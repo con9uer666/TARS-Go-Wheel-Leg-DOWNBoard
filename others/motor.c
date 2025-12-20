@@ -553,6 +553,10 @@ void Motor_task(void const * argument)
     for(;;)
     {
         
+
+
+
+        
         /*定腿长*/
         if(start_mode == 0 && upstares_mode == 0)
         {   
