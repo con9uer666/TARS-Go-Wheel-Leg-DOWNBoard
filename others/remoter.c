@@ -132,8 +132,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef * huart)
 	}
 	if (huart == &huart2)
     {
-		// HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));
-		// __HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
 		a ++;
 	}
 }

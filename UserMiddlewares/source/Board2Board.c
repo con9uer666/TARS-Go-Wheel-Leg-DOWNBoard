@@ -7,6 +7,8 @@
 #include "usart.h"
 #include "cmsis_os.h"
 
+extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
+extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern osThreadId ErrorHandle;
 
@@ -129,11 +131,12 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
 	{
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
 		receive_times ++;
 		B2B_ParseUsart();
 		Detect_Update(DeviceID_B2B);
 		detectList[DeviceID_B2B].isLost = 0;
-		
 	}
 }
 

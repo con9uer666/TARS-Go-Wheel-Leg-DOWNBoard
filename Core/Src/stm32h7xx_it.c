@@ -310,8 +310,8 @@ void USART1_IRQHandler(void)
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
-  HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
-	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
+  // HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
+	// __HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
   /* USER CODE END USART1_IRQn 1 */
 }
 
