@@ -36,8 +36,8 @@ float vaEstimateKF_P[4] = {1.0f, 0.0f,
 float vaEstimateKF_Q[4] = {100.0f, 0.0f, 
                            0.0f, 1.0f};    // Q矩阵初始值
 
-float vaEstimateKF_R[4] = {1000000.0f, 0.0f, 
-                            0.0f,  0.01f};
+float vaEstimateKF_R[4] = {100.0f, 0.0f, 
+                            0.0f,  0.1f};
 														
 float vaEstimateKF_K[4];
 													 
@@ -55,7 +55,7 @@ void Observe_Tasks(void const * argument)
 	TickType_t xLastWakeTime = xTaskGetTickCount(); 
   	while(1)
 	{  
-    	xvEstimateKF_Update(&vaEstimateKF, accel_b[1], body_speed);
+    	xvEstimateKF_Update(&vaEstimateKF, -accel_b[1], body_speed);
 		//原地自转的过程中v_filter和x_filter应该都是为0
 		kalman_body_speed = vel_acc[0];//得到卡尔曼滤波后的速度
 		osDelayUntil(&xLastWakeTime, 2);

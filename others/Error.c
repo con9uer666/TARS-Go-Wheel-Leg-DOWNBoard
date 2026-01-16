@@ -28,8 +28,10 @@ void Error_task(void const * argument)
 		Disable_DM_Motor(&hfdcan2, 0x02);
 		Disable_DM_Motor(&hfdcan1, 0x02);
 		HAL_Delay(1);
-		Disable_LK_Motor(&hfdcan2, 0x141);
-		Disable_LK_Motor(&hfdcan1, 0x141);
+		// Disable_LK_Motor(&hfdcan2, 0x141);
+		// Disable_LK_Motor(&hfdcan1, 0x141);
+		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+		DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 		Buzzer_High_si();
 		HAL_Delay(100);
 		Stop_Buzzer();
@@ -50,9 +52,11 @@ void Error_task(void const * argument)
 			Disable_DM_Motor(&hfdcan2, 0x02);
 			Disable_DM_Motor(&hfdcan1, 0x02);
 			HAL_Delay(1);
-			Disable_LK_Motor(&hfdcan2, 0x141);
-			Disable_LK_Motor(&hfdcan1, 0x141);
-			if(STOPFLAG != 1)
+			// Disable_LK_Motor(&hfdcan2, 0x141);
+			// Disable_LK_Motor(&hfdcan1, 0x141);
+			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+			if(SBUS_CH.SW3 == 1)
 			{
 				__set_FAULTMASK(1);//禁止所有的可屏蔽中断
 				HAL_NVIC_SystemReset();
@@ -65,9 +69,11 @@ void Error_task(void const * argument)
 			Disable_DM_Motor(&hfdcan2, 0x02);
 			Disable_DM_Motor(&hfdcan1, 0x02);
 			HAL_Delay(1);
-			Disable_LK_Motor(&hfdcan2, 0x141);
-			Disable_LK_Motor(&hfdcan1, 0x141);
-			if(STOPFLAG != 1)
+			// Disable_LK_Motor(&hfdcan2, 0x141);
+			// Disable_LK_Motor(&hfdcan1, 0x141);
+			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+			if(SBUS_CH.SW3 == 1)
 			{
 				__set_FAULTMASK(1);//禁止所有的可屏蔽中断
 				HAL_NVIC_SystemReset();

@@ -54,11 +54,17 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 				DM8009_Get_Data(rx_data, &R_DM8009[1]);
 				break;
 			}
-			case 0x141:
+			// case 0x141:
+			// {
+			// 	LK9025_Get_Data(rx_data, &R_LK9025);
+			// 	break;
+			// }
+			case 0x205:
 			{
-				LK9025_Get_Data(rx_data, &R_LK9025);
+				DJI3508_Get_Data(rx_data, &R_LK9025);
 				break;
 			}
+
 			
 		}
     }
@@ -77,9 +83,14 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 				DM8009_Get_Data(rx_data, &L_DM8009[1]);
 				break;
 			}
-			case 0x141:
+			// case 0x141:
+			// {
+			// 	LK9025_Get_Data(rx_data, &L_LK9025);
+			// 	break;
+			// }
+			case 0x203:
 			{
-				LK9025_Get_Data(rx_data, &L_LK9025);
+				DJI3508_Get_Data(rx_data, &L_LK9025);
 				break;
 			}
 		}
@@ -111,8 +122,8 @@ void CAN_Transmit(void const * argument)
     for(;;)
     {
 		// touqer = ((SBUS_CH.CH1 - 992.0f) / 1600.0f) * 4.0f;
-		LK_MF9025_Torque_Ctrl(&hfdcan2, 0x141, L_LK9025.Target_Torque);
-        LK_MF9025_Torque_Ctrl(&hfdcan1, 0x141, -R_LK9025.Target_Torque);
+		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_LK9025.Target_Torque);
+        DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_LK9025.Target_Torque);
         osDelay(1);
 		DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
         DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
@@ -125,8 +136,8 @@ void CAN_Transmit(void const * argument)
         // DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
         // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 		// osDelay(1);
-		// LK_MF9025_Torque_Ctrl(&hfdcan2, 0x141, 0);
-        // LK_MF9025_Torque_Ctrl(&hfdcan1, 0x141, 0);
+		// DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+        // DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 
     }
 }

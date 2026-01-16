@@ -82,8 +82,8 @@ void INS_Task(void)
 					//HAL_GPIO_WritePin(GPIOE,GPIO_PIN_13,GPIO_PIN_RESET);
 					//===============================================================================	
 					//ekf获取姿态角度函数
-					roll=Get_Pitch(); //获得pitch
-					pitch=Get_Roll();//获得roll
+					roll=-Get_Pitch(); //获得pitch
+					pitch=-Get_Roll();//获得roll
 					yaw=Get_Yaw();//获得yaw
 					QEKF_GetMotionAccel_b(accel_b);
 					//==============================================================================

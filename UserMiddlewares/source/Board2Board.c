@@ -121,24 +121,24 @@ void B2B_ParseUsart() // ÏÈ·¢µÍ×Ö½Ú
 		HAL_UART_Transmit_DMA(&huart2, txbuffer, 64);
 	}
 }
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
-	if (huart == &huart1)
-	{
-		// JUDGE_Read_Data(usart1RxBuf);
-		Detect_Update(DeviceID_Judge);
-	}
+// void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+// {
+// 	if (huart == &huart1)
+// 	{
+// 		// JUDGE_Read_Data(usart1RxBuf);
+// 		Detect_Update(DeviceID_Judge);
+// 	}
 
-	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
-	{
-		HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
-		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
-		receive_times ++;
-		B2B_ParseUsart();
-		Detect_Update(DeviceID_B2B);
-		detectList[DeviceID_B2B].isLost = 0;
-	}
-}
+// 	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
+// 	{
+// 		HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
+// 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
+// 		receive_times ++;
+// 		B2B_ParseUsart();
+// 		Detect_Update(DeviceID_B2B);
+// 		detectList[DeviceID_B2B].isLost = 0;
+// 	}
+// }
 
 void Task_B2B_Callback()
 {

@@ -11,11 +11,13 @@
 #include "USER_CAN.h"
 #include "VMC.h"
 #include "observe_task.h"
+#include <stdint.h>
 
 Joint_Motor_t L_DM8009[2], R_DM8009[2];
 Wheel_Motor_t L_LK9025, R_LK9025;
 
-#define PITCH_OFFSET 0.000
+
+float PITCH_OFFSET=-0.19;
 
 float pitch_trans[2];
 float d_pitch;
@@ -50,10 +52,10 @@ float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 
-float mg = 190.0f/2;
+float mg = 150.0f/2;
 float L_Ground_F0, R_Ground_F0;
 
-float b_phi0_offset = 0.001;
+float b_phi0_offset = 0.32;
 
 float LQR_K[4][10] = {
     -1.5319,  -4.4506,  -4.8607,  -0.84003,  -6.7098,  -0.90493,  -5.4903,  -0.83328,  -9.7772,  -0.90614,
@@ -63,47 +65,46 @@ float LQR_K[4][10] = {
 };
 
 float K_Fit_Coefficients[40][6] = {
-    -0.44594,  -7.5776,  2.3621,  7.57,  1.2116,  -2.2662,
-     -1.3795,  -15.778,  6.2041,  17.699,  -1.3182,  -4.3862,
-     -16.368,  47.288,  -24.596,  -52.837,  2.647,  27.485,
-     -1.8348,  6.8823,  -5.2778,  -5.4135,  -0.78319,  5.7595,
-     -9.1907,  -87.929,  15.739,  85.959,  13.398,  -19.014,
-     -0.19042,  -7.0812,  1.6572,  0.010734,  3.417,  -2.3167,
-     -2.7605,  7.696,  -27.839,  -2.7838,  9.5124,  18.303,
-     -0.072125,  -0.60716,  -2.6051,  1.8068,  -1.2737,  0.4975,
-     -26.373,  38.389,  36.753,  -5.953,  -37.522,  -23.994,
-     -2.6224,  2.4,  4.9941,  0.84101,  -4.4493,  -3.5611,
-     -0.44594,  2.3621,  -7.5776,  -2.2662,  1.2116,  7.57,
-     -1.3795,  6.2041,  -15.778,  -4.3862,  -1.3182,  17.699,
-     16.368,  24.596,  -47.288,  -27.485,  -2.647,  52.837,
-     1.8348,  5.2778,  -6.8823,  -5.7595,  0.78319,  5.4135,
-     -2.7605,  -27.839,  7.696,  18.303,  9.5124,  -2.7838,
-     -0.072125,  -2.6051,  -0.60716,  0.4975,  -1.2737,  1.8068,
-     -9.1907,  15.739,  -87.929,  -19.014,  13.398,  85.959,
-     -0.19042,  1.6572,  -7.0812,  -2.3167,  3.417,  0.010734,
-     -26.373,  36.753,  38.389,  -23.994,  -37.522,  -5.953,
-     -2.6224,  4.9941,  2.4,  -3.5611,  -4.4493,  0.84101,
-     7.9423,  1.3487,  -23.273,  -17.685,  26.217,  11.001,
-     19.107,  -1.4678,  -57.19,  -39.016,  72.844,  24.648,
-     -16.651,  -91.842,  -69.602,  152,  -65.855,  101.03,
-     -1.4585,  -18.865,  -6.2173,  25.696,  -16.232,  8.0278,
-     118.67,  -228.43,  19.47,  176.29,  111.24,  -50.124,
-     3.5461,  7.0156,  -3.4198,  -4.0037,  10.578,  -0.67639,
-     7.5101,  -87.596,  -56.151,  107.87,  -82.389,  47.303,
-     0.75131,  -4.5101,  1.243,  2.7716,  -4.8192,  -11.005,
-     -40.738,  -431.21,  119.66,  459.37,  65.997,  -139.38,
-     -0.5749,  -27.008,  3.0428,  22.54,  12.778,  -5.5466,
-     7.9423,  -23.273,  1.3487,  11.001,  26.217,  -17.685,
-     19.107,  -57.19,  -1.4678,  24.648,  72.844,  -39.016,
-     16.651,  69.602,  91.842,  -101.03,  65.855,  -152,
-     1.4585,  6.2173,  18.865,  -8.0278,  16.232,  -25.696,
-     7.5101,  -56.151,  -87.596,  47.303,  -82.389,  107.87,
-     0.75131,  1.243,  -4.5101,  -11.005,  -4.8192,  2.7716,
-     118.67,  19.47,  -228.43,  -50.124,  111.24,  176.29,
-     3.5461,  -3.4198,  7.0156,  -0.67639,  10.578,  -4.0037,
-     -40.738,  119.66,  -431.21,  -139.38,  65.997,  459.37,
-     -0.5749,  3.0428,  -27.008,  -5.5466,  12.778,  22.54
-
+    -0.070651,  -1.2811,  0.25301,  1.2484,  0.45274,  -0.37445,
+     -0.50034,  -8.0905,  1.7271,  8.0037,  2.5346,  -2.3823,
+     -9.1466,  24.365,  -15.122,  -24.984,  -1.394,  17.084,
+     -1.3727,  4.7027,  -3.6793,  -3.4745,  -0.46997,  3.7493,
+     -4.1952,  -47.572,  11.312,  37.82,  13.348,  -13.641,
+     -0.07852,  -4.5944,  1.0191,  -0.82574,  2.9643,  -1.7127,
+     -1.3961,  5.049,  -24.399,  1.1645,  5.5067,  16.885,
+     -0.026159,  -0.31885,  -2.1852,  0.93648,  0.48556,  -0.40258,
+     -17.809,  27.732,  24.67,  -5.3572,  -32.385,  -11.358,
+     -2.0457,  1.9857,  3.5828,  0.65426,  -3.6696,  -2.2091,
+     -0.070651,  0.25301,  -1.2811,  -0.37445,  0.45274,  1.2484,
+     -0.50034,  1.7271,  -8.0905,  -2.3823,  2.5346,  8.0037,
+     9.1466,  15.122,  -24.365,  -17.084,  1.394,  24.984,
+     1.3727,  3.6793,  -4.7027,  -3.7493,  0.46997,  3.4745,
+     -1.3961,  -24.399,  5.049,  16.885,  5.5067,  1.1645,
+     -0.026159,  -2.1852,  -0.31885,  -0.40258,  0.48556,  0.93648,
+     -4.1952,  11.312,  -47.572,  -13.641,  13.348,  37.82,
+     -0.07852,  1.0191,  -4.5944,  -1.7127,  2.9643,  -0.82574,
+     -17.809,  24.67,  27.732,  -11.358,  -32.385,  -5.3572,
+     -2.0457,  3.5828,  1.9857,  -2.2091,  -3.6696,  0.65426,
+     1.8551,  -0.94997,  -4.3724,  -2.356,  4.7372,  2.5482,
+     12.076,  -6.6473,  -28.837,  -14.921,  32.483,  16.264,
+     -12.676,  -62.864,  -29.391,  105.73,  -46.907,  47.581,
+     -1.5261,  -15.756,  -3.2727,  23.177,  -16.377,  5.6203,
+     62.409,  -88.767,  6.2586,  44.974,  106.66,  -30.336,
+     2.0813,  8.1469,  -2.4228,  -7.0016,  10.939,  -0.25414,
+     7.1488,  -79.8,  -21.465,  100.2,  -103.8,  37.466,
+     0.77553,  -4.8539,  2.0633,  6.2873,  -14.403,  -4.3549,
+     -25.772,  -367,  82.995,  387.24,  91.383,  -113.69,
+     0.42515,  -27.672,  2.2785,  23.49,  13.267,  -4.7976,
+     1.8551,  -4.3724,  -0.94997,  2.5482,  4.7372,  -2.356,
+     12.076,  -28.837,  -6.6473,  16.264,  32.483,  -14.921,
+     12.676,  29.391,  62.864,  -47.581,  46.907,  -105.73,
+     1.5261,  3.2727,  15.756,  -5.6203,  16.377,  -23.177,
+     7.1488,  -21.465,  -79.8,  37.466,  -103.8,  100.2,
+     0.77553,  2.0633,  -4.8539,  -4.3549,  -14.403,  6.2873,
+     62.409,  6.2586,  -88.767,  -30.336,  106.66,  44.974,
+     2.0813,  -2.4228,  8.1469,  -0.25414,  10.939,  -7.0016,
+     -25.772,  82.995,  -367,  -113.69,  91.383,  387.24,
+     0.42515,  2.2785,  -27.672,  -4.7976,  13.267,  23.49,
 };
 
 PID_t L_Leg_L0_PID;
@@ -136,6 +137,55 @@ int ready_count = 0;
 
 uint8_t leg_state = 0;
 int leg_state_count;
+
+RampGenerator Target_Speed_Ramp;
+
+// 一个周期内对斜坡发生器状态的更新
+void rampIterate(RampGenerator *ramp)
+{
+    if (ramp->isBusy)
+    {
+        if (ramp->currentValue < ramp->targetValue)
+        {                                     // 如果当前值小于目标值
+            ramp->currentValue += ramp->step; // 增大当前值
+            if (ramp->currentValue > ramp->targetValue)
+            { // 避免超调
+                ramp->currentValue = ramp->targetValue;
+            }
+        }
+        else if (ramp->currentValue > ramp->targetValue)
+        {                                     // 如果当前值大于目标值
+            ramp->currentValue -= ramp->step; // 减小当前值
+            if (ramp->currentValue < ramp->targetValue)
+            { // 避免超调
+                ramp->currentValue = ramp->targetValue;
+            }
+        }
+
+        // 判断是否达到目标
+        // if (ramp->currentValue == ramp->targetValue)
+        // {
+        //     ramp->isBusy = 0; // 达到目标，标记为不忙碌
+        // }
+    }
+}
+
+// 初始化斜坡发生器
+void rampInit(RampGenerator *ramp, float startValue, float targetValue, float finalstep, float time, float cycleTime)
+{
+    ramp->currentValue = startValue;
+    ramp->targetValue = targetValue;
+    // 计算步进值，这里需要注意的是，确保斜坡时间和周期时间都不为零来避免除以零的错误
+    if (time != 0 && cycleTime != 0)
+    {
+        ramp->step = (finalstep - 0) * (cycleTime / time);
+    }
+    else
+    {
+        ramp->step = 0; // 出错情况下设置为0，避免非法操作
+    }
+    ramp->isBusy = 1; // 标记为忙碌
+}
 
 void DM_Joint_Motor_Init(Joint_Motor_t *Motor, float TMAX, float PMAX,float VMAX, uint16_t motor_id)
 {
@@ -180,16 +230,24 @@ void DM8009_Get_Data(uint8_t *Data, Joint_Motor_t *Motor)
     Motor->Rx_Data.T_Rotor = (float)Data[7];
 }
 
-void LK9025_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
+void DJI3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
 {
-    if(Data[0] == 0x9c || Data[0] == 0xa4 || Data[0] == 0xa2 ||Data[0] == 0xa8 ||Data[0] == 0xa1)
-    {
-        Motor->Rx_Data.T_Rotor = Data[1];
-        Motor->Rx_Data.Torque = (Data[3] << 8 | Data[2]);
-        Motor->Rx_Data.Velocity = (((int16_t)(Data[5] << 8 | Data[4])) / 180.0f) * PI;
-        Motor->Rx_Data.Position = (Data[7] << 8 | Data[6]);
-    }
+    Motor->Rx_Data.Position = (uint16_t)(Data[0] << 8 | Data[1]);
+    Motor->Rx_Data.Velocity = ((((int16_t)(Data[2] << 8 | Data[3])) / 60.0f) * 2 * PI) / 14.88f;
+    Motor->Rx_Data.Torque = (int16_t)(Data[4] << 8 | Data[5]);
+    Motor->Rx_Data.temperate = Data[6];
 }
+
+// void LK9025_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
+// {
+//     if(Data[0] == 0x9c || Data[0] == 0xa4 || Data[0] == 0xa2 ||Data[0] == 0xa8 ||Data[0] == 0xa1)
+//     {
+//         Motor->Rx_Data.T_Rotor = Data[1];
+//         Motor->Rx_Data.Torque = (Data[3] << 8 | Data[2]);
+//         Motor->Rx_Data.Velocity = (((int16_t)(Data[5] << 8 | Data[4])) / 180.0f) * PI;
+//         Motor->Rx_Data.Position = (Data[7] << 8 | Data[6]);
+//     }
+// }
 
 void Enable_DM_Motor_MIT(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 {
@@ -279,6 +337,24 @@ void DM_Wheel_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Wheel_Motor_t M
     CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);
 }
 
+void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque)
+{
+    uint8_t data[8] = {0};
+
+    int16_t tqControl = (int16_t)(((((torque / 14.88f) / 0.02f))/20.0f) * 16384);
+
+    data[0] = tqControl >> 8;
+    data[1] = tqControl;
+    data[2] = tqControl >> 8;
+    data[3] = tqControl;
+    data[4] = tqControl >> 8;
+    data[5] = tqControl;
+    data[6] = tqControl >> 8;
+    data[7] = tqControl;
+
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+}
+
 void Enable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 {
     uint8_t data[8] = {0};
@@ -356,13 +432,13 @@ void Roll_Comp()
     else
     target_roll = alpha_target_roll * target_roll + (1 - alpha_target_roll) * target_roll;
 
-    PID_Set_Error(&Roll_Comp_PID, roll, target_roll);
+    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 2);
     PID_coculate(&Roll_Comp_PID);
 }
 
 void b_phi0_offset_coc(float target_Leg_L0)
 {
-    b_phi0_offset = -0.6043 *target_Leg_L0 + 0.175;
+    // b_phi0_offset = -0.6043 *target_Leg_L0 + 0.175;
 }
 
 void Leg_L0_Control()
@@ -388,11 +464,11 @@ void Leg_L0_Control()
         if(leg_state <= 0)
         leg_state = 0;
     }
-    target_Leg_L0 = alpha_target_L0 * (((leg_state / 2.0f) * 0.21) + 0.19f) + (1 - alpha_target_L0) * target_Leg_L0;
+    target_Leg_L0 = alpha_target_L0 * (((leg_state / 2.0f) * 0.22) + 0.18f) + (1 - alpha_target_L0) * target_Leg_L0;
     if(target_Leg_L0 >= 0.40f)
     target_Leg_L0 = 0.40f;
-    if(target_Leg_L0 <= 0.19f)
-    target_Leg_L0 = 0.19f;
+    if(target_Leg_L0 <= 0.16f)
+    target_Leg_L0 = 0.16f;
 
     target_L_Leg_L0 = target_Leg_L0;
     target_R_Leg_L0 = target_Leg_L0;
@@ -402,13 +478,13 @@ void Leg_L0_Control()
 
     if(target_L_Leg_L0 >= 0.40)
     target_L_Leg_L0 = 0.40;
-    if(target_L_Leg_L0 <= 0.19)
-    target_L_Leg_L0 = 0.19;
+    if(target_L_Leg_L0 <= 0.16)
+    target_L_Leg_L0 = 0.16;
 
     if(target_R_Leg_L0 >= 0.40)
     target_R_Leg_L0 = 0.40;
-    if(target_R_Leg_L0 <= 0.19)
-    target_R_Leg_L0 = 0.19;
+    if(target_R_Leg_L0 <= 0.16)
+    target_R_Leg_L0 = 0.16;
 
     PID_Set_Error(&L_Leg_L0_PID, VMC_L.L0, target_L_Leg_L0);
     PID_Set_Error(&R_Leg_L0_PID, VMC_R.L0, target_R_Leg_L0);
@@ -419,13 +495,16 @@ void Leg_L0_Control()
 
 void Speed_Error_Set()
 {
-    speed_limit = 2.3;
-    target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH3 - 992.0f) / 800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
+    speed_limit = 2.7;
+    rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit),speed_limit, 0.3f, 0.002f);
+    rampIterate(&Target_Speed_Ramp);
+    target_body_speed = Target_Speed_Ramp.currentValue;
+    // target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
     speed_error = target_body_speed - kalman_body_speed;
-    if(speed_error >= speed_limit * 1.1)
-    speed_error = speed_limit * 1.1;
-    if(speed_error <= -speed_limit * 1.1)
-    speed_error = -speed_limit * 1.1;
+    if(speed_error >= speed_limit * 0.7)
+    speed_error = speed_limit * 0.7;
+    if(speed_error <= -speed_limit * 0.7)
+    speed_error = -speed_limit * 0.7;
 }
 
 void Distance_Error_Set()
@@ -443,7 +522,7 @@ void Body_Speed_Coculate()
     VMC_L.d_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_phi0 ;
     VMC_L.dd_b_phi0 = (VMC_L.d_phi0 - VMC_L.last_d_phi0)/0.002f;
 
-    Wl = alpha_W * (L_LK9025.Rx_Data.Velocity + VMC_L.d_phi0) + (1 - alpha_W) * Wl;
+    Wl = alpha_W * (-L_LK9025.Rx_Data.Velocity + VMC_L.d_phi0) + (1 - alpha_W) * Wl;
     body_speed_L = alpha_body_speed * ((Wl * 0.061f) + VMC_L.d_phi0 * VMC_L.L0 * arm_cos_f32(VMC_L.b_phi0)) + (1 - alpha_body_speed) * body_speed_L;
 
     VMC_R.last_phi0 = VMC_R.b_phi0;
@@ -452,7 +531,7 @@ void Body_Speed_Coculate()
     VMC_R.d_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_phi0 ;
     VMC_R.dd_b_phi0 = (VMC_R.d_phi0 - VMC_R.last_d_phi0)/0.002f;
 
-    Wr = alpha_W * (-R_LK9025.Rx_Data.Velocity + VMC_R.d_phi0) + (1 - alpha_W) * Wr;
+    Wr = alpha_W * (R_LK9025.Rx_Data.Velocity + VMC_R.d_phi0) + (1 - alpha_W) * Wr;
     body_speed_R = alpha_body_speed * ((Wr * 0.061f) + VMC_R.d_phi0 * VMC_R.L0 * arm_cos_f32(VMC_R.b_phi0)) + (1 - alpha_body_speed) * body_speed_R;
 
     body_speed = (body_speed_L + body_speed_R) / 2.0f;
@@ -541,14 +620,14 @@ void Motor_task(void const * argument)
     osDelay(5);
     Enable_DM_Motor_MIT(&hfdcan2, 0x02);
     osDelay(5);
-    Enable_LK_Motor(&hfdcan1, 0x141);
+    // Enable_LK_Motor(&hfdcan1, 0x141);
     
     osDelay(5);
     Enable_DM_Motor_MIT(&hfdcan1, 0x01);
     osDelay(5);	
     Enable_DM_Motor_MIT(&hfdcan1, 0x02);
     osDelay(5);
-    Enable_LK_Motor(&hfdcan2, 0x141);
+    // Enable_LK_Motor(&hfdcan2, 0x141);
     TickType_t xLastWakeTime = xTaskGetTickCount(); 
     for(;;)
     {
@@ -579,14 +658,14 @@ void Motor_task(void const * argument)
             PID_coculate(&R_Leg_L0_SPD_PID);
             if(L_Leg_State >= 1)
             {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+0.2);
+                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);
                 PID_coculate(&L_Leg_Middle_PID);
                 PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             if(R_Leg_State >= 1)
             {
-                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-0.2);
+                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
                 PID_coculate(&R_Leg_Middle_PID);
                 PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
                 PID_coculate(&R_Leg_dphi0_PID);
@@ -723,6 +802,9 @@ void Motor_task(void const * argument)
 
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
             VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
+
+            // VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T + Leg_Phi0_PID.output);
+            // VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)), -Leg_R_T + Leg_Phi0_PID.output);
 
             L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
             R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
@@ -887,28 +969,28 @@ void Motor_task(void const * argument)
             
             if(L_Leg_State >= 1)
             {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+0.2);
+                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);
                 PID_coculate(&L_Leg_Middle_PID);
                 PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             else 
             {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);
+                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-1.2);
                 PID_coculate(&L_Leg_Middle_PID);
                 PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             if(R_Leg_State >= 1)
             {
-                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-0.2);
+                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
                 PID_coculate(&R_Leg_Middle_PID);
                 PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
                 PID_coculate(&R_Leg_dphi0_PID);
             }
             else
             {
-                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
+                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+1.2);
                 PID_coculate(&R_Leg_Middle_PID);
                 PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
                 PID_coculate(&R_Leg_dphi0_PID);
