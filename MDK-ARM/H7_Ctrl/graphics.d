@@ -1,5 +1,5 @@
 h7_ctrl\graphics.o: ..\UI\source\Graphics.c
-h7_ctrl\graphics.o: ..\UI\include\Graphics.h
+h7_ctrl\graphics.o: ../UI/include/Graphics.h
 h7_ctrl\graphics.o: ../Core/Inc/main.h
 h7_ctrl\graphics.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\graphics.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -43,7 +43,7 @@ h7_ctrl\graphics.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
 h7_ctrl\graphics.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 h7_ctrl\graphics.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\graphics.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
-h7_ctrl\graphics.o: ..\UI\include\Judge.h
+h7_ctrl\graphics.o: ../UI/include/Judge.h
 h7_ctrl\graphics.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\graphics.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdarg.h
 h7_ctrl\graphics.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\string.h

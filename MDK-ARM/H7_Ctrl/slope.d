@@ -1,5 +1,5 @@
 h7_ctrl\slope.o: ..\math\source\Slope.c
-h7_ctrl\slope.o: ..\math\include\Slope.h
+h7_ctrl\slope.o: ../math/include/Slope.h
 h7_ctrl\slope.o: ../Core/Inc/main.h
 h7_ctrl\slope.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\slope.o: ../Core/Inc/stm32h7xx_hal_conf.h

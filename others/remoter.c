@@ -108,17 +108,17 @@ void Remoter_Init()
 }
 
 //下板单独调试遥控器接收
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
+// void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+// {
 
-	if(huart->Instance == UART5)
-	{
-			// 接收完毕后重启
-			Sbus_Data_Count(Rx_Data);
-			Error_Judge();
-			HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
-	}
-}
+// 	if(huart->Instance == UART5)
+// 	{
+// 			// 接收完毕后重启
+// 			Sbus_Data_Count(Rx_Data);
+// 			Error_Judge();
+// 			HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
+// 	}
+// }
 
 int a;
 

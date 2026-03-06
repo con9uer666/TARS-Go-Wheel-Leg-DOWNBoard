@@ -1,4 +1,5 @@
 h7_ctrl\motor.o: ..\others\motor.c
+h7_ctrl\motor.o: ../Core/Inc/fdcan.h
 h7_ctrl\motor.o: ../Core/Inc/main.h
 h7_ctrl\motor.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\motor.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -84,9 +85,8 @@ h7_ctrl\motor.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/transform_fu
 h7_ctrl\motor.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/filtering_functions.h
 h7_ctrl\motor.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
 h7_ctrl\motor.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
-h7_ctrl\motor.o: ..\IMU_coculate\imu_temp_ctrl.h
+h7_ctrl\motor.o: ../IMU_coculate/imu_temp_ctrl.h
 h7_ctrl\motor.o: ..\others\USER_CAN.h
-h7_ctrl\motor.o: ../Core/Inc/fdcan.h
 h7_ctrl\motor.o: ..\others\VMC.h
 h7_ctrl\motor.o: ..\others\observe_task.h
 h7_ctrl\motor.o: ..\others\kalman_filter1.h

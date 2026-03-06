@@ -89,5 +89,5 @@ h7_ctrl\imu_temp_ctrl.o: ..\IMU_coculate\QuaternionEKF.h
 h7_ctrl\imu_temp_ctrl.o: ..\IMU_coculate\imu_temp_ctrl.h
 h7_ctrl\imu_temp_ctrl.o: ..\IMU_coculate\MahonyAHRS.h
 h7_ctrl\imu_temp_ctrl.o: ..\IMU_coculate\pid.h
-h7_ctrl\imu_temp_ctrl.o: ..\others\remoter.h
+h7_ctrl\imu_temp_ctrl.o: ../others/remoter.h
 h7_ctrl\imu_temp_ctrl.o: ../Core/Inc/usart.h

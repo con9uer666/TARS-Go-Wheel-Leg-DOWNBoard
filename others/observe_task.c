@@ -21,23 +21,24 @@
 #include "float.h"
 #include "string.h"
 #include "freertos.h"
+#include <math.h>
 
 
 
 
 KalmanFilter_t vaEstimateKF;	   // 卡尔曼滤波器结构体
 
-float vaEstimateKF_F[4] = {1.0f, 0.003f, 
+float vaEstimateKF_F[4] = {1.0f, 0.002f, 
                            0.0f, 1.0f};	   // 状态转移矩阵，控制周期为0.001s
 
 float vaEstimateKF_P[4] = {1.0f, 0.0f,
                            0.0f, 1.0f};    // 后验估计协方差初始值
 
-float vaEstimateKF_Q[4] = {100.0f, 0.0f, 
-                           0.0f, 1.0f};    // Q矩阵初始值
+float vaEstimateKF_Q[4] = {50.0f, 0.0f, 
+                           0.0f, 0.005f};    // Q矩阵初始值
 
-float vaEstimateKF_R[4] = {100.0f, 0.0f, 
-                            0.0f,  0.1f};
+float vaEstimateKF_R[4] = {1000000.0f, 0.0f, 
+                            0.0f,  0.01f};
 														
 float vaEstimateKF_K[4];
 													 
@@ -47,6 +48,7 @@ const float vaEstimateKF_H[4] = {1.0f, 0.0f,
 
 float vel_acc[2];
 float kalman_body_speed;
+float accel_speed;
 
 																 
 void Observe_Tasks(void const * argument)
@@ -55,9 +57,14 @@ void Observe_Tasks(void const * argument)
 	TickType_t xLastWakeTime = xTaskGetTickCount(); 
   	while(1)
 	{  
+		accel_speed += (-accel_b[1]) * 0.002f; //加速度积分得到速度
     	xvEstimateKF_Update(&vaEstimateKF, -accel_b[1], body_speed);
 		//原地自转的过程中v_filter和x_filter应该都是为0
 		kalman_body_speed = vel_acc[0];//得到卡尔曼滤波后的速度
+		if(fabsf(kalman_body_speed) <= 0.05)
+		{
+			kalman_body_speed = 0;
+		}
 		osDelayUntil(&xLastWakeTime, 2);
 	}
 }

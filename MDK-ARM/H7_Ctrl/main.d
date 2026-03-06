@@ -64,6 +64,6 @@ h7_ctrl\main.o: ../Core/Inc/spi.h
 h7_ctrl\main.o: ../Core/Inc/tim.h
 h7_ctrl\main.o: ../Core/Inc/usart.h
 h7_ctrl\main.o: ../Core/Inc/gpio.h
-h7_ctrl\main.o: ..\others\USER_CAN.h
-h7_ctrl\main.o: ..\UserMiddlewares\include\Board2Board.h
+h7_ctrl\main.o: ../others/USER_CAN.h
+h7_ctrl\main.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\main.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h

@@ -86,6 +86,8 @@
 "h7_ctrl\board2board.o"
 "h7_ctrl\com.o"
 "h7_ctrl\userfreertos.o"
+"h7_ctrl\powerctrl.o"
+"h7_ctrl\rls.o"
 "h7_ctrl\basicmathfunctions.o"
 "h7_ctrl\basicmathfunctionsf16.o"
 "h7_ctrl\bayesfunctions.o"

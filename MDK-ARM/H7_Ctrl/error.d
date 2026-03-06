@@ -65,5 +65,5 @@ h7_ctrl\error.o: ..\others\USER_CAN.h
 h7_ctrl\error.o: ../Core/Inc/fdcan.h
 h7_ctrl\error.o: ..\others\motor.h
 h7_ctrl\error.o: ..\others\pid.h
-h7_ctrl\error.o: ..\UserMiddlewares\include\Board2Board.h
+h7_ctrl\error.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\error.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h

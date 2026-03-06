@@ -27,6 +27,7 @@ typedef struct LK_Rx_Data{
 typedef struct DJI_Rx_Data{
     uint16_t Position;
     float Velocity;
+    int16_t Speed;
     int16_t Torque;
     uint8_t temperate;
     int16_t last_ecd;
@@ -43,6 +44,7 @@ typedef struct Joint_Motor{
 
 typedef struct Wheel_Motor{
     DJI_Rx_Data_t Rx_Data;
+    int16_t TX_data;
     float Target_Torque;
     float TMAX;
     float PMAX;
@@ -58,7 +60,7 @@ typedef struct RampGenerator
     uint8_t isBusy;        // 指示斜坡发生器是否正在调整中
 }RampGenerator;
 
-extern Joint_Motor_t L_DM8009[2], R_DM8009[2];
+extern Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
 extern Wheel_Motor_t L_LK9025, R_LK9025;
 
 extern float body_speed;

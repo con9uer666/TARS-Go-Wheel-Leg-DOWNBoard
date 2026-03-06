@@ -81,4 +81,4 @@ h7_ctrl\vmc.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/filtering_func
 h7_ctrl\vmc.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
 h7_ctrl\vmc.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
 h7_ctrl\vmc.o: ..\others\VMC.h
-h7_ctrl\vmc.o: ..\IMU_coculate\imu_temp_ctrl.h
+h7_ctrl\vmc.o: ../IMU_coculate/imu_temp_ctrl.h

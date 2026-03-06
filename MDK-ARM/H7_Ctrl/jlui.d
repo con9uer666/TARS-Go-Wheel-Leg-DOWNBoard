@@ -1,5 +1,5 @@
 h7_ctrl\jlui.o: ..\UI\source\jlui.cpp
-h7_ctrl\jlui.o: ..\UI\include\jlui.h
+h7_ctrl\jlui.o: ../UI/include/jlui.h
 h7_ctrl\jlui.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\jlui.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h
 h7_ctrl\jlui.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h

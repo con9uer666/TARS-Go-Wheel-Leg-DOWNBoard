@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
-            <RunUserProg2>0</RunUserProg2>
+            <RunUserProg2>1</RunUserProg2>
             <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_PWR_LDO_SUPPLY,USE_HAL_DRIVER,STM32H723xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;..\IMU_coculate;..\math\include;..\others;..\UI\include;..\UserMiddlewares\include</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -914,6 +914,31 @@
               <FileName>UserFreertos.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\UserMiddlewares\source\UserFreertos.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Power_control</GroupName>
+          <Files>
+            <File>
+              <FileName>PowerCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Power_control\PowerCtrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>PowerCtrl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Power_control\PowerCtrl.h</FilePath>
+            </File>
+            <File>
+              <FileName>RLS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Power_control\RLS.c</FilePath>
+            </File>
+            <File>
+              <FileName>RLS.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Power_control\RLS.h</FilePath>
             </File>
           </Files>
         </Group>

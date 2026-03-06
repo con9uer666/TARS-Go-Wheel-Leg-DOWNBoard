@@ -1,5 +1,5 @@
 h7_ctrl\jlui_port_freertos.o: ..\UI\source\jlui_port_freertos.c
-h7_ctrl\jlui_port_freertos.o: ..\UI\include\jlui.h
+h7_ctrl\jlui_port_freertos.o: ../UI/include/jlui.h
 h7_ctrl\jlui_port_freertos.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\jlui_port_freertos.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h
 h7_ctrl\jlui_port_freertos.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h
@@ -56,11 +56,11 @@ h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include
 h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-h7_ctrl\jlui_port_freertos.o: ..\UserMiddlewares\include\userfreertos.h
+h7_ctrl\jlui_port_freertos.o: ../UserMiddlewares/include/userfreertos.h
 h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 h7_ctrl\jlui_port_freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 h7_ctrl\jlui_port_freertos.o: ../Core/Inc/spi.h
-h7_ctrl\jlui_port_freertos.o: ..\UserMiddlewares\include\Board2Board.h
-h7_ctrl\jlui_port_freertos.o: ..\UI\include\judge.h
-h7_ctrl\jlui_port_freertos.o: ..\UI\include\Graphics.h
+h7_ctrl\jlui_port_freertos.o: ../UserMiddlewares/include/Board2Board.h
+h7_ctrl\jlui_port_freertos.o: ../UI/include/judge.h
+h7_ctrl\jlui_port_freertos.o: ../UI/include/Graphics.h

@@ -30,7 +30,7 @@ h7_ctrl\observe_task.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/filte
 h7_ctrl\observe_task.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
 h7_ctrl\observe_task.o: D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
 h7_ctrl\observe_task.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdlib.h
-h7_ctrl\observe_task.o: ..\IMU_coculate\imu_temp_ctrl.h
+h7_ctrl\observe_task.o: ../IMU_coculate/imu_temp_ctrl.h
 h7_ctrl\observe_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 h7_ctrl\observe_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 h7_ctrl\observe_task.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h

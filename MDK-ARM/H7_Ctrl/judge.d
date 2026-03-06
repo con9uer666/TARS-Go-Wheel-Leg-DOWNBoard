@@ -1,5 +1,5 @@
 h7_ctrl\judge.o: ..\UI\source\Judge.c
-h7_ctrl\judge.o: ..\UI\include\Judge.h
+h7_ctrl\judge.o: ../UI/include/Judge.h
 h7_ctrl\judge.o: ../Core/Inc/main.h
 h7_ctrl\judge.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\judge.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -45,11 +45,11 @@ h7_ctrl\judge.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\judge.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
 h7_ctrl\judge.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\judge.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\string.h
-h7_ctrl\judge.o: ..\UI\include\cRc.h
+h7_ctrl\judge.o: ../UI/include/cRc.h
 h7_ctrl\judge.o: ../Core/Inc/usart.h
-h7_ctrl\judge.o: ..\UI\include\Detect.h
-h7_ctrl\judge.o: ..\UI\include\Graphics.h
-h7_ctrl\judge.o: ..\UserMiddlewares\include\userfreertos.h
+h7_ctrl\judge.o: ../UI/include/Detect.h
+h7_ctrl\judge.o: ../UI/include/Graphics.h
+h7_ctrl\judge.o: ../UserMiddlewares/include/userfreertos.h
 h7_ctrl\judge.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 h7_ctrl\judge.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 h7_ctrl\judge.o: ../Core/Inc/FreeRTOSConfig.h
@@ -65,5 +65,5 @@ h7_ctrl\judge.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\judge.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\judge.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 h7_ctrl\judge.o: ../Core/Inc/spi.h
-h7_ctrl\judge.o: ..\UserMiddlewares\include\Board2Board.h
-h7_ctrl\judge.o: ..\math\include\myQueue.h
+h7_ctrl\judge.o: ../UserMiddlewares/include/Board2Board.h
+h7_ctrl\judge.o: ../math/include/myQueue.h

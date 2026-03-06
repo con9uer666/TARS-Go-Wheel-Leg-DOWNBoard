@@ -1,5 +1,5 @@
 h7_ctrl\board2board.o: ..\UserMiddlewares\source\Board2Board.c
-h7_ctrl\board2board.o: ..\UserMiddlewares\include\Board2Board.h
+h7_ctrl\board2board.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\board2board.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h
 h7_ctrl\board2board.o: ../Core/Inc/usart.h
 h7_ctrl\board2board.o: ../Core/Inc/main.h
@@ -45,10 +45,10 @@ h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
 h7_ctrl\board2board.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
-h7_ctrl\board2board.o: ..\others\USER_CAN.h
+h7_ctrl\board2board.o: ../others/USER_CAN.h
 h7_ctrl\board2board.o: ../Core/Inc/fdcan.h
-h7_ctrl\board2board.o: ..\UI\include\Detect.h
-h7_ctrl\board2board.o: ..\UserMiddlewares\include\UserFreertos.h
+h7_ctrl\board2board.o: ../UI/include/Detect.h
+h7_ctrl\board2board.o: ../UserMiddlewares/include/UserFreertos.h
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 h7_ctrl\board2board.o: ../Core/Inc/FreeRTOSConfig.h
@@ -64,6 +64,8 @@ h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 h7_ctrl\board2board.o: ../Core/Inc/spi.h
-h7_ctrl\board2board.o: ..\UI\include\Judge.h
-h7_ctrl\board2board.o: ..\UserMiddlewares\include\Com.h
+h7_ctrl\board2board.o: ../UI/include/Judge.h
+h7_ctrl\board2board.o: ../UserMiddlewares/include/Com.h
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
+h7_ctrl\board2board.o: ../others/motor.h
+h7_ctrl\board2board.o: ../others/pid.h
