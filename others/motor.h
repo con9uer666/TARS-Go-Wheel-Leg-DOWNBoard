@@ -4,6 +4,8 @@
 #include "pid.h"
 #include "main.h"
 
+#define LEG_MIN_LENTH 0.17f
+
 typedef struct Rx_Data{
     uint8_t ID;
     uint8_t State;

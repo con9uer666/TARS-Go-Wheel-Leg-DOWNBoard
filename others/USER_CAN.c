@@ -122,6 +122,13 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
     }
 }
 
+/**
+ * @brief 普通的电机数据发送函数，适用于所有电机
+ * 
+ * @param hfdcan 
+ * @param StdId 
+ * @param Data 
+ */
 void CAN_Send_DM_Motor_Data(FDCAN_HandleTypeDef *hfdcan, int16_t StdId, uint8_t *Data)
 {
   	FDCAN_TxHeaderTypeDef tx_header;

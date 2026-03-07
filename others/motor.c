@@ -15,34 +15,34 @@
 #include <stdint.h>
 
 
-Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
-Wheel_Motor_t L_LK9025, R_LK9025;
-
-float powerPredict;
-
-
-float L_b_phi0, R_b_phi0;
-
-float PITCH_OFFSET=-0.08;
-
-float pitch_trans[2];
-float d_pitch;
-float alpha_d_pitch = 1.0;
-
-float alpha_phi0 = 1.0;
-float alpha_d_phi0 = 1.0;
-
-float Leg_L_T;
-float Leg_R_T;
-
-float Wr, Wl;
-float alpha_W = 0.9;
-float body_speed_L, body_speed_R, body_speed;
-float target_body_speed;
-float speed_limit = 1.3;
-float speed_error;
-float alpha_target_body_speed = 1.0;
-float alpha_body_speed = 1.0;
+Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;                                                                                                                                     
+Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名                                                                                                                                       
+                                                                                                                                        
+float powerPredict;                                                                                                                                     
+                                                                                                                                        
+                                                                                                                                        
+float L_b_phi0, R_b_phi0;                                                                                                                                       
+                                                                                                                                        
+float PITCH_OFFSET=-0.08;                                                                                                                                       
+                                                                                                                                        
+float pitch_trans[2];                                                                                                                                       
+float d_pitch;                                                                                                                                      
+float alpha_d_pitch = 1.0;                                                                                                                                      
+                                                                                                                                        
+float alpha_phi0 = 1.0;                                                                                                                                     
+float alpha_d_phi0 = 1.0;                                                                                                                                       
+                                                                                                                                        
+float Leg_L_T;                                                                                                                                      
+float Leg_R_T;                                                                                                                                      
+                                                                                                                                        
+float Wr, Wl;                                                                                                                                       
+float alpha_W = 0.9;                                                                                                                                        
+float body_speed_L, body_speed_R, body_speed; //当前车体速度                                                                                                                                      
+float target_body_speed;//目标速度                                                                                                                                        
+float speed_limit = 1.3;                                                                                                                                        
+float speed_error;                                                                                                                                      
+float alpha_target_body_speed = 1.0;                                                                                                                                        
+float alpha_body_speed = 1.0;                                                                                                                                       
 float body_distance;
 
 float target_body_distance = 2.0f;
@@ -124,10 +124,10 @@ PID_t R_Leg_L0_SPD_PID;
 PID_t Roll_Comp_PID;
 
 PID_t Leg_Phi0_PID;
-float target_Leg_L0 = 0.17f;
-float alpha_target_L0 = 0.01f;
-float target_L_Leg_L0 = 0.17f;
-float target_R_Leg_L0 = 0.17f;
+float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
+float alpha_target_L0 = 0.01f;//低通滤波系数，越小越平滑，但响应越慢
+float target_L_Leg_L0 = LEG_MIN_LENTH;
+float target_R_Leg_L0 = LEG_MIN_LENTH;
 uint8_t i;
 int height_wait;
 uint8_t temp1;
@@ -144,9 +144,9 @@ int ready_count = 0;
 uint8_t leg_state = 0;
 int leg_state_count;
 
-RampGenerator Target_Speed_Ramp;
+RampGenerator Target_Speed_Ramp;//目标速度斜坡发生器
 
-// 一个周期内对斜坡发生器状态的更新
+// 一阶斜坡发生器更新函数
 void rampIterate(RampGenerator *ramp)
 {
     if (ramp->isBusy)
@@ -176,7 +176,16 @@ void rampIterate(RampGenerator *ramp)
     }
 }
 
-// 初始化斜坡发生器
+/**
+ * @brief 初始化斜坡发生器
+ * 
+ * @param ramp 斜坡发生器结构体指针
+ * @param startValue 开始值
+ * @param targetValue 目标值
+ * @param finalstep 
+ * @param time 更新频率
+ * @param cycleTime 
+ */
 void rampInit(RampGenerator *ramp, float startValue, float targetValue, float finalstep, float time, float cycleTime)
 {
     ramp->currentValue = startValue;
@@ -269,7 +278,7 @@ void Enable_DM_Motor_MIT(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 	data[6] = 0xFF;
 	data[7] = 0xFC;
 	
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void Disable_DM_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
@@ -285,7 +294,7 @@ void Disable_DM_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 	data[6] = 0xFF;
 	data[7] = 0xFD;
 
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, float torq)
@@ -313,7 +322,7 @@ void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, 
 	data[6] = ((kd_tmp&0xF)<<4)|(tor_tmp>>8);
 	data[7] = tor_tmp;
 
-    CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void DM_Wheel_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Wheel_Motor_t Motor, float torq)
@@ -341,7 +350,7 @@ void DM_Wheel_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Wheel_Motor_t M
 	data[6] = ((kd_tmp&0xF)<<4)|(tor_tmp>>8);
 	data[7] = tor_tmp;
 
-    CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque)
@@ -369,23 +378,30 @@ void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float
     data[6] = tqControl >> 8;
     data[7] = tqControl;
 
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void Enable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 {
     uint8_t data[8] = {0};
     data[0] = 0x88;
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void Disable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 {
     uint8_t data[8] = {0};
     data[0] = 0x80;
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
+/**
+ * @brief 9025电机的转矩控制函数
+ * 
+ * @param hfdcan 
+ * @param motor_id 
+ * @param torque 力矩值，单位牛米
+ */
 void LK_MF9025_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque)
 {
     uint8_t data[8] = {0};
@@ -416,9 +432,13 @@ void LK_MF9025_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float
     data[6] = 0;
     data[7] = 0;
 
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
+/**
+ * @brief K矩阵融合
+ * 
+ */
 void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, float L0_r)
 {
     for(uint8_t i = 0; i < 4; i++) {
@@ -444,6 +464,10 @@ void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, fl
 
 extern uint8_t UP_Leg;
 
+/**
+ * @brief 横滚补偿
+ * 
+ */
 void Roll_Comp()
 {
     if(speed_error <= 0.3 && speed_error >= -0.3)
@@ -460,56 +484,60 @@ void b_phi0_offset_coc(float target_Leg_L0)
     // b_phi0_offset = -0.6043 *target_Leg_L0 + 0.175;
 }
 
+//腿长控制vscode://lirentech.file-ref-tags?filePath=others%2Fmotor.c&snippet=%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
 void Leg_L0_Control()
-{
-    if(leg_state_count > 0)
-    {
-        leg_state_count --;
-    }
+{                                                                                                                                                           
+    if(leg_state_count > 0)          //?                                                                                                                                               
+    {                                //? 延时                                                                                                                          
+        leg_state_count --;          //?                                                                                                                                               
+    }                                //?                                                                                                                           
 
-    if(UP_Leg == 1 && leg_state_count == 0)
-    {
-        leg_state_count = 300;
-        if(leg_state <= 1)
-        leg_state ++;
-        if(leg_state > 1)
-        leg_state = 0;
-    }
-    // if(SBUS_CH.SW4 == 0 && leg_state_count == 0)
-    // {
-    //     leg_state_count = 300;
-    //     if(leg_state > 0)
-    //     leg_state --;
-    //     if(leg_state <= 0)
-    //     leg_state = 0;
-    // }
-    target_Leg_L0 = alpha_target_L0 * (((leg_state / 2.0f) * 0.22) + 0.17f) + (1 - alpha_target_L0) * target_Leg_L0;
-    if(target_Leg_L0 >= 0.40f)
-    target_Leg_L0 = 0.40f;
-    if(target_Leg_L0 <= 0.16f)
-    target_Leg_L0 = 0.16f;
+    if(UP_Leg == 1 && leg_state_count == 0)                   //TODO:                                                                                                                                      
+    {                                                         //TODO:                                                                                                  
+        leg_state_count = 300;                                //TODO:                                                                                                                          
+        if(leg_state <= 1)                                    //TODO:                                                                                                                      
+        leg_state ++;                                         //TODO:                                                                                                                  
+        if(leg_state > 1)                                     //TODO:                                                                                                                      
+        leg_state = 0;                                        //TODO: 看看这段代码到底要不要注释掉                                                                                                                 
+    }                                                         //TODO:                                                                                                  
+    // if(SBUS_CH.SW4 == 0 && leg_state_count == 0)           //TODO:                                                                                                                                              
+    // {                                                      //TODO:                                                                                                      
+    //     leg_state_count = 300;                             //TODO:                                                                                                                              
+    //     if(leg_state > 0)                                  //TODO:                                                                                                                          
+    //     leg_state --;                                      //TODO:                                                                                                                      
+    //     if(leg_state <= 0)                                 //TODO:                                                                                                                          
+    //     leg_state = 0;                                     //TODO:                                                                                                                      
+    // }                                                      //TODO:                                                                                                      
 
-    target_L_Leg_L0 = target_Leg_L0;
-    target_R_Leg_L0 = target_Leg_L0;
+    //低通滤波                                                                                                                                                          
+    target_Leg_L0 = alpha_target_L0 * (((leg_state / 2.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
 
-    // target_L_Leg_L0 = target_Leg_L0 + Roll_Comp_PID.output;
-    // target_R_Leg_L0 = target_Leg_L0 - Roll_Comp_PID.output;
+    if(target_Leg_L0 >= 0.40f)                                                                                                                                                          
+    target_Leg_L0 = 0.40f;                                                                                                                                                          
+    if(target_Leg_L0 <= LEG_MIN_LENTH)                                                                                                                                                          
+    target_Leg_L0 = LEG_MIN_LENTH;                                                                                                                                                          
 
-    if(target_L_Leg_L0 >= 0.40)
-    target_L_Leg_L0 = 0.40;
-    if(target_L_Leg_L0 <= 0.16)
-    target_L_Leg_L0 = 0.16;
+    target_L_Leg_L0 = target_Leg_L0;                                                                                                                                                            
+    target_R_Leg_L0 = target_Leg_L0;                                                                                                                                                            
 
-    if(target_R_Leg_L0 >= 0.40)
-    target_R_Leg_L0 = 0.40;
-    if(target_R_Leg_L0 <= 0.16)
-    target_R_Leg_L0 = 0.16;
+    // target_L_Leg_L0 = target_Leg_L0 + Roll_Comp_PID.output;                                                                                                                                                          
+    // target_R_Leg_L0 = target_Leg_L0 - Roll_Comp_PID.output;                                                                                                                                                          
 
-    PID_Set_Error(&L_Leg_L0_PID, VMC_L.L0, target_L_Leg_L0);
-    PID_Set_Error(&R_Leg_L0_PID, VMC_R.L0, target_R_Leg_L0);
+    if(target_L_Leg_L0 >= 0.40)                                                                                                                                                         
+    target_L_Leg_L0 = 0.40;                                                                                                                                                         
+    if(target_L_Leg_L0 <= LEG_MIN_LENTH)                                                                                                                                                            
+    target_L_Leg_L0 = LEG_MIN_LENTH;                                                                                                                                                            
 
-    PID_coculate(&L_Leg_L0_PID);
-    PID_coculate(&R_Leg_L0_PID);
+    if(target_R_Leg_L0 >= 0.40)                                                                                                                                                         
+    target_R_Leg_L0 = 0.40;                                                                                                                                                         
+    if(target_R_Leg_L0 <= LEG_MIN_LENTH)                                                                                                                                                            
+    target_R_Leg_L0 = LEG_MIN_LENTH;                                                                                                                                                            
+
+    PID_Set_Error(&L_Leg_L0_PID, VMC_L.L0, target_L_Leg_L0);                                                                                                                                                            
+    PID_Set_Error(&R_Leg_L0_PID, VMC_R.L0, target_R_Leg_L0);                                                                                                                                                            
+
+    PID_coculate(&L_Leg_L0_PID);                                                                                                                                                            
+    PID_coculate(&R_Leg_L0_PID);                                                                                                                                                            
 }
 
 void Speed_Error_Set()
@@ -1007,8 +1035,8 @@ void Motor_task(void const * argument)
 
             Body_Speed_Coculate();
 
-            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16);
-            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16);
+            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MIN_LENTH);
+            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MIN_LENTH);
             PID_coculate(&L_Leg_L0_POS_PID);
             PID_coculate(&R_Leg_L0_POS_PID);
 
@@ -1100,7 +1128,7 @@ void Motor_task(void const * argument)
                 R_Leg_State = 1;
                 L_Leg_State = 1;
                 leg_state = 0;
-                target_Leg_L0 = 0.16;
+                target_Leg_L0 = LEG_MIN_LENTH;
 
             }	
         }

@@ -42,7 +42,7 @@ add_subdirectory(cmake/stm32cubemx)
 
 # Add CMSIS-DSP
 set(CMSISCORE "${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS")
-add_subdirectory(D:/PROJECTS/Wheel_Leg_About/Wheel_Leg_VScode/Drivers/CMSIS-DSP-main/Source bin_dsp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS-DSP-main/Source bin_dsp)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
