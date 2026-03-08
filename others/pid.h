@@ -13,8 +13,8 @@ typedef struct {
     float error;
     float pre_error;
     float output;
-		float deadzone;
-		float Integraldead_zone;
+		float deadzone;//输出死区范围
+		float Integraldead_zone;//积分累加死区范围，当error在这个范围外时，积分不累加
 }PID_t;
 
 float PID_coculate(PID_t *PID);

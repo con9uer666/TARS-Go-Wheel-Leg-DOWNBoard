@@ -12,11 +12,13 @@
 #include "USER_CAN.h"
 #include "VMC.h"
 #include "observe_task.h"
+#include <math.h>
 #include <stdint.h>
 
 
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;                                                                                                                                     
-Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名                                                                                                                                       
+Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名    
+Foot_Chassis_t Foot_Chassis;                                                                                                                               
                                                                                                                                         
 float powerPredict;                                                                                                                                     
                                                                                                                                         
@@ -25,30 +27,32 @@ float L_b_phi0, R_b_phi0;
                                                                                                                                         
 float PITCH_OFFSET=-0.08;                                                                                                                                       
                                                                                                                                         
-float pitch_trans[2];                                                                                                                                       
-float d_pitch;                                                                                                                                      
-float alpha_d_pitch = 1.0;                                                                                                                                      
+//!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值  单位为弧度   
+float pitch_trans[2];                                                                                               
+float d_pitch;//pitch速度，单位为弧度每秒                                                                                                                                      
+float alpha_d_pitch = 1.0;//滤波系数                                                                                                                                      
                                                                                                                                         
-float alpha_phi0 = 1.0;                                                                                                                                     
+float alpha_phi0 = 1.0;//滤波系数                                                                                                                                     
 float alpha_d_phi0 = 1.0;                                                                                                                                       
                                                                                                                                         
 float Leg_L_T;                                                                                                                                      
 float Leg_R_T;                                                                                                                                      
                                                                                                                                         
-float Wr, Wl;                                                                                                                                       
-float alpha_W = 0.9;                                                                                                                                        
-float body_speed_L, body_speed_R, body_speed; //当前车体速度                                                                                                                                      
+float Wr, Wl;//加上杆角速度的车轮速度                                                                                                                                    
+float alpha_W = 0.9;//滤波系数                                                                                                                                        
+float body_speed_L, body_speed_R, body_speed; //当前车体速度 ,已正交，是水平方向的速度                                                                                                                                     
 float target_body_speed;//目标速度                                                                                                                                        
 float speed_limit = 1.3;                                                                                                                                        
 float speed_error;                                                                                                                                      
 float alpha_target_body_speed = 1.0;                                                                                                                                        
-float alpha_body_speed = 1.0;                                                                                                                                       
+float alpha_body_speed = 1.0;//单侧算车体速度 滤波系数                                                                                                                                       
 float body_distance;
 
 float target_body_distance = 2.0f;
 float body_distance_error;
 
 float target_yaw, yaw_error;
+//!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值     单位为弧度
 float yaw_trans[2];
 float d_yaw;
 float alpha_d_yaw = 1.0;
@@ -113,17 +117,17 @@ float K_Fit_Coefficients[40][6] = {
      1.2444,  1.5483,  -33.561,  -5.1333,  18.088,  26.94,
 };
 
-PID_t L_Leg_L0_PID;
-PID_t R_Leg_L0_PID;
+PID_t L_Leg_L0_PID;     //常态
+PID_t R_Leg_L0_PID;     //
 
-PID_t L_Leg_L0_POS_PID;
-PID_t R_Leg_L0_POS_PID;
-PID_t L_Leg_L0_SPD_PID;
-PID_t R_Leg_L0_SPD_PID;
+PID_t L_Leg_L0_POS_PID; //收腿
+PID_t R_Leg_L0_POS_PID; //
+PID_t L_Leg_L0_SPD_PID; //
+PID_t R_Leg_L0_SPD_PID; //
 
-PID_t Roll_Comp_PID;
+PID_t Roll_Comp_PID;    //ROLL补偿pid
 
-PID_t Leg_Phi0_PID;
+PID_t Leg_Phi0_PID;     //防劈叉pid
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
 float alpha_target_L0 = 0.01f;//低通滤波系数，越小越平滑，但响应越慢
 float target_L_Leg_L0 = LEG_MIN_LENTH;
@@ -132,16 +136,16 @@ uint8_t i;
 int height_wait;
 uint8_t temp1;
 
-PID_t L_Leg_Middle_PID, R_Leg_Middle_PID;
-PID_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;
+PID_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
+PID_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
-uint8_t first_run = 1;
+uint8_t first_run = 1;//是否是第一次运行，第一次运行需要特殊处理一些变量的初始值
 
-uint8_t start_mode = 0;
+uint8_t start_mode = 0;//0为刚从急停退出来，1为正常行走，2为上楼模式
 uint8_t upstares_mode = 0;
 int ready_count = 0;
 
-uint8_t leg_state = 0;
+uint8_t leg_state = 0;  //腿长状态 0为最短，1为中等，2为最长（未来会改）
 int leg_state_count;
 
 RampGenerator Target_Speed_Ramp;//目标速度斜坡发生器
@@ -182,18 +186,24 @@ void rampIterate(RampGenerator *ramp)
  * @param ramp 斜坡发生器结构体指针
  * @param startValue 开始值
  * @param targetValue 目标值
- * @param finalstep 
- * @param time 更新频率
- * @param cycleTime 
+ * @param time 总时间
+ * @param cycleTime 周期时间
  */
-void rampInit(RampGenerator *ramp, float startValue, float targetValue, float finalstep, float time, float cycleTime)
+void rampInit(RampGenerator *ramp, float startValue, float targetValue, float time, float cycleTime)
 {
     ramp->currentValue = startValue;
     ramp->targetValue = targetValue;
     // 计算步进值，这里需要注意的是，确保斜坡时间和周期时间都不为零来避免除以零的错误
     if (time != 0 && cycleTime != 0)
     {
-        ramp->step = (finalstep - 0) * (cycleTime / time);
+        if(targetValue>= startValue)
+        {
+            ramp->step = (targetValue - startValue) * (cycleTime / time); // 计算步进值，确保在指定时间内达到目标值
+        }
+        else
+        {
+            ramp->step = (startValue - targetValue) * (cycleTime / time); // 计算步进值，确保在指定时间内达到目标值
+        }
     }
     else
     {
@@ -462,7 +472,6 @@ void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, fl
     }
 }
 
-extern uint8_t UP_Leg;
 
 /**
  * @brief 横滚补偿
@@ -492,14 +501,14 @@ void Leg_L0_Control()
         leg_state_count --;          //?                                                                                                                                               
     }                                //?                                                                                                                           
 
-    if(UP_Leg == 1 && leg_state_count == 0)                   //TODO:                                                                                                                                      
-    {                                                         //TODO:                                                                                                  
-        leg_state_count = 300;                                //TODO:                                                                                                                          
-        if(leg_state <= 1)                                    //TODO:                                                                                                                      
-        leg_state ++;                                         //TODO:                                                                                                                  
-        if(leg_state > 1)                                     //TODO:                                                                                                                      
-        leg_state = 0;                                        //TODO: 看看这段代码到底要不要注释掉                                                                                                                 
-    }                                                         //TODO:                                                                                                  
+    // if(leg_state_count == 0)                   //TODO:                                                                                                                                      
+    // {                                                         //TODO:                                                                                                  
+    //     leg_state_count = 300;                                //TODO:                                                                                                                          
+    //     if(leg_state <= 1)                                    //TODO:                                                                                                                      
+    //     leg_state ++;                                         //TODO:                                                                                                                  
+    //     if(leg_state > 1)                                     //TODO:                                                                                                                      
+    //     leg_state = 0;                                        //TODO: 看看这段代码到底要不要注释掉                                                                                                                 
+    // }                                                         //TODO:                                                                                                  
     // if(SBUS_CH.SW4 == 0 && leg_state_count == 0)           //TODO:                                                                                                                                              
     // {                                                      //TODO:                                                                                                      
     //     leg_state_count = 300;                             //TODO:                                                                                                                              
@@ -510,7 +519,7 @@ void Leg_L0_Control()
     // }                                                      //TODO:                                                                                                      
 
     //低通滤波                                                                                                                                                          
-    target_Leg_L0 = alpha_target_L0 * (((leg_state / 2.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
+    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 2.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
 
     if(target_Leg_L0 >= 0.40f)                                                                                                                                                          
     target_Leg_L0 = 0.40f;                                                                                                                                                          
@@ -540,50 +549,74 @@ void Leg_L0_Control()
     PID_coculate(&R_Leg_L0_PID);                                                                                                                                                            
 }
 
+/**
+ * @brief 计算速度误差，并进行斜坡限制
+ * @attention 速度误差在这里被限幅了，限制在最大速度的70%，这是为了防止在速度变化较大时，电机输出过大导致不稳定 //!藏这一块（必须猛猛藏）
+ */
 void Speed_Error_Set()
 {
-    speed_limit = 2.7;
-    rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit),speed_limit, 0.3f, 0.002f);
-    rampIterate(&Target_Speed_Ramp);
-    target_body_speed = Target_Speed_Ramp.currentValue;
-    // target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
+    speed_limit = 2.7f;     //车子最大速
+    // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
+    // //TODO: init和更新函数连着写，大抵是bug
+    // rampIterate(&Target_Speed_Ramp);
+    target_body_speed = Foot_Chassis.Target_Vy;
+    float temp = ((0.7f - fabsf(yaw_error))/0.7f);
+
+    if(temp < 0.0)
+    temp = 0.0;
+
+    target_body_speed = target_body_speed * temp;//yaw误差越大，目标速度越小，最大为100%，最小为0
+    //// target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
     speed_error = target_body_speed - kalman_body_speed;
-    if(speed_error >= speed_limit * 0.7)
-    speed_error = speed_limit * 0.7;
-    if(speed_error <= -speed_limit * 0.7)
-    speed_error = -speed_limit * 0.7;
+
+    //!这个速度误差限制是为了防止在速度变化较大时，电机输出过大导致不稳定，藏得可真狠啊
+    if(speed_error >= speed_limit * 1.0f)
+    speed_error = speed_limit * 1.0f;
+    if(speed_error <= -speed_limit * 1.0f)
+    speed_error = -speed_limit * 1.0f;
 }
 
+/**
+ * @brief 计算距离误差
+ * 
+ */
 void Distance_Error_Set()
 {
-    body_distance += kalman_body_speed * 0.002;
-    target_body_distance += (kalman_body_speed + speed_error) * 0.002;
+    body_distance += kalman_body_speed * 0.002f;
+    target_body_distance += (kalman_body_speed + speed_error) * 0.002f; //! kalman_body_speed + speed_error不等于target_body_speed，因为speed_error是经过限幅的，而target_body_speed是没有经过限幅的，始作俑者：25年丛庆
     body_distance_error = target_body_distance - body_distance;
 }
 
+/**
+ * @brief 水平方向车身速度解算
+ */
 void Body_Speed_Coculate()
 {
-    VMC_L.last_phi0 = VMC_L.b_phi0;
-    VMC_L.b_phi0 = alpha_phi0 * (-pitch_trans[0] + VMC_L.phi0 - (PI/2)) + (1 - alpha_phi0) * VMC_L.b_phi0;
-    VMC_L.last_d_phi0 = VMC_L.d_phi0;
-    VMC_L.d_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_phi0 ;
-    VMC_L.dd_b_phi0 = (VMC_L.d_phi0 - VMC_L.last_d_phi0)/0.002f;
+    VMC_L.last_b_phi0 = VMC_L.b_phi0;
+    VMC_L.b_phi0 = alpha_phi0 * (-pitch_trans[0] + VMC_L.phi0 - (PI/2)) + (1 - alpha_phi0) * VMC_L.b_phi0;//滤波
+    VMC_L.last_d_b_phi0 = VMC_L.d_b_phi0;
+    VMC_L.d_b_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_b_phi0 ;
+    VMC_L.dd_b_phi0 = (VMC_L.d_b_phi0 - VMC_L.last_d_b_phi0)/0.002f;
 
-    Wl = alpha_W * (-L_LK9025.Rx_Data.Velocity + VMC_L.d_phi0) + (1 - alpha_W) * Wl;
-    body_speed_L = alpha_body_speed * ((Wl * 0.061f) + VMC_L.d_phi0 * VMC_L.L0 * arm_cos_f32(VMC_L.b_phi0)) + (1 - alpha_body_speed) * body_speed_L;
+    //算单侧轮子速度
+    Wl = alpha_W * (-L_LK9025.Rx_Data.Velocity + VMC_L.d_b_phi0) + (1 - alpha_W) * Wl;
+    //算单侧车身速度
+    body_speed_L = alpha_body_speed * ((Wl * WHEEL_RADIUS) + VMC_L.d_b_phi0 * VMC_L.L0 * arm_cos_f32(VMC_L.b_phi0)) + (1 - alpha_body_speed) * body_speed_L;
 
-    VMC_R.last_phi0 = VMC_R.b_phi0;
+    VMC_R.last_b_phi0 = VMC_R.b_phi0;
     VMC_R.b_phi0 = alpha_phi0 * (-pitch_trans[0] + (PI - VMC_R.phi0)- (PI/2)) + (1 - alpha_phi0) * VMC_R.b_phi0;
-    VMC_R.last_d_phi0 = VMC_R.d_phi0;
-    VMC_R.d_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_phi0 ;
-    VMC_R.dd_b_phi0 = (VMC_R.d_phi0 - VMC_R.last_d_phi0)/0.002f;
+    VMC_R.last_d_b_phi0 = VMC_R.d_b_phi0;
+    VMC_R.d_b_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_b_phi0 ;
+    VMC_R.dd_b_phi0 = (VMC_R.d_b_phi0 - VMC_R.last_d_b_phi0)/0.002f;
 
-    Wr = alpha_W * (R_LK9025.Rx_Data.Velocity + VMC_R.d_phi0) + (1 - alpha_W) * Wr;
-    body_speed_R = alpha_body_speed * ((Wr * 0.061f) + VMC_R.d_phi0 * VMC_R.L0 * arm_cos_f32(VMC_R.b_phi0)) + (1 - alpha_body_speed) * body_speed_R;
+    Wr = alpha_W * (R_LK9025.Rx_Data.Velocity + VMC_R.d_b_phi0) + (1 - alpha_W) * Wr;
+    body_speed_R = alpha_body_speed * ((Wr * WHEEL_RADIUS) + VMC_R.d_b_phi0 * VMC_R.L0 * arm_cos_f32(VMC_R.b_phi0)) + (1 - alpha_body_speed) * body_speed_R;
 
     body_speed = (body_speed_L + body_speed_R) / 2.0f;
 }
 
+//!这个函数的命名也太随意了吧，丛庆     PS:这个注释不是我写的，是你自己的ai备注的hhhhhhhh甚至知道你叫丛庆
+//算VMC的变量
 void VMC_Coculate()
 {
     VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
@@ -592,19 +625,22 @@ void VMC_Coculate()
     VMC_Get_L0_phi0(&VMC_R);
 }
 
+//惯性导航系统数据处理
 void INS_Coculate()
 {
-    pitch_trans[1] = pitch_trans[0];
+    pitch_trans[1] = pitch_trans[0];//!看不懂就看看变量的注释，有解释
     pitch_trans[0] = (pitch/180.0f) * PI;
     yaw_trans[1] = yaw_trans[0];
     yaw_trans[0] = (yaw/180.0f) * PI;
     d_pitch = alpha_d_pitch * ((pitch_trans[0] - pitch_trans[1])/0.002f) + (1 - alpha_d_pitch) * d_pitch;
-    float temp = yaw_trans[0] - yaw_trans[1];
-    if (temp > PI) temp -= 2 * PI;
-    else if (temp < -PI) temp += 2 * PI;
+    float temp = yaw_trans[0] - yaw_trans[1];//临时变量
+    if (temp > PI) 
+        temp -= 2 * PI;
+    else if (temp < -PI)
+        temp += 2 * PI;
     d_yaw = alpha_d_yaw * (temp/0.002f) + (1 - alpha_d_yaw) * d_yaw;
 
-    if(first_run == 1)
+    if(first_run == 1)  //!听说是屎，后来好像不用了
     {
         target_yaw = yaw_trans[0];
         d_yaw = 0;
@@ -614,10 +650,11 @@ void INS_Coculate()
 
 extern float Foot_Target_Relative_Angle;
 
+//算yaw的误差值
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
-    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-1.792f);
+    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-1.792f);//减的是零点
     if(Yaw_motor_position > PI)
     {
         Yaw_motor_position -= 2 * PI;
@@ -627,104 +664,109 @@ void Yaw_Error_Coculate()
         Yaw_motor_position += 2 * PI;
     }
 
-    float yaw_speed;
-    yaw_speed = 0.008;
-    target_yaw -= ((SBUS_CH.CH4 - 992.0f)/800.0f) * yaw_speed;
-    if(target_yaw >= PI)
-    target_yaw -= 2 * PI;
-    if(target_yaw <= -PI)
-    target_yaw += 2 * PI;
+    
 
-    // if(UP_Leg == 2)
-    // yaw_error = 3;
-    // else
-    // {
-        yaw_error = -(-Yaw_motor_position - Foot_Target_Relative_Angle);
-        if(yaw_error > 0.5)
-        yaw_error = 0.5;
-        if(yaw_error < -0.5)
-        yaw_error = -0.5;
-    // }
-    // yaw_error = target_yaw - yaw_trans[0];
-    // if (yaw_error > PI) yaw_error -= 2 * PI;
-    // else if (yaw_error < -PI) yaw_error += 2 * PI;
+    yaw_error = -(-Yaw_motor_position - Foot_Target_Relative_Angle);
+    float yaw_error_max = 0;
+    yaw_error_max = ((2.0f - fabsf(kalman_body_speed))/2.0f) * 1.5f;//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
+    if(yaw_error_max <= 0.05f)
+    {
+        yaw_error_max = 0.05f;
+    }
+
+    Speed_Error_Set();
+
+    if(yaw_error > yaw_error_max)
+        yaw_error = yaw_error_max;
+    if(yaw_error < -yaw_error_max)
+        yaw_error = -yaw_error_max;
     
 }
 
-int L_Leg_State, R_Leg_State;
+int L_Leg_State, R_Leg_State;   //收腿阶段，具体意义未知
 int L_Ready_Count, R_Ready_Count;
 int L_off_ground = 0;
 int R_off_ground = 0;
 
-void Motor_task(void const * argument)
+//电机任务
+void Motor_task(void const *argument)
 {
-    DM_Joint_Motor_Init(&L_DM8009[0], 54.0f, 3.14159265f, 45.0f, 0x01);
-    DM_Joint_Motor_Init(&L_DM8009[1], 54.0f, 3.14159265f, 45.0f, 0x02);
+  
+//电机初始化vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%94%B5%E6%9C%BA%E5%88%9D%E5%A7%8B%E5%8C%96
+        DM_Joint_Motor_Init(&L_DM8009[0], 54.0f, 3.14159265f, 45.0f, 0x01);
+        DM_Joint_Motor_Init(&L_DM8009[1], 54.0f, 3.14159265f, 45.0f, 0x02);
 
-    DM_Joint_Motor_Init(&R_DM8009[0], 54.0f, 3.14159265f, 45.0f, 0x01);
-    DM_Joint_Motor_Init(&R_DM8009[1], 54.0f, 3.14159265f, 45.0f, 0x02);
+        DM_Joint_Motor_Init(&R_DM8009[0], 54.0f, 3.14159265f, 45.0f, 0x01);
+        DM_Joint_Motor_Init(&R_DM8009[1], 54.0f, 3.14159265f, 45.0f, 0x02);
 
-    DM_Joint_Motor_Init(&Yaw_DM4310, 10.0f, 3.14159265f, 30.0f, 0x10);
-    DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
+        DM_Joint_Motor_Init(&Yaw_DM4310, 10.0f, 3.14159265f, 30.0f, 0x10);
+        DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
 
-    VMC_Init(&VMC_L, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f);
-    VMC_Init(&VMC_R, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f);
+//VMC初始化vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2FVMC%E5%88%9D%E5%A7%8B%E5%8C%96
+        VMC_Init(&VMC_L, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f);
+        VMC_Init(&VMC_R, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f);
 
-	PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
-    PID_INIT(&Leg_Phi0_PID, 300, 0.1, 5, 150, 150, 50000, 0);
-    PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 10000, 0);
+//PID初始化vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2FPID%E5%88%9D%E5%A7%8B%E5%8C%96
+        PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
+        PID_INIT(&R_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
+        PID_INIT(&Leg_Phi0_PID, 300, 0.1, 5, 150, 150, 50000, 0);
+        PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 10000, 0);
 
-    PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0);
-    PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0);
-    PID_INIT(&L_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 2000, 0);
-    PID_INIT(&R_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 2000, 0);
+        PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0);
+        PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0);
+        PID_INIT(&L_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 2000, 0);
+        PID_INIT(&R_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 2000, 0);
 
-    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
-    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
-    PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
-    PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
+        PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
+        PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
+        PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
+        PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
 
     osDelay(2000);
 
-    pitch_trans[1] = pitch_trans[0];
-    pitch_trans[0] = (pitch/180.0f) * PI;
+//机身pitch计算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9C%BA%E8%BA%ABpitch%E8%AE%A1%E7%AE%97
+        pitch_trans[1] = pitch_trans[0];
+        pitch_trans[0] = (pitch/180.0f) * PI;
 
-    Enable_DM_Motor_MIT(&hfdcan2, 0x01);
-    osDelay(5);
-    Enable_DM_Motor_MIT(&hfdcan2, 0x02);
-    osDelay(5);
-    
-    Enable_DM_Motor_MIT(&hfdcan1, 0x01);
-    osDelay(5);	
-    Enable_DM_Motor_MIT(&hfdcan1, 0x02);
-    osDelay(5);
+//电机使能vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%94%B5%E6%9C%BA%E4%BD%BF%E8%83%BD
+        Enable_DM_Motor_MIT(&hfdcan2, 0x01);
+        osDelay(5);
+        Enable_DM_Motor_MIT(&hfdcan2, 0x02);
+        osDelay(5);
+        
+        Enable_DM_Motor_MIT(&hfdcan1, 0x01);
+        osDelay(5);	
+        Enable_DM_Motor_MIT(&hfdcan1, 0x02);
+        osDelay(5);
 
-    Enable_DM_Motor_MIT(&hfdcan3, 0x11);
-    osDelay(5);
-    Enable_DM_Motor_MIT(&hfdcan3, 0x10);
-    osDelay(5);
-    TickType_t xLastWakeTime = xTaskGetTickCount(); 
+        Enable_DM_Motor_MIT(&hfdcan3, 0x11);
+        osDelay(5);
+        Enable_DM_Motor_MIT(&hfdcan3, 0x10);
+        osDelay(5);
+
+//精确延时用
+        TickType_t xLastWakeTime = xTaskGetTickCount();
+
+        
     for(;;)
     {
-        
-
-
-
-        
-        /*定腿长*/
+        //刚启动收腿过程中
         if(start_mode == 0 && upstares_mode == 0)
         {   
-            first_run = 1;
+            first_run = 1;//第一次运行标记vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%90%E8%A1%8C%E6%A0%87%E8%AE%B0
+
+            //更新VMC的变量vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9B%B4%E6%96%B0VMC%E7%9A%84%E5%8F%98%E9%87%8F
             VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
             VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
             VMC_Get_L0_phi0(&VMC_L);
             VMC_Get_L0_phi0(&VMC_R);
 
+            //车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             Body_Speed_Coculate();
 
-            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19);
-            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19);
+            //腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
+            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
+            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
             PID_coculate(&L_Leg_L0_POS_PID);
             PID_coculate(&R_Leg_L0_POS_PID);
 
@@ -732,24 +774,28 @@ void Motor_task(void const * argument)
             PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
             PID_coculate(&L_Leg_L0_SPD_PID);
             PID_coculate(&R_Leg_L0_SPD_PID);
+
+            //腿角度控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E8%A7%92%E5%BA%A6%E6%8E%A7%E5%88%B6
             if(L_Leg_State >= 1)
             {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);
+                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
                 PID_coculate(&L_Leg_Middle_PID);
-                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
+                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             if(R_Leg_State >= 1)
             {
                 PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
                 PID_coculate(&R_Leg_Middle_PID);
-                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
+                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
                 PID_coculate(&R_Leg_dphi0_PID);
             }
 
+            //VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2FVMC%E8%A7%A3%E7%AE%97
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
             VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
+            //轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
             L_LK9025.Target_Torque = 0;
             R_LK9025.Target_Torque = 0;
 
@@ -809,7 +855,7 @@ void Motor_task(void const * argument)
             Body_Speed_Coculate();
             
             Yaw_Error_Coculate();
-            Speed_Error_Set();
+            // Speed_Error_Set();
 
             Distance_Error_Set();
             
@@ -837,9 +883,9 @@ void Motor_task(void const * argument)
             + LQR_K[0][2] * (yaw_error)
             - LQR_K[0][3] * d_yaw
             - LQR_K[0][4] * VMC_L.b_phi0 
-            - LQR_K[0][5] * VMC_L.d_phi0 
+            - LQR_K[0][5] * VMC_L.d_b_phi0 
             - LQR_K[0][6] * VMC_R.b_phi0 
-            - LQR_K[0][7] * VMC_R.d_phi0 
+            - LQR_K[0][7] * VMC_R.d_b_phi0 
             + LQR_K[0][8] * (pitch_trans[0] - PITCH_OFFSET)
             + LQR_K[0][9] * d_pitch;
 
@@ -849,9 +895,9 @@ void Motor_task(void const * argument)
             + LQR_K[1][2] * (yaw_error)
             - LQR_K[1][3] * d_yaw
             - LQR_K[1][4] * VMC_L.b_phi0 
-            - LQR_K[1][5] * VMC_L.d_phi0 
+            - LQR_K[1][5] * VMC_L.d_b_phi0 
             - LQR_K[1][6] * VMC_R.b_phi0 
-            - LQR_K[1][7] * VMC_R.d_phi0 
+            - LQR_K[1][7] * VMC_R.d_b_phi0 
             + LQR_K[1][8] * (pitch_trans[0] - PITCH_OFFSET)
             + LQR_K[1][9] * d_pitch;
 
@@ -861,9 +907,9 @@ void Motor_task(void const * argument)
             + LQR_K[2][2] * (-yaw_error)
             - LQR_K[2][3] * d_yaw
             - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
-            - LQR_K[2][5] * VMC_L.d_phi0 
+            - LQR_K[2][5] * VMC_L.d_b_phi0 
             - LQR_K[2][6] * VMC_R.b_phi0 
-            - LQR_K[2][7] * VMC_R.d_phi0
+            - LQR_K[2][7] * VMC_R.d_b_phi0
             + LQR_K[2][8] * (pitch_trans[0] - PITCH_OFFSET)
             + LQR_K[2][9] * d_pitch;
 
@@ -873,9 +919,9 @@ void Motor_task(void const * argument)
             + LQR_K[3][2] * (-yaw_error)
             - LQR_K[3][3] * d_yaw
             - LQR_K[3][4] * VMC_L.b_phi0 
-            - LQR_K[3][5] * VMC_L.d_phi0 
+            - LQR_K[3][5] * VMC_L.d_b_phi0 
             - LQR_K[3][6] * (VMC_R.b_phi0 - b_phi0_offset)
-            - LQR_K[3][7] * VMC_R.d_phi0
+            - LQR_K[3][7] * VMC_R.d_b_phi0
             + LQR_K[3][8] * (pitch_trans[0] - PITCH_OFFSET)
             + LQR_K[3][9] * d_pitch;
 
@@ -913,7 +959,7 @@ void Motor_task(void const * argument)
             {
                 Leg_L_T = 
                 - LQR_K[2][4] * VMC_L.b_phi0 
-                - LQR_K[2][5] * VMC_L.d_phi0 ;
+                - LQR_K[2][5] * VMC_L.d_b_phi0 ;
                 Leg_L_T *= 0.7;
                 L_LK9025.Target_Torque = 0;
                 VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);
@@ -925,7 +971,7 @@ void Motor_task(void const * argument)
             {
                 Leg_R_T = 
                 - LQR_K[3][6] * VMC_R.b_phi0 
-                - LQR_K[3][7] * VMC_R.d_phi0;
+                - LQR_K[3][7] * VMC_R.d_b_phi0;
                 Leg_R_T *= 0.7;
                 R_LK9025.Target_Torque = 0;
                 VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)), -Leg_R_T);
@@ -988,12 +1034,12 @@ void Motor_task(void const * argument)
 
             PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 0.75);
             PID_coculate(&L_Leg_Middle_PID);
-            PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
+            PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
             PID_coculate(&L_Leg_dphi0_PID);
             
             PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 0.75);
             PID_coculate(&R_Leg_Middle_PID);
-            PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
+            PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
             PID_coculate(&R_Leg_dphi0_PID);
 
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
@@ -1050,28 +1096,28 @@ void Motor_task(void const * argument)
             {
                 PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);
                 PID_coculate(&L_Leg_Middle_PID);
-                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
+                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             else 
             {
                 PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);
                 PID_coculate(&L_Leg_Middle_PID);
-                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
+                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             if(R_Leg_State >= 1)
             {
                 PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
                 PID_coculate(&R_Leg_Middle_PID);
-                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
+                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
                 PID_coculate(&R_Leg_dphi0_PID);
             }
             else
             {
                 PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
                 PID_coculate(&R_Leg_Middle_PID);
-                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_phi0, -R_Leg_Middle_PID.output);
+                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
                 PID_coculate(&R_Leg_dphi0_PID);
             }
 
@@ -1129,10 +1175,9 @@ void Motor_task(void const * argument)
                 L_Leg_State = 1;
                 leg_state = 0;
                 target_Leg_L0 = LEG_MIN_LENTH;
-
             }	
         }
-        osDelayUntil(&xLastWakeTime, 2);
+        osDelayUntil(&xLastWakeTime, 2);//精确延时2毫秒，同时更新xLastWakeTime的值为当前时间
     }
 
     

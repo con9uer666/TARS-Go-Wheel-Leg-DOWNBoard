@@ -67,14 +67,16 @@ uint8_t txbuffer[64] = {0};
 int receive_times;
 
 extern float target_body_speed;
-float Foot_Target_Relative_Angle;
+float Foot_Target_Relative_Angle;//!目前没用。以后可能会用
+
+
 
 void B2B_ParseUsart() // 先发低字节
 {
 	if (usart2RxBuf[0] == 0xAA && usart2RxBuf[63] == 0xFE)
 	{
-		Foot_Target_Relative_Angle = (float)((int16_t)(usart2RxBuf[1] | usart2RxBuf[2] << 8))/1000.0f;
-		target_body_speed = (float)((int16_t)(usart2RxBuf[3] | usart2RxBuf[4] << 8))/1000.0f;
+		Foot_Chassis.Target_Vx = (float)((int16_t)(usart2RxBuf[1] | usart2RxBuf[2] << 8))/1000.0f;
+		Foot_Chassis.Target_Vy = (float)((int16_t)(usart2RxBuf[3] | usart2RxBuf[4] << 8))/1000.0f;
 		uint8_t stopFlag = (usart2RxBuf[29] >> 7) & 0x01;	 // 最高位
 		uint8_t chassisMode = (usart2RxBuf[29] >> 5) & 0x03; // 第6-7位
 		uint8_t visionFind = (usart2RxBuf[29] >> 4) & 0x01;	 // 第5位+
@@ -105,7 +107,8 @@ void B2B_ParseUsart() // 先发低字节
 		vision_rune_dirt = (usart2RxBuf[41] >> 1) & 0x01;
 		trigger_block = usart2RxBuf[41] & 0x01;
 
-		UP_Leg = usart2RxBuf[42];
+		Foot_Chassis.Target_Leg_State = usart2RxBuf[42];
+		Foot_Chassis.Chassis_Mode = usart2RxBuf[43];
 
 		// for(int i = 0; i <= 127; i++)
 		// {

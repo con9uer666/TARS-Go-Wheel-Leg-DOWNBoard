@@ -19,15 +19,17 @@ void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5)
     VMC->l5 = l5;
 }
 
+//设置phi1和phi4
 void VMC_Set_phi1_phi4(VMC_t *VMC, float phi1, float phi4)
 {
     VMC->phi1 = phi1;
     VMC->phi4 = phi4;
 }
 
+//算LO和phi0
 void VMC_Get_L0_phi0(VMC_t *VMC)
 {
-    VMC->last_phi0 = VMC->phi0;
+    VMC->last_b_phi0 = VMC->phi0;
     VMC->last_L0 = VMC->L0;
     VMC->last_d_L0 = VMC->d_L0;
 
@@ -86,7 +88,7 @@ float VMC_Get_Ground_F0(VMC_t *VMC)
     float P, m_w, dd_zw;
 
     P = VMC->F * arm_cos_f32(VMC->b_phi0) + ((VMC->T * arm_sin_f32(VMC->b_phi0)) / VMC->L0);
-    dd_zw = accel_b[2] - VMC->dd_L0 * arm_cos_f32(VMC->b_phi0) + (2 * VMC->d_L0 * VMC->d_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->dd_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->d_phi0 * VMC->d_phi0 *arm_cos_f32(VMC->b_phi0));
+    dd_zw = accel_b[2] - VMC->dd_L0 * arm_cos_f32(VMC->b_phi0) + (2 * VMC->d_L0 * VMC->d_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->dd_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->d_b_phi0 * VMC->d_b_phi0 *arm_cos_f32(VMC->b_phi0));
 
     F0 = P + 1.1 * dd_zw;
 
