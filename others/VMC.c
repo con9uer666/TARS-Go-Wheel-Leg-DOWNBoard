@@ -66,6 +66,7 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
     VMC->dd_L0 = (VMC->d_L0 - VMC->last_d_L0)/0.002;
 }
 
+//VMC解算
 void VMC_Set_F0_T(VMC_t *VMC, float F, float T)
 {
     float matrix[4];
@@ -82,6 +83,7 @@ void VMC_Set_F0_T(VMC_t *VMC, float F, float T)
 
 }
 
+//计算支持力
 float VMC_Get_Ground_F0(VMC_t *VMC)
 {
     float F0;

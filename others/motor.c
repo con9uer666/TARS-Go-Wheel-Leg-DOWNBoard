@@ -18,7 +18,7 @@
 
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;                                                                                                                                     
 Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名    
-Foot_Chassis_t Foot_Chassis;                                                                                                                               
+Foot_Chassis_t Foot_Chassis;//轮足底盘结构体                                                                                                                               
                                                                                                                                         
 float powerPredict;                                                                                                                                     
                                                                                                                                         
@@ -35,7 +35,7 @@ float alpha_d_pitch = 1.0;//滤波系数
 float alpha_phi0 = 1.0;//滤波系数                                                                                                                                     
 float alpha_d_phi0 = 1.0;                                                                                                                                       
                                                                                                                                         
-float Leg_L_T;                                                                                                                                      
+float Leg_L_T; //模拟腿力矩                                                                                                                                     
 float Leg_R_T;                                                                                                                                      
                                                                                                                                         
 float Wr, Wl;//加上杆角速度的车轮速度                                                                                                                                    
@@ -63,7 +63,7 @@ float alpha_target_roll = 0.05;
 float Leg_F0_Limit = 500;
 
 float mg = 130.0f/2;
-float L_Ground_F0, R_Ground_F0;
+float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
 
@@ -141,8 +141,8 @@ PID_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
 uint8_t first_run = 1;//是否是第一次运行，第一次运行需要特殊处理一些变量的初始值
 
-uint8_t start_mode = 0;//0为刚从急停退出来，1为正常行走，2为上楼模式
-uint8_t upstares_mode = 0;
+uint8_t start_mode = 0;//0为刚从急停退出来，1为正常行走，2为正在上楼模式
+uint8_t upstares_mode = 0;//0为上楼收腿未完成，1为上楼收腿完成
 int ready_count = 0;
 
 uint8_t leg_state = 0;  //腿长状态 0为最短，1为中等，2为最长（未来会改）
@@ -493,7 +493,7 @@ void b_phi0_offset_coc(float target_Leg_L0)
     // b_phi0_offset = -0.6043 *target_Leg_L0 + 0.175;
 }
 
-//腿长控制vscode://lirentech.file-ref-tags?filePath=others%2Fmotor.c&snippet=%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
+//pd单环腿长控制函数vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2Fpd%E5%8D%95%E7%8E%AF%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0
 void Leg_L0_Control()
 {                                                                                                                                                           
     if(leg_state_count > 0)          //?                                                                                                                                               
@@ -501,22 +501,22 @@ void Leg_L0_Control()
         leg_state_count --;          //?                                                                                                                                               
     }                                //?                                                                                                                           
 
-    // if(leg_state_count == 0)                   //TODO:                                                                                                                                      
-    // {                                                         //TODO:                                                                                                  
-    //     leg_state_count = 300;                                //TODO:                                                                                                                          
-    //     if(leg_state <= 1)                                    //TODO:                                                                                                                      
-    //     leg_state ++;                                         //TODO:                                                                                                                  
-    //     if(leg_state > 1)                                     //TODO:                                                                                                                      
-    //     leg_state = 0;                                        //TODO: 看看这段代码到底要不要注释掉                                                                                                                 
-    // }                                                         //TODO:                                                                                                  
-    // if(SBUS_CH.SW4 == 0 && leg_state_count == 0)           //TODO:                                                                                                                                              
-    // {                                                      //TODO:                                                                                                      
-    //     leg_state_count = 300;                             //TODO:                                                                                                                              
-    //     if(leg_state > 0)                                  //TODO:                                                                                                                          
-    //     leg_state --;                                      //TODO:                                                                                                                      
-    //     if(leg_state <= 0)                                 //TODO:                                                                                                                          
-    //     leg_state = 0;                                     //TODO:                                                                                                                      
-    // }                                                      //TODO:                                                                                                      
+    // if(leg_state_count == 0)                                                                                                              
+    // {                                                                                                                  
+    //     leg_state_count = 300;                                                                                                                 
+    //     if(leg_state <= 1)                                                                                                                 
+    //     leg_state ++;                                                                                                                  
+    //     if(leg_state > 1)                                                                                                                  
+    //     leg_state = 0;                                                                                                                                          
+    // }                                                                                                                  
+    // if(SBUS_CH.SW4 == 0 && leg_state_count == 0)                                                                                                                
+    // {                                                                                                                   
+    //     leg_state_count = 300;                                                                                                                  
+    //     if(leg_state > 0)                                                                                                                   
+    //     leg_state --;                                                                                                                   
+    //     if(leg_state <= 0)                                                                                                                  
+    //     leg_state = 0;                                                                                                                  
+    // }                                                                                                                   
 
     //低通滤波                                                                                                                                                          
     target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 2.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
@@ -549,19 +549,15 @@ void Leg_L0_Control()
     PID_coculate(&R_Leg_L0_PID);                                                                                                                                                            
 }
 
-/**
- * @brief 计算速度误差，并进行斜坡限制
- * @attention 速度误差在这里被限幅了，限制在最大速度的70%，这是为了防止在速度变化较大时，电机输出过大导致不稳定 //!藏这一块（必须猛猛藏）
- */
+//speed_error | 计算前进速度误差 (yaw_error)
 void Speed_Error_Set()
 {
     speed_limit = 2.7f;     //车子最大速
     // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
-    // //TODO: init和更新函数连着写，大抵是bug
     // rampIterate(&Target_Speed_Ramp);
     target_body_speed = Foot_Chassis.Target_Vy;
+    
     float temp = ((0.7f - fabsf(yaw_error))/0.7f);
-
     if(temp < 0.0)
     temp = 0.0;
 
@@ -569,7 +565,6 @@ void Speed_Error_Set()
     //// target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
     speed_error = target_body_speed - kalman_body_speed;
 
-    //!这个速度误差限制是为了防止在速度变化较大时，电机输出过大导致不稳定，藏得可真狠啊
     if(speed_error >= speed_limit * 1.0f)
     speed_error = speed_limit * 1.0f;
     if(speed_error <= -speed_limit * 1.0f)
@@ -577,7 +572,7 @@ void Speed_Error_Set()
 }
 
 /**
- * @brief 计算距离误差
+ * @brief body_distance, target_body_distance, body_distance_error | 计算距离误差(kalman_body_speed, speed_error)，并且更新和
  * 
  */
 void Distance_Error_Set()
@@ -586,9 +581,8 @@ void Distance_Error_Set()
     target_body_distance += (kalman_body_speed + speed_error) * 0.002f; //! kalman_body_speed + speed_error不等于target_body_speed，因为speed_error是经过限幅的，而target_body_speed是没有经过限幅的，始作俑者：25年丛庆
     body_distance_error = target_body_distance - body_distance;
 }
-
 /**
- * @brief 水平方向车身速度解算
+ * b_phi0, d_b_phi0, dd_b_phi0, body_speed | 水平方向车身速度解算，以及VMC剩下的结算部分(VMC.phi0, INS.pitch_trans)
  */
 void Body_Speed_Coculate()
 {
@@ -615,8 +609,10 @@ void Body_Speed_Coculate()
     body_speed = (body_speed_L + body_speed_R) / 2.0f;
 }
 
-//!这个函数的命名也太随意了吧，丛庆     PS:这个注释不是我写的，是你自己的ai备注的hhhhhhhh甚至知道你叫丛庆
-//算VMC的变量
+//! 这个函数的命名也太随意了吧，丛庆
+//! PS:这个注释不是我写的，是你自己的ai备注的hhhhhhhh甚至知道你叫丛庆
+ 
+//算左右VMC的phi1/phi4/L0/phi0
 void VMC_Coculate()
 {
     VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
@@ -625,7 +621,7 @@ void VMC_Coculate()
     VMC_Get_L0_phi0(&VMC_R);
 }
 
-//惯性导航系统数据处理
+//惯性导航系统数据处理，算出pitch_trans/yaw_trans/d_pitch/d_yaw
 void INS_Coculate()
 {
     pitch_trans[1] = pitch_trans[0];//!看不懂就看看变量的注释，有解释
@@ -650,7 +646,7 @@ void INS_Coculate()
 
 extern float Foot_Target_Relative_Angle;
 
-//算yaw的误差值
+//speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
@@ -674,6 +670,7 @@ void Yaw_Error_Coculate()
         yaw_error_max = 0.05f;
     }
 
+    //这里Speed_Error_Set要用的是原生yaw_error，所以要写在yaw_error_max之上
     Speed_Error_Set();
 
     if(yaw_error > yaw_error_max)
@@ -683,7 +680,7 @@ void Yaw_Error_Coculate()
     
 }
 
-int L_Leg_State, R_Leg_State;   //收腿阶段，具体意义未知
+int L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
 int L_Ready_Count, R_Ready_Count;
 int L_off_ground = 0;
 int R_off_ground = 0;
@@ -764,7 +761,7 @@ void Motor_task(void const *argument)
             //车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             Body_Speed_Coculate();
 
-            //腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
+            //收腿过程腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
             PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
             PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
             PID_coculate(&L_Leg_L0_POS_PID);
@@ -791,7 +788,7 @@ void Motor_task(void const *argument)
                 PID_coculate(&R_Leg_dphi0_PID);
             }
 
-            //VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2FVMC%E8%A7%A3%E7%AE%97
+            //收腿过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
             VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
@@ -799,14 +796,16 @@ void Motor_task(void const *argument)
             L_LK9025.Target_Torque = 0;
             R_LK9025.Target_Torque = 0;
 
+            //腿长判断是否到达目标长度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E9%95%BF%E5%BA%A6
+            //!这史是丛庆写的
             if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
             {
                 L_Ready_Count ++;
             }
-            if(L_Leg_State == 0 && L_Ready_Count >= 50)
+            if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
             {
-                L_Leg_State = 1;
-                L_Ready_Count = 0;
+                L_Leg_State = 1;    //收腿完成
+                L_Ready_Count = 0;  //归零
             }
             if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
             {
@@ -818,6 +817,7 @@ void Motor_task(void const *argument)
                 R_Ready_Count = 0;
             }
 
+            //腿长达标之后，判断腿角度是否到达目标角度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E8%BE%BE%E6%A0%87%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%88%A4%E6%96%AD%E8%85%BF%E8%A7%92%E5%BA%A6%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
             if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
             {
                 L_Ready_Count ++;
@@ -835,12 +835,13 @@ void Motor_task(void const *argument)
             {
                 R_Leg_State = 2;
                 R_Ready_Count = 0;
-                
             }
 
+            
             if(R_Leg_State == 2 && L_Leg_State == 2)
             {
-                start_mode = 1;
+                start_mode = 1; // 收腿完成，进入正常模式
+                //归零
                 R_Leg_State = 0;
                 L_Leg_State = 0;
             }			
@@ -848,23 +849,30 @@ void Motor_task(void const *argument)
 
         else if(start_mode == 1)
         {
+            //占用率检测用的，留着吧，看不懂也不影响vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E5%8D%A0%E7%94%A8%E7%8E%87%E6%A3%80%E6%B5%8B%E7%94%A8%E7%9A%84%EF%BC%8C%E7%95%99%E7%9D%80%E5%90%A7%EF%BC%8C%E7%9C%8B%E4%B8%8D%E6%87%82%E4%B9%9F%E4%B8%8D%E5%BD%B1%E5%93%8D
             HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
-            
+
+            //惯性导航、VMC、水平方向车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E3%80%81VMC%E3%80%81%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             INS_Coculate();
             VMC_Coculate();
             Body_Speed_Coculate();
-            
-            Yaw_Error_Coculate();
-            // Speed_Error_Set();
 
+            //算yaw的误差，以及根据yaw误差调整目标速度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97yaw%E7%9A%84%E8%AF%AF%E5%B7%AE%EF%BC%8C%E4%BB%A5%E5%8F%8A%E6%A0%B9%E6%8D%AEyaw%E8%AF%AF%E5%B7%AE%E8%B0%83%E6%95%B4%E7%9B%AE%E6%A0%87%E9%80%9F%E5%BA%A6
+            Yaw_Error_Coculate();
+            // Speed_Error_Set();   //! 这个函数在Yaw_Error_Coculate里面被调用了，因为speed_error的计算需要用到yaw_error，所以放在Yaw_Error_Coculate里面更合理一些，虽然命名上可能有点奇怪，丛庆加的
+
+            //计算距离误差vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%AE%A1%E7%AE%97%E8%B7%9D%E7%A6%BB%E8%AF%AF%E5%B7%AE
             Distance_Error_Set();
-            
+
+            //横滚补偿和PD单环腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%A8%AA%E6%BB%9A%E8%A1%A5%E5%81%BF%E5%92%8CPD%E5%8D%95%E7%8E%AF%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
             Roll_Comp();
             Leg_L0_Control();
 
+            //放劈叉vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%BE%E5%8A%88%E5%8F%89
             PID_Set_Error(&Leg_Phi0_PID, (VMC_L.phi0 - PI/2) + (VMC_R.phi0 - PI/2), 0);
             PID_coculate(&Leg_Phi0_PID);
 
+            //100hz算K值，毕竟K值的计算比较耗时vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F100hz%E7%AE%97K%E5%80%BC
             i++;
             if(i >= 5)
             {
@@ -872,11 +880,13 @@ void Motor_task(void const *argument)
                 LQR_Get_K(LQR_K, K_Fit_Coefficients, VMC_L.L0, VMC_R.L0);
             }
 
+            //目前这是一个空函数
             b_phi0_offset_coc(target_Leg_L0);
 
             L_b_phi0 = VMC_L.b_phi0;
             R_b_phi0 = VMC_R.b_phi0;
 
+            //算轮子力矩vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E8%BD%AE%E5%AD%90%E5%8A%9B%E7%9F%A9
             L_LK9025.Target_Torque = 
             + LQR_K[0][0] * body_distance_error
             + LQR_K[0][1] * (speed_error) 
@@ -901,6 +911,7 @@ void Motor_task(void const *argument)
             + LQR_K[1][8] * (pitch_trans[0] - PITCH_OFFSET)
             + LQR_K[1][9] * d_pitch;
 
+            //算模拟腿力矩vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E6%A8%A1%E6%8B%9F%E8%85%BF%E5%8A%9B%E7%9F%A9
             Leg_L_T = 
             + LQR_K[2][0] * body_distance_error
             + LQR_K[2][1] * (speed_error) 
@@ -925,6 +936,7 @@ void Motor_task(void const *argument)
             + LQR_K[3][8] * (pitch_trans[0] - PITCH_OFFSET)
             + LQR_K[3][9] * d_pitch;
 
+            //常态下VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E5%B8%B8%E6%80%81%E4%B8%8BVMC%E8%A7%A3%E7%AE%97
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
             VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
 
@@ -934,8 +946,7 @@ void Motor_task(void const *argument)
             L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
             R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
 
-            
-
+            //离地检测滤波vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E6%A3%80%E6%B5%8B%E6%BB%A4%E6%B3%A2
             if(L_Ground_F0 <= 20.0f)
             L_off_ground ++;
             else
@@ -954,15 +965,18 @@ void Motor_task(void const *argument)
             if(R_off_ground <= 0)
             R_off_ground = 0;
 
-
-            if(L_off_ground >= 15)
+            //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
+            if(L_off_ground >= 15)//正常行驶过程离地
             {
+                //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
                 Leg_L_T = 
                 - LQR_K[2][4] * VMC_L.b_phi0 
                 - LQR_K[2][5] * VMC_L.d_b_phi0 ;
-                Leg_L_T *= 0.7;
-                L_LK9025.Target_Torque = 0;
-                VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);
+                Leg_L_T *= 0.7; //收腿力度参数
+                L_LK9025.Target_Torque = 0;//离地轮子脱力
+                //正常行驶过程离地VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%AD%A3%E5%B8%B8%E8%A1%8C%E9%A9%B6%E8%BF%87%E7%A8%8B%E7%A6%BB%E5%9C%B0VMC%E8%A7%A3%E7%AE%97
+                VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);//VMC解算
+                //离地距离相关量归零vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E8%B7%9D%E7%A6%BB%E7%9B%B8%E5%85%B3%E9%87%8F%E5%BD%92%E9%9B%B6
                 body_distance = 0;
                 target_body_distance = 2.0;
             }
@@ -1010,19 +1024,24 @@ void Motor_task(void const *argument)
             // DM_Wheel_Motor_MIT_Torque_ctrl(&hfdcan2, L_LK9025, 0);
             // DM_Wheel_Motor_MIT_Torque_ctrl(&hfdcan1, R_LK9025, 0);
         }
-        else if(start_mode == 2 && upstares_mode == 0)//伸腿上台阶
+        else if(start_mode == 2 && upstares_mode == 0)//正在磕台阶
         {
+            //伸腿VMC状态参数计算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%BC%B8%E8%85%BFVMC%E7%8A%B6%E6%80%81%E5%8F%82%E6%95%B0%E8%AE%A1%E7%AE%97
             VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
             VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
             VMC_Get_L0_phi0(&VMC_L);
             VMC_Get_L0_phi0(&VMC_R);
 
+            //伸腿的水平方向车身速度解算，以及VMC剩下的结算部分  vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%BC%B8%E8%85%BF%E7%9A%84%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97%EF%BC%8C%E4%BB%A5%E5%8F%8AVMC%E5%89%A9%E4%B8%8B%E7%9A%84%E7%BB%93%E7%AE%97%E9%83%A8%E5%88%86
             Body_Speed_Coculate();
 
+            //上台阶过程中轮子正转，防止滑下来vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%AD%E8%BD%AE%E5%AD%90%E6%AD%A3%E8%BD%AC%EF%BC%8C%E9%98%B2%E6%AD%A2%E6%BB%91%E4%B8%8B%E6%9D%A5
             L_LK9025.Target_Torque = 0.1;
             R_LK9025.Target_Torque = 0.1;
 
-            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.44);
+            // 磕台阶过程中双环腿长控制
+            // vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F+%E7%A3%95%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%8F%8C%E7%8E%AF%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
+            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.44);   //TODO: 写一个最大腿长的宏定义
             PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.44);
             PID_coculate(&L_Leg_L0_POS_PID);
             PID_coculate(&R_Leg_L0_POS_PID);
@@ -1032,6 +1051,7 @@ void Motor_task(void const *argument)
             PID_coculate(&L_Leg_L0_SPD_PID);
             PID_coculate(&R_Leg_L0_SPD_PID);
 
+            //磕台阶过程中双环腿角度控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A3%95%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%8F%8C%E7%8E%AF%E8%85%BF%E8%A7%92%E5%BA%A6%E6%8E%A7%E5%88%B6
             PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 0.75);
             PID_coculate(&L_Leg_Middle_PID);
             PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
@@ -1042,9 +1062,11 @@ void Motor_task(void const *argument)
             PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
             PID_coculate(&R_Leg_dphi0_PID);
 
+            //上台阶过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
             VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
+            //上台阶收腿过程中判断腿长和腿角度是否都到位了vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%88%A4%E6%96%AD%E8%85%BF%E9%95%BF%E5%92%8C%E8%85%BF%E8%A7%92%E5%BA%A6%E6%98%AF%E5%90%A6%E9%83%BD%E5%88%B0%E4%BD%8D%E4%BA%86
             if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
             {
                 L_Ready_Count ++;
@@ -1073,14 +1095,17 @@ void Motor_task(void const *argument)
         }
         else if(upstares_mode == 1)//收腿起立
         {
-            
+            //收腿起立VMC状态参数计算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8BVMC%E7%8A%B6%E6%80%81%E5%8F%82%E6%95%B0%E8%AE%A1%E7%AE%97
             VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
             VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
             VMC_Get_L0_phi0(&VMC_L);
             VMC_Get_L0_phi0(&VMC_R);
 
+            //收腿起立的水平方向车身速度解算，以及VMC剩下的结算部分vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97%EF%BC%8C%E4%BB%A5%E5%8F%8AVMC%E5%89%A9%E4%B8%8B%E7%9A%84%E7%BB%93%E7%AE%97%E9%83%A8%E5%88%86
             Body_Speed_Coculate();
 
+            //收腿起立的腿长双环控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E8%85%BF%E9%95%BF%E5%8F%8C%E7%8E%AF%E6%8E%A7%E5%88%B6
+            //!这他妈是史啊，写这段何意味
             PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MIN_LENTH);
             PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MIN_LENTH);
             PID_coculate(&L_Leg_L0_POS_PID);
@@ -1092,16 +1117,18 @@ void Motor_task(void const *argument)
             PID_coculate(&R_Leg_L0_SPD_PID);
 
             
-            if(L_Leg_State >= 1)
+            if(L_Leg_State >= 1)//腿长缩短完成，腿后伸完成
             {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);
+                //收腿到准备起立态的角度双环vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E5%88%B0%E5%87%86%E5%A4%87%E8%B5%B7%E7%AB%8B%E6%80%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%8C%E7%8E%AF
+                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
                 PID_coculate(&L_Leg_Middle_PID);
                 PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
             }
             else 
             {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);
+                //伸腿到腿向后伸长态的角度双环vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%BC%B8%E8%85%BF%E5%88%B0%E8%85%BF%E5%90%91%E5%90%8E%E4%BC%B8%E9%95%BF%E6%80%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%8C%E7%8E%AF
+                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
                 PID_coculate(&L_Leg_Middle_PID);
                 PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
                 PID_coculate(&L_Leg_dphi0_PID);
@@ -1121,19 +1148,21 @@ void Motor_task(void const *argument)
                 PID_coculate(&R_Leg_dphi0_PID);
             }
 
+            //收腿起立VMC，轮力矩解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8BVMC%EF%BC%8C%E8%BD%AE%E5%8A%9B%E7%9F%A9%E8%A7%A3%E7%AE%97
             VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
             VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
-            L_LK9025.Target_Torque = 0.5;
-            R_LK9025.Target_Torque = 0.5;
+            L_LK9025.Target_Torque = 0.5f;
+            R_LK9025.Target_Torque = 0.5f;
 
-            if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)
+            //腿收短，后伸检测vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E6%94%B6%E7%9F%AD%EF%BC%8C%E5%90%8E%E4%BC%B8%E6%A3%80%E6%B5%8B
+            if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
             {
                 L_Ready_Count ++;
             }
-            if(L_Leg_State == 0 && L_Ready_Count >= 100)
+            if(L_Leg_State == 0 && L_Ready_Count >= 100)//
             {
-                L_Leg_State = 1;
+                L_Leg_State = 1;//腿长缩短完成，腿后伸完成，准备收腿
                 L_Ready_Count = 0;
             }
             if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
@@ -1146,6 +1175,7 @@ void Motor_task(void const *argument)
                 R_Ready_Count = 0;
             }
 
+            //腿长缩短完成，腿后伸完成之后，判断腿角度是否到达准备起立的目标角度，达到后轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E7%BC%A9%E7%9F%AD%E5%AE%8C%E6%88%90%EF%BC%8C%E8%85%BF%E5%90%8E%E4%BC%B8%E5%AE%8C%E6%88%90%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%88%A4%E6%96%AD%E8%85%BF%E8%A7%92%E5%BA%A6%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E5%87%86%E5%A4%87%E8%B5%B7%E7%AB%8B%E7%9A%84%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6%EF%BC%8C%E8%BE%BE%E5%88%B0%E5%90%8E%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
             if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
             {
                 L_Ready_Count ++;
@@ -1167,6 +1197,7 @@ void Motor_task(void const *argument)
                 R_LK9025.Target_Torque = 0;
             }
 
+            //状态量归位vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%8A%B6%E6%80%81%E9%87%8F%E5%BD%92%E4%BD%8D
             if(R_Leg_State == 2 && L_Leg_State == 2)
             {
                 upstares_mode = 0;
