@@ -60,6 +60,8 @@
 "h7_ctrl\state.o"
 "h7_ctrl\user_can.o"
 "h7_ctrl\vmc.o"
+"h7_ctrl\leg_control.o"
+"h7_ctrl\self_righting.o"
 "h7_ctrl\bmi088driver.o"
 "h7_ctrl\bmi088middleware.o"
 "h7_ctrl\bsp_dwt.o"

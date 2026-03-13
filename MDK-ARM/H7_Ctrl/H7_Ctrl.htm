@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Mar 08 17:51:40 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Mar 13 20:46:07 2026
 <BR><P>
 <H3>Maximum Stack Usage =        424 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -745,13 +745,13 @@ Global Symbols
 <LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Measure
 <LI><a href="#[19e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;H_K_R_Adjustment1
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
-<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Observe
 <LI><a href="#[1a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Update
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Measure
 <LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;H_K_R_Adjustment
 <LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Update
 <LI><a href="#[1a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Init
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Observe
 </UL>
 
 <P><STRONG><a name="[24f]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
@@ -788,10 +788,10 @@ Global Symbols
 <LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Measure
 <LI><a href="#[1b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Init
 <LI><a href="#[19e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;H_K_R_Adjustment1
-<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_SetH
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Measure
 <LI><a href="#[1a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Init
 <LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;H_K_R_Adjustment
+<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_SetH
 </UL>
 
 <P><STRONG><a name="[253]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
@@ -1027,7 +1027,7 @@ Global Symbols
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_read_muli_reg
 </UL>
 
-<P><STRONG><a name="[fa]"></a>Body_Speed_Coculate</STRONG> (Thumb, 678 bytes, Stack size 8 bytes, motor.o(i.Body_Speed_Coculate))
+<P><STRONG><a name="[fa]"></a>Body_Speed_Coculate</STRONG> (Thumb, 306 bytes, Stack size 8 bytes, motor.o(i.Body_Speed_Coculate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Body_Speed_Coculate
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_cos_f32
@@ -2645,7 +2645,7 @@ Global Symbols
 <P><STRONG><a name="[d]"></a>MemManage_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32h7xx_it.o(i.MemManage_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
-<P><STRONG><a name="[b5]"></a>Motor_task</STRONG> (Thumb, 5366 bytes, Stack size 16 bytes, motor.o(i.Motor_task))
+<P><STRONG><a name="[b5]"></a>Motor_task</STRONG> (Thumb, 5372 bytes, Stack size 16 bytes, motor.o(i.Motor_task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Motor_task &rArr; Enable_DM_Motor_MIT &rArr; CAN_Send_DM_Motor_Data &rArr; HAL_FDCAN_AddMessageToTxFifoQ &rArr; FDCAN_CopyMessageToRAM
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2976,7 +2976,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1e0]"></a>VMC_Get_L0_phi0</STRONG> (Thumb, 802 bytes, Stack size 40 bytes, vmc.o(i.VMC_Get_L0_phi0))
+<P><STRONG><a name="[1e0]"></a>VMC_Get_L0_phi0</STRONG> (Thumb, 1226 bytes, Stack size 40 bytes, vmc.o(i.VMC_Get_L0_phi0))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = VMC_Get_L0_phi0 &rArr; arm_atan2_f32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_cos_f32
@@ -2987,7 +2987,7 @@ Global Symbols
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1dd]"></a>VMC_Init</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, vmc.o(i.VMC_Init))
+<P><STRONG><a name="[1dd]"></a>VMC_Init</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, vmc.o(i.VMC_Init))
 <BR><BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
@@ -3040,12 +3040,12 @@ Global Symbols
 <P><STRONG><a name="[1a6]"></a>__hardfp_asinf</STRONG> (Thumb, 258 bytes, Stack size 16 bytes, asinf.o(i.__hardfp_asinf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = __hardfp_asinf &rArr; sqrtf &rArr; __set_errno
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
+<BR>[Calls]<UL><LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
 <LI><a href="#[200]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
 <LI><a href="#[202]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
 <LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
 <LI><a href="#[1ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
+<LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Update
 </UL>
@@ -3085,11 +3085,11 @@ Global Symbols
 <LI><a href="#[1bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatMinusUpdate
 <LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
 <LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_PminusUpdate
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatUpdate
 <LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatMinusUpdate
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
 <LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_PminusUpdate
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 </UL>
 
 <P><STRONG><a name="[1a2]"></a>arm_mat_init_f32</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, matrixfunctions.o(i.arm_mat_init_f32))
@@ -3102,8 +3102,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = arm_mat_inverse_f32
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 </UL>
 
 <P><STRONG><a name="[1a9]"></a>arm_mat_mult_f32</STRONG> (Thumb, 110 bytes, Stack size 36 bytes, matrixfunctions.o(i.arm_mat_mult_f32))
@@ -3114,12 +3114,12 @@ Global Symbols
 <LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
 <LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_PminusUpdate
 <LI><a href="#[1b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_P_Update
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatUpdate
 <LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatMinusUpdate
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
 <LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_PminusUpdate
 <LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_P_Update
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 </UL>
 
 <P><STRONG><a name="[1ac]"></a>arm_mat_sub_f32</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, matrixfunctions.o(i.arm_mat_sub_f32))
@@ -3127,9 +3127,9 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatUpdate
 <LI><a href="#[1b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_P_Update
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatUpdate
 <LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_P_Update
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 </UL>
 
 <P><STRONG><a name="[1a8]"></a>arm_mat_trans_f32</STRONG> (Thumb, 50 bytes, Stack size 20 bytes, matrixfunctions.o(i.arm_mat_trans_f32))
@@ -3137,9 +3137,9 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
 <LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_PminusUpdate
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
 <LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_PminusUpdate
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 </UL>
 
 <P><STRONG><a name="[1fc]"></a>arm_sin_f32</STRONG> (Thumb, 120 bytes, Stack size 0 bytes, fastmathfunctions.o(i.arm_sin_f32))

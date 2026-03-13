@@ -714,6 +714,16 @@
               <FileType>1</FileType>
               <FilePath>..\others\VMC.c</FilePath>
             </File>
+            <File>
+              <FileName>Leg_Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Leg_Control.c</FilePath>
+            </File>
+            <File>
+              <FileName>Self_Righting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Self_Righting.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

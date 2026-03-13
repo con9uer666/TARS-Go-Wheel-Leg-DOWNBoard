@@ -1958,7 +1958,7 @@ I (..\others\buzzer.h)(0x68009E3D)
 I (..\others\USER_CAN.h)(0x6944324A)
 I (../Core/Inc/fdcan.h)(0x696F8AB5)
 I (..\others\motor.h)(0x69AD415F)
-I (..\others\pid.h)(0x69AD23F5)
+I (..\others\pid.h)(0x69B17A56)
 I (../UserMiddlewares/include/Board2Board.h)(0x682F6ABC)
 I (D:\Keil_MDK\Core\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
 F (..\others\kalman_filter1.c)(0x69442020)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\kalman_filter1.o --omf_browse h7_ctrl\kalman_filter1.crf --depend h7_ctrl\kalman_filter1.d)
@@ -2064,7 +2064,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33
 I (..\others\remoter.h)(0x68009E6A)
 I (..\others\buzzer.h)(0x68009E3D)
 I (..\others\State.h)(0x68397F42)
-F (..\others\motor.c)(0x69AD46A6)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\motor.o --omf_browse h7_ctrl\motor.crf --depend h7_ctrl\motor.d)
+F (..\others\motor.c)(0x69B3FFFE)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\motor.o --omf_browse h7_ctrl\motor.crf --depend h7_ctrl\motor.d)
 I (../Core/Inc/fdcan.h)(0x696F8AB5)
 I (../Core/Inc/main.h)(0x6944A00E)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
@@ -2123,7 +2123,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33)
 I (..\others\remoter.h)(0x68009E6A)
-I (..\others\pid.h)(0x69AD23F5)
+I (..\others\pid.h)(0x69B17A56)
 I (..\others\motor.h)(0x69AD415F)
 I (..\others\State.h)(0x68397F42)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x6943F130)
@@ -2152,7 +2152,7 @@ I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x6943F130)
 I (../IMU_coculate/imu_temp_ctrl.h)(0x68454C05)
 I (..\others\USER_CAN.h)(0x6944324A)
-I (..\others\VMC.h)(0x69AC0B3C)
+I (..\others\VMC.h)(0x69B405B4)
 I (..\others\observe_task.h)(0x684568C4)
 I (..\others\kalman_filter1.h)(0x69441FB7)
 I (D:\Keil_MDK\Core\ARM\ARMCC\include\stdlib.h)(0x5D9B348A)
@@ -2205,7 +2205,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33)
 I (..\others\motor.h)(0x69AD415F)
-I (..\others\pid.h)(0x69AD23F5)
+I (..\others\pid.h)(0x69B17A56)
 I (../Core/Inc/main.h)(0x6944A00E)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
 I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6944A00E)
@@ -2243,8 +2243,8 @@ I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x67FEBF73)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x67FEBF73)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h)(0x67FEBF73)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h)(0x67FEBF73)
-F (..\others\pid.c)(0x69AD2653)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\pid.o --omf_browse h7_ctrl\pid.crf --depend h7_ctrl\pid.d)
-I (..\others\pid.h)(0x69AD23F5)
+F (..\others\pid.c)(0x69B17A59)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\pid.o --omf_browse h7_ctrl\pid.crf --depend h7_ctrl\pid.d)
+I (..\others\pid.h)(0x69B17A56)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x6943F130)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h)(0x6943F130)
 I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x67FEBF3D)
@@ -2396,7 +2396,7 @@ I (..\others\state.h)(0x68397F42)
 I (..\others\buzzer.h)(0x68009E3D)
 I (../Core/Inc/tim.h)(0x6944A00D)
 I (..\others\motor.h)(0x69AD415F)
-I (..\others\pid.h)(0x69AD23F5)
+I (..\others\pid.h)(0x69B17A56)
 I (../Core/Inc/adc.h)(0x6944A00B)
 F (..\others\USER_CAN.c)(0x69AD3FBE)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\user_can.o --omf_browse h7_ctrl\user_can.crf --depend h7_ctrl\user_can.d)
 I (..\others\USER_CAN.h)(0x6944324A)
@@ -2459,8 +2459,8 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33)
 I (..\others\remoter.h)(0x68009E6A)
 I (..\others\motor.h)(0x69AD415F)
-I (..\others\pid.h)(0x69AD23F5)
-I (..\others\VMC.h)(0x69AC0B3C)
+I (..\others\pid.h)(0x69B17A56)
+I (..\others\VMC.h)(0x69B405B4)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x6943F130)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h)(0x6943F130)
 I (D:\Keil_MDK\Core\ARM\ARMCC\include\string.h)(0x5D9B3488)
@@ -2485,7 +2485,7 @@ I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h)(0x6
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h)(0x6943F130)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h)(0x6943F130)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x6943F130)
-F (..\others\VMC.c)(0x69AC110B)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\vmc.o --omf_browse h7_ctrl\vmc.crf --depend h7_ctrl\vmc.d)
+F (..\others\VMC.c)(0x69B4066A)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\vmc.o --omf_browse h7_ctrl\vmc.crf --depend h7_ctrl\vmc.d)
 I (../Core/Inc/main.h)(0x6944A00E)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
 I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6944A00E)
@@ -2566,8 +2566,101 @@ I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h)(0x6
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h)(0x6943F130)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h)(0x6943F130)
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x6943F130)
-I (..\others\VMC.h)(0x69AC0B3C)
+I (..\others\VMC.h)(0x69B405B4)
 I (../IMU_coculate/imu_temp_ctrl.h)(0x68454C05)
+F (..\others\Leg_Control.c)(0x69B2B13E)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\leg_control.o --omf_browse h7_ctrl\leg_control.crf --depend h7_ctrl\leg_control.d)
+I (..\others\Leg_Control.h)(0x69B2B397)
+I (..\others\pid.h)(0x69B17A56)
+I (..\others\VMC.h)(0x69B405B4)
+I (../Core/Inc/main.h)(0x6944A00E)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6944A00E)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x67FEBF73)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x67FEBF73)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h723xx.h)(0x67FEBF74)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x67FEBF3D)
+I (D:\Keil_MDK\Core\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x67FEBF73)
+I (D:\Keil_MDK\Core\ARM\ARMCC\include\stddef.h)(0x5D9B3488)
+I (D:\Keil_MDK\Core\ARM\ARMCC\include\math.h)(0x5D9B3482)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_fdcan.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h)(0x67FEBF73)
+F (..\others\Self_Righting.c)(0x69B401E7)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\self_righting.o --omf_browse h7_ctrl\self_righting.crf --depend h7_ctrl\self_righting.d)
+I (..\others\Self_Righting.h)(0x69B4068F)
+I (../Core/Inc/main.h)(0x6944A00E)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
+I (../Core/Inc/stm32h7xx_hal_conf.h)(0x6944A00E)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h)(0x67FEBF73)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h)(0x67FEBF73)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h723xx.h)(0x67FEBF74)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x67FEBF3D)
+I (D:\Keil_MDK\Core\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x67FEBF3D)
+I (../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x67FEBF73)
+I (D:\Keil_MDK\Core\ARM\ARMCC\include\stddef.h)(0x5D9B3488)
+I (D:\Keil_MDK\Core\ARM\ARMCC\include\math.h)(0x5D9B3482)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_adc.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_adc_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_fdcan.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_hsem.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h)(0x67FEBF73)
+I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h)(0x67FEBF73)
+I (..\others\Leg_Control.h)(0x69B2B397)
+I (..\others\pid.h)(0x69B17A56)
+I (..\others\VMC.h)(0x69B405B4)
 F (..\IMU_coculate\BMI088driver.c)(0x66B9C4B7)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\bmi088driver.o --omf_browse h7_ctrl\bmi088driver.crf --depend h7_ctrl\bmi088driver.d)
 I (..\IMU_coculate\BMI088driver.h)(0x66B9C4B7)
 I (D:\Keil_MDK\Core\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
@@ -3526,7 +3619,7 @@ I (../Core/Inc/spi.h)(0x6944A00C)
 I (../UI/include/Judge.h)(0x6814879A)
 I (../UserMiddlewares/include/Com.h)(0x6814879A)
 I (../others/motor.h)(0x69AD415F)
-I (../others/pid.h)(0x69AD23F5)
+I (../others/pid.h)(0x69B17A56)
 F (..\UserMiddlewares\source\Com.c)(0x6814879A)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\com.o --omf_browse h7_ctrl\com.crf --depend h7_ctrl\com.d)
 F (..\UserMiddlewares\source\UserFreertos.c)(0x694447B6)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\userfreertos.o --omf_browse h7_ctrl\userfreertos.crf --depend h7_ctrl\userfreertos.d)
 F (..\Power_control\PowerCtrl.c)(0x696B9574)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\powerctrl.o --omf_browse h7_ctrl\powerctrl.crf --depend h7_ctrl\powerctrl.d)
@@ -3599,7 +3692,7 @@ I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.
 I (D:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x6943F130)
 I (..\Power_control\RLS.h)(0x69688A4E)
 I (../others/motor.h)(0x69AD415F)
-I (../others/pid.h)(0x69AD23F5)
+I (../others/pid.h)(0x69B17A56)
 F (..\Power_control\PowerCtrl.h)(0x696B90BC)()
 F (..\Power_control\RLS.c)(0x69688A5B)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\Include-ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-ID:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\rls.o --omf_browse h7_ctrl\rls.crf --depend h7_ctrl\rls.d)
 I (..\Power_control\RLS.h)(0x69688A4E)

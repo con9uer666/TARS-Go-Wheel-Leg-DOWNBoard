@@ -32,8 +32,8 @@ float pitch_trans[2];
 float d_pitch;//pitch速度，单位为弧度每秒                                                                                                                                      
 float alpha_d_pitch = 1.0;//滤波系数                                                                                                                                      
                                                                                                                                         
-float alpha_phi0 = 1.0;//滤波系数                                                                                                                                     
-float alpha_d_phi0 = 1.0;                                                                                                                                       
+                                                                                                                                     
+                                                                                                                                       
                                                                                                                                         
 float Leg_L_T; //模拟腿力矩                                                                                                                                     
 float Leg_R_T;                                                                                                                                      
@@ -582,26 +582,14 @@ void Distance_Error_Set()
     body_distance_error = target_body_distance - body_distance;
 }
 /**
- * b_phi0, d_b_phi0, dd_b_phi0, body_speed | 水平方向车身速度解算，以及VMC剩下的结算部分(VMC.phi0, INS.pitch_trans)
+ * body_speed | 水平方向车身速度解算(VMC, INS.pitch_trans)
  */
 void Body_Speed_Coculate()
 {
-    VMC_L.last_b_phi0 = VMC_L.b_phi0;
-    VMC_L.b_phi0 = alpha_phi0 * (-pitch_trans[0] + VMC_L.phi0 - (PI/2)) + (1 - alpha_phi0) * VMC_L.b_phi0;//滤波
-    VMC_L.last_d_b_phi0 = VMC_L.d_b_phi0;
-    VMC_L.d_b_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_b_phi0 ;
-    VMC_L.dd_b_phi0 = (VMC_L.d_b_phi0 - VMC_L.last_d_b_phi0)/0.002f;
-
     //算单侧轮子速度
     Wl = alpha_W * (-L_LK9025.Rx_Data.Velocity + VMC_L.d_b_phi0) + (1 - alpha_W) * Wl;
     //算单侧车身速度
     body_speed_L = alpha_body_speed * ((Wl * WHEEL_RADIUS) + VMC_L.d_b_phi0 * VMC_L.L0 * arm_cos_f32(VMC_L.b_phi0)) + (1 - alpha_body_speed) * body_speed_L;
-
-    VMC_R.last_b_phi0 = VMC_R.b_phi0;
-    VMC_R.b_phi0 = alpha_phi0 * (-pitch_trans[0] + (PI - VMC_R.phi0)- (PI/2)) + (1 - alpha_phi0) * VMC_R.b_phi0;
-    VMC_R.last_d_b_phi0 = VMC_R.d_b_phi0;
-    VMC_R.d_b_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_b_phi0 ;
-    VMC_R.dd_b_phi0 = (VMC_R.d_b_phi0 - VMC_R.last_d_b_phi0)/0.002f;
 
     Wr = alpha_W * (R_LK9025.Rx_Data.Velocity + VMC_R.d_b_phi0) + (1 - alpha_W) * Wr;
     body_speed_R = alpha_body_speed * ((Wr * WHEEL_RADIUS) + VMC_R.d_b_phi0 * VMC_R.L0 * arm_cos_f32(VMC_R.b_phi0)) + (1 - alpha_body_speed) * body_speed_R;
@@ -700,8 +688,8 @@ void Motor_task(void const *argument)
         DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
 
 //VMC初始化vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2FVMC%E5%88%9D%E5%A7%8B%E5%8C%96
-        VMC_Init(&VMC_L, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f);
-        VMC_Init(&VMC_R, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f);
+        VMC_Init(&VMC_L, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f, 1);
+        VMC_Init(&VMC_R, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f, 0);
 
 //PID初始化vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2FPID%E5%88%9D%E5%A7%8B%E5%8C%96
         PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
@@ -1032,7 +1020,7 @@ void Motor_task(void const *argument)
             VMC_Get_L0_phi0(&VMC_L);
             VMC_Get_L0_phi0(&VMC_R);
 
-            //伸腿的水平方向车身速度解算，以及VMC剩下的结算部分  vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%BC%B8%E8%85%BF%E7%9A%84%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97%EF%BC%8C%E4%BB%A5%E5%8F%8AVMC%E5%89%A9%E4%B8%8B%E7%9A%84%E7%BB%93%E7%AE%97%E9%83%A8%E5%88%86
+            //伸腿的水平方向车身速度解算  vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%BC%B8%E8%85%BF%E7%9A%84%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             Body_Speed_Coculate();
 
             //上台阶过程中轮子正转，防止滑下来vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%AD%E8%BD%AE%E5%AD%90%E6%AD%A3%E8%BD%AC%EF%BC%8C%E9%98%B2%E6%AD%A2%E6%BB%91%E4%B8%8B%E6%9D%A5
@@ -1101,7 +1089,7 @@ void Motor_task(void const *argument)
             VMC_Get_L0_phi0(&VMC_L);
             VMC_Get_L0_phi0(&VMC_R);
 
-            //收腿起立的水平方向车身速度解算，以及VMC剩下的结算部分vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97%EF%BC%8C%E4%BB%A5%E5%8F%8AVMC%E5%89%A9%E4%B8%8B%E7%9A%84%E7%BB%93%E7%AE%97%E9%83%A8%E5%88%86
+            //收腿起立的水平方向车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             Body_Speed_Coculate();
 
             //收腿起立的腿长双环控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E8%85%BF%E9%95%BF%E5%8F%8C%E7%8E%AF%E6%8E%A7%E5%88%B6

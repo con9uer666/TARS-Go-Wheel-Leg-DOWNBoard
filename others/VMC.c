@@ -5,18 +5,23 @@
 #include "arm_math.h"
 #include "VMC.h"
 #include "imu_temp_ctrl.h"
+#include <math.h>
+// #include <stdint.h>
 
 VMC_t VMC_L, VMC_R;
 
+float alpha_d_phi0 = 1.0;
+float alpha_phi0 = 1.0;//滤波系数
+extern float pitch_trans[2];
 
-
-void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5)
+void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5, uint8_t isLeft)
 {
     VMC->l1 = l1;
     VMC->l2 = l2;
     VMC->l3 = l3;
     VMC->l4 = l4;
     VMC->l5 = l5;
+    VMC->isLeft = isLeft;
 }
 
 //设置phi1和phi4
@@ -29,7 +34,8 @@ void VMC_Set_phi1_phi4(VMC_t *VMC, float phi1, float phi4)
 //算LO和phi0
 void VMC_Get_L0_phi0(VMC_t *VMC)
 {
-    VMC->last_b_phi0 = VMC->phi0;
+    VMC->last_phi0 = VMC->phi0;
+    VMC->last_b_phi0 = VMC->b_phi0;
     VMC->last_L0 = VMC->L0;
     VMC->last_d_L0 = VMC->d_L0;
 
@@ -62,8 +68,28 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
     VMC->L0 = L0;
     arm_atan2_f32(VMC->Yc, (VMC->Xc - (VMC->l5 / 2)), &VMC->phi0);
 
-    VMC->d_L0 = (VMC->L0 - VMC->last_L0)/0.002;
-    VMC->dd_L0 = (VMC->d_L0 - VMC->last_d_L0)/0.002;
+    VMC->d_phi0 = (VMC->phi0 - VMC->last_phi0) / 0.002f;
+    VMC->d_b_phi0 = (VMC->b_phi0 - VMC->last_b_phi0) / 0.002f;
+
+    VMC->d_L0 = (VMC->L0 - VMC->last_L0)/0.002f;
+    VMC->dd_L0 = (VMC->d_L0 - VMC->last_d_L0) / 0.002f;
+
+    if(VMC->isLeft)
+    {
+        VMC_L.last_b_phi0 = VMC_L.b_phi0;
+        VMC_L.b_phi0 = alpha_phi0 * (-pitch_trans[0] + VMC_L.phi0 - (PI/2)) + (1 - alpha_phi0) * VMC_L.b_phi0;//滤波
+        VMC_L.last_d_b_phi0 = VMC_L.d_b_phi0;
+        VMC_L.d_b_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_b_phi0 ;
+        VMC_L.dd_b_phi0 = (VMC_L.d_b_phi0 - VMC_L.last_d_b_phi0) / 0.002f;
+    }
+    else
+    {
+        VMC_R.last_b_phi0 = VMC_R.b_phi0;
+        VMC_R.b_phi0 = alpha_phi0 * (-pitch_trans[0] + (PI - VMC_R.phi0)- (PI/2)) + (1 - alpha_phi0) * VMC_R.b_phi0;
+        VMC_R.last_d_b_phi0 = VMC_R.d_b_phi0;
+        VMC_R.d_b_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_b_phi0 ;
+        VMC_R.dd_b_phi0 = (VMC_R.d_b_phi0 - VMC_R.last_d_b_phi0)/0.002f;
+    }
 }
 
 //VMC解算

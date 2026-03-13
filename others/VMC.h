@@ -1,6 +1,9 @@
 #ifndef VMC_H
 #define VMC_H
 
+// #include <stdint.h>
+#include "main.h"
+
 //VMC建模vscode://lirentech.file-ref-tags?filePath=VMC.h&snippet=%2F%2FVMC%E5%BB%BA%E6%A8%A1
 typedef struct VMC
 {
@@ -12,22 +15,24 @@ typedef struct VMC
 
     float Xb, Yb, Xd, Yd, Xc, Yc;
 
-    float L0;
+    float L0, d_L0, dd_L0;
     float last_L0, last_d_L0;
-    float d_L0, dd_L0;
-    float phi0;//机身坐标系下的phi0
-    float b_phi0;//大地坐标系下的phi0
-    float dd_b_phi0;
-    float last_b_phi0;
-    float d_b_phi0, last_d_b_phi0;
-    float F;//足端力
-    float T;//虚拟杆扭矩
 
+    float phi0, d_phi0; // 机身坐标系下的phi0
+    float last_phi0, last_d_phi0;
+
+    float b_phi0, d_b_phi0, dd_b_phi0;//大地坐标系下的phi0
+    float last_b_phi0, last_d_b_phi0;
+
+    float F;//足端力
+    float T; // 虚拟杆扭矩
+
+    uint8_t isLeft;//是否为左腿
 }VMC_t;
 
 extern VMC_t VMC_L, VMC_R;
 
-void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5);
+void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5, uint8_t isLeft);
 void VMC_Set_phi1_phi4(VMC_t *VMC, float phi1, float phi4);
 void VMC_Get_L0_phi0(VMC_t *VMC);
 void VMC_Set_F0_T(VMC_t *VMC, float F, float T);

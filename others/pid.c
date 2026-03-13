@@ -2,7 +2,18 @@
 #include "arm_math.h"
 
 
-//PID初始化
+/**
+ * @brief 
+ * 
+ * @param PID 
+ * @param Kp 
+ * @param Ki 
+ * @param Kd 
+ * @param out_limit 
+ * @param i_limit 
+ * @param Integraldead_zone 积分累加死区范围，当error在这个范围外时，积分不累加
+ * @param deadzone 输出死区范围
+ */
 void PID_INIT(PID_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float Integraldead_zone, float deadzone)
 {
     PID->Kp = Kp;
