@@ -754,7 +754,6 @@ void Motor_task(void const *argument)
             if(roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f)
             {
                 Self_Righting_Step();
-
             }
             else 
             {

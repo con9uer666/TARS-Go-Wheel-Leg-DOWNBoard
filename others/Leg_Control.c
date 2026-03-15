@@ -12,8 +12,8 @@ int HZ = 500;        // 控制循环频率，单位为Hz，决定控制逻辑的
 // // 卡住检测和控制调节的参数。
 // float torque_release_rate = 0.1f;  // 卡住解除时转动力矩限制的释放速率。
 
-PID_t s_speed_pid[2]; // 用于转动速度的PID控制器（每条腿一个）。
-PID_t s_l0_pid[2];    // 用于腿长的PID控制器（每条腿一个）。
+PID_t speed_PID[2]; // 用于转动速度的PID控制器（每条腿一个）。
+PID_t L0_PID[2];    // 用于腿长的PID控制器（每条腿一个）。
 // float s_torque_limit[2] = {0.0f, 0.0f}; // 每条腿的转动力矩限制。
 int s_l0_stuck_counter[2] = {0, 0}; // 每条腿的腿长卡住计数器。
 int s_turn_stuck_counter[2] = {0, 0}; // 每条腿的转动卡住计数器。
@@ -44,7 +44,7 @@ int get_sign_float(float value)
     }
 }
 
-// PID控制器初始化
+// 腿部PID控制器初始化
 static void leg_ctrl_pid_init(VMC_t *VMC)
 {
     int idx = leg_ctrl_get_idx(VMC);
@@ -55,8 +55,8 @@ static void leg_ctrl_pid_init(VMC_t *VMC)
     }
 
     // 使用默认参数初始化PID控制器。
-    PID_INIT(&s_speed_pid[idx], 5.0f, 0.05f, 1.0f, 10.0f, 20.0f, 2000.0f, 0.0f);    //TODO: 调参
-    PID_INIT(&s_l0_pid[idx], 2000.0f, 0.0f, 25000.0f, 150.0f, 0.0f, 0.0f, 0.0f);       //TODO: 调参
+    PID_INIT(&speed_PID[idx], 5.0f, 0.05f, 1.0f, 10.0f, 20.0f, 2000.0f, 0.0f);    //TODO: 调参
+    PID_INIT(&L0_PID[idx], 2000.0f, 0.0f, 25000.0f, 150.0f, 0.0f, 0.0f, 0.0f);       //TODO: 调参
     s_pid_inited[idx] = 1; // 标记PID控制器已初始化。
 }
 
@@ -87,11 +87,11 @@ float leg_length_control(VMC_t *VMC, float target_L0, float ramp_rate, float F0_
     leg_ctrl_pid_init(VMC);
 
     // 控腿函数配置PID控制器的限制vscode://lirentech.file-ref-tags?filePath=Leg_Control.c&snippet=%2F%2F+%E6%8E%A7%E8%85%BF%E5%87%BD%E6%95%B0%E9%85%8D%E7%BD%AEPID%E6%8E%A7%E5%88%B6%E5%99%A8%E7%9A%84%E9%99%90%E5%88%B6
-    PID_Reset_OutLimit(&s_l0_pid[idx], F0_max);//输出限制
+    PID_Reset_OutLimit(&L0_PID[idx], F0_max);//输出限制
 
     // 计算控制误差并计算原始F0值vscode://lirentech.file-ref-tags?filePath=Leg_Control.c&snippet=%2F%2F+%E8%AE%A1%E7%AE%97%E6%8E%A7%E5%88%B6%E8%AF%AF%E5%B7%AE%E5%B9%B6%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8BF0%E5%80%BC
-    PID_Set_Error(&s_l0_pid[idx], VMC->L0, target_L0);
-    f0_raw = PID_coculate(&s_l0_pid[idx]);
+    PID_Set_Error(&L0_PID[idx], VMC->L0, target_L0);
+    f0_raw = PID_coculate(&L0_PID[idx]);
 
     // 如果启用了斜坡发生器，则应用斜坡处理vscode://lirentech.file-ref-tags?filePath=Leg_Control.c&snippet=%2F%2F+%E5%A6%82%E6%9E%9C%E5%90%AF%E7%94%A8%E4%BA%86%E6%96%9C%E5%9D%A1%E5%8F%91%E7%94%9F%E5%99%A8%EF%BC%8C%E5%88%99%E5%BA%94%E7%94%A8%E6%96%9C%E5%9D%A1%E5%A4%84%E7%90%86
     if (ramp_rate != 0.0f)
@@ -166,11 +166,11 @@ float leg_turn_speed_control(VMC_t *VMC, float target_speed, float max_torque, f
     leg_ctrl_pid_init(VMC);
 
     // 配置PID控制器的限制。
-    PID_Reset_OutLimit(&s_speed_pid[idx], max_torque); // 输出限制
+    PID_Reset_OutLimit(&speed_PID[idx], max_torque); // 输出限制
 
     // 计算控制误差并计算原始torque值vscode://lirentech.file-ref-tags?filePath=Leg_Control.c&snippet=%2F%2F+%E8%AE%A1%E7%AE%97%E6%8E%A7%E5%88%B6%E8%AF%AF%E5%B7%AE%E5%B9%B6%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8Btorque%E5%80%BC
-    PID_Set_Error(&s_speed_pid[idx], VMC->d_phi0, target_speed);//target - now
-    torque_raw = PID_coculate(&s_speed_pid[idx]);
+    PID_Set_Error(&speed_PID[idx], VMC->d_phi0, target_speed);//target - now
+    torque_raw = PID_coculate(&speed_PID[idx]);
 
     // 是否启用斜坡发生器
     if (ramp_rate != 0.0f)

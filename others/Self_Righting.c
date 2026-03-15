@@ -5,9 +5,14 @@
 #include "Leg_Control.h"
 #include "VMC.h"
 #include "motor.h"
+#include "pid.h"
+
+//TODO:轮子锁死双环PID，防劈叉PID
 
 
 /* ========================= 状态与模式标志 ========================= */
+
+int SR_test_state = 0;	//0：程序正常跑		1：强制第一阶段		2：强制第二阶段		3：强制第三阶段		4：强制第四阶段
 
 /* 当前自起状态机阶段。 */
 SelfRightingStage_t g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
@@ -23,6 +28,10 @@ uint8_t g_self_righting_enable = 1;
 uint8_t g_self_righting_sync_from_stuck = 0;
 
 /* ========================= 参数区 ========================= */
+
+//轮子PID结构体
+PID_t wheel_PID_l;
+PID_t wheel_PID_r;
 
 /* 第一阶段（伸腿）目标与判定参数 */
 float g_sr_target_l0 = 0.41f;          /* 目标腿长（用户要求默认0.4）。 */
@@ -44,7 +53,7 @@ float g_sr_extend_passive_damping_torque_max = 10.0f;   /* 被动阻尼转矩限
 /* 第二阶段（反向匀速转到并齐）参数 */
 float g_sr_reverse_speed_l = 0.5f;        /* 左腿反向匀速转速度目标 */
 float g_sr_reverse_speed_r = 0.5f;        /* 右腿反向匀速转速度目标 */
-float g_sr_reverse_torque_max = 5.0f;      /* 第二阶段转矩上限 */
+float g_sr_reverse_torque_max = 10.0f;      /* 第二阶段转矩上限 */
 float g_sr_reverse_torque_ramp = 0.0f;     /* 第二阶段转矩斜坡速率 */
 float g_sr_turn_stuck_thresh = 0.0873f;     /* 第二阶段转动卡住判定阈值。 */
 float g_sr_align_tol = 0.0873f;              /* 两腿并齐角度误差阈值（|phiL-phiR| <= tol） */
@@ -95,6 +104,18 @@ int l0_reached_r;//右腿达到目标腿长标签，1：达到；0：未达到
 int aligned;    //两腿并齐标签，1：并齐；0：未并齐
 
 float phi_diff;//两腿角度差
+
+//轮子PID参数
+float wheel_kp = 0;
+float wheel_ki = 0;
+float wheel_kd = 0;
+float wheel_out_limit = 0;
+float wheel_i_limit = 0;
+float wheel_Integraldead_zone = 0;
+float wheel_deadzone = 0;
+
+float reached_ang_l = 0;
+float reached_ang_r = 0;
 
 /* ========================= 内部辅助函数 ========================= */
 
@@ -186,6 +207,10 @@ void Self_Righting_Reset(void)
  */
 uint8_t Self_Righting_Step(void)
 {
+	//锁死轮子
+	PID_INIT(&wheel_PID_l, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_Integraldead_zone, wheel_deadzone);
+	PID_INIT(&wheel_PID_r, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_Integraldead_zone, wheel_deadzone);
+
 	//封装的0-4PI的角度变量，方便后续判断转动卡住和是否到达目标角度vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%B0%81%E8%A3%85%E7%9A%840-4PI%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%98%E9%87%8F%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%90%8E%E7%BB%AD%E5%88%A4%E6%96%AD%E8%BD%AC%E5%8A%A8%E5%8D%A1%E4%BD%8F%E5%92%8C%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
 	update_phi0_0_to_4PI();
 
@@ -208,7 +233,7 @@ uint8_t Self_Righting_Step(void)
 	aligned = (fabsf(phi_diff) <= g_sr_align_tol) ? 1 : 0;
 
 	/* ===================== 第一阶段：伸腿 ===================== */
-	if (g_self_righting_stage == SELF_RIGHTING_STAGE_EXTEND)
+	if ((g_self_righting_stage == SELF_RIGHTING_STAGE_EXTEND && SR_test_state == 0) || (SR_test_state == 1))
 	{
 
 
@@ -232,7 +257,7 @@ uint8_t Self_Righting_Step(void)
 				 * - 算绝对值
                  */
 
-		if (l0_stuck_l)//卡住
+		if (l0_stuck_l && l0_reached_l == 0)//卡住未到位
 		{
             //转动vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E8%BD%AC%E5%8A%A8
             t_l = leg_turn_speed_control(&VMC_L, g_sr_extend_unstuck_speed_l, g_sr_extend_unstuck_torque_max, g_sr_extend_unstuck_torque_ramp);
@@ -245,7 +270,7 @@ uint8_t Self_Righting_Step(void)
 		}
 
 		/* 右腿同样策略。 */
-		if (l0_stuck_r)
+		if (l0_stuck_r && l0_reached_r == 0)
 		{
 			t_r = leg_turn_speed_control(&VMC_R, -g_sr_extend_unstuck_speed_r, g_sr_extend_unstuck_torque_max, g_sr_extend_unstuck_torque_ramp);
 		}
@@ -256,7 +281,7 @@ uint8_t Self_Righting_Step(void)
 		}
 
 		//两腿腿长都到位检测vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E4%B8%A4%E8%85%BF%E8%85%BF%E9%95%BF%E9%83%BD%E5%88%B0%E4%BD%8D%E6%A3%80%E6%B5%8B
-		if ((l0_reached_l != 0) && (l0_reached_r != 0))
+		if ((l0_reached_l == 1) && (l0_reached_r == 1))//都到位
 		{
 			g_self_righting_stage = SELF_RIGHTING_STAGE_REVERSE_TURN;
 			g_self_righting_sync_from_stuck = 0;
@@ -266,7 +291,7 @@ uint8_t Self_Righting_Step(void)
 		l0_reached_r = 0;
 	}
 	/* ===================== 第二阶段：反向匀速转并尝试并齐 ===================== */
-	else if (g_self_righting_stage == SELF_RIGHTING_STAGE_REVERSE_TURN)
+	else if ((g_self_righting_stage == SELF_RIGHTING_STAGE_REVERSE_TURN && SR_test_state == 0) || (SR_test_state == 2))
 	{
 		//第二阶段保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
 		f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
@@ -274,12 +299,12 @@ uint8_t Self_Righting_Step(void)
 
 		//第二阶段反向匀速转vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E5%8F%8D%E5%90%91%E5%8C%80%E9%80%9F%E8%BD%AC
 		t_l = leg_turn_speed_control(&VMC_L, g_sr_reverse_speed_l, g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
-		t_r = leg_turn_speed_control(&VMC_R, g_sr_reverse_speed_r, g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
+		t_r = leg_turn_speed_control(&VMC_R, -g_sr_reverse_speed_r, g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
 
 		//第二阶段检查并齐和卡住状态，用于决定何时进入第三阶段vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%A3%80%E6%9F%A5%E5%B9%B6%E9%BD%90%E5%92%8C%E5%8D%A1%E4%BD%8F%E7%8A%B6%E6%80%81%EF%BC%8C%E7%94%A8%E4%BA%8E%E5%86%B3%E5%AE%9A%E4%BD%95%E6%97%B6%E8%BF%9B%E5%85%A5%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5
 		aligned = (fabsf(VMC_L.phi0 - VMC_R.phi0) <= g_sr_align_tol) ? 1 : 0;
-		turn_stuck_l = leg_turn_stuck_detect(&VMC_L, g_sr_turn_stuck_thresh, 0.1f);
-		turn_stuck_r = leg_turn_stuck_detect(&VMC_R, g_sr_turn_stuck_thresh, 0.1f);
+		turn_stuck_l = leg_turn_stuck_detect(&VMC_L, g_sr_turn_stuck_thresh, 0.3f);
+		turn_stuck_r = leg_turn_stuck_detect(&VMC_R, g_sr_turn_stuck_thresh, 0.3f);
 
 		if (aligned)//并齐
 		{
@@ -295,10 +320,8 @@ uint8_t Self_Righting_Step(void)
 		}
 	}
 	/* ===================== 第三阶段：大力矩匀速转到目标角 ===================== */
-	else if (g_self_righting_stage == SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE)
+	else if ((g_self_righting_stage == SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE && SR_test_state == 0) || (SR_test_state == 3))
 	{
-
-
 		//第三阶段继续保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%E7%BB%A7%E7%BB%AD%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
 		f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
 		f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
@@ -401,17 +424,18 @@ uint8_t Self_Righting_Step(void)
 			g_self_righting_stage = SELF_RIGHTING_STAGE_FINISHED;
 		}
 	}
-	else
+	/* ===================== 第四阶段：摆腿完成，若还未到目标角度，进入下一循环前的准备动作 ===================== */
+	else if((g_self_righting_stage == SELF_RIGHTING_STAGE_FINISHED && SR_test_state == 0) || (SR_test_state == 4))
 	{
-		//保持姿势不动vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E4%BF%9D%E6%8C%81%E5%A7%BF%E5%8A%BF%E4%B8%8D%E5%8A%A8
-        f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		t_l = 0.0f;
-		t_r = 0.0f;
+		// //保持姿势不动vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E4%BF%9D%E6%8C%81%E5%A7%BF%E5%8A%BF%E4%B8%8D%E5%8A%A8
+        // f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		// f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		// t_l = 0.0f;
+		// t_r = 0.0f;
 
-        sr_apply_cmd(f_l, t_l, f_r, t_r);
+        // sr_apply_cmd(f_l, t_l, f_r, t_r);
         
-        return 1;
+        // return 1;
 	}
 
 	//VMC输出vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2FVMC%E8%BE%93%E5%87%BA
