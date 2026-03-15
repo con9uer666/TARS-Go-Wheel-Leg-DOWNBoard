@@ -153,6 +153,8 @@ void CAN_Transmit(void const * argument)
 	osDelay(2500);
     for(;;)
     {
+		//输出开关vscode://lirentech.file-ref-tags?filePath=USER_CAN.c&snippet=%2F%2F%E8%BE%93%E5%87%BA%E5%BC%80%E5%85%B3
+
 		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_LK9025.Target_Torque);
         DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_LK9025.Target_Torque);
         osDelay(1);
@@ -163,6 +165,8 @@ void CAN_Transmit(void const * argument)
 		osDelay(1);
 		DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
         DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, Shooter_DM2325.Target_Torque);
+
+
         // osDelay(1);
 		// DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
         // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);

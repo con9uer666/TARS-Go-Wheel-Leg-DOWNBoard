@@ -9,8 +9,7 @@
 #include "BMI088driver.h"
 #include "remoter.h"
 
-//extern float gyro[3],accel[3],temperate;
-
+//extern flo 
 
 //void IMU_tasks(void const * argument)
 //{

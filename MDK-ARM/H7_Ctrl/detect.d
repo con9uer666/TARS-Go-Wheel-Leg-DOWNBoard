@@ -8,7 +8,7 @@ h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h723xx.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Include/core_cm7.h
-h7_ctrl\detect.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h
+h7_ctrl\detect.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Include/cmsis_version.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -16,8 +16,8 @@ h7_ctrl\detect.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 h7_ctrl\detect.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-h7_ctrl\detect.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h
-h7_ctrl\detect.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\math.h
+h7_ctrl\detect.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+h7_ctrl\detect.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h
@@ -62,6 +62,6 @@ h7_ctrl\detect.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\detect.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 h7_ctrl\detect.o: ../Core/Inc/spi.h
 h7_ctrl\detect.o: ../UI/include/judge.h
-h7_ctrl\detect.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
+h7_ctrl\detect.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\detect.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\detect.o: ../Core/Inc/usart.h

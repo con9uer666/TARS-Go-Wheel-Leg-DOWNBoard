@@ -1,8 +1,8 @@
 h7_ctrl\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
-h7_ctrl\heap_4.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdlib.h
+h7_ctrl\heap_4.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 h7_ctrl\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-h7_ctrl\heap_4.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h
-h7_ctrl\heap_4.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h
+h7_ctrl\heap_4.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+h7_ctrl\heap_4.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 h7_ctrl\heap_4.o: ../Core/Inc/FreeRTOSConfig.h
 h7_ctrl\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 h7_ctrl\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

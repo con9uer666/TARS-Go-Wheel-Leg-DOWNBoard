@@ -3,6 +3,10 @@
 
 #include "main.h"
 
+#ifndef PI
+#define PI 3.14159265358979323846f
+#endif
+
 /*
  * 倒地自起流程状态机：
  * 1) EXTEND: 先伸腿到目标腿长；

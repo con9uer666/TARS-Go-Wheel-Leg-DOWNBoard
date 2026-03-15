@@ -1,6 +1,6 @@
 h7_ctrl\board2board.o: ..\UserMiddlewares\source\Board2Board.c
 h7_ctrl\board2board.o: ../UserMiddlewares/include/Board2Board.h
-h7_ctrl\board2board.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h
+h7_ctrl\board2board.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 h7_ctrl\board2board.o: ../Core/Inc/usart.h
 h7_ctrl\board2board.o: ../Core/Inc/main.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
@@ -17,8 +17,8 @@ h7_ctrl\board2board.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 h7_ctrl\board2board.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-h7_ctrl\board2board.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h
-h7_ctrl\board2board.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\math.h
+h7_ctrl\board2board.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+h7_ctrl\board2board.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h
@@ -44,7 +44,7 @@ h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
-h7_ctrl\board2board.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdbool.h
+h7_ctrl\board2board.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\board2board.o: ../others/USER_CAN.h
 h7_ctrl\board2board.o: ../Core/Inc/fdcan.h
 h7_ctrl\board2board.o: ../UI/include/Detect.h

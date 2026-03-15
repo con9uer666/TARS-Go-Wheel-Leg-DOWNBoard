@@ -1,8 +1,8 @@
 h7_ctrl\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/list.c
-h7_ctrl\list.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdlib.h
+h7_ctrl\list.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 h7_ctrl\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-h7_ctrl\list.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stddef.h
-h7_ctrl\list.o: D:\Keil_MDK\Core\ARM\ARMCC\Bin\..\include\stdint.h
+h7_ctrl\list.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+h7_ctrl\list.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 h7_ctrl\list.o: ../Core/Inc/FreeRTOSConfig.h
 h7_ctrl\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 h7_ctrl\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

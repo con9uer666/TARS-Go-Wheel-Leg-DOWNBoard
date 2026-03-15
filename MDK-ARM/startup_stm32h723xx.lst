@@ -1279,11 +1279,12 @@ o -I../Core/Inc -I../Drivers/STM32H7xx_HAL_Driver/Inc -I../Drivers/STM32H7xx_HA
 L_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../M
 iddlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/
 FreeRTOS/Source/portable/RVDS/ARM_CM4F -I../Drivers/CMSIS/Device/ST/STM32H7xx/I
-nclude -I../Drivers/CMSIS/Include -I.\RTE\_H7_Ctrl -ID:\Keil_MDK\Packs\ARM\CMSI
-S-DSP\1.16.2\Include -ID:\Keil_MDK\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude -I
-D:\Keil_MDK\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include --predefine="__UVISION_VER
-SION SETA 541" --predefine="STM32H723xx SETA 1" --predefine="_RTE_ SETA 1" --li
-st=startup_stm32h723xx.lst startup_stm32h723xx.s
+nclude -I../Drivers/CMSIS/Include -I.\RTE\_H7_Ctrl -IC:\Users\WXR\AppData\Local
+\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include -IC:\Users\WXR\AppData\Local\Arm\Packs\
+ARM\CMSIS-DSP\1.16.2\PrivateInclude -IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\
+CMSIS\6.2.0\CMSIS\Core\Include --predefine="__UVISION_VERSION SETA 543" --prede
+fine="STM32H723xx SETA 1" --predefine="_RTE_ SETA 1" --list=startup_stm32h723xx
+.lst startup_stm32h723xx.s
 
 
 

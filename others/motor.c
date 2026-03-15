@@ -14,6 +14,7 @@
 #include "observe_task.h"
 #include <math.h>
 #include <stdint.h>
+#include "Self_Righting.h"
 
 
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;                                                                                                                                     
@@ -707,7 +708,7 @@ void Motor_task(void const *argument)
         PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
         PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
 
-    osDelay(2000);
+    osDelay(1000);
 
 //机身pitch计算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9C%BA%E8%BA%ABpitch%E8%AE%A1%E7%AE%97
         pitch_trans[1] = pitch_trans[0];
@@ -749,89 +750,99 @@ void Motor_task(void const *argument)
             //车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             Body_Speed_Coculate();
 
-            //收腿过程腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
-            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
-            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
-            PID_coculate(&L_Leg_L0_POS_PID);
-            PID_coculate(&R_Leg_L0_POS_PID);
+            //是否姿态稳定在误差20°内的起立态vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%98%AF%E5%90%A6%E5%A7%BF%E6%80%81%E7%A8%B3%E5%AE%9A%E5%9C%A8%E8%AF%AF%E5%B7%AE20%C2%B0%E5%86%85%E7%9A%84%E8%B5%B7%E7%AB%8B%E6%80%81
+            if(roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f)
+            {
+                Self_Righting_Step();
 
-            PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
-            PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
-            PID_coculate(&L_Leg_L0_SPD_PID);
-            PID_coculate(&R_Leg_L0_SPD_PID);
+            }
+            else 
+            {
+                g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
+                //收腿过程腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
+                PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
+                PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
+                PID_coculate(&L_Leg_L0_POS_PID);
+                PID_coculate(&R_Leg_L0_POS_PID);
 
-            //腿角度控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E8%A7%92%E5%BA%A6%E6%8E%A7%E5%88%B6
-            if(L_Leg_State >= 1)
-            {
-                PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
-                PID_coculate(&L_Leg_Middle_PID);
-                PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
-                PID_coculate(&L_Leg_dphi0_PID);
-            }
-            if(R_Leg_State >= 1)
-            {
-                PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
-                PID_coculate(&R_Leg_Middle_PID);
-                PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
-                PID_coculate(&R_Leg_dphi0_PID);
-            }
+                PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
+                PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
+                PID_coculate(&L_Leg_L0_SPD_PID);
+                PID_coculate(&R_Leg_L0_SPD_PID);
 
-            //收腿过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
-            VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
-            VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
+                //腿角度控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E8%A7%92%E5%BA%A6%E6%8E%A7%E5%88%B6
+                if(L_Leg_State >= 1)
+                {
+                    PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
+                    PID_coculate(&L_Leg_Middle_PID);
+                    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+                    PID_coculate(&L_Leg_dphi0_PID);
+                }
+                if(R_Leg_State >= 1)
+                {
+                    PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+                    PID_coculate(&R_Leg_Middle_PID);
+                    PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+                    PID_coculate(&R_Leg_dphi0_PID);
+                }
 
-            //轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
-            L_LK9025.Target_Torque = 0;
-            R_LK9025.Target_Torque = 0;
+                //收腿过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
+                VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
+                VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
-            //腿长判断是否到达目标长度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E9%95%BF%E5%BA%A6
-            //!这史是丛庆写的
-            if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
-            {
-                L_Ready_Count ++;
-            }
-            if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
-            {
-                L_Leg_State = 1;    //收腿完成
-                L_Ready_Count = 0;  //归零
-            }
-            if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
-            {
-                R_Ready_Count ++;
-            }
-            if(R_Leg_State == 0 && R_Ready_Count >= 50)
-            {
-                R_Leg_State = 1;
-                R_Ready_Count = 0;
-            }
+                //轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
+                L_LK9025.Target_Torque = 0;
+                R_LK9025.Target_Torque = 0;
 
-            //腿长达标之后，判断腿角度是否到达目标角度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E8%BE%BE%E6%A0%87%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%88%A4%E6%96%AD%E8%85%BF%E8%A7%92%E5%BA%A6%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
-            if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-            {
-                L_Ready_Count ++;
-            }
-            if(L_Leg_State == 1 && L_Ready_Count >= 50)
-            {
-                L_Leg_State = 2;
-                L_Ready_Count = 0;
-            }
-            if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-            {
-                R_Ready_Count ++;
-            }
-            if(R_Leg_State == 1 &&R_Ready_Count >= 50)
-            {
-                R_Leg_State = 2;
-                R_Ready_Count = 0;
-            }
+                //腿长判断是否到达目标长度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E9%95%BF%E5%BA%A6
+                //!这史是丛庆写的
+                if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
+                {
+                    L_Ready_Count ++;
+                }
+                if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
+                {
+                    L_Leg_State = 1;    //收腿完成
+                    L_Ready_Count = 0;  //归零
+                }
+                if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
+                {
+                    R_Ready_Count ++;
+                }
+                if(R_Leg_State == 0 && R_Ready_Count >= 50)
+                {
+                    R_Leg_State = 1;
+                    R_Ready_Count = 0;
+                }
 
-            
-            if(R_Leg_State == 2 && L_Leg_State == 2)
-            {
-                start_mode = 1; // 收腿完成，进入正常模式
-                //归零
-                R_Leg_State = 0;
-                L_Leg_State = 0;
+                //腿长达标之后，判断腿角度是否到达目标角度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E8%BE%BE%E6%A0%87%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%88%A4%E6%96%AD%E8%85%BF%E8%A7%92%E5%BA%A6%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
+                if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+                {
+                    L_Ready_Count ++;
+                }
+                if(L_Leg_State == 1 && L_Ready_Count >= 50)
+                {
+                    L_Leg_State = 2;
+                    L_Ready_Count = 0;
+                }
+                if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+                {
+                    R_Ready_Count ++;
+                }
+                if(R_Leg_State == 1 &&R_Ready_Count >= 50)
+                {
+                    R_Leg_State = 2;
+                    R_Ready_Count = 0;
+                }
+
+                
+                if(R_Leg_State == 2 && L_Leg_State == 2)
+                {
+                    start_mode = 1; // 收腿完成，进入正常模式
+                    //归零
+                    R_Leg_State = 0;
+                    L_Leg_State = 0;
+                }
             }			
         }
 
