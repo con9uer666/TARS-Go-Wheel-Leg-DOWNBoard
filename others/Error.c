@@ -19,99 +19,99 @@ extern DMA_HandleTypeDef hdma_usart2_rx;
 extern uint8_t usart2RxBuf[256];
 
 /**
-Ö÷Òª¹¦ÄÜ£º
+ä¸»è¦åŠŸèƒ½ï¼š
 
-1.³õÊ¼»¯ºÍ¹ÒÆğÈÎÎñ£º
+1.åˆå§‹åŒ–å’ŒæŒ‚èµ·ä»»åŠ¡ï¼š
 
-µ÷ÓÃ Remoter_Init() ³õÊ¼»¯Ò£¿ØÆ÷¡£
-Ê¹ÓÃ vTaskSuspend(NULL) ¹ÒÆğµ±Ç°ÈÎÎñ¡£
+è°ƒç”¨ Remoter_Init() åˆå§‹åŒ–é¥æ§å™¨ã€‚
+ä½¿ç”¨ vTaskSuspend(NULL) æŒ‚èµ·å½“å‰ä»»åŠ¡ã€‚
 
-2.½ûÓÃµç»ú£º
+2.ç¦ç”¨ç”µæœºï¼š
 
-µ÷ÓÃ Disable_DM_Motor ½ûÓÃ¶à¸öµç»ú£¨Í¨¹ı hfdcan1 ºÍ hfdcan2 ×ÜÏß£©¡£
-µ÷ÓÃ DJI_Motor_Torque_Ctrl ÉèÖÃµç»úÅ¤¾ØÎª 0¡£
+è°ƒç”¨ Disable_DM_Motor ç¦ç”¨å¤šä¸ªç”µæœºï¼ˆé€šè¿‡ hfdcan1 å’Œ hfdcan2 æ€»çº¿ï¼‰ã€‚
+è°ƒç”¨ DJI_Motor_Torque_Ctrl è®¾ç½®ç”µæœºæ‰­çŸ©ä¸º 0ã€‚
 
-3.·äÃùÆ÷ÌáÊ¾£º
+3.èœ‚é¸£å™¨æç¤ºï¼š
 
-µ÷ÓÃ Buzzer_High_si ºÍ Stop_Buzzer ¿ØÖÆ·äÃùÆ÷·¢³öÌáÊ¾Òô¡£
+è°ƒç”¨ Buzzer_High_si å’Œ Stop_Buzzer æ§åˆ¶èœ‚é¸£å™¨å‘å‡ºæç¤ºéŸ³ã€‚
 
-4. LED ¿ØÖÆ£º
+4. LED æ§åˆ¶ï¼š
 
-Ê¹ÓÃ WS2812_1_Set ÉèÖÃ LED µÄÑÕÉ«¡£
+ä½¿ç”¨ WS2812_1_Set è®¾ç½® LED çš„é¢œè‰²ã€‚
 
-5.´íÎó×´Ì¬Ñ­»·£º
+5.é”™è¯¯çŠ¶æ€å¾ªç¯ï¼š
 
-ÔÚÎŞÏŞÑ­»·ÖĞÖØ¸´½ûÓÃµç»ú¡¢ÉèÖÃ LED ÑÕÉ«¡£
-¼ì²éÒ£¿ØÆ÷µÄ SW3 ¿ª¹Ø×´Ì¬£¬Èç¹ûÎª 1£¬Ôòµ÷ÓÃ HAL_NVIC_SystemReset ÖØÆôÏµÍ³¡£
+åœ¨æ— é™å¾ªç¯ä¸­é‡å¤ç¦ç”¨ç”µæœºã€è®¾ç½® LED é¢œè‰²ã€‚
+æ£€æŸ¥é¥æ§å™¨çš„ SW3 å¼€å…³çŠ¶æ€ï¼Œå¦‚æœä¸º 1ï¼Œåˆ™è°ƒç”¨ HAL_NVIC_SystemReset é‡å¯ç³»ç»Ÿã€‚
 
-6.DMA ½ÓÊÕ£º
+6.DMA æ¥æ”¶ï¼š
 
-Ê¹ÓÃ HAL_UARTEx_ReceiveToIdle_DMA ºÍ __HAL_DMA_DISABLE_IT ÅäÖÃ UART µÄ DMA ½ÓÊÕ¡£
-Õâ¸öÈÎÎñµÄÖ÷ÒªÄ¿µÄÊÇÔÚ´íÎó×´Ì¬ÏÂÖ´ĞĞÒ»ÏµÁĞ°²È«²Ù×÷£¨Èç½ûÓÃµç»ú¡¢·¢³ö¾¯¸æÌáÊ¾¡¢ÖØÆôÏµÍ³µÈ£©£¬ÒÔÈ·±£Éè±¸µÄ°²È«ĞÔºÍÎÈ¶¨ĞÔ¡£
+ä½¿ç”¨ HAL_UARTEx_ReceiveToIdle_DMA å’Œ __HAL_DMA_DISABLE_IT é…ç½® UART çš„ DMA æ¥æ”¶ã€‚
+è¿™ä¸ªä»»åŠ¡çš„ä¸»è¦ç›®çš„æ˜¯åœ¨é”™è¯¯çŠ¶æ€ä¸‹æ‰§è¡Œä¸€ç³»åˆ—å®‰å…¨æ“ä½œï¼ˆå¦‚ç¦ç”¨ç”µæœºã€å‘å‡ºè­¦å‘Šæç¤ºã€é‡å¯ç³»ç»Ÿç­‰ï¼‰ï¼Œä»¥ç¡®ä¿è®¾å¤‡çš„å®‰å…¨æ€§å’Œç¨³å®šæ€§ã€‚
  */
 void Error_task(void const * argument)
 {																				
-		Remoter_Init();													//? 																																							
-    	vTaskSuspend(NULL);												//? 																																								
-		Disable_DM_Motor(&hfdcan2, 0x01);								//? 																																												
-		Disable_DM_Motor(&hfdcan1, 0x01);								//? 																																												
-		Disable_DM_Motor(&hfdcan3, 0x11);								//? 																																												
-		HAL_Delay(1);													//? Í£ÓÃµç»ú																																							
-		Disable_DM_Motor(&hfdcan2, 0x02);								//? 																																												
-		Disable_DM_Motor(&hfdcan1, 0x02);								//? 																																												
-		Disable_DM_Motor(&hfdcan3, 0x10);								//? 																																												
-		HAL_Delay(1);													//? 																																							
-		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);						//? 																																														
-		DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);						//? 																																														
-		Buzzer_High_si();																				//? 																																															
-		HAL_Delay(100);																					//? 																																														
-		Stop_Buzzer();																					//? 																																														
-		HAL_Delay(50);																					//? ·äÃù																																														
-		Buzzer_High_si();																				//? 																																															
-		HAL_Delay(100);																					//? 																																														
-		Stop_Buzzer();																					//? 																																														
-		HAL_Delay(50);																					//? 																																														
+		Remoter_Init();																
+    	vTaskSuspend(NULL);									
+		Disable_DM_Motor(&hfdcan2, 0x01);					
+		Disable_DM_Motor(&hfdcan1, 0x01);					
+		Disable_DM_Motor(&hfdcan3, 0x11);					
+		HAL_Delay(1);												
+		Disable_DM_Motor(&hfdcan2, 0x02);					
+		Disable_DM_Motor(&hfdcan1, 0x02);					
+		Disable_DM_Motor(&hfdcan3, 0x10);					
+		HAL_Delay(1);												
+		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);				
+		DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);				
+		Buzzer_High_si();																			
+		HAL_Delay(100);																			
+		Stop_Buzzer();																			
+		HAL_Delay(50);																				
+		Buzzer_High_si();																			
+		HAL_Delay(100);																			
+		Stop_Buzzer();																			
+		HAL_Delay(50);																																																								
 
 
     for(;;)
     {																																										
-			WS2812_1_Set(0,100,0,0);//ºìÂÌµÆ											 																															
-			HAL_Delay(100);														//? 																												
-			Disable_DM_Motor(&hfdcan2, 0x01);									//? 																																	
-			Disable_DM_Motor(&hfdcan1, 0x01);									//? 																																	
-			Disable_DM_Motor(&hfdcan3, 0x11);									//? 																																	
-			HAL_Delay(1);														//? Í£ÓÃµç»ú																												
-			Disable_DM_Motor(&hfdcan2, 0x02);									//? 																																	
-			Disable_DM_Motor(&hfdcan1, 0x02);									//? 																																	
-			Disable_DM_Motor(&hfdcan3, 0x10);									//? 																																	
-			HAL_Delay(1);														//? 																												
-			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);							//? 																																			
-			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);							//? 																																			
-			if(STOPFLAG != 1)											//?																															
-			{															//?																											
-				__set_FAULTMASK(1);//½ûÖ¹ËùÓĞµÄ¿ÉÆÁ±ÎÖĞ¶Ï				  //? ÓÒÄÚ²¦¸ËÉÏ£¬ÏµÍ³ÖØÆô																																						
-				HAL_NVIC_SystemReset();//ÖØÆôÏµÍ³						 //?																																	
-			}															//?																											
-			WS2812_1_Set(0,0,0,0);//ÃğµÆ																																										
-			HAL_Delay(100);														//? 																												
-			Disable_DM_Motor(&hfdcan2, 0x01);									//? 																																	
-			Disable_DM_Motor(&hfdcan1, 0x01);									//? 																																	
-			Disable_DM_Motor(&hfdcan3, 0x11);									//? 																																	
-			HAL_Delay(1);														//? 																												
-			Disable_DM_Motor(&hfdcan2, 0x02);									//? 																																	
-			Disable_DM_Motor(&hfdcan1, 0x02);									//? Í£ÓÃµç»ú																																	
-			Disable_DM_Motor(&hfdcan3, 0x10);									//? 																																	
-			HAL_Delay(1);														//? 	hello world																											
-			// Disable_LK_Motor(&hfdcan2, 0x141);								//? 																																		
-			// Disable_LK_Motor(&hfdcan1, 0x141);								//? 																																		
-			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);							//? 																																			
-			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);							//? 																																			
-			if(STOPFLAG != 1)											//?																															
-			{															//?																											
-				__set_FAULTMASK(1);//½ûÖ¹ËùÓĞµÄ¿ÉÆÁ±ÎÖĞ¶Ï				  //?	ÓÒÄÚ²¦¸ËÉÏ£¬ÏµÍ³ÖØÆô																																					
-				HAL_NVIC_SystemReset();									//?																																	
-			}															//?																											
-			HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));		//? ²ÃÅĞÏµÍ³½ÓÊÜ																																								
-			__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);							//? 																																			
-    }																																										
+			WS2812_1_Set(0,100,0,0);//çº¢ç»¿ç¯		
+			HAL_Delay(100);								
+			Disable_DM_Motor(&hfdcan2, 0x01);	
+			Disable_DM_Motor(&hfdcan1, 0x01);	
+			Disable_DM_Motor(&hfdcan3, 0x11);	
+			HAL_Delay(1);								
+			Disable_DM_Motor(&hfdcan2, 0x02);	
+			Disable_DM_Motor(&hfdcan1, 0x02);	
+			Disable_DM_Motor(&hfdcan3, 0x10);	
+			HAL_Delay(1);								
+			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);																																		
+			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);																																		
+			if(STOPFLAG != 1)																						
+			{																															
+				__set_FAULTMASK(1);//ç¦æ­¢æ‰€æœ‰çš„å¯å±è”½ä¸­æ–­																																					
+				HAL_NVIC_SystemReset();//é‡å¯ç³»ç»Ÿ																													
+			}																															
+			WS2812_1_Set(0,0,0,0);//ç­ç¯																											
+			HAL_Delay(100);																												
+			Disable_DM_Motor(&hfdcan2, 0x01);																												
+			Disable_DM_Motor(&hfdcan1, 0x01);																												
+			Disable_DM_Motor(&hfdcan3, 0x11);																												
+			HAL_Delay(1);																												
+			Disable_DM_Motor(&hfdcan2, 0x02);																												
+			Disable_DM_Motor(&hfdcan1, 0x02);																														
+			Disable_DM_Motor(&hfdcan3, 0x10);																												
+			HAL_Delay(1);																														
+			// Disable_LK_Motor(&hfdcan2, 0x141);											
+			// Disable_LK_Motor(&hfdcan1, 0x141);																										
+			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);																										
+			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);																										
+			if(STOPFLAG != 1)																							
+			{																							
+				__set_FAULTMASK(1);//ç¦æ­¢æ‰€æœ‰çš„å¯å±è”½ä¸­æ–­																													
+				HAL_NVIC_SystemReset();																							
+			}																																		
+			HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));																																								
+			__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);																															
+    }																														
 }																																										

@@ -14,39 +14,39 @@
  * @param Integraldead_zone 积分累加死区范围，当error在这个范围外时，积分不累加
  * @param deadzone 输出死区范围
  */
-void PID_INIT(PID_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float Integraldead_zone, float deadzone)
+void PID_INIT(user_pid_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float Integraldead_zone, float deadzone)
 {
     PID->Kp = Kp;
     PID->Ki = Ki;
     PID->Kd = Kd;
     PID->out_limit = out_limit;
     PID->I_limit = i_limit;
-		PID->Integraldead_zone = Integraldead_zone;
-		PID->deadzone = deadzone;
+    PID->Integraldead_zone = Integraldead_zone;
+    PID->deadzone = deadzone;
 
     PID->I = 0;
 }
 
 //重写PID输出限幅
-void PID_Reset_OutLimit(PID_t *PID, float new_limit)
+void PID_Reset_OutLimit(user_pid_t *PID, float new_limit)
 {
 	PID->out_limit = new_limit;
 }
 
 //归零PID积分
-void PID_Clear(PID_t *PID)
+void PID_Clear(user_pid_t *PID)
 {
     PID->I = 0;
 }
 
 //PID误差计算
-void PID_Set_Error(PID_t *PID, float now, float target)
+void PID_Set_Error(user_pid_t *PID, float now, float target)
 {
     PID->error = target - now;
 }
 
 //PID计算	//!只负责计算，不负责更新误差
-float PID_coculate(PID_t *PID)
+float PID_coculate(user_pid_t *PID)
 {
 	//死区处理
 	if((PID->error <= PID->deadzone) && (PID->error >= -PID->deadzone))

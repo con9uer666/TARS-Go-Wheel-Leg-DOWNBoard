@@ -12,8 +12,8 @@ int HZ = 500;        // 控制循环频率，单位为Hz，决定控制逻辑的
 // // 卡住检测和控制调节的参数。
 // float torque_release_rate = 0.1f;  // 卡住解除时转动力矩限制的释放速率。
 
-PID_t speed_PID[2]; // 用于转动速度的PID控制器（每条腿一个）。
-PID_t L0_PID[2];    // 用于腿长的PID控制器（每条腿一个）。
+user_pid_t speed_PID[2]; // 用于转动速度的PID控制器（每条腿一个）。
+user_pid_t L0_PID[2];    // 用于腿长的PID控制器（每条腿一个）。
 // float s_torque_limit[2] = {0.0f, 0.0f}; // 每条腿的转动力矩限制。
 int s_l0_stuck_counter[2] = {0, 0}; // 每条腿的腿长卡住计数器。
 int s_turn_stuck_counter[2] = {0, 0}; // 每条腿的转动卡住计数器。

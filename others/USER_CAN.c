@@ -166,7 +166,6 @@ void CAN_Transmit(void const * argument)
 		DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
         DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, Shooter_DM2325.Target_Torque);
 
-
         // osDelay(1);
 		// DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
         // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);

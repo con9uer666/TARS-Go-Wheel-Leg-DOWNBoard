@@ -21,93 +21,97 @@ Target DLL:      CMSIS_AGDI.dll V1.33.24.0
 Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
-C:\Users\WXR\Desktop\robomaster\Code\RM_missions\2025TARS-GO\Wheel_Leg_VScode20260314\MDK-ARM\H7_Ctrl.uvprojx
+C:\Users\WXR\Desktop\robomaster\Code\RM_missions\2025TARS-GO\Wheel_Leg\Wheel_Leg_VScode20260314\MDK-ARM\H7_Ctrl.uvprojx
 Project File Date:  03/14/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin'
 Build target 'H7_Ctrl'
 Note: source file '..\IMU_coculate\pid.c' - object file renamed from 'H7_Ctrl\pid.o' to 'H7_Ctrl\pid_1.o'.
+compiling USER_CAN.c...
+..\others\USER_CAN.c(48): warning:  #177-D: variable "if_can_get_message_ok"  was declared but never referenced
+  	HAL_StatusTypeDef if_can_get_message_ok;
+..\others\USER_CAN.c: 1 warning, 0 errors
 compiling motor.c...
 ..\others\Self_Righting.h(73): warning:  #1-D: last line of file ends without a newline
   #endif //SELF_RIGHTING_H
-..\others\motor.c(421): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(423): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(torque >= 0.338959944)
-..\others\motor.c(483): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(485): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(speed_error <= 0.3 && speed_error >= -0.3)
-..\others\motor.c(523): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 2.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
-..\others\motor.c(536): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(525): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
+..\others\motor.c(538): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(target_L_Leg_L0 >= 0.40)                                                                                                                                                         
-..\others\motor.c(541): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(543): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(target_R_Leg_L0 >= 0.40)                                                                                                                                                         
-..\others\motor.c(562): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(564): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(temp < 0.0)
-..\others\motor.c(776): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(798): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                       PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加�?
-..\others\motor.c(783): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(805): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                       PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
-..\others\motor.c(799): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(821): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
-..\others\motor.c(808): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(830): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
-..\others\motor.c(819): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(841): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(828): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(850): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(852): warning:  #188-D: enumerated type mixed with another type
+..\others\motor.c(874): warning:  #188-D: enumerated type mixed with another type
               HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
-..\others\motor.c(945): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(981): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
-..\others\motor.c(945): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(981): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
-..\others\motor.c(946): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(982): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
-..\others\motor.c(946): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(982): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
-..\others\motor.c(974): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1010): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   Leg_L_T *= 0.7; //收腿力度参数
-..\others\motor.c(988): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1024): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   Leg_R_T *= 0.7;
-..\others\motor.c(1006): warning:  #188-D: enumerated type mixed with another type
+..\others\motor.c(1040): warning:  #188-D: enumerated type mixed with another type
               HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
-..\others\motor.c(1054): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1088): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 0.75);
-..\others\motor.c(1059): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1093): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 0.75);
-..\others\motor.c(1069): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1103): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(1069): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1103): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(1078): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1112): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(1078): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1112): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(1122): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1156): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
-..\others\motor.c(1130): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1164): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
-..\others\motor.c(1137): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1171): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                   PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
-..\others\motor.c(1144): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-                  PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
-..\others\motor.c(1158): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-              if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
-..\others\motor.c(1158): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-              if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
-..\others\motor.c(1167): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-              if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
-..\others\motor.c(1167): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-              if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
 ..\others\motor.c(1178): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                  PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
+..\others\motor.c(1192): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
+..\others\motor.c(1192): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
+..\others\motor.c(1201): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
+..\others\motor.c(1201): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
+..\others\motor.c(1212): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\motor.c(1188): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\motor.c(1222): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
 ..\others\motor.c: 37 warnings, 0 errors
 linking...
-Program Size: Code=87444 RO-data=3716 RW-data=2264 ZI-data=52504  
+Program Size: Code=88588 RO-data=3716 RW-data=2416 ZI-data=52680  
 FromELF: creating hex file...
-"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 37 Warning(s).
+"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 38 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -140,42 +144,42 @@ Package Vendor: Keil
       Include file:  CMSIS/Core/Include/tz_context.h
 
    * Component: ARM::CMSIS:DSP&Source@1.16.2
-      Source file:   Source/StatisticsFunctions/StatisticsFunctions.c
-      Source file:   Source/SupportFunctions/SupportFunctions.c
-      Source file:   Source/SVMFunctions/SVMFunctions.c
-      Include file:  Include/arm_const_structs_f16.h
-      Source file:   Source/InterpolationFunctions/InterpolationFunctions.c
       Source file:   Source/BasicMathFunctions/BasicMathFunctions.c
-      Source file:   Source/DistanceFunctions/DistanceFunctions.c
-      Source file:   Source/ComplexMathFunctions/ComplexMathFunctions.c
       Include file:  Include/arm_math.h
       Include file:  Include/arm_math_f16.h
-      Source file:   Source/FastMathFunctions/FastMathFunctions.c
+      Include file:  Include/arm_common_tables.h
       Include file:  Include/arm_common_tables_f16.h
+      Include file:  Include/arm_const_structs.h
+      Include file:  Include/arm_const_structs_f16.h
+      Source file:   Source/DistanceFunctions/DistanceFunctions.c
+      Source file:   Source/InterpolationFunctions/InterpolationFunctions.c
+      Source file:   Source/FastMathFunctions/FastMathFunctionsF16.c
+      Source file:   Source/StatisticsFunctions/StatisticsFunctions.c
+      Source file:   Source/DistanceFunctions/DistanceFunctionsF16.c
+      Source file:   Source/SupportFunctions/SupportFunctions.c
       Source file:   Source/MatrixFunctions/MatrixFunctions.c
       Source file:   Source/WindowFunctions/WindowFunctions.c
-      Source file:   Source/TransformFunctions/TransformFunctions.c
-      Source file:   Source/QuaternionMathFunctions/QuaternionMathFunctions.c
-      Include file:  Include/arm_const_structs.h
-      Source file:   Source/FilteringFunctions/FilteringFunctions.c
-      Include file:  Include/arm_common_tables.h
-      Source file:   Source/ControllerFunctions/ControllerFunctions.c
-      Source file:   Source/CommonTables/CommonTables.c
-      Source file:   Source/BayesFunctions/BayesFunctions.c
-      Source file:   Source/StatisticsFunctions/StatisticsFunctionsF16.c
-      Source file:   Source/FastMathFunctions/FastMathFunctionsF16.c
-      Source file:   Source/DistanceFunctions/DistanceFunctionsF16.c
-      Source file:   Source/InterpolationFunctions/InterpolationFunctionsF16.c
-      Source file:   Source/BayesFunctions/BayesFunctionsF16.c
       Source file:   Source/ComplexMathFunctions/ComplexMathFunctionsF16.c
-      Source file:   Source/TransformFunctions/TransformFunctionsF16.c
-      Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
+      Source file:   Source/InterpolationFunctions/InterpolationFunctionsF16.c
+      Source file:   Source/QuaternionMathFunctions/QuaternionMathFunctions.c
+      Source file:   Source/CommonTables/CommonTables.c
+      Source file:   Source/SVMFunctions/SVMFunctions.c
+      Source file:   Source/BayesFunctions/BayesFunctions.c
       Source file:   Source/CommonTables/CommonTablesF16.c
+      Source file:   Source/ComplexMathFunctions/ComplexMathFunctions.c
+      Source file:   Source/FilteringFunctions/FilteringFunctions.c
+      Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
       Source file:   Source/MatrixFunctions/MatrixFunctionsF16.c
-      Source file:   Source/SupportFunctions/SupportFunctionsF16.c
       Source file:   Source/SVMFunctions/SVMFunctionsF16.c
+      Source file:   Source/TransformFunctions/TransformFunctionsF16.c
+      Source file:   Source/TransformFunctions/TransformFunctions.c
+      Source file:   Source/FastMathFunctions/FastMathFunctions.c
       Source file:   Source/FilteringFunctions/FilteringFunctionsF16.c
-Build Time Elapsed:  00:00:05
+      Source file:   Source/ControllerFunctions/ControllerFunctions.c
+      Source file:   Source/StatisticsFunctions/StatisticsFunctionsF16.c
+      Source file:   Source/SupportFunctions/SupportFunctionsF16.c
+      Source file:   Source/BayesFunctions/BayesFunctionsF16.c
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

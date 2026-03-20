@@ -1,3 +1,4 @@
+#include "controller.h"
 #include "fdcan.h"
 #include "main.h"
 #include "FreeRTOS.h"
@@ -15,7 +16,8 @@
 #include <math.h>
 #include <stdint.h>
 #include "Self_Righting.h"
-
+#include "Board2Board.h"
+#include "Slope.h"
 
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;                                                                                                                                     
 Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名    
@@ -55,7 +57,7 @@ float body_distance_error;
 float target_yaw, yaw_error;
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值     单位为弧度
 float yaw_trans[2];
-float d_yaw;
+float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
 float alpha_d_yaw = 1.0;
 
 float target_roll;
@@ -118,17 +120,17 @@ float K_Fit_Coefficients[40][6] = {
      1.2444,  1.5483,  -33.561,  -5.1333,  18.088,  26.94,
 };
 
-PID_t L_Leg_L0_PID;     //常态
-PID_t R_Leg_L0_PID;     //
+user_pid_t L_Leg_L0_PID;     //常态
+user_pid_t R_Leg_L0_PID;     //
 
-PID_t L_Leg_L0_POS_PID; //收腿
-PID_t R_Leg_L0_POS_PID; //
-PID_t L_Leg_L0_SPD_PID; //
-PID_t R_Leg_L0_SPD_PID; //
+user_pid_t L_Leg_L0_POS_PID; //收腿
+user_pid_t R_Leg_L0_POS_PID; //
+user_pid_t L_Leg_L0_SPD_PID; //
+user_pid_t R_Leg_L0_SPD_PID; //
 
-PID_t Roll_Comp_PID;    //ROLL补偿pid
+user_pid_t Roll_Comp_PID;    //ROLL补偿pid
 
-PID_t Leg_Phi0_PID;     //防劈叉pid
+user_pid_t Leg_Phi0_PID;     //防劈叉pid
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
 float alpha_target_L0 = 0.01f;//低通滤波系数，越小越平滑，但响应越慢
 float target_L_Leg_L0 = LEG_MIN_LENTH;
@@ -137,8 +139,8 @@ uint8_t i;
 int height_wait;
 uint8_t temp1;
 
-PID_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
-PID_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
+user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
+user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
 uint8_t first_run = 1;//是否是第一次运行，第一次运行需要特殊处理一些变量的初始值
 
@@ -520,7 +522,7 @@ void Leg_L0_Control()
     // }                                                                                                                   
 
     //低通滤波                                                                                                                                                          
-    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 2.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
+    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
 
     if(target_Leg_L0 >= 0.40f)                                                                                                                                                          
     target_Leg_L0 = 0.40f;                                                                                                                                                          
@@ -634,12 +636,14 @@ void INS_Coculate()
 }
 
 extern float Foot_Target_Relative_Angle;
+float yaw_error_slope_step = 0.01f;
+user_pid_t spinning_pid;
 
 //speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
-    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-1.792f);//减的是零点
+    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-2.82779312f);//减的是零点
     if(Yaw_motor_position > PI)
     {
         Yaw_motor_position -= 2 * PI;
@@ -649,9 +653,8 @@ void Yaw_Error_Coculate()
         Yaw_motor_position += 2 * PI;
     }
 
-    
-
     yaw_error = -(-Yaw_motor_position - Foot_Target_Relative_Angle);
+
     float yaw_error_max = 0;
     yaw_error_max = ((2.0f - fabsf(kalman_body_speed))/2.0f) * 1.5f;//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
     if(yaw_error_max <= 0.05f)
@@ -673,6 +676,23 @@ int L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过�
 int L_Ready_Count, R_Ready_Count;
 int L_off_ground = 0;
 int R_off_ground = 0;
+
+float spinning_ramp_accel = 30.0f; // 小陀螺斜坡加速度 rad/s^2 // TODO: 调参
+uint16_t motor_HZ = 500; //任务频率
+float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+float slope_target_spinning_d_yaw = 0.0f;
+
+float wheel_track_R = 0.19242f; // 轮距半径，单位为米
+
+float raw_yaw_error = 0.0f; // 小陀螺原始yaw误差
+
+float spinning_pid_kp = 0.2f; // 小陀螺PID比例增益 // TODO: 调参
+float spinning_pid_ki = 0.003f; // 小陀螺PID积分增益 // TODO: 调参
+float spinning_pid_kd = 0.0f; // 小陀螺PID微分增益 // TODO: 调参
+float spinning_pid_integral_limit = 10.0f; // 小陀螺PID积分死区 // TODO: 调参
+float spinning_pid_output_limit = 4.0f; // 小陀螺PID输出限幅 // TODO: 调参
+float spinning_pid_i_limit = 3.0f; // 小陀螺PID积分限幅 // TODO: 调参
+float spinning_pid_deadzone = 0.0f; // 小陀螺PID输出死区 // TODO: 调参
 
 //电机任务
 void Motor_task(void const *argument)
@@ -707,6 +727,9 @@ void Motor_task(void const *argument)
         PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
         PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
         PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
+
+        //小陀螺pid
+        PID_INIT(&spinning_pid, spinning_pid_kp, spinning_pid_ki, spinning_pid_kd, spinning_pid_output_limit, spinning_pid_i_limit, spinning_pid_integral_limit, spinning_pid_deadzone); // TODO: 调参
 
     osDelay(1000);
 
@@ -856,7 +879,21 @@ void Motor_task(void const *argument)
             Body_Speed_Coculate();
 
             //算yaw的误差，以及根据yaw误差调整目标速度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97yaw%E7%9A%84%E8%AF%AF%E5%B7%AE%EF%BC%8C%E4%BB%A5%E5%8F%8A%E6%A0%B9%E6%8D%AEyaw%E8%AF%AF%E5%B7%AE%E8%B0%83%E6%95%B4%E7%9B%AE%E6%A0%87%E9%80%9F%E5%BA%A6
-            Yaw_Error_Coculate();
+            if(Foot_Chassis.Chassis_Mode == 0)
+            {
+                Yaw_Error_Coculate();
+                slope_target_spinning_d_yaw = 0;
+                spinning_pid.I = 0;
+            }
+            //算小陀螺的yaw_error vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E5%B0%8F%E9%99%80%E8%9E%BA%E7%9A%84yaw_error
+            if(Foot_Chassis.Chassis_Mode == 1)
+            {
+                slope_target_spinning_d_yaw = easy_Slope(target_spinning_d_yaw, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
+                PID_Set_Error(&spinning_pid, d_yaw, slope_target_spinning_d_yaw);
+                yaw_error = PID_coculate(&spinning_pid);
+                Speed_Error_Set();
+            }
+
             // Speed_Error_Set();   //! 这个函数在Yaw_Error_Coculate里面被调用了，因为speed_error的计算需要用到yaw_error，所以放在Yaw_Error_Coculate里面更合理一些，虽然命名上可能有点奇怪，丛庆加的
 
             //计算距离误差vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%AE%A1%E7%AE%97%E8%B7%9D%E7%A6%BB%E8%AF%AF%E5%B7%AE
@@ -912,7 +949,7 @@ void Motor_task(void const *argument)
             //算模拟腿力矩vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E6%A8%A1%E6%8B%9F%E8%85%BF%E5%8A%9B%E7%9F%A9
             Leg_L_T = 
             + LQR_K[2][0] * body_distance_error
-            + LQR_K[2][1] * (speed_error) 
+            + LQR_K[2][1] * (speed_error)
             + LQR_K[2][2] * (-yaw_error)
             - LQR_K[2][3] * d_yaw
             - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
@@ -991,14 +1028,12 @@ void Motor_task(void const *argument)
                 target_body_distance = 2.0;
             }
 
-            // if(SBUS_CH.SW1 != 1)
-            // {
-            //     start_mode = 2;
-            // }
-
+            if(upstairs_flag == 1)
+            {
+                start_mode = 2;
+                upstairs_flag = 0;
+            }
             
-            
-
             // VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output, + L_Leg_Phi0_PID.output);
             // VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output, + R_Leg_Phi0_PID.output);
 
@@ -1104,8 +1139,8 @@ void Motor_task(void const *argument)
 
             //收腿起立的腿长双环控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E8%85%BF%E9%95%BF%E5%8F%8C%E7%8E%AF%E6%8E%A7%E5%88%B6
             //!这他妈是史啊，写这段何意味
-            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MIN_LENTH);
-            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MIN_LENTH);
+            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16f);
+            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16f);
             PID_coculate(&L_Leg_L0_POS_PID);
             PID_coculate(&R_Leg_L0_POS_PID);
 
