@@ -68,6 +68,10 @@ uint8_t txbuffer[64] = {0};
 int receive_times;
 
 extern float target_body_speed;
+<<<<<<< HEAD
+=======
+float Foot_Target_Relative_Angle;//!目前没用。以后可能会用
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 uint8_t upstairs_flag = 0;//0：常态；1：上台阶的瞬间
 
 

@@ -159,7 +159,11 @@
           <Type>0</Type>
           <LineNumber>1438</LineNumber>
           <EnabledFlag>1</EnabledFlag>
+<<<<<<< HEAD
           <Address>134263144</Address>
+=======
+          <Address>134263036</Address>
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -442,11 +446,14 @@
           <WinNumber>1</WinNumber>
           <ItemText>\\H7_Ctrl\../others/motor.c\spinning_pid.output</ItemText>
         </Ww>
+<<<<<<< HEAD
         <Ww>
           <count>54</count>
           <WinNumber>1</WinNumber>
           <ItemText>spinning_flag</ItemText>
         </Ww>
+=======
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
       </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>

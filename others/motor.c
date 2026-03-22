@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "controller.h"
 #include "fdcan.h"
 #include "main.h"
 #include "FreeRTOS.h"
@@ -16,6 +17,8 @@
 #include <math.h>
 #include <stdint.h>
 #include "Self_Righting.h"
+#include "Board2Board.h"
+#include "Slope.h"
 #include "Board2Board.h"
 #include "Slope.h"
 
@@ -57,6 +60,7 @@ float body_distance_error;
 float target_yaw, yaw_error;
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值     单位为弧度
 float yaw_trans[2];
+float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
 float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
 float alpha_d_yaw = 1.0;
 
@@ -129,6 +133,10 @@ user_pid_t L_Leg_L0_POS_PID; //收腿
 user_pid_t R_Leg_L0_POS_PID; //
 user_pid_t L_Leg_L0_SPD_PID; //
 user_pid_t R_Leg_L0_SPD_PID; //
+user_pid_t L_Leg_L0_POS_PID; //收腿
+user_pid_t R_Leg_L0_POS_PID; //
+user_pid_t L_Leg_L0_SPD_PID; //
+user_pid_t R_Leg_L0_SPD_PID; //
 
 user_pid_t spinning_pid;//小陀螺PID
 
@@ -147,6 +155,8 @@ uint8_t i;
 int height_wait;
 uint8_t temp1;
 
+user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
+user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
 user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
@@ -530,6 +540,7 @@ void Leg_L0_Control()
     // }                                                                                                                   
 
     //低通滤波                                                                                                                                                          
+    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
     target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
 
     if(target_Leg_L0 >= 0.40f)                                                                                                                                                          
@@ -1032,6 +1043,7 @@ void Motor_task(void const *argument)
             Leg_L_T = 
             + LQR_K[2][0] * body_distance_error
             + LQR_K[2][1] * (speed_error)
+            + LQR_K[2][1] * (speed_error)
             + LQR_K[2][2] * (-yaw_error)
             - LQR_K[2][3] * d_yaw
             - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
@@ -1110,6 +1122,12 @@ void Motor_task(void const *argument)
                 target_body_distance = 2.0;
             }
 
+            if(upstairs_flag == 1)
+            {
+                start_mode = 2;
+                upstairs_flag = 0;
+            }
+            
             if(upstairs_flag == 1)
             {
                 start_mode = 2;
@@ -1221,6 +1239,8 @@ void Motor_task(void const *argument)
 
             //收腿起立的腿长双环控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E8%85%BF%E9%95%BF%E5%8F%8C%E7%8E%AF%E6%8E%A7%E5%88%B6
             //!这他妈是史啊，写这段何意味
+            PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16f);
+            PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16f);
             PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16f);
             PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16f);
             PID_coculate(&L_Leg_L0_POS_PID);

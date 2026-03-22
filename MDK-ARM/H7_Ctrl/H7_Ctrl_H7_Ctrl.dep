@@ -1957,7 +1957,11 @@ I (../Core/Inc/tim.h)(0x6944A00D)
 I (..\others\buzzer.h)(0x68009E3D)
 I (..\others\USER_CAN.h)(0x6944324A)
 I (../Core/Inc/fdcan.h)(0x696F8AB5)
+<<<<<<< HEAD
 I (..\others\motor.h)(0x69C02525)
+=======
+I (..\others\motor.h)(0x69AD415F)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (..\others\pid.h)(0x69BD9189)
 I (../UserMiddlewares/include/Board2Board.h)(0x69BAB1B3)
 I (C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
@@ -2064,7 +2068,11 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33
 I (..\others\remoter.h)(0x68009E6A)
 I (..\others\buzzer.h)(0x68009E3D)
 I (..\others\State.h)(0x68397F42)
+<<<<<<< HEAD
 F (..\others\motor.c)(0x69C04DCB)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\motor.o --omf_browse h7_ctrl\motor.crf --depend h7_ctrl\motor.d)
+=======
+F (..\others\motor.c)(0x69BD9FD8)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\motor.o --omf_browse h7_ctrl\motor.crf --depend h7_ctrl\motor.d)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (../IMU_coculate/controller.h)(0x65CF0AF9)
 I (../Core/Inc/main.h)(0x6944A00E)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
@@ -2128,7 +2136,11 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33
 I (../Core/Inc/fdcan.h)(0x696F8AB5)
 I (..\others\remoter.h)(0x68009E6A)
 I (..\others\pid.h)(0x69BD9189)
+<<<<<<< HEAD
 I (..\others\motor.h)(0x69C02525)
+=======
+I (..\others\motor.h)(0x69AD415F)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (..\others\State.h)(0x68397F42)
 I (C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x68D69498)
 I (C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h)(0x68D69498)
@@ -2211,7 +2223,11 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33)
+<<<<<<< HEAD
 I (..\others\motor.h)(0x69C02525)
+=======
+I (..\others\motor.h)(0x69AD415F)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (..\others\pid.h)(0x69BD9189)
 I (../Core/Inc/main.h)(0x6944A00E)
 I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h)(0x67FEBF73)
@@ -2402,10 +2418,17 @@ I (..\others\remoter.h)(0x68009E6A)
 I (..\others\state.h)(0x68397F42)
 I (..\others\buzzer.h)(0x68009E3D)
 I (../Core/Inc/tim.h)(0x6944A00D)
+<<<<<<< HEAD
 I (..\others\motor.h)(0x69C02525)
 I (..\others\pid.h)(0x69BD9189)
 I (../Core/Inc/adc.h)(0x6944A00B)
 F (..\others\USER_CAN.c)(0x69C04D0E)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\user_can.o --omf_browse h7_ctrl\user_can.crf --depend h7_ctrl\user_can.d)
+=======
+I (..\others\motor.h)(0x69AD415F)
+I (..\others\pid.h)(0x69BD9189)
+I (../Core/Inc/adc.h)(0x6944A00B)
+F (..\others\USER_CAN.c)(0x69BD9FF7)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\user_can.o --omf_browse h7_ctrl\user_can.crf --depend h7_ctrl\user_can.d)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (..\others\USER_CAN.h)(0x6944324A)
 I (../Core/Inc/fdcan.h)(0x696F8AB5)
 I (../Core/Inc/main.h)(0x6944A00E)
@@ -2465,7 +2488,11 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x67FEBF33)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33)
 I (..\others\remoter.h)(0x68009E6A)
+<<<<<<< HEAD
 I (..\others\motor.h)(0x69C02525)
+=======
+I (..\others\motor.h)(0x69AD415F)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (..\others\pid.h)(0x69BD9189)
 I (..\others\VMC.h)(0x69B405B4)
 I (C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x68D69498)
@@ -3559,7 +3586,11 @@ I (../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h)(0x67FEBF73)
 F (..\math\source\SMC.c)(0x6814879A)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\smc.o --omf_browse h7_ctrl\smc.crf --depend h7_ctrl\smc.d)
 I (../math/include/SMC.h)(0x6814879A)
 I (C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\include\math.h)(0x5D9B3482)
+<<<<<<< HEAD
 F (..\UserMiddlewares\source\Board2Board.c)(0x69BFCA42)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\board2board.o --omf_browse h7_ctrl\board2board.crf --depend h7_ctrl\board2board.d)
+=======
+F (..\UserMiddlewares\source\Board2Board.c)(0x69BAB036)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\board2board.o --omf_browse h7_ctrl\board2board.crf --depend h7_ctrl\board2board.d)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (../UserMiddlewares/include/Board2Board.h)(0x69BAB1B3)
 I (C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B3488)
 I (../Core/Inc/usart.h)(0x6944A00D)
@@ -3626,7 +3657,11 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x67FEBF33
 I (../Core/Inc/spi.h)(0x6944A00C)
 I (../UI/include/Judge.h)(0x6814879A)
 I (../UserMiddlewares/include/Com.h)(0x6814879A)
+<<<<<<< HEAD
 I (../others/motor.h)(0x69C02525)
+=======
+I (../others/motor.h)(0x69AD415F)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (../others/pid.h)(0x69BD9189)
 F (..\UserMiddlewares\source\Com.c)(0x6814879A)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\com.o --omf_browse h7_ctrl\com.crf --depend h7_ctrl\com.d)
 F (..\UserMiddlewares\source\UserFreertos.c)(0x694447B6)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\userfreertos.o --omf_browse h7_ctrl\userfreertos.crf --depend h7_ctrl\userfreertos.d)
@@ -3699,7 +3734,11 @@ I (C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\filteri
 I (C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h)(0x68D69498)
 I (C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x68D69498)
 I (..\Power_control\RLS.h)(0x69688A4E)
+<<<<<<< HEAD
 I (../others/motor.h)(0x69C02525)
+=======
+I (../others/motor.h)(0x69AD415F)
+>>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 I (../others/pid.h)(0x69BD9189)
 F (..\Power_control\PowerCtrl.h)(0x696B90BC)()
 F (..\Power_control\RLS.c)(0x69688A5B)(--c99 -c --cpu Cortex-M7.fp.dp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../math/include -I ../others -I ../UI/include -I ../UserMiddlewares/include -I ../Power_control-I.\RTE\_H7_Ctrl-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\PrivateInclude-IC:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl\rls.o --omf_browse h7_ctrl\rls.crf --depend h7_ctrl\rls.d)
