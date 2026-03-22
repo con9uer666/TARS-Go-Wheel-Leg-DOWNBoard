@@ -120,6 +120,8 @@ float K_Fit_Coefficients[40][6] = {
      1.2444,  1.5483,  -33.561,  -5.1333,  18.088,  26.94,
 };
 
+//
+// PID控制器定义vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F+PID%E6%8E%A7%E5%88%B6%E5%99%A8%E5%AE%9A%E4%B9%89
 user_pid_t L_Leg_L0_PID;     //常态
 user_pid_t R_Leg_L0_PID;     //
 
@@ -127,6 +129,8 @@ user_pid_t L_Leg_L0_POS_PID; //收腿
 user_pid_t R_Leg_L0_POS_PID; //
 user_pid_t L_Leg_L0_SPD_PID; //
 user_pid_t R_Leg_L0_SPD_PID; //
+
+user_pid_t spinning_pid;//小陀螺PID
 
 user_pid_t Roll_Comp_PID;    //ROLL补偿pid
 
@@ -637,7 +641,7 @@ void INS_Coculate()
 
 extern float Foot_Target_Relative_Angle;
 float yaw_error_slope_step = 0.01f;
-user_pid_t spinning_pid;
+
 
 //speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
 void Yaw_Error_Coculate()
@@ -773,6 +777,10 @@ void Motor_task(void const *argument)
             //车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
             Body_Speed_Coculate();
 
+            //摆头防卡腿vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%91%86%E5%A4%B4%E9%98%B2%E5%8D%A1%E8%85%BF
+
+
+
             //是否姿态稳定在误差20°内的起立态vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%98%AF%E5%90%A6%E5%A7%BF%E6%80%81%E7%A8%B3%E5%AE%9A%E5%9C%A8%E8%AF%AF%E5%B7%AE20%C2%B0%E5%86%85%E7%9A%84%E8%B5%B7%E7%AB%8B%E6%80%81
             if(roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f)
             {
@@ -881,9 +889,31 @@ void Motor_task(void const *argument)
             //算yaw的误差，以及根据yaw误差调整目标速度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97yaw%E7%9A%84%E8%AF%AF%E5%B7%AE%EF%BC%8C%E4%BB%A5%E5%8F%8A%E6%A0%B9%E6%8D%AEyaw%E8%AF%AF%E5%B7%AE%E8%B0%83%E6%95%B4%E7%9B%AE%E6%A0%87%E9%80%9F%E5%BA%A6
             if(Foot_Chassis.Chassis_Mode == 0)
             {
-                Yaw_Error_Coculate();
-                slope_target_spinning_d_yaw = 0;
-                spinning_pid.I = 0;
+                if(spinning_flag == 1)
+                {
+                    //小陀螺减速
+                    target_spinning_d_yaw = 0;
+                    
+                    slope_target_spinning_d_yaw = easy_Slope(0, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
+                    PID_Set_Error(&spinning_pid, d_yaw, slope_target_spinning_d_yaw);
+                    yaw_error = PID_coculate(&spinning_pid);
+                    Speed_Error_Set();
+
+                    if(fabsf(d_yaw) <= 5.0f)
+                    {
+                        spinning_flag = 0;
+                    }
+                }
+                else
+                {
+                    //常态
+                    Yaw_Error_Coculate();
+                    slope_target_spinning_d_yaw = 0;
+                    spinning_pid.I = 0;
+
+                    spinning_flag = 0;
+                }
+
             }
             //算小陀螺的yaw_error vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E5%B0%8F%E9%99%80%E8%9E%BA%E7%9A%84yaw_error
             if(Foot_Chassis.Chassis_Mode == 1)
@@ -892,6 +922,8 @@ void Motor_task(void const *argument)
                 PID_Set_Error(&spinning_pid, d_yaw, slope_target_spinning_d_yaw);
                 yaw_error = PID_coculate(&spinning_pid);
                 Speed_Error_Set();
+
+                spinning_flag = 1;
             }
 
             // Speed_Error_Set();   //! 这个函数在Yaw_Error_Coculate里面被调用了，因为speed_error的计算需要用到yaw_error，所以放在Yaw_Error_Coculate里面更合理一些，虽然命名上可能有点奇怪，丛庆加的
@@ -961,7 +993,7 @@ void Motor_task(void const *argument)
 
             Leg_R_T = 
             + LQR_K[3][0] * body_distance_error
-            + LQR_K[3][1] * (speed_error) 
+            + LQR_K[3][1] * (speed_error)
             + LQR_K[3][2] * (-yaw_error)
             - LQR_K[3][3] * d_yaw
             - LQR_K[3][4] * VMC_L.b_phi0 
