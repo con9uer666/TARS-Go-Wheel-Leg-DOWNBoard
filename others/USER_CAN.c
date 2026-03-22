@@ -163,7 +163,14 @@ void CAN_Transmit(void const * argument)
         DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
         DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
 		osDelay(1);
-		DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
+		if(gimbal_follow_flag == 1)
+		{
+			DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, down_board_yaw_output);
+		}
+		if(gimbal_follow_flag == 0)
+		{
+			DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
+		}
         DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, Shooter_DM2325.Target_Torque);
 
         // osDelay(1);
