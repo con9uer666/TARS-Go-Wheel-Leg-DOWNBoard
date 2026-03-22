@@ -639,15 +639,18 @@ void INS_Coculate()
     }
 }
 
-extern float Foot_Target_Relative_Angle;
 float yaw_error_slope_step = 0.01f;
 
+//动态低通滤波系数
+float alpha_yaw_error = 0.0f;//yaw误差低通滤波系数
 
 //speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
     Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-2.82779312f);//减的是零点
+
+    //套圈处理
     if(Yaw_motor_position > PI)
     {
         Yaw_motor_position -= 2 * PI;
@@ -657,7 +660,9 @@ void Yaw_Error_Coculate()
         Yaw_motor_position += 2 * PI;
     }
 
-    yaw_error = -(-Yaw_motor_position - Foot_Target_Relative_Angle);
+    alpha_yaw_error = Yaw_motor_position * Yaw_motor_position * 0.05f;//Yaw_motor_position越大，alpha越大，响应越慢，最大为0.5
+
+    yaw_error = Yaw_motor_position * (1 - alpha_yaw_error) + yaw_error * alpha_yaw_error;//yaw误差低通滤波，响应速度根据yaw误差大小动态调整，yaw误差越大，响应越慢
 
     float yaw_error_max = 0;
     yaw_error_max = ((2.0f - fabsf(kalman_body_speed))/2.0f) * 1.5f;//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
