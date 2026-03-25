@@ -1,4 +1,4 @@
-h7_ctrl\vmc.o: ..\others\VMC.c
+h7_ctrl\vmc.o: ..\others\Motion_Control\Ctrl\src\VMC.c
 h7_ctrl\vmc.o: ../Core/Inc/main.h
 h7_ctrl\vmc.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\vmc.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -80,5 +80,5 @@ h7_ctrl\vmc.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include
 h7_ctrl\vmc.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/filtering_functions.h
 h7_ctrl\vmc.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
 h7_ctrl\vmc.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
-h7_ctrl\vmc.o: ..\others\VMC.h
+h7_ctrl\vmc.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
 h7_ctrl\vmc.o: ../IMU_coculate/imu_temp_ctrl.h

@@ -1,5 +1,5 @@
-h7_ctrl\self_righting.o: ..\others\Self_Righting.c
-h7_ctrl\self_righting.o: ..\others\Self_Righting.h
+h7_ctrl\self_righting.o: ..\others\Motion_Control\App\src\Self_Righting.c
+h7_ctrl\self_righting.o: ..\others\Motion_Control\App\inc\Self_Righting.h
 h7_ctrl\self_righting.o: ../Core/Inc/main.h
 h7_ctrl\self_righting.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\self_righting.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -43,7 +43,7 @@ h7_ctrl\self_righting.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
 h7_ctrl\self_righting.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 h7_ctrl\self_righting.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\self_righting.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
-h7_ctrl\self_righting.o: ..\others\Leg_Control.h
-h7_ctrl\self_righting.o: ..\others\pid.h
-h7_ctrl\self_righting.o: ..\others\VMC.h
-h7_ctrl\self_righting.o: ..\others\motor.h
+h7_ctrl\self_righting.o: ..\others\Motion_Control\Ctrl\inc\Leg_Control.h
+h7_ctrl\self_righting.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\self_righting.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
+h7_ctrl\self_righting.o: ..\others\Motion_Control\App\inc\motor.h

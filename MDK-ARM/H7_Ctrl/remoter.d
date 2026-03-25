@@ -1,5 +1,5 @@
-h7_ctrl\remoter.o: ..\others\remoter.c
-h7_ctrl\remoter.o: ..\others\remoter.h
+h7_ctrl\remoter.o: ..\others\Device\src\remoter.c
+h7_ctrl\remoter.o: ..\others\Device\inc\remoter.h
 h7_ctrl\remoter.o: ../Core/Inc/main.h
 h7_ctrl\remoter.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\remoter.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -59,4 +59,4 @@ h7_ctrl\remoter.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 h7_ctrl\remoter.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\remoter.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\remoter.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-h7_ctrl\remoter.o: ..\others\state.h
+h7_ctrl\remoter.o: ../others/state.h

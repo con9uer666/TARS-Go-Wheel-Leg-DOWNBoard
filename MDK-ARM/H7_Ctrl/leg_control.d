@@ -1,7 +1,7 @@
-h7_ctrl\leg_control.o: ..\others\Leg_Control.c
-h7_ctrl\leg_control.o: ..\others\Leg_Control.h
-h7_ctrl\leg_control.o: ..\others\pid.h
-h7_ctrl\leg_control.o: ..\others\VMC.h
+h7_ctrl\leg_control.o: ..\others\Motion_Control\Ctrl\src\Leg_Control.c
+h7_ctrl\leg_control.o: ..\others\Motion_Control\Ctrl\inc\Leg_Control.h
+h7_ctrl\leg_control.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\leg_control.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
 h7_ctrl\leg_control.o: ../Core/Inc/main.h
 h7_ctrl\leg_control.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\leg_control.o: ../Core/Inc/stm32h7xx_hal_conf.h

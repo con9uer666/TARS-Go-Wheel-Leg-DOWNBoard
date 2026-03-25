@@ -1,5 +1,5 @@
-h7_ctrl\user_can.o: ..\others\USER_CAN.c
-h7_ctrl\user_can.o: ..\others\USER_CAN.h
+h7_ctrl\user_can.o: ..\others\Motion_Control\Drv\src\USER_CAN.c
+h7_ctrl\user_can.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
 h7_ctrl\user_can.o: ../Core/Inc/fdcan.h
 h7_ctrl\user_can.o: ../Core/Inc/main.h
 h7_ctrl\user_can.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
@@ -58,10 +58,10 @@ h7_ctrl\user_can.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 h7_ctrl\user_can.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\user_can.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\user_can.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-h7_ctrl\user_can.o: ..\others\remoter.h
-h7_ctrl\user_can.o: ..\others\motor.h
-h7_ctrl\user_can.o: ..\others\pid.h
-h7_ctrl\user_can.o: ..\others\VMC.h
+h7_ctrl\user_can.o: ..\others\Device\inc\remoter.h
+h7_ctrl\user_can.o: ..\others\Motion_Control\App\inc\motor.h
+h7_ctrl\user_can.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\user_can.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
 h7_ctrl\user_can.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h
 h7_ctrl\user_can.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h
 h7_ctrl\user_can.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

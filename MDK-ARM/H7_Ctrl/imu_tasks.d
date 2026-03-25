@@ -62,4 +62,4 @@ h7_ctrl\imu_tasks.o: ../Core/Inc/spi.h
 h7_ctrl\imu_tasks.o: ../Core/Inc/usart.h
 h7_ctrl\imu_tasks.o: ../Core/Inc/gpio.h
 h7_ctrl\imu_tasks.o: ..\IMU_coculate\BMI088driver.h
-h7_ctrl\imu_tasks.o: ../others/remoter.h
+h7_ctrl\imu_tasks.o: ..\others\Device\inc\remoter.h

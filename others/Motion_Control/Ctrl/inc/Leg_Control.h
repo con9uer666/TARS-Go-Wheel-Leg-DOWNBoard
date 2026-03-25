@@ -1,7 +1,7 @@
 #ifndef LEG_CONTROL_H
 #define LEG_CONTROL_H
 
-#include "pid.h"
+#include "user_pid.h"
 #include "VMC.h"
 #include <stdint.h>
 

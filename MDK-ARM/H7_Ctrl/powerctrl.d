@@ -68,5 +68,5 @@ h7_ctrl\powerctrl.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\I
 h7_ctrl\powerctrl.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
 h7_ctrl\powerctrl.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
 h7_ctrl\powerctrl.o: ..\Power_control\RLS.h
-h7_ctrl\powerctrl.o: ../others/motor.h
-h7_ctrl\powerctrl.o: ../others/pid.h
+h7_ctrl\powerctrl.o: ..\others\Motion_Control\App\inc\motor.h
+h7_ctrl\powerctrl.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h

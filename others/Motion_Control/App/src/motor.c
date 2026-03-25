@@ -6,7 +6,7 @@
 #include "task.h"
 #include "cmsis_os.h"
 #include "remoter.h"
-#include "pid.h"
+#include "user_pid.h"
 #include "motor.h"
 #include "State.h"
 #include "arm_math.h"
@@ -183,37 +183,27 @@ int leg_state_count;
 
 RampGenerator Target_Speed_Ramp;//目标速度斜坡发生器
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*============================= 任务变量 ================================= */
 
+//?标志位
+uint8_t gimbal_follow_flag = 0; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
+uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
+uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
+uint8_t L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
 
-int L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
-int L_Ready_Count, R_Ready_Count;
-int L_off_ground = 0;
-int R_off_ground = 0;
+//?计数器
+uint16_t L_Ready_Count, R_Ready_Count;
+uint16_t L_off_ground = 0;
+uint16_t R_off_ground = 0;
+uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器
 
-float spinning_ramp_accel = 30.0f; // 小陀螺斜坡加速度 rad/s^2 // TODO: 调参
+//?常量
 uint16_t motor_HZ = 500; //任务频率
-float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
-float slope_target_spinning_d_yaw = 0.0f;
-
+float head_forward_angle = -2.9f;//正视前方的yaw电机角度
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
-// float raw_yaw_error = 0.0f; // 小陀螺原始yaw误差
+//?调参
+float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧度每秒
 
 float spinning_pid_kp = 0.0f; // 小陀螺PID比例增益 // TODO: 调参
 float spinning_pid_ki = 0.0025f; // 小陀螺PID积分增益 // TODO: 调参
@@ -223,21 +213,10 @@ float spinning_pid_output_limit = 3.0f; // 小陀螺PID输出限幅 // TODO: 调
 float spinning_pid_i_limit = 6.0f; // 小陀螺PID积分限幅 // TODO: 调参
 float spinning_pid_deadzone = 0.0f; // 小陀螺PID输出死区 // TODO: 调参
 
-uint8_t gimbal_follow_flag = 0; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
-
-uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
-uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
-
-uint8_t yaw_ctrl_mode = 0; // 0：下板控制 1：上板控制
-
+//?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
 
-uint8_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器d
-
-float head_forward_angle = -2.9f;//正视前方的yaw电机角度
-float yaw_angle_PI = 0.0f;
-
-
+float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
 
 /*============================= 斜坡相关 ================================= */
 
@@ -850,6 +829,16 @@ void task_Motor_Enable()
     Enable_DM_Motor_MIT(&hfdcan3, 0x10);
     osDelay(5);
 }
+
+//更新VMC的变量vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9B%B4%E6%96%B0VMC%E7%9A%84%E5%8F%98%E9%87%8F
+void task_VMC_calculate()
+{
+    VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
+    VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
+    VMC_Get_L0_phi0(&VMC_L);
+    VMC_Get_L0_phi0(&VMC_R);
+}
+
 /*===============================================运动函数===============================================*/
 
 //未站起 + 未上楼收腿  函数
@@ -857,14 +846,8 @@ void NotStanding_NotStairRetract()
 {
     //标志位
     gimbal_follow_flag = 1; //下板控制云台
-    yaw_ctrl_mode = 0;
-    // first_run = 1;//第一次运行标记vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%90%E8%A1%8C%E6%A0%87%E8%AE%B0
 
-    //更新VMC的变量vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9B%B4%E6%96%B0VMC%E7%9A%84%E5%8F%98%E9%87%8F
-    VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
-    VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
-    VMC_Get_L0_phi0(&VMC_L);
-    VMC_Get_L0_phi0(&VMC_R);
+    task_VMC_calculate();
 
     //车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
     Body_Speed_Coculate();
@@ -1002,17 +985,14 @@ void Standing()
             gimbal_follow_flag = 0;//云台跟随底盘完成，切换到底盘跟随云台
             gimbal_follow_flag_cnt = 0;
         }
-        yaw_ctrl_mode = 0;//云台跟随底盘时，yaw控制模式为下板控制
     }
     if(gimbal_follow_flag == 0)
     {
-        yaw_ctrl_mode = 1;//底盘跟随云台时，yaw控制模式为上板控制
-
         //算小陀螺的yaw_error vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E5%B0%8F%E9%99%80%E8%9E%BA%E7%9A%84yaw_error
         if(Foot_Chassis.Chassis_Mode == 1 && spinning_usable == 1)
         {
             // slope_target_spinning_d_yaw = easy_Slope(target_spinning_d_yaw, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
-            PID_Set_Error(&spinning_pid, d_yaw, 8.0f);
+            PID_Set_Error(&spinning_pid, d_yaw, target_spinning_d_yaw);
             yaw_error = PID_coculate(&spinning_pid);
             Speed_Error_Set();
 
@@ -1052,7 +1032,7 @@ void Standing()
             else if(spinning_flag == 0)//常态
             {
                 
-                slope_target_spinning_d_yaw = 0;
+                // slope_target_spinning_d_yaw = 0;
                 spinning_pid.I = 0;
                 spinning_usable = 1;
                 spinning_flag = 0;

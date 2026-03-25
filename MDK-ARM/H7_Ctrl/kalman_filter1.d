@@ -1,5 +1,5 @@
-h7_ctrl\kalman_filter1.o: ..\others\kalman_filter1.c
-h7_ctrl\kalman_filter1.o: ..\others\kalman_filter1.h
+h7_ctrl\kalman_filter1.o: ..\others\Motion_Control\Ctrl\src\kalman_filter1.c
+h7_ctrl\kalman_filter1.o: ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h
 h7_ctrl\kalman_filter1.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h
 h7_ctrl\kalman_filter1.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h
 h7_ctrl\kalman_filter1.o: ../Drivers/CMSIS/Include/cmsis_compiler.h

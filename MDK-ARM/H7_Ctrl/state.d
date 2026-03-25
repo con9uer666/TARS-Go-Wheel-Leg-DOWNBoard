@@ -56,10 +56,10 @@ h7_ctrl\state.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 h7_ctrl\state.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\state.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\state.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-h7_ctrl\state.o: ..\others\remoter.h
+h7_ctrl\state.o: ..\others\Device\inc\remoter.h
 h7_ctrl\state.o: ..\others\state.h
-h7_ctrl\state.o: ..\others\buzzer.h
+h7_ctrl\state.o: ..\others\Device\inc\buzzer.h
 h7_ctrl\state.o: ../Core/Inc/tim.h
-h7_ctrl\state.o: ..\others\motor.h
-h7_ctrl\state.o: ..\others\pid.h
+h7_ctrl\state.o: ..\others\Motion_Control\App\inc\motor.h
+h7_ctrl\state.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
 h7_ctrl\state.o: ../Core/Inc/adc.h

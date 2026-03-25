@@ -43,7 +43,7 @@ h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\detect.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
-h7_ctrl\detect.o: ../others/USER_CAN.h
+h7_ctrl\detect.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
 h7_ctrl\detect.o: ../Core/Inc/fdcan.h
 h7_ctrl\detect.o: ../UserMiddlewares/include/UserFreertos.h
 h7_ctrl\detect.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h

@@ -45,7 +45,7 @@ h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\board2board.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
 h7_ctrl\board2board.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-h7_ctrl\board2board.o: ../others/USER_CAN.h
+h7_ctrl\board2board.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
 h7_ctrl\board2board.o: ../Core/Inc/fdcan.h
 h7_ctrl\board2board.o: ../UI/include/Detect.h
 h7_ctrl\board2board.o: ../UserMiddlewares/include/UserFreertos.h
@@ -67,5 +67,5 @@ h7_ctrl\board2board.o: ../Core/Inc/spi.h
 h7_ctrl\board2board.o: ../UI/include/Judge.h
 h7_ctrl\board2board.o: ../UserMiddlewares/include/Com.h
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
-h7_ctrl\board2board.o: ../others/motor.h
-h7_ctrl\board2board.o: ../others/pid.h
+h7_ctrl\board2board.o: ..\others\Motion_Control\App\inc\motor.h
+h7_ctrl\board2board.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h

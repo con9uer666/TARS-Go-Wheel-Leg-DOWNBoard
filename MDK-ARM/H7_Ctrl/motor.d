@@ -1,4 +1,4 @@
-h7_ctrl\motor.o: ..\others\motor.c
+h7_ctrl\motor.o: ..\others\Motion_Control\App\src\motor.c
 h7_ctrl\motor.o: ../IMU_coculate/controller.h
 h7_ctrl\motor.o: ../Core/Inc/main.h
 h7_ctrl\motor.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
@@ -62,10 +62,10 @@ h7_ctrl\motor.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\motor.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 h7_ctrl\motor.o: ../Core/Inc/fdcan.h
 h7_ctrl\motor.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
-h7_ctrl\motor.o: ..\others\remoter.h
-h7_ctrl\motor.o: ..\others\pid.h
-h7_ctrl\motor.o: ..\others\motor.h
-h7_ctrl\motor.o: ..\others\State.h
+h7_ctrl\motor.o: ..\others\Device\inc\remoter.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\motor.o: ..\others\Motion_Control\App\inc\motor.h
+h7_ctrl\motor.o: ../others/State.h
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\float.h
@@ -90,11 +90,11 @@ h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Inclu
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
 h7_ctrl\motor.o: ../IMU_coculate/imu_temp_ctrl.h
-h7_ctrl\motor.o: ..\others\USER_CAN.h
-h7_ctrl\motor.o: ..\others\VMC.h
-h7_ctrl\motor.o: ..\others\observe_task.h
-h7_ctrl\motor.o: ..\others\kalman_filter1.h
-h7_ctrl\motor.o: ..\others\Self_Righting.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\observe_task.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h
+h7_ctrl\motor.o: ..\others\Motion_Control\App\inc\Self_Righting.h
 h7_ctrl\motor.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\motor.o: ../Core/Inc/usart.h
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

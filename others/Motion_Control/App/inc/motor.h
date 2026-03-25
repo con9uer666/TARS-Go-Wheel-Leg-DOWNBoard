@@ -1,7 +1,7 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-#include "pid.h"
+#include "user_pid.h"
 #include "main.h"
 
 #define LEG_MIN_LENTH 0.19f
@@ -87,7 +87,6 @@ extern Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
 extern Wheel_Motor_t L_LK9025, R_LK9025;
 extern Foot_Chassis_t Foot_Chassis;
 extern uint8_t gimbal_follow_flag; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
-extern uint8_t yaw_ctrl_mode; // 0：下板控制 1：上板控制
 extern float down_board_yaw_output; // 下板yaw输出
 
 extern float body_speed;

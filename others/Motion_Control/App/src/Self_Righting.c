@@ -3,7 +3,7 @@
 #include "Leg_Control.h"
 #include "VMC.h"
 #include "motor.h"
-#include "pid.h"
+#include "user_pid.h"
 
 /* ========================= 状态与模式标志 ========================= */
 

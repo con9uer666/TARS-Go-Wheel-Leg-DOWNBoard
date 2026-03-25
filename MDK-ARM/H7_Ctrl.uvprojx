@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_PWR_LDO_SUPPLY,USE_HAL_DRIVER,STM32H723xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control;..\CommonLibs\inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control;..\CommonLibs\inc;..\others\Device\inc;..\others\Motion_Control\App\inc;..\others\Motion_Control\Ctrl\inc;..\others\Motion_Control\Drv\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -657,76 +657,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>others</GroupName>
-          <Files>
-            <File>
-              <FileName>buzzer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\buzzer.c</FilePath>
-            </File>
-            <File>
-              <FileName>Error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\Error.c</FilePath>
-            </File>
-            <File>
-              <FileName>kalman_filter1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\kalman_filter1.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\LED.c</FilePath>
-            </File>
-            <File>
-              <FileName>motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>observe_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\observe_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>pid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\pid.c</FilePath>
-            </File>
-            <File>
-              <FileName>remoter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\remoter.c</FilePath>
-            </File>
-            <File>
-              <FileName>State.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\State.c</FilePath>
-            </File>
-            <File>
-              <FileName>USER_CAN.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\USER_CAN.c</FilePath>
-            </File>
-            <File>
-              <FileName>VMC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\VMC.c</FilePath>
-            </File>
-            <File>
-              <FileName>Leg_Control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\Leg_Control.c</FilePath>
-            </File>
-            <File>
-              <FileName>Self_Righting.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\Self_Righting.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>IMU</GroupName>
           <Files>
             <File>
@@ -964,6 +894,101 @@
               <FileName>Trigger_about.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CommonLibs\src\Trigger_about.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others</GroupName>
+          <Files>
+            <File>
+              <FileName>Error.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Error.c</FilePath>
+            </File>
+            <File>
+              <FileName>State.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\State.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Device\src</GroupName>
+          <Files>
+            <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\buzzer.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\LED.c</FilePath>
+            </File>
+            <File>
+              <FileName>remoter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\remoter.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Motion_Control\App\src</GroupName>
+          <Files>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>Self_Righting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\Self_Righting.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Motion_Control\Ctrl\src</GroupName>
+          <Files>
+            <File>
+              <FileName>kalman_filter1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\kalman_filter1.c</FilePath>
+            </File>
+            <File>
+              <FileName>Leg_Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\Leg_Control.c</FilePath>
+            </File>
+            <File>
+              <FileName>observe_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\observe_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>VMC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\VMC.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\user_pid.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Motion_Control\Drv\src</GroupName>
+          <Files>
+            <File>
+              <FileName>Motor_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Drv\src\Motor_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>USER_CAN.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Drv\src\USER_CAN.c</FilePath>
             </File>
           </Files>
         </Group>

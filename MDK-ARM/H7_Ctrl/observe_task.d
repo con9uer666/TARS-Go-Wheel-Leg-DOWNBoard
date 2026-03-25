@@ -1,6 +1,6 @@
-h7_ctrl\observe_task.o: ..\others\observe_task.c
-h7_ctrl\observe_task.o: ..\others\observe_task.h
-h7_ctrl\observe_task.o: ..\others\kalman_filter1.h
+h7_ctrl\observe_task.o: ..\others\Motion_Control\Ctrl\src\observe_task.c
+h7_ctrl\observe_task.o: ..\others\Motion_Control\Ctrl\inc\observe_task.h
+h7_ctrl\observe_task.o: ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h
 h7_ctrl\observe_task.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h
 h7_ctrl\observe_task.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h
 h7_ctrl\observe_task.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
@@ -46,8 +46,8 @@ h7_ctrl\observe_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timer
 h7_ctrl\observe_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\observe_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\observe_task.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-h7_ctrl\observe_task.o: ..\others\motor.h
-h7_ctrl\observe_task.o: ..\others\pid.h
+h7_ctrl\observe_task.o: ..\others\Motion_Control\App\inc\motor.h
+h7_ctrl\observe_task.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
 h7_ctrl\observe_task.o: ../Core/Inc/main.h
 h7_ctrl\observe_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\observe_task.o: ../Core/Inc/stm32h7xx_hal_conf.h

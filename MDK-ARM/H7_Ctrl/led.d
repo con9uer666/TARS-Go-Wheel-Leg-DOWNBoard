@@ -1,5 +1,5 @@
-h7_ctrl\led.o: ..\others\LED.c
-h7_ctrl\led.o: ..\others\LED.h
+h7_ctrl\led.o: ..\others\Device\src\LED.c
+h7_ctrl\led.o: ..\others\Device\inc\LED.h
 h7_ctrl\led.o: ../Core/Inc/main.h
 h7_ctrl\led.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 h7_ctrl\led.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -58,6 +58,6 @@ h7_ctrl\led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 h7_ctrl\led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 h7_ctrl\led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 h7_ctrl\led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-h7_ctrl\led.o: ..\others\remoter.h
-h7_ctrl\led.o: ..\others\buzzer.h
-h7_ctrl\led.o: ..\others\State.h
+h7_ctrl\led.o: ..\others\Device\inc\remoter.h
+h7_ctrl\led.o: ..\others\Device\inc\buzzer.h
+h7_ctrl\led.o: ../others/State.h
