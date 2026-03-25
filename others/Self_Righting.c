@@ -1,31 +1,39 @@
 #include "Self_Righting.h"
-
 #include <math.h>
-
 #include "Leg_Control.h"
 #include "VMC.h"
 #include "motor.h"
 #include "pid.h"
 
-//TODO:轮子锁死双环PID，防劈叉PID
-
-
 /* ========================= 状态与模式标志 ========================= */
 
-int SR_test_state = 0;	//0：程序正常跑		1：强制第一阶段		2：强制第二阶段		3：强制第三阶段		4：强制第四阶段
+//调试强制入口
+//0：程序正常跑		1：强制第一阶段		2：强制第二阶段		3：强制第三阶段		4：强制第四阶段
+int SR_test_state = 0;	
 
-/* 当前自起状态机阶段。 */
+//当前自起状态机阶段
 SelfRightingStage_t g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
 
-/* 总开关：置1执行自起，置0时本模块不输出力矩（保持清零）。 */
+//总开关：置1执行自起，置0时倒地自起不输出力矩
 uint8_t g_self_righting_enable = 1;
 
-/*
- * 标记是否由“未并齐但卡住”触发进入第三阶段。
- * 0: 正常并齐后进入第三阶段；
- * 1: 未并齐但卡住，直接进入第三阶段并启用差速策略。
- */
+
+//标记是否由“未并齐但卡住”触发进入第三阶段
+//
+//@ 0: 正常并齐后进入第三阶段；
+//@ 1: 未并齐但卡住，直接进入第三阶段并启用差速策略。
 uint8_t g_self_righting_sync_from_stuck = 0;
+
+//卡腿标志
+int turn_stuck_l;//左腿转动卡住标签，1：卡住；0：不卡住
+int turn_stuck_r;//右腿转动卡住标签，1：卡住；0：不卡住
+
+//伸腿到位标志
+int l0_reached_l;//左腿达到目标腿长标签，1：达到；0：未达到
+int l0_reached_r;//右腿达到目标腿长标签，1：达到；0：未达到
+
+//两腿并齐标签，1：并齐；0：未并齐
+int aligned;
 
 /* ========================= 参数区 ========================= */
 
@@ -84,9 +92,6 @@ float right_phi0_0_to_4PI;
 float cmd_spd_l;
 float cmd_spd_r;
 
-int turn_stuck_l;//左腿转动卡住标签，1：卡住；0：不卡住
-int turn_stuck_r; // 右腿转动卡住标签，1：卡住；0：不卡住
-
 float rem_l;//非负数
 float rem_r;//非负数
 
@@ -101,12 +106,9 @@ float l0_err_r;//右腿腿长误差
 int l0_stuck_l;
 int l0_stuck_r;
 
-int l0_reached_l;//左腿达到目标腿长标签，1：达到；0：未达到
-int l0_reached_r;//右腿达到目标腿长标签，1：达到；0：未达到
-
-int aligned;    //两腿并齐标签，1：并齐；0：未并齐
-
 float phi_diff;//两腿角度差
+
+/* ========================= PID参数 ========================= */
 
 //轮子PID参数
 float wheel_kp = 0.01;
@@ -126,9 +128,11 @@ float anti_split_i_limit = 0;
 float anti_split_Integraldead_zone = 0;
 float anti_split_deadzone = 0;
 
-float reached_ang_l = 0;
-float reached_ang_r = 0;
+//腿角度到位标志
+float reached_ang_l = 0;//左腿角度到位标志	1：到位 0：未到位
+float reached_ang_r = 0;//右腿角度到位标志	1：到位 0：未到位
 
+/* ========================= 用户调试观测量 ========================= */
 
 float user_a;
 float user_b;

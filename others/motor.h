@@ -102,5 +102,18 @@ void LK_MF9025_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float
 void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, float torq);
 void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque);
 
+
+/*====================================== 运动控制相关 =========================================== */
+void task_Motor_Init();
+void task_VMC_Init();
+void task_PID_Init();
+void task_Pitch_Coculate();
+void task_Motor_Enable();
+void NotStanding_NotStairRetract();
+void Standing();
+void Upstair_NotStairRetract();
+void StairRetract();
+
+
 #endif
 

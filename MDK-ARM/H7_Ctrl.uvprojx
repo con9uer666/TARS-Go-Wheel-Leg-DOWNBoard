@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_PWR_LDO_SUPPLY,USE_HAL_DRIVER,STM32H723xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control;..\CommonLibs\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -905,11 +905,6 @@
               <FileType>1</FileType>
               <FilePath>..\math\source\SMC.c</FilePath>
             </File>
-            <File>
-              <FileName>Angle_about.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\math\source\Angle_about.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -954,6 +949,21 @@
               <FileName>RLS.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Power_control\RLS.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CommonLibs</GroupName>
+          <Files>
+            <File>
+              <FileName>Angle_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CommonLibs\src\Angle_about.c</FilePath>
+            </File>
+            <File>
+              <FileName>Trigger_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CommonLibs\src\Trigger_about.c</FilePath>
             </File>
           </Files>
         </Group>

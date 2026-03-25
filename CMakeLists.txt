@@ -56,6 +56,7 @@ file(GLOB_RECURSE THREAD
         "UserMiddlewares/*.c"
         "math/*.c"
         "Power_control/*.c"
+        "CommonLibs/*.c"
 )
 
 # Add sources to executable
@@ -72,6 +73,7 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/UserMiddlewares/include
     ${CMAKE_CURRENT_LIST_DIR}/math/include
     ${CMAKE_CURRENT_LIST_DIR}/Power_control
+    ${CMAKE_CURRENT_LIST_DIR}/CommonLibs/inc
 )
 
 # Add project symbols (macros)
