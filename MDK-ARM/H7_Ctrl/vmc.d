@@ -82,3 +82,6 @@ h7_ctrl\vmc.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include
 h7_ctrl\vmc.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
 h7_ctrl\vmc.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
 h7_ctrl\vmc.o: ../IMU_coculate/imu_temp_ctrl.h
+h7_ctrl\vmc.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h
+h7_ctrl\vmc.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
+h7_ctrl\vmc.o: ../Core/Inc/fdcan.h

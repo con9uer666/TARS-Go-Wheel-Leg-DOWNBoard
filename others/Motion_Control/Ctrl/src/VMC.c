@@ -6,6 +6,7 @@
 #include "VMC.h"
 #include "imu_temp_ctrl.h"
 #include <math.h>
+#include "Motor_Drv.h"
 // #include <stdint.h>
 
 VMC_t VMC_L, VMC_R;
@@ -121,4 +122,13 @@ float VMC_Get_Ground_F0(VMC_t *VMC)
     F0 = P + 1.1 * dd_zw;
 
     return F0;
+}
+
+//算左右VMC的phi1/phi4/L0/phi0
+void VMC_Coculate()
+{
+    VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
+    VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
+    VMC_Get_L0_phi0(&VMC_L);
+    VMC_Get_L0_phi0(&VMC_R);
 }

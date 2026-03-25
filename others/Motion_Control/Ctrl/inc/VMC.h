@@ -37,5 +37,6 @@ void VMC_Set_phi1_phi4(VMC_t *VMC, float phi1, float phi4);
 void VMC_Get_L0_phi0(VMC_t *VMC);
 void VMC_Set_F0_T(VMC_t *VMC, float F, float T);
 float VMC_Get_Ground_F0(VMC_t *VMC);
+void VMC_Coculate();
 
 #endif

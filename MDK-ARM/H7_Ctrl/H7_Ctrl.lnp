@@ -91,6 +91,7 @@
 "h7_ctrl\observe_task.o"
 "h7_ctrl\vmc.o"
 "h7_ctrl\user_pid.o"
+"h7_ctrl\wheel_leg_about.o"
 "h7_ctrl\motor_drv.o"
 "h7_ctrl\user_can.o"
 "h7_ctrl\basicmathfunctions.o"

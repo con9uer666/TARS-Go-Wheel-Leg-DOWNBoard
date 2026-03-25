@@ -101,3 +101,4 @@ h7_ctrl\motor.o: ../Core/Inc/usart.h
 h7_ctrl\motor.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 h7_ctrl\motor.o: ../math/include/Slope.h
 h7_ctrl\motor.o: ..\CommonLibs\inc\Angle_about.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\Wheel_Leg_about.h
