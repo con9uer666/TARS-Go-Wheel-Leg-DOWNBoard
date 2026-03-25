@@ -65,5 +65,6 @@ h7_ctrl\error.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
 h7_ctrl\error.o: ../Core/Inc/fdcan.h
 h7_ctrl\error.o: ..\others\Motion_Control\App\inc\motor.h
 h7_ctrl\error.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\error.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h
 h7_ctrl\error.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\error.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

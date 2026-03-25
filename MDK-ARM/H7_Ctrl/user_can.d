@@ -61,6 +61,7 @@ h7_ctrl\user_can.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_gro
 h7_ctrl\user_can.o: ..\others\Device\inc\remoter.h
 h7_ctrl\user_can.o: ..\others\Motion_Control\App\inc\motor.h
 h7_ctrl\user_can.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\user_can.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h
 h7_ctrl\user_can.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
 h7_ctrl\user_can.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h
 h7_ctrl\user_can.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h

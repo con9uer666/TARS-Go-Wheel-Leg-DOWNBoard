@@ -70,3 +70,6 @@ h7_ctrl\powerctrl.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\I
 h7_ctrl\powerctrl.o: ..\Power_control\RLS.h
 h7_ctrl\powerctrl.o: ..\others\Motion_Control\App\inc\motor.h
 h7_ctrl\powerctrl.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\powerctrl.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h
+h7_ctrl\powerctrl.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
+h7_ctrl\powerctrl.o: ../Core/Inc/fdcan.h

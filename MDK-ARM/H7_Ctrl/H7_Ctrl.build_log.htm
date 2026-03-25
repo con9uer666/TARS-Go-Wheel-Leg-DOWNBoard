@@ -29,114 +29,382 @@ Project File Date:  03/26/2026
 Build target 'H7_Ctrl'
 Note: source file '..\IMU_coculate\pid.c' - object file renamed from 'H7_Ctrl\pid.o' to 'H7_Ctrl\pid_1.o'.
 Note: source file '..\CommonLibs\src\Angle_about.c' - object file renamed from 'H7_Ctrl\Angle_about.o' to 'H7_Ctrl\angle_about_1.o'.
-compiling motor.c...
-..\others\Motion_Control\App\inc\motor.h(106): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
-  void task_Motor_Init();
-..\others\Motion_Control\App\inc\motor.h(107): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
-  void task_VMC_Init();
-..\others\Motion_Control\App\inc\motor.h(108): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
-  void task_PID_Init();
-..\others\Motion_Control\App\inc\motor.h(109): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
-  void task_Pitch_Coculate();
-..\others\Motion_Control\App\inc\motor.h(110): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
-  void task_Motor_Enable();
-..\others\Motion_Control\App\inc\motor.h(111): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
-  void NotStanding_NotStairRetract();
-..\others\Motion_Control\App\inc\motor.h(112): warning:  #1295-D: Deprecated declaration Standing - give arg types
-  void Standing();
-..\others\Motion_Control\App\inc\motor.h(113): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
-  void Upstair_NotStairRetract();
-..\others\Motion_Control\App\inc\motor.h(114): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
-  void StairRetract();
-..\others\Motion_Control\App\inc\Self_Righting.h(73): warning:  #1-D: last line of file ends without a newline
-  #endif //SELF_RIGHTING_H
-..\CommonLibs\inc\Angle_about.h(7): warning:  #47-D: incompatible redefinition of macro "PI"  (declared at line 57 of "../IMU_coculate/user_lib.h")
+compiling user_lib.c...
+compiling BMI088driver.c...
+compiling usart.c...
+compiling tim.c...
+compiling memorymap.c...
+compiling BMI088Middleware.c...
+compiling stm32h7xx_hal_msp.c...
+compiling freertos.c...
+compiling fdcan.c...
+compiling adc.c...
+compiling dma.c...
+compiling Graphics.c...
+compiling imu_temp_ctrl.c...
+..\IMU_coculate\imu_temp_ctrl.c(137): warning:  #188-D: enumerated type mixed with another type
+  		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
+..\IMU_coculate\imu_temp_ctrl.c(139): warning:  #188-D: enumerated type mixed with another type
+  		HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
+..\IMU_coculate\imu_temp_ctrl.c(59): warning:  #177-D: variable "first_mahony"  was declared but never referenced
+  static uint8_t first_mahony=0; 
+..\IMU_coculate\imu_temp_ctrl.c: 3 warnings, 0 errors
+compiling pid.c...
+compiling bsp_dwt.c...
+compiling spi.c...
+compiling main.c...
+compiling IMU_tasks.c...
+compiling Slope.c...
+..\math\source\Slope.c(64): warning:  #1-D: last line of file ends without a newline
+  }
+..\math\source\Slope.c: 1 warning, 0 errors
+compiling Detect.c...
+compiling Judge.c...
+compiling jlui_port_freertos.c...
+..\UI\source\jlui_port_freertos.c(114): warning:  #177-D: variable "CAPBurst"  was declared but never referenced
+  	Uiid CAPBurst;
+..\UI\source\jlui_port_freertos.c: 1 warning, 0 errors
+compiling gpio.c...
+compiling controller.c...
+compiling stm32h7xx_it.c...
+compiling Motor_Drv.c...
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\Drv\src\Motor_Drv.c(212): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(torque >= 0.338959944)
+..\others\Motion_Control\Drv\src\Motor_Drv.c: 2 warnings, 0 errors
+compiling buzzer.c...
+compiling Leg_Control.c...
+..\others\Motion_Control\Ctrl\inc\Leg_Control.h(23): warning:  #1-D: last line of file ends without a newline
+  #endif // LEG_CONTROL_H
+..\others\Motion_Control\Ctrl\src\Leg_Control.c(317): warning:  #1-D: last line of file ends without a newline
+  // }
+..\others\Motion_Control\Ctrl\src\Leg_Control.c: 2 warnings, 0 errors
+compiling Angle_about.c...
+..\CommonLibs\inc\Angle_about.h(7): warning:  #47-D: incompatible redefinition of macro "PI"  (declared at line 65 of "../Core/Inc/main.h")
   #define PI 3.1415926f
 ..\CommonLibs\inc\Angle_about.h(21): warning:  #1-D: last line of file ends without a newline
   #endif
-..\others\Motion_Control\App\src\motor.c(492): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      if(torque >= 0.338959944)
-..\others\Motion_Control\App\src\motor.c(558): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\CommonLibs\src\Angle_about.c(94): warning:  #1-D: last line of file ends without a newline
+  }
+..\CommonLibs\src\Angle_about.c: 3 warnings, 0 errors
+compiling Trigger_about.c...
+..\CommonLibs\inc\Trigger_about.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\CommonLibs\src\Trigger_about.c(35): warning:  #1-D: last line of file ends without a newline
+  }
+..\CommonLibs\src\Trigger_about.c: 2 warnings, 0 errors
+compiling Self_Righting.c...
+..\others\Motion_Control\App\inc\Self_Righting.h(73): warning:  #1-D: last line of file ends without a newline
+  #endif //SELF_RIGHTING_H
+..\others\Motion_Control\Ctrl\inc\Leg_Control.h(23): warning:  #1-D: last line of file ends without a newline
+  #endif // LEG_CONTROL_H
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\Motion_Control\App\src\Self_Righting.c(73): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  float g_sr_target_angle_l = 2.0 * PI;          /* 左腿目标角度（车身坐标系 phi0）�? */ 
+..\others\Motion_Control\App\src\Self_Righting.c(74): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  float g_sr_target_angle_r = 2.0 * PI;          /* 右腿目标角度（车身坐标系 phi0）�? */ 
+..\others\Motion_Control\App\src\Self_Righting.c(206): warning:  #940-D: missing return statement at end of non-void function "update_differ_phi0_0_to_4PI" 
+  }
+..\others\Motion_Control\App\src\Self_Righting.c(151): warning:  #177-D: function "limit_function"  was declared but never referenced
+  static float limit_function(float value, float max_mag)
+..\others\Motion_Control\App\src\Self_Righting.c: 16 warnings, 0 errors
+compiling RLS.c...
+../Core/Inc/main.h(65): warning:  #47-D: incompatible redefinition of macro "PI"  (declared at line 54 of "C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/fast_math_functions.h")
+  #define PI 3.14159265f
+..\Power_control\PowerCtrl.h(36): warning:  #1295-D: Deprecated declaration PowerCtrl - give arg types
+  void PowerCtrl();
+..\Power_control\PowerCtrl.h(38): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Power_control\RLS.c: 3 warnings, 0 errors
+compiling LED.c...
+..\others\Device\src\LED.c(76): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		if(bat_voltage >= 15.0)
+..\others\Device\src\LED.c: 1 warning, 0 errors
+compiling Error.c...
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\Error.c: 10 warnings, 0 errors
+compiling PowerCtrl.c...
+..\Power_control\PowerCtrl.h(36): warning:  #1295-D: Deprecated declaration PowerCtrl - give arg types
+  void PowerCtrl();
+..\Power_control\PowerCtrl.h(38): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\Power_control\PowerCtrl.c(75): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  	whell_power.kp = 1/sqrt(2*whell_power.a*0.3*0.3*(-0.5*(LQR_K[0][2]+LQR_K[1][2]))*(-0.5*(LQR_K[0][2]+LQR_K[1][2])));
+..\Power_control\PowerCtrl.c: 13 warnings, 0 errors
+compiling remoter.c...
+compiling observe_task.c...
+../Core/Inc/main.h(65): warning:  #47-D: incompatible redefinition of macro "PI"  (declared at line 54 of "C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/fast_math_functions.h")
+  #define PI 3.14159265f
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\Motion_Control\Ctrl\src\observe_task.c(64): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		if(fabsf(kalman_body_speed) <= 0.05)
+..\others\Motion_Control\Ctrl\src\observe_task.c: 12 warnings, 0 errors
+compiling State.c...
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\State.c(43): warning:  #177-D: variable "i"  was declared but never referenced
+  	int i = 0;
+..\others\State.c: 11 warnings, 0 errors
+compiling VMC.c...
+..\others\Motion_Control\Ctrl\src\VMC.c(82): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          VMC_L.d_b_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_b_phi0 ;
+..\others\Motion_Control\Ctrl\src\VMC.c(90): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          VMC_R.d_b_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_b_phi0 ;
+..\others\Motion_Control\Ctrl\src\VMC.c(121): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      F0 = P + 1.1 * dd_zw;
+..\others\Motion_Control\Ctrl\src\VMC.c(116): warning:  #177-D: variable "m_w"  was declared but never referenced
+      float P, m_w, dd_zw;
+..\others\Motion_Control\Ctrl\src\VMC.c: 4 warnings, 0 errors
+compiling Board2Board.c...
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\UserMiddlewares\source\Board2Board.c: 10 warnings, 0 errors
+compiling USER_CAN.c...
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\Motion_Control\Drv\src\USER_CAN.c(48): warning:  #177-D: variable "if_can_get_message_ok"  was declared but never referenced
+  	HAL_StatusTypeDef if_can_get_message_ok;
+..\others\Motion_Control\Drv\src\USER_CAN.c: 11 warnings, 0 errors
+compiling motor.c...
+..\others\Motion_Control\Drv\inc\Motor_Drv.h(72): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\inc\motor.h(67): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(68): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(69): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(70): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(71): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(72): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(73): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(74): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(75): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\Motion_Control\App\inc\Self_Righting.h(73): warning:  #1-D: last line of file ends without a newline
+  #endif //SELF_RIGHTING_H
+..\CommonLibs\inc\Angle_about.h(7): warning:  #47-D: incompatible redefinition of macro "PI"  (declared at line 65 of "../Core/Inc/main.h")
+  #define PI 3.1415926f
+..\CommonLibs\inc\Angle_about.h(21): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\src\motor.c(320): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(speed_error <= 0.3 && speed_error >= -0.3)
-..\others\Motion_Control\App\src\motor.c(598): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
-..\others\Motion_Control\App\src\motor.c(599): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
-..\others\Motion_Control\App\src\motor.c(612): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      if(target_L_Leg_L0 >= 0.40)                                                                                                                                                         
-..\others\Motion_Control\App\src\motor.c(617): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      if(target_R_Leg_L0 >= 0.40)                                                                                                                                                         
-..\others\Motion_Control\App\src\motor.c(638): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(360): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
+..\others\Motion_Control\App\src\motor.c(361): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
+..\others\Motion_Control\App\src\motor.c(374): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(target_L_Leg_L0 >= 0.40)                    
+..\others\Motion_Control\App\src\motor.c(379): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(target_R_Leg_L0 >= 0.40)                    
+..\others\Motion_Control\App\src\motor.c(400): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(temp < 0.0)
-..\others\Motion_Control\App\src\motor.c(883): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(645): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加�?
-..\others\Motion_Control\App\src\motor.c(890): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(652): warning:  #1035-D: single-precision operand implicitly converted to double-precision
               PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
-..\others\Motion_Control\App\src\motor.c(906): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(668): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
-..\others\Motion_Control\App\src\motor.c(915): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(677): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
-..\others\Motion_Control\App\src\motor.c(926): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(688): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(935): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(697): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(962): warning:  #188-D: enumerated type mixed with another type
+..\others\Motion_Control\App\src\motor.c(724): warning:  #188-D: enumerated type mixed with another type
       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
-..\others\Motion_Control\App\src\motor.c(1056): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(818): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       yaw_error = 0.05 * yaw_error + 0.95 * last_yaw_error;
-..\others\Motion_Control\App\src\motor.c(1056): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(818): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       yaw_error = 0.05 * yaw_error + 0.95 * last_yaw_error;
-..\others\Motion_Control\App\src\motor.c(1145): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(907): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
-..\others\Motion_Control\App\src\motor.c(1145): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(907): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
-..\others\Motion_Control\App\src\motor.c(1146): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(908): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
-..\others\Motion_Control\App\src\motor.c(1146): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(908): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
-..\others\Motion_Control\App\src\motor.c(1174): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(936): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           Leg_L_T *= 0.7; //收腿力度参数
-..\others\Motion_Control\App\src\motor.c(1188): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(950): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           Leg_R_T *= 0.7;
-..\others\Motion_Control\App\src\motor.c(1203): warning:  #188-D: enumerated type mixed with another type
+..\others\Motion_Control\App\src\motor.c(965): warning:  #188-D: enumerated type mixed with another type
       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
-..\others\Motion_Control\App\src\motor.c(1252): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1014): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.2);
-..\others\Motion_Control\App\src\motor.c(1257): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1019): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.2);
-..\others\Motion_Control\App\src\motor.c(1267): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1029): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(1267): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1029): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(1276): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1038): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(1276): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1038): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(1322): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1084): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
-..\others\Motion_Control\App\src\motor.c(1330): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1092): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
-..\others\Motion_Control\App\src\motor.c(1337): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1099): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
-..\others\Motion_Control\App\src\motor.c(1344): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1106): warning:  #1035-D: single-precision operand implicitly converted to double-precision
           PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
-..\others\Motion_Control\App\src\motor.c(1358): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1120): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
-..\others\Motion_Control\App\src\motor.c(1358): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1120): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
-..\others\Motion_Control\App\src\motor.c(1367): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1129): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
-..\others\Motion_Control\App\src\motor.c(1367): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1129): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
-..\others\Motion_Control\App\src\motor.c(1378): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1140): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-..\others\Motion_Control\App\src\motor.c(1388): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\others\Motion_Control\App\src\motor.c(1150): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
 ..\others\Motion_Control\App\src\motor.c: 51 warnings, 0 errors
 linking...
-Program Size: Code=89788 RO-data=3716 RW-data=2420 ZI-data=52852  
+Program Size: Code=89788 RO-data=3716 RW-data=2424 ZI-data=52856  
 FromELF: creating hex file...
-"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 51 Warning(s).
+"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 156 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -204,7 +472,7 @@ Package Vendor: Keil
       Source file:   Source/CommonTables/CommonTables.c
       Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
       Source file:   Source/TransformFunctions/TransformFunctionsF16.c
-Build Time Elapsed:  00:00:07
+Build Time Elapsed:  00:01:14
 </pre>
 </body>
 </html>

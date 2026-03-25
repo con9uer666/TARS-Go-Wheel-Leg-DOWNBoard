@@ -69,3 +69,4 @@ h7_ctrl\board2board.o: ../UserMiddlewares/include/Com.h
 h7_ctrl\board2board.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 h7_ctrl\board2board.o: ..\others\Motion_Control\App\inc\motor.h
 h7_ctrl\board2board.o: ..\others\Motion_Control\Ctrl\inc\user_pid.h
+h7_ctrl\board2board.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h

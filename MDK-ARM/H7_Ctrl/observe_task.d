@@ -86,3 +86,6 @@ h7_ctrl\observe_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
 h7_ctrl\observe_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 h7_ctrl\observe_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 h7_ctrl\observe_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
+h7_ctrl\observe_task.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h
+h7_ctrl\observe_task.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
+h7_ctrl\observe_task.o: ../Core/Inc/fdcan.h

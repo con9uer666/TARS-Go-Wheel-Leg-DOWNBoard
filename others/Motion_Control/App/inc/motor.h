@@ -3,57 +3,18 @@
 
 #include "user_pid.h"
 #include "main.h"
+#include "Motor_Drv.h"
 
 #define LEG_MIN_LENTH 0.19f
 #define WHEEL_RADIUS 0.061f
 
-typedef struct Rx_Data{
-    uint8_t ID;
-    uint8_t State;
-    float Position;
-    float Velocity;
-    float Torque;
-    float T_Mos;
-    float T_Rotor;
-}Rx_Data_t;
 
-typedef struct LK_Rx_Data{
-    uint8_t ID;
-    uint8_t State;
-    int16_t Position;
-    float Velocity;
-    int16_t Torque;
-    int16_t T_Mos;
-    int16_t T_Rotor;
-}LK_Rx_Data_t;
 
-typedef struct DJI_Rx_Data{
-    uint16_t Position;
-    float Velocity;
-    int16_t Speed;
-    int16_t Torque;
-    uint8_t temperate;
-    int16_t last_ecd;
-}DJI_Rx_Data_t;
 
-typedef struct Joint_Motor{
-    Rx_Data_t Rx_Data;
-    float Target_Torque;
-    float TMAX;
-    float PMAX;
-    float VMAX;
-    uint16_t motor_id;
-}Joint_Motor_t;
 
-typedef struct Wheel_Motor{
-    DJI_Rx_Data_t Rx_Data;
-    int16_t TX_data;
-    float Target_Torque;
-    float TMAX;
-    float PMAX;
-    float VMAX;
-    uint16_t motor_id;
-}Wheel_Motor_t;
+
+
+
 
 typedef struct RampGenerator
 {
@@ -83,8 +44,8 @@ typedef struct Foot_Chassis
 	Foot_Chassis_Info_t	Info;//底盘信息
 }Foot_Chassis_t;
 
-extern Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
-extern Wheel_Motor_t L_LK9025, R_LK9025;
+
+
 extern Foot_Chassis_t Foot_Chassis;
 extern uint8_t gimbal_follow_flag; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
 extern float down_board_yaw_output; // 下板yaw输出
