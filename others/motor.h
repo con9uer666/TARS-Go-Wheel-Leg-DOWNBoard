@@ -4,7 +4,7 @@
 #include "pid.h"
 #include "main.h"
 
-#define LEG_MIN_LENTH 0.18f
+#define LEG_MIN_LENTH 0.19f
 #define WHEEL_RADIUS 0.061f
 
 typedef struct Rx_Data{
@@ -91,6 +91,7 @@ extern uint8_t yaw_ctrl_mode; // 0：下板控制 1：上板控制
 extern float down_board_yaw_output; // 下板yaw输出
 
 extern float body_speed;
+extern uint8_t start_mode;
 
 void DM8009_Get_Data(uint8_t *Data ,Joint_Motor_t *Motor);
 // void LK9025_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor);

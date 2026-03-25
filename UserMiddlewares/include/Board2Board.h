@@ -133,6 +133,7 @@ extern RC_TypeDef rcInfo;
 extern uint8_t STOPFLAG;
 extern uint8_t FEEDBACK;
 extern uint8_t upstairs_flag;
+extern uint8_t B2B_offline_flag;
 
 void B2B_ParseUsart(void);
 //RC初始化

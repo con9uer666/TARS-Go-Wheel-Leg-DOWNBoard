@@ -68,10 +68,7 @@ uint8_t txbuffer[64] = {0};
 int receive_times;
 
 extern float target_body_speed;
-<<<<<<< HEAD
-=======
 float Foot_Target_Relative_Angle;//!目前没用。以后可能会用
->>>>>>> c7fd8cbf19104cfa1eafc0ed5235dabcae1d64f3
 uint8_t upstairs_flag = 0;//0：常态；1：上台阶的瞬间
 
 
@@ -113,10 +110,11 @@ void B2B_ParseUsart() // 先发低字节
 
 		Foot_Chassis.Target_Leg_State = usart2RxBuf[42];
 		Foot_Chassis.Chassis_Mode = usart2RxBuf[43];
-		if(usart2RxBuf[44] == 1)
-		{
-			upstairs_flag = 1;
-		}
+		// if(usart2RxBuf[44] == 1)
+		// {
+		// 	upstairs_flag = 1;
+		// }
+		upstairs_flag = usart2RxBuf[44];
 		// for(int i = 0; i <= 127; i++)
 		// {
 		// 	usart2RxBuf[i] = 0;
@@ -158,13 +156,19 @@ void B2B_ParseUsart() // 先发低字节
 		txbuffer[44] = JUDGE_GetChassisPowerLimit() >> 8;
 
 		txbuffer[45] = JUDGE_IsValid();
-		
+
+		txbuffer[46] = start_mode;
 
 		rs485_isvalid = 1;
 
 		HAL_UART_Transmit_DMA(&huart2, txbuffer, 64);
 	}
 }
+
+uint16_t B2B_offline_cnt = 0;
+uint16_t pre_B2B_offline_cnt = 0;
+uint8_t B2B_time_cnt = 0;
+uint8_t B2B_offline_flag = 0;
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
@@ -182,6 +186,8 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		B2B_ParseUsart();
 		Detect_Update(DeviceID_B2B);
 		detectList[DeviceID_B2B].isLost = 0;
+
+		B2B_offline_cnt ++;
 	}
 }
 
@@ -214,6 +220,19 @@ void OS_Board2BoardCallback(void const *argument)
 			receive_times = 0;
 		}
 		Task_B2B_Callback();
+
+		if(B2B_time_cnt >= 250)
+		{
+			if(B2B_offline_cnt == pre_B2B_offline_cnt)
+			{
+				B2B_offline_flag = 1;
+				STOPFLAG = 1;
+			}
+			pre_B2B_offline_cnt = B2B_offline_cnt;
+			B2B_time_cnt = 0;
+		}
+
+		B2B_time_cnt ++;
 		osDelay(2);
 	}
 }

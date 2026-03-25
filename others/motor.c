@@ -21,6 +21,8 @@
 #include "Slope.h"
 #include "Board2Board.h"
 #include "Slope.h"
+#include "Angle_about.h"
+#include "Slope.h"
 
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;                                                                                                                                     
 Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名    
@@ -73,6 +75,10 @@ float mg = 130.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
+
+float raw_yaw_error;
+float last_yaw_error;
+float yaw_error_step = 0.01f;//yaw误差斜坡步长
 
 float LQR_K[4][10] = {
     -1.5319,  -4.4506,  -4.8607,  -0.84003,  -6.7098,  -0.90493,  -5.4903,  -0.83328,  -9.7772,  -0.90614,
@@ -139,16 +145,20 @@ user_pid_t L_Leg_L0_SPD_PID; //
 user_pid_t R_Leg_L0_SPD_PID; //
 
 user_pid_t spinning_pid;//小陀螺PID
+user_pid_t spinning_speed_pid;//小陀螺减速PID
+// user_pid_t gimbal_follow_error_pid;//云台跟随错误PID
 
 user_pid_t Roll_Comp_PID;    //ROLL补偿pid
 
 user_pid_t Leg_Phi0_PID;     //防劈叉pid
 
 user_pid_t gimbal_pitch_pid;//云台俯仰pid
-user_pid_t gimbal_yaw_pid;//云台偏航pid
+
+user_pid_t gimbal_yaw_torque_pid;//云台偏航速度环pid
+user_pid_t gimbal_yaw_speed_pid;//云台偏航角度环pid
 
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
-float alpha_target_L0 = 0.01f;//低通滤波系数，越小越平滑，但响应越慢
+float alpha_target_L0 = 0.005f;//低通滤波系数，越小越平滑，但响应越慢
 float target_L_Leg_L0 = LEG_MIN_LENTH;
 float target_R_Leg_L0 = LEG_MIN_LENTH;
 uint8_t i;
@@ -587,10 +597,10 @@ void Speed_Error_Set()
     //// target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
     speed_error = target_body_speed - kalman_body_speed;
 
-    if(speed_error >= speed_limit * 1.0f)
-    speed_error = speed_limit * 1.0f;
-    if(speed_error <= -speed_limit * 1.0f)
-    speed_error = -speed_limit * 1.0f;
+    if(speed_error >= speed_limit * 0.7f)
+    speed_error = speed_limit * 0.7f;
+    if(speed_error <= -speed_limit * 0.7f)
+    speed_error = -speed_limit * 0.7f;
 }
 
 /**
@@ -645,26 +655,17 @@ void INS_Coculate()
     else if (temp < -PI)
         temp += 2 * PI;
     d_yaw = alpha_d_yaw * (temp/0.002f) + (1 - alpha_d_yaw) * d_yaw;
-
-    if(first_run == 1)  //!听说是屎，后来好像不用了
-    {
-        target_yaw = yaw_trans[0];
-        d_yaw = 0;
-        first_run = 0;
-    }
 }
 
-float yaw_error_slope_step = 0.01f;
-
-//动态低通滤波系数
-float alpha_yaw_error = 0.0f;//yaw误差低通滤波系数
+// //动态低通滤波系数
+// float alpha_yaw_error = 0.0f;//yaw误差低通滤波系数
 
 //speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
     Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-2.84f);//减的是零点
-
+    
     //套圈处理
     if(Yaw_motor_position > PI)
     {
@@ -674,11 +675,11 @@ void Yaw_Error_Coculate()
     {
         Yaw_motor_position += 2 * PI;
     }
+    yaw_error = Yaw_motor_position;
+    // alpha_yaw_error = Yaw_motor_position * Yaw_motor_position * 0.05f;//Yaw_motor_position越大，alpha越大，响应越慢，最大为0.5
+    // raw_yaw_error = Yaw_motor_position;
 
-    alpha_yaw_error = Yaw_motor_position * Yaw_motor_position * 0.05f;//Yaw_motor_position越大，alpha越大，响应越慢，最大为0.5
-
-    yaw_error = Yaw_motor_position * (1 - alpha_yaw_error) + yaw_error * alpha_yaw_error;//yaw误差低通滤波，响应速度根据yaw误差大小动态调整，yaw误差越大，响应越慢
-
+    
     float yaw_error_max = 0;
     yaw_error_max = ((2.0f - fabsf(kalman_body_speed))/2.0f) * 1.5f;//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
     if(yaw_error_max <= 0.05f)
@@ -693,7 +694,10 @@ void Yaw_Error_Coculate()
         yaw_error = yaw_error_max;
     if(yaw_error < -yaw_error_max)
         yaw_error = -yaw_error_max;
+
     
+        // yaw_error = easy_Slope(raw_yaw_error, yaw_error, yaw_error_step);
+
 }
 
 int L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
@@ -708,7 +712,7 @@ float slope_target_spinning_d_yaw = 0.0f;
 
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
-float raw_yaw_error = 0.0f; // 小陀螺原始yaw误差
+// float raw_yaw_error = 0.0f; // 小陀螺原始yaw误差
 
 float spinning_pid_kp = 0.0f; // 小陀螺PID比例增益 // TODO: 调参
 float spinning_pid_ki = 0.0025f; // 小陀螺PID积分增益 // TODO: 调参
@@ -721,12 +725,16 @@ float spinning_pid_deadzone = 0.0f; // 小陀螺PID输出死区 // TODO: 调参
 uint8_t gimbal_follow_flag = 0; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
 
 uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
+uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
 
 uint8_t yaw_ctrl_mode = 0; // 0：下板控制 1：上板控制
 
 float down_board_yaw_output = 0.0f; // 下板yaw输出
 
-uint8_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器
+uint8_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器d
+
+float head_forward_angle = -2.9f;//正视前方的yaw电机角度
+float yaw_angle_PI = 0.0f;
 
 
 //电机任务
@@ -768,8 +776,10 @@ void Motor_task(void const *argument)
 
         //云台pid   //TODO:调参
         PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 10000, 0);
-        PID_INIT(&gimbal_yaw_pid, 30, 0, 300, 6, 80, 10000, 0);
-
+        PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0);
+        PID_INIT(&gimbal_yaw_speed_pid, 80, 0,1, 6, 80, 10000, 0);
+        PID_INIT(&gimbal_yaw_torque_pid, 0.3, 0.00, 0.3, 5, 80, 10000, 0);
+        // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
     osDelay(1000);
 
 //机身pitch计算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9C%BA%E8%BA%ABpitch%E8%AE%A1%E7%AE%97
@@ -798,12 +808,15 @@ void Motor_task(void const *argument)
         
     for(;;)
     {
+        yaw_angle_PI = Angle_Normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
+
+
         //刚启动收腿过程中
         if(start_mode == 0 && upstares_mode == 0)
         {   
             gimbal_follow_flag = 1;
             yaw_ctrl_mode = 0;
-            first_run = 1;//第一次运行标记vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%90%E8%A1%8C%E6%A0%87%E8%AE%B0
+            // first_run = 1;//第一次运行标记vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%90%E8%A1%8C%E6%A0%87%E8%AE%B0
 
             //更新VMC的变量vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%9B%B4%E6%96%B0VMC%E7%9A%84%E5%8F%98%E9%87%8F
             VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
@@ -815,15 +828,16 @@ void Motor_task(void const *argument)
             Body_Speed_Coculate();
 
             //摆头防卡腿vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%91%86%E5%A4%B4%E9%98%B2%E5%8D%A1%E8%85%BF
-            PID_Set_Error(&gimbal_yaw_pid, Yaw_DM4310.Rx_Data.Position, -2.3f);
-            down_board_yaw_output = PID_coculate(&gimbal_yaw_pid);
+            PID_Set_Error(&gimbal_yaw_speed_pid, yaw_angle_PI, 0);
+            PID_Set_Error(&gimbal_yaw_torque_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_speed_pid));
+            down_board_yaw_output = PID_coculate(&gimbal_yaw_torque_pid);
 
             //是否姿态稳定在误差20°内的起立态vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%98%AF%E5%90%A6%E5%A7%BF%E6%80%81%E7%A8%B3%E5%AE%9A%E5%9C%A8%E8%AF%AF%E5%B7%AE20%C2%B0%E5%86%85%E7%9A%84%E8%B5%B7%E7%AB%8B%E6%80%81
-            if(roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f)
+            if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)
             {
                 Self_Righting_Step();
             }
-            else 
+            else
             {
                 g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
                 //收腿过程腿长控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%BF%87%E7%A8%8B%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6
@@ -910,7 +924,11 @@ void Motor_task(void const *argument)
                     R_Leg_State = 0;
                     L_Leg_State = 0;
                 }
+
+                first_run = 0;//第一次运行完成
             }			
+
+            
         }
 
         else if(start_mode == 1)
@@ -930,15 +948,14 @@ void Motor_task(void const *argument)
                 yaw_error = 0;//云台跟随底盘时，强制yaw误差为0，让底盘完全跟随云台
                 Speed_Error_Set();
 
-                //控制yaw电机归零
-                PID_Set_Error(&gimbal_yaw_pid, Yaw_DM4310.Rx_Data.Position, -2.84f);
-                down_board_yaw_output = PID_coculate(&gimbal_yaw_pid);
+                 PID_Set_Error(&gimbal_yaw_torque_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_speed_pid));
+                down_board_yaw_output = PID_coculate(&gimbal_yaw_torque_pid);
 
-                if(fabsf(Yaw_DM4310.Rx_Data.Position - (-2.84f)) <= 0.01f)
+                if(fabsf(yaw_angle_PI) <= 0.1f)
                 {
                     gimbal_follow_flag_cnt ++;
                 }
-                if(gimbal_follow_flag_cnt >= 100)
+                if(gimbal_follow_flag_cnt >= 50)
                 {
                     gimbal_follow_flag = 0;//云台跟随底盘完成，切换到底盘跟随云台
                     gimbal_follow_flag_cnt = 0;
@@ -949,44 +966,75 @@ void Motor_task(void const *argument)
             {
                 yaw_ctrl_mode = 1;//底盘跟随云台时，yaw控制模式为上板控制
 
-                if(Foot_Chassis.Chassis_Mode == 0)
-                {
-                    if(spinning_flag == 1)
-                    {
-                        //小陀螺减速
-                        // slope_target_spinning_d_yaw = easy_Slope(0, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
-                        PID_Set_Error(&spinning_pid, d_yaw, 0);
-                        yaw_error = PID_coculate(&spinning_pid);
-                        Speed_Error_Set();
-
-                        if(fabsf(d_yaw) <= 4.0f && (Yaw_DM4310.Rx_Data.Position <=-0.5f || Yaw_DM4310.Rx_Data.Position >= 1.0f))
-                        {
-                            spinning_flag = 0;
-                        }
-                        
-                    }
-                    else
-                    {
-                        //常态
-                        Yaw_Error_Coculate();
-                        slope_target_spinning_d_yaw = 0;
-                        spinning_pid.I = 0;
-
-                        spinning_flag = 0;
-                    }
-
-                }
                 //算小陀螺的yaw_error vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97%E5%B0%8F%E9%99%80%E8%9E%BA%E7%9A%84yaw_error
-                if(Foot_Chassis.Chassis_Mode == 1)
+                if(Foot_Chassis.Chassis_Mode == 1 && spinning_usable == 1)
                 {
                     // slope_target_spinning_d_yaw = easy_Slope(target_spinning_d_yaw, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
-                    PID_Set_Error(&spinning_pid, d_yaw, 12.0f);
+                    PID_Set_Error(&spinning_pid, d_yaw, 8.0f);
                     yaw_error = PID_coculate(&spinning_pid);
                     Speed_Error_Set();
 
                     spinning_flag = 1;
                 }
+                else
+                {
+                    if(spinning_flag == 1)//小陀螺减速
+                    {
+                        spinning_usable = 0;
+                        //小陀螺减速
+                        // slope_target_spinning_d_yaw = easy_Slope(0, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
+                        PID_Set_Error(&spinning_pid, d_yaw, 0);
+                        yaw_error = PID_coculate(&spinning_pid);
+                        Speed_Error_Set();//TODO:不知道加不加
+
+                        if((fabsf(d_yaw) <= 10.0f && yaw_angle_PI >= 0) || (fabsf(d_yaw) <= 3.0f))
+                        {
+                            spinning_flag = 2;
+                        }
+                    }
+                    else if(spinning_flag == 2)//双环减速，目标头方向
+                    {
+                        //小陀螺急停
+                        PID_Set_Error(&spinning_speed_pid, yaw_angle_PI, 0);
+                        float spinning_speed_output = PID_coculate(&spinning_speed_pid);
+                        PID_Set_Error(&spinning_pid, d_yaw, spinning_speed_output);
+                        yaw_error = PID_coculate(&spinning_pid);
+                        Speed_Error_Set();//TODO:不知道加不加
+
+                        if((fabsf(yaw_angle_PI) <= 0.1f && fabsf(d_yaw) <= 4.0f) || (fabsf(d_yaw) <= 0.05f))
+                        {
+                            spinning_flag = 0;
+                            spinning_usable = 1;
+                        }
+                    }
+                    else if(spinning_flag == 0)//常态
+                    {
+                        
+                        slope_target_spinning_d_yaw = 0;
+                        spinning_pid.I = 0;
+                        spinning_usable = 1;
+                        spinning_flag = 0;
+                        // if(yaw_angle_PI <= -1.0f || yaw_angle_PI >= 1.0f)
+                        // {
+                        //     //小陀螺加速
+                        //     // slope_target_spinning_d_yaw = easy_Slope(target_spinning_d_yaw, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
+                        //     PID_Set_Error(&gimbal_follow_error_pid, yaw_angle_PI, 0);
+                        //     yaw_error = PID_coculate(&gimbal_follow_error_pid);
+                        //     Speed_Error_Set();
+                        // }
+                        // else
+                        // {
+                            Yaw_Error_Coculate();
+                        // }
+                    }
+                }
+
             }
+
+            yaw_error = 0.05 * yaw_error + 0.95 * last_yaw_error;
+            last_yaw_error = yaw_error;
+
+            
             // Speed_Error_Set();   //! 这个函数在Yaw_Error_Coculate里面被调用了，因为speed_error的计算需要用到yaw_error，所以放在Yaw_Error_Coculate里面更合理一些，虽然命名上可能有点奇怪，丛庆加的
 
             //计算距离误差vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%AE%A1%E7%AE%97%E8%B7%9D%E7%A6%BB%E8%AF%AF%E5%B7%AE
@@ -1125,13 +1173,6 @@ void Motor_task(void const *argument)
             if(upstairs_flag == 1)
             {
                 start_mode = 2;
-                upstairs_flag = 0;
-            }
-            
-            if(upstairs_flag == 1)
-            {
-                start_mode = 2;
-                upstairs_flag = 0;
             }
             
             // VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output, + L_Leg_Phi0_PID.output);
@@ -1185,12 +1226,12 @@ void Motor_task(void const *argument)
             PID_coculate(&R_Leg_L0_SPD_PID);
 
             //磕台阶过程中双环腿角度控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A3%95%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%8F%8C%E7%8E%AF%E8%85%BF%E8%A7%92%E5%BA%A6%E6%8E%A7%E5%88%B6
-            PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 0.75);
+            PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.2);
             PID_coculate(&L_Leg_Middle_PID);
             PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
             PID_coculate(&L_Leg_dphi0_PID);
             
-            PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 0.75);
+            PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.2);
             PID_coculate(&R_Leg_Middle_PID);
             PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
             PID_coculate(&R_Leg_dphi0_PID);

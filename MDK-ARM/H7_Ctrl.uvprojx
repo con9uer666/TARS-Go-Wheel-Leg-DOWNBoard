@@ -905,6 +905,11 @@
               <FileType>1</FileType>
               <FilePath>..\math\source\SMC.c</FilePath>
             </File>
+            <File>
+              <FileName>Angle_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\math\source\Angle_about.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
