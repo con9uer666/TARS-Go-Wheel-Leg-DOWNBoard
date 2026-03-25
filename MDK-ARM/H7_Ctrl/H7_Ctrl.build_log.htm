@@ -29,7 +29,114 @@ Project File Date:  03/26/2026
 Build target 'H7_Ctrl'
 Note: source file '..\IMU_coculate\pid.c' - object file renamed from 'H7_Ctrl\pid.o' to 'H7_Ctrl\pid_1.o'.
 Note: source file '..\CommonLibs\src\Angle_about.c' - object file renamed from 'H7_Ctrl\Angle_about.o' to 'H7_Ctrl\angle_about_1.o'.
-"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 0 Warning(s).
+compiling motor.c...
+..\others\Motion_Control\App\inc\motor.h(106): warning:  #1295-D: Deprecated declaration task_Motor_Init - give arg types
+  void task_Motor_Init();
+..\others\Motion_Control\App\inc\motor.h(107): warning:  #1295-D: Deprecated declaration task_VMC_Init - give arg types
+  void task_VMC_Init();
+..\others\Motion_Control\App\inc\motor.h(108): warning:  #1295-D: Deprecated declaration task_PID_Init - give arg types
+  void task_PID_Init();
+..\others\Motion_Control\App\inc\motor.h(109): warning:  #1295-D: Deprecated declaration task_Pitch_Coculate - give arg types
+  void task_Pitch_Coculate();
+..\others\Motion_Control\App\inc\motor.h(110): warning:  #1295-D: Deprecated declaration task_Motor_Enable - give arg types
+  void task_Motor_Enable();
+..\others\Motion_Control\App\inc\motor.h(111): warning:  #1295-D: Deprecated declaration NotStanding_NotStairRetract - give arg types
+  void NotStanding_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(112): warning:  #1295-D: Deprecated declaration Standing - give arg types
+  void Standing();
+..\others\Motion_Control\App\inc\motor.h(113): warning:  #1295-D: Deprecated declaration Upstair_NotStairRetract - give arg types
+  void Upstair_NotStairRetract();
+..\others\Motion_Control\App\inc\motor.h(114): warning:  #1295-D: Deprecated declaration StairRetract - give arg types
+  void StairRetract();
+..\others\Motion_Control\App\inc\Self_Righting.h(73): warning:  #1-D: last line of file ends without a newline
+  #endif //SELF_RIGHTING_H
+..\CommonLibs\inc\Angle_about.h(7): warning:  #47-D: incompatible redefinition of macro "PI"  (declared at line 57 of "../IMU_coculate/user_lib.h")
+  #define PI 3.1415926f
+..\CommonLibs\inc\Angle_about.h(21): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\others\Motion_Control\App\src\motor.c(492): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(torque >= 0.338959944)
+..\others\Motion_Control\App\src\motor.c(558): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(speed_error <= 0.3 && speed_error >= -0.3)
+..\others\Motion_Control\App\src\motor.c(598): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
+..\others\Motion_Control\App\src\motor.c(599): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                                                                                                                                                            
+..\others\Motion_Control\App\src\motor.c(612): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(target_L_Leg_L0 >= 0.40)                                                                                                                                                         
+..\others\Motion_Control\App\src\motor.c(617): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(target_R_Leg_L0 >= 0.40)                                                                                                                                                         
+..\others\Motion_Control\App\src\motor.c(638): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(temp < 0.0)
+..\others\Motion_Control\App\src\motor.c(883): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加�?
+..\others\Motion_Control\App\src\motor.c(890): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+..\others\Motion_Control\App\src\motor.c(906): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
+..\others\Motion_Control\App\src\motor.c(915): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
+..\others\Motion_Control\App\src\motor.c(926): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(935): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(962): warning:  #188-D: enumerated type mixed with another type
+      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
+..\others\Motion_Control\App\src\motor.c(1056): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      yaw_error = 0.05 * yaw_error + 0.95 * last_yaw_error;
+..\others\Motion_Control\App\src\motor.c(1056): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      yaw_error = 0.05 * yaw_error + 0.95 * last_yaw_error;
+..\others\Motion_Control\App\src\motor.c(1145): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
+..\others\Motion_Control\App\src\motor.c(1145): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
+..\others\Motion_Control\App\src\motor.c(1146): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
+..\others\Motion_Control\App\src\motor.c(1146): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
+..\others\Motion_Control\App\src\motor.c(1174): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          Leg_L_T *= 0.7; //收腿力度参数
+..\others\Motion_Control\App\src\motor.c(1188): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          Leg_R_T *= 0.7;
+..\others\Motion_Control\App\src\motor.c(1203): warning:  #188-D: enumerated type mixed with another type
+      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
+..\others\Motion_Control\App\src\motor.c(1252): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.2);
+..\others\Motion_Control\App\src\motor.c(1257): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.2);
+..\others\Motion_Control\App\src\motor.c(1267): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(1267): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(1276): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(1276): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(1322): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
+..\others\Motion_Control\App\src\motor.c(1330): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
+..\others\Motion_Control\App\src\motor.c(1337): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+..\others\Motion_Control\App\src\motor.c(1344): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+          PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
+..\others\Motion_Control\App\src\motor.c(1358): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
+..\others\Motion_Control\App\src\motor.c(1358): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
+..\others\Motion_Control\App\src\motor.c(1367): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
+..\others\Motion_Control\App\src\motor.c(1367): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
+..\others\Motion_Control\App\src\motor.c(1378): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c(1388): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+..\others\Motion_Control\App\src\motor.c: 51 warnings, 0 errors
+linking...
+Program Size: Code=89788 RO-data=3716 RW-data=2420 ZI-data=52852  
+FromELF: creating hex file...
+"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 51 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -97,7 +204,7 @@ Package Vendor: Keil
       Source file:   Source/CommonTables/CommonTables.c
       Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
       Source file:   Source/TransformFunctions/TransformFunctionsF16.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>
