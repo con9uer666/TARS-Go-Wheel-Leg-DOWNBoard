@@ -91,12 +91,12 @@ void Leg_L0_Control()
 //speed_error | 计算前进速度误差 (yaw_error)
 void Speed_Error_Set()
 {
-    speed_limit = 2.7f;     //车子最大速
+    speed_limit = 2.0f;     //车子最大速
     // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
     // rampIterate(&Target_Speed_Ramp);
     target_body_speed = Foot_Chassis.Target_Vy;
     
-    float temp = ((0.7f - fabsf(yaw_error))/0.7f);
+    float temp = ((0.7f - fabsf(yaw_error))/0.7f);//速度和转速功率分配倍率为0.7
     if(temp < 0.0)
     temp = 0.0;
 
@@ -164,7 +164,7 @@ void INS_Coculate()
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
-    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (-2.84f);//减的是零点
+    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (2.83f);//减的是零点
     
     //套圈处理
     if(Yaw_motor_position > PI)
