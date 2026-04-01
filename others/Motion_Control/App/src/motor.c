@@ -1,5 +1,4 @@
 #include "controller.h"
-#include "controller.h"
 #include "fdcan.h"
 #include "main.h"
 #include "FreeRTOS.h"
@@ -20,10 +19,7 @@
 #include "Self_Righting.h"
 #include "Board2Board.h"
 #include "Slope.h"
-#include "Board2Board.h"
-#include "Slope.h"
 #include "Angle_about.h"
-#include "Slope.h"
 #include "Wheel_Leg_about.h"
 
 
@@ -164,8 +160,6 @@ uint8_t i;
 int height_wait;
 uint8_t temp1;
 
-user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
-user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
 user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
