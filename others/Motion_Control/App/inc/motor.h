@@ -74,6 +74,7 @@ extern float body_speed;
 extern uint8_t start_mode;
 extern float body_distance_error;
 extern float alpha_body_speed;
+extern float head_forward_angle;
 
 /*====================================== 运动控制相关 =========================================== */
 void task_Motor_Init();

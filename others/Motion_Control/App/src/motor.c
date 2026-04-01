@@ -16,6 +16,7 @@
 #include "observe_task.h"
 #include <math.h>
 #include <stdint.h>
+#include "Leg_Control.h"
 #include "Self_Righting.h"
 #include "Board2Board.h"
 #include "Slope.h"
@@ -70,7 +71,7 @@ float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 
-float mg = 180.0f/2;
+float mg = 150.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
@@ -195,7 +196,7 @@ uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数�
 
 //?常量
 uint16_t motor_HZ = 500; //任务频率
-float head_forward_angle = 2.833f;//正视前方的yaw电机角度
+float head_forward_angle = 2.38024735f;//正视前方的yaw电机角度
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
@@ -205,6 +206,8 @@ float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧�
 float down_board_yaw_output = 0.0f; // 下板yaw输出
 
 float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
+
+
 
 /*============================= 斜坡相关 ================================= */
 
@@ -287,11 +290,11 @@ void rampInit(RampGenerator *ramp, float startValue, float targetValue, float ti
 //电机初始化参数及结构体
 void task_Motor_Init()
 {
-    DM_Joint_Motor_Init(&L_DM8009[0], 54.0f, 3.14159265f, 45.0f, 0x01);
-    DM_Joint_Motor_Init(&L_DM8009[1], 54.0f, 3.14159265f, 45.0f, 0x02);
+    DM_Joint_Motor_Init(&L_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0x01);
+    DM_Joint_Motor_Init(&L_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0x02);
 
-    DM_Joint_Motor_Init(&R_DM8009[0], 54.0f, 3.14159265f, 45.0f, 0x01);
-    DM_Joint_Motor_Init(&R_DM8009[1], 54.0f, 3.14159265f, 45.0f, 0x02);
+    DM_Joint_Motor_Init(&R_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0x01);
+    DM_Joint_Motor_Init(&R_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0x02);
 
     DM_Joint_Motor_Init(&Yaw_DM4310, 10.0f, 3.14159265f, 30.0f, 0x10);
     DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
@@ -364,9 +367,7 @@ void task_Motor_Enable()
 //未站起 + 未上楼收腿  函数
 void NotStanding_NotStairRetract()
 {
-
     //腿长判断是否到达目标长度
-    //!这史是丛庆写的
     if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
     {
         L_Ready_Count ++;
@@ -470,9 +471,6 @@ void NotStanding_NotStairRetract()
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
         L_LK9025.Target_Torque = 0;
         R_LK9025.Target_Torque = 0;
-
-        
-        
     }
 }
 
@@ -506,7 +504,6 @@ void LQR_calculate()
     //算模拟腿力矩
     Leg_L_T = 
     + LQR_K[2][0] * body_distance_error
-    + LQR_K[2][1] * (speed_error)
     + LQR_K[2][1] * (speed_error)
     + LQR_K[2][2] * (-yaw_error)
     - LQR_K[2][3] * d_yaw
@@ -563,9 +560,9 @@ void slip_fliter()
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
         Leg_L_T *= 0.7; //收腿力度参数
         L_LK9025.Target_Torque = 0;//离地轮子脱力
-        //正常行驶过程离地VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%AD%A3%E5%B8%B8%E8%A1%8C%E9%A9%B6%E8%BF%87%E7%A8%8B%E7%A6%BB%E5%9C%B0VMC%E8%A7%A3%E7%AE%97
+        //正常行驶过程离地VMC解算
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);//VMC解算
-        //离地距离相关量归零vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E8%B7%9D%E7%A6%BB%E7%9B%B8%E5%85%B3%E9%87%8F%E5%BD%92%E9%9B%B6
+        //离地距离相关量归零
         body_distance = 0;
         target_body_distance = 2.0;
     }
@@ -690,7 +687,7 @@ void Standing()
 
     LQR_calculate();
 
-    //常态下VMC解算
+    //常态下VMC解算，加入PID前馈
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
 
@@ -875,8 +872,118 @@ void StairRetract()
         target_Leg_L0 = LEG_MIN_LENTH;
     }
 }
-    
 
+/*====================================== 腿坐标系相关结构体 ========================================*/
+
+typedef struct
+{
+    Cartesian_Def current;
+    Cartesian_Def error;
+    Cartesian_Def target;
+} Leg_Cartesian_Def;
+
+typedef struct
+{
+    Polar_Def current;
+    Polar_Def error;
+    Polar_Def target;
+} Leg_Polar_Def;
+
+Leg_Cartesian_Def Cartesian_left_leg;
+Leg_Cartesian_Def Cartesian_right_leg;
+
+Leg_Polar_Def Polar_left_leg;
+Leg_Polar_Def Polar_right_leg;
+
+typedef struct
+{
+    user_pid_t L0_speed;
+    user_pid_t L0_distance;
+    user_pid_t phi0_speed;
+    user_pid_t phi0_angle;
+} Leg_user_pid_t;
+
+Leg_user_pid_t left_Leg_PID;
+Leg_user_pid_t right_Leg_PID;
+
+float left_square_error;
+float right_square_error;
+
+float left_mean_square_error;
+float right_mean_square_error;
+
+uint8_t count;
+
+float final_left_F0;
+float final_left_tao;
+float final_right_F0;
+float final_right_tao;
+
+void Gravity_Compensation_Test_Function(void)
+{
+    VMC_Coculate();
+    Polar_Get(&Polar_left_leg.current, VMC_L.phi0, VMC_L.L0);
+    Polar_Get(&Polar_right_leg.current, VMC_R.phi0, VMC_R.L0);
+
+    //计算方差
+    left_square_error += Polar_left_leg.error.r * Polar_left_leg.error.r + Polar_left_leg.error.angle * Polar_left_leg.error.angle;
+    right_square_error += Polar_right_leg.error.r * Polar_right_leg.error.r + Polar_right_leg.error.angle * Polar_right_leg.error.angle;
+
+    left_mean_square_error = left_square_error / count;
+    right_mean_square_error = right_square_error / count;
+
+    //极坐标误差计算
+    Polar_left_leg.error.angle = Polar_left_leg.target.angle - Polar_left_leg.current.angle;
+    Polar_left_leg.error.r = Polar_left_leg.target.r - Polar_left_leg.current.r;
+    Polar_right_leg.error.angle = Polar_right_leg.target.angle - Polar_right_leg.current.angle;
+    Polar_right_leg.error.r = Polar_right_leg.target.r - Polar_right_leg.current.r;
+
+    //pid双环
+    PID_Set_Error(&left_Leg_PID.L0_distance, Polar_right_leg.current.r, Polar_right_leg.target.r);
+    PID_coculate(&left_Leg_PID.L0_distance);
+    PID_Set_Error(&left_Leg_PID.L0_speed, Polar_right_leg.current.d_r, left_Leg_PID.L0_distance.output);
+    PID_coculate(&left_Leg_PID.L0_speed);
+
+    PID_Set_Error(&left_Leg_PID.phi0_angle, Polar_left_leg.current.angle, Polar_left_leg.target.angle);
+    PID_coculate(&left_Leg_PID.phi0_angle);
+    PID_Set_Error(&left_Leg_PID.phi0_speed, Polar_left_leg.current.d_angle, left_Leg_PID.phi0_angle.output);
+    PID_coculate(&left_Leg_PID.phi0_speed);
+
+    PID_Set_Error(&right_Leg_PID.L0_distance, Polar_right_leg.current.r, Polar_right_leg.target.r);
+    PID_coculate(&right_Leg_PID.L0_distance);
+    PID_Set_Error(&right_Leg_PID.L0_speed, Polar_right_leg.current.d_r, right_Leg_PID.L0_distance.output);
+    PID_coculate(&right_Leg_PID.L0_speed);
+
+    PID_Set_Error(&right_Leg_PID.phi0_angle, Polar_left_leg.current.angle, Polar_left_leg.target.angle);
+    PID_coculate(&right_Leg_PID.phi0_angle);
+    PID_Set_Error(&right_Leg_PID.phi0_speed, Polar_left_leg.current.d_angle, right_Leg_PID.phi0_angle.output);
+    PID_coculate(&right_Leg_PID.phi0_speed);
+
+    VMC_Set_F0_T(&VMC_L, left_Leg_PID.L0_speed.output, left_Leg_PID.phi0_speed.output);
+    VMC_Set_F0_T(&VMC_R, right_Leg_PID.L0_speed.output, right_Leg_PID.phi0_speed.output);
+
+    if(count == 255)
+    {
+        if(left_mean_square_error <= 0.01f)
+        {
+            //重力补偿参数测试通过
+            final_left_F0 = left_Leg_PID.L0_speed.output;
+            final_left_tao = left_Leg_PID.phi0_speed.output;
+        }
+        if(right_mean_square_error <= 0.01f)
+        {
+            //重力补偿参数测试通过
+            final_right_F0 = right_Leg_PID.L0_speed.output;
+            final_right_tao = right_Leg_PID.phi0_speed.output;
+        }
+
+        count = 0;
+        left_square_error = 0;
+        right_square_error = 0;
+    }
+
+    count ++;
+}
 
 
 /*****************************************************************************************************
@@ -887,6 +994,8 @@ void StairRetract()
  *                                                                                                   * 
  *****************************************************************************************************/
 
+//调试接口
+uint8_t user_mode = 0;
 
 void Motor_task(void const *argument)
 {
@@ -903,26 +1012,33 @@ void Motor_task(void const *argument)
 
     for(;;)
     {
-        //计算标零后角度值
-        yaw_angle_PI = easy_angle_normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
+        if(user_mode == 0)
+        {
+            //计算标零后角度值
+            yaw_angle_PI = easy_angle_normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
 
-        //刚启动收腿过程中
-        if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
-        {  
-            NotStanding_NotStairRetract();
-        }
+            //刚启动收腿过程中
+            if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
+            {  
+                NotStanding_NotStairRetract();
+            }
 
-        else if(start_mode == 1)//站起
-        {
-            Standing();
+            else if(start_mode == 1)//站起
+            {
+                Standing();
+            }
+            else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
+            {
+                Upstair_NotStairRetract();
+            }
+            else if(upstares_mode == 1)//收腿起立
+            {
+                StairRetract();
+            }
         }
-        else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
+        if(user_mode == 1)
         {
-            Upstair_NotStairRetract();
-        }
-        else if(upstares_mode == 1)//收腿起立
-        {
-            StairRetract();
+            Gravity_Compensation_Test_Function();
         }
 
         osDelayUntil(&xLastWakeTime, 2);//精确延时2毫秒，同时更新xLastWakeTime的值为当前时间

@@ -1,6 +1,10 @@
 // Created by Speros987
 
 #include "Angle_about.h"
+#include "arm_math.h"
+#include <stdint.h>
+
+uint16_t HZ = 500; // 控制循环频率，单位为Hz，决定角度计算的时间分辨率
 
 // -PI到PI范围角度转换，将设定点标定为0点
 //
@@ -91,4 +95,63 @@ float calculate_angle_diff_single_direction(float left_leg_angle, float right_le
         diff -= 2.0f * PI;
     }
     return diff;
+}
+
+/**
+ * @brief 将笛卡尔坐标转换为极坐标，X方向为0度，X正方向朝Y正方向为极坐标正方向
+ * 
+ * @param cartesian 笛卡尔坐标
+ * @param polar 极坐标
+ */
+void Cartesian_to_Polar(Cartesian_Def *cartesian, Polar_Def *polar)
+{
+    polar->angle = atan2f(cartesian->Y, cartesian->X);
+    polar->r = sqrtf(cartesian->X * cartesian->X + cartesian->Y * cartesian->Y);
+}
+
+/**
+ * @brief 将极坐标转换为笛卡尔坐标
+ * 
+ * @param polar 极坐标
+ * @param cartesian 笛卡尔坐标
+ */
+void Polar_to_Cartesian(Polar_Def *polar, Cartesian_Def *cartesian)
+{
+    cartesian->X = polar->r * arm_cos_f32(polar->angle);
+    cartesian->Y = polar->r * arm_sin_f32(polar->angle);
+}
+
+/**
+ * @brief 获取极坐标值
+ * 
+ * @param polar 极坐标结构体指针，包含腿ID以区分左右腿
+ * @param VMC VMC结构体指针
+ */
+void Polar_Get(Polar_Def *polar, float phi0, float L0)
+{
+    static float last_angle = 0.0f;
+    static float last_r = 0.0f;
+    static float last_d_angle = 0.0f;
+    static float last_d_r = 0.0f;
+
+    if(polar->leg_id == 0)
+    {
+        polar->angle = phi0;
+        polar->r = L0;
+    }
+    else
+    {
+        polar->angle = phi0;
+        polar->r = L0;
+    }
+    polar->d_angle = (polar->angle - last_angle) * HZ;
+    polar->d_r = (polar->r - last_r) * HZ;
+    polar->dd_angle = (polar->d_angle - last_d_angle) * HZ;
+    polar->dd_r = (polar->d_r - last_d_r) * HZ;
+
+    last_angle = polar->angle;
+    last_r = polar->r;
+    last_d_angle = polar->d_angle;
+    last_d_r = polar->d_r;
+
 }

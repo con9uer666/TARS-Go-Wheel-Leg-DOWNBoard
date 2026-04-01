@@ -14,8 +14,10 @@
  */
 void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, float L0_r)
 {
-    for(uint8_t i = 0; i < 4; i++) {
-        for(uint8_t j = 0; j < 10; j++) {
+    for(uint8_t i = 0; i < 4; i++) 
+    {
+        for(uint8_t j = 0; j < 10; j++) 
+        {
             uint8_t pos = i * 10 + j;
             
             float p00 = K_Fit_Coefficients[pos][0];
@@ -51,7 +53,7 @@ void Roll_Comp()
     PID_coculate(&Roll_Comp_PID);
 }
 
-//pd单环腿长控制函数vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2Fpd%E5%8D%95%E7%8E%AF%E8%85%BF%E9%95%BF%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0
+//pd单环腿长控制函数
 void Leg_L0_Control()
 {
     if(leg_state_count > 0)
@@ -59,27 +61,27 @@ void Leg_L0_Control()
         leg_state_count --;
     }
 
-    //低通滤波                     
+    //低通滤波
     target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
     target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
 
-    if(target_Leg_L0 >= 0.40f)                     
-    target_Leg_L0 = 0.40f;                     
-    if(target_Leg_L0 <= LEG_MIN_LENTH)                     
-    target_Leg_L0 = LEG_MIN_LENTH;                     
+    if(target_Leg_L0 >= 0.40f)          
+    target_Leg_L0 = 0.40f;              
+    if(target_Leg_L0 <= LEG_MIN_LENTH)  
+    target_Leg_L0 = LEG_MIN_LENTH;      
 
-    target_L_Leg_L0 = target_Leg_L0;                       
-    target_R_Leg_L0 = target_Leg_L0;                       
+    target_L_Leg_L0 = target_Leg_L0;    
+    target_R_Leg_L0 = target_Leg_L0;    
 
-    if(target_L_Leg_L0 >= 0.40)                    
-    target_L_Leg_L0 = 0.40;                    
-    if(target_L_Leg_L0 <= LEG_MIN_LENTH)                       
-    target_L_Leg_L0 = LEG_MIN_LENTH;                       
+    if(target_L_Leg_L0 >= 0.40)         
+    target_L_Leg_L0 = 0.40;
+    if(target_L_Leg_L0 <= LEG_MIN_LENTH)
+    target_L_Leg_L0 = LEG_MIN_LENTH;
 
-    if(target_R_Leg_L0 >= 0.40)                    
-    target_R_Leg_L0 = 0.40;                    
-    if(target_R_Leg_L0 <= LEG_MIN_LENTH)                       
-    target_R_Leg_L0 = LEG_MIN_LENTH;                       
+    if(target_R_Leg_L0 >= 0.40)         
+    target_R_Leg_L0 = 0.40;             
+    if(target_R_Leg_L0 <= LEG_MIN_LENTH)
+    target_R_Leg_L0 = LEG_MIN_LENTH;    
 
     PID_Set_Error(&L_Leg_L0_PID, VMC_L.L0, target_L_Leg_L0);                       
     PID_Set_Error(&R_Leg_L0_PID, VMC_R.L0, target_R_Leg_L0);                       
@@ -91,10 +93,15 @@ void Leg_L0_Control()
 //speed_error | 计算前进速度误差 (yaw_error)
 void Speed_Error_Set()
 {
-    speed_limit = 2.0f;     //车子最大速
+    speed_limit = 2.2f;     //车子最大速
     // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
     // rampIterate(&Target_Speed_Ramp);
     target_body_speed = Foot_Chassis.Target_Vy;
+
+    if(target_body_speed >= speed_limit)
+    target_body_speed = speed_limit;
+    else if(target_body_speed <= -speed_limit)
+    target_body_speed = -speed_limit;
     
     float temp = ((0.7f - fabsf(yaw_error))/0.7f);//速度和转速功率分配倍率为0.7
     if(temp < 0.0)
@@ -164,7 +171,7 @@ void INS_Coculate()
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
-    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (2.83f);//减的是零点
+    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (head_forward_angle);//减的是零点
     
     //套圈处理
     if(Yaw_motor_position > PI)

@@ -4,6 +4,7 @@
 #include "VMC.h"
 #include "motor.h"
 #include "user_pid.h"
+#include "Angle_about.h"
 
 /* ========================= 状态与模式标志 ========================= */
 
@@ -85,9 +86,9 @@ float g_sr_cmd_t_l = 0.0f;
 float g_sr_cmd_f_r = 0.0f;
 float g_sr_cmd_t_r = 0.0f;
 
-//封装的0-4PI的角度变量
-float left_phi0_0_to_4PI;
-float right_phi0_0_to_4PI;
+//封装的0-2PI的角度变量
+float left_phi0_0_to_2PI;
+float right_phi0_0_to_2PI;
 
 float cmd_spd_l;
 float cmd_spd_r;
@@ -178,31 +179,23 @@ static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 	VMC_Set_F0_T(&VMC_R, f_r, t_r);
 }
 
-//封装角度到0-4PI，方便后续判断转动卡住和是否到达目标角度
-void update_phi0_0_to_4PI()
+//封装角度到0-2PI，方便后续判断转动卡住和是否到达目标角度
+void update_phi0_0_to_2PI()
 {
-	left_phi0_0_to_4PI = VMC_L.phi0;
-	if (left_phi0_0_to_4PI < 0.0f)
+	left_phi0_0_to_2PI = VMC_L.phi0;
+	if (left_phi0_0_to_2PI < 0.0f)
 	{
-		left_phi0_0_to_4PI = VMC_L.phi0 + 2.0f * PI;
+		left_phi0_0_to_2PI = VMC_L.phi0 + 2.0f * PI;
 	}
 
-	right_phi0_0_to_4PI = VMC_R.phi0;
-	right_phi0_0_to_4PI = PI - VMC_R.phi0;
+	right_phi0_0_to_2PI = VMC_R.phi0;
+	right_phi0_0_to_2PI = PI - VMC_R.phi0;
 }
 
-//计算两腿角度差值，得到的是左腿-右腿弧度值
-float update_differ_phi0_0_to_4PI()
+//计算两腿角度差值，得到的是左腿-右腿弧度值，-PI到PI
+float update_differ_phi0_0_to_2PI()
 {
-	float out1 = left_phi0_0_to_4PI - right_phi0_0_to_4PI;
-	if(fabsf(out1) <= PI)
-		return out1;
-	float out2 = (left_phi0_0_to_4PI + 2 * PI) - right_phi0_0_to_4PI;
-	if(fabsf(out2) <= PI)
-		return out2;
-	float out3 = left_phi0_0_to_4PI - (right_phi0_0_to_4PI + 2 * PI);
-	if(fabsf(out3) <= PI)
-		return out3;
+	return calculate_angle_diff_double_direction(left_phi0_0_to_2PI, right_phi0_0_to_2PI);
 }
 
 /* ========================= 对外接口实现 ========================= */
@@ -252,10 +245,10 @@ uint8_t Self_Righting_Step(void)
 
 	PID_INIT(&anti_split_PID, anti_split_kp, anti_split_ki, anti_split_kd, anti_split_out_limit, anti_split_i_limit, anti_split_Integraldead_zone, anti_split_deadzone);
 
-	//封装的0-4PI的角度变量，方便后续判断转动卡住和是否到达目标角度vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%B0%81%E8%A3%85%E7%9A%840-4PI%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%98%E9%87%8F%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%90%8E%E7%BB%AD%E5%88%A4%E6%96%AD%E8%BD%AC%E5%8A%A8%E5%8D%A1%E4%BD%8F%E5%92%8C%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
-	update_phi0_0_to_4PI();
+	//封装的0-2PI的角度变量，方便后续判断转动卡住和是否到达目标角度vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%B0%81%E8%A3%85%E7%9A%840-2PI%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%98%E9%87%8F%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%90%8E%E7%BB%AD%E5%88%A4%E6%96%AD%E8%BD%AC%E5%8A%A8%E5%8D%A1%E4%BD%8F%E5%92%8C%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
+	update_phi0_0_to_2PI();
 
-	PID_Set_Error(&anti_split_PID, update_differ_phi0_0_to_4PI(), 0);
+	PID_Set_Error(&anti_split_PID, update_differ_phi0_0_to_2PI(), 0);
 
 	//函数锁vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%87%BD%E6%95%B0%E9%94%81
 	if (g_self_righting_enable == 0U)
@@ -379,8 +372,8 @@ uint8_t Self_Righting_Step(void)
 		f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
 
 		//计算每条腿到目标角的剩余距离（绝对值用于比较远近）vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E8%AE%A1%E7%AE%97%E6%AF%8F%E6%9D%A1%E8%85%BF%E5%88%B0%E7%9B%AE%E6%A0%87%E8%A7%92%E7%9A%84%E5%89%A9%E4%BD%99%E8%B7%9D%E7%A6%BB%EF%BC%88%E7%BB%9D%E5%AF%B9%E5%80%BC%E7%94%A8%E4%BA%8E%E6%AF%94%E8%BE%83%E8%BF%9C%E8%BF%91%EF%BC%89
-		rem_l = fabsf(g_sr_target_angle_l - left_phi0_0_to_4PI);
-		rem_r = fabsf(g_sr_target_angle_r - right_phi0_0_to_4PI);
+		rem_l = fabsf(g_sr_target_angle_l - left_phi0_0_to_2PI);
+		rem_r = fabsf(g_sr_target_angle_r - right_phi0_0_to_2PI);
 
         //判断是否到达目标角vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92
 		reached_ang_l = (rem_l <= g_sr_target_angle_tol) ? 1 : 0;
