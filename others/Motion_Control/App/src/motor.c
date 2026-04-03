@@ -127,7 +127,7 @@ float K_Fit_Coefficients[40][6] = {
 };
 
 //
-// PID控制器定义vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F+PID%E6%8E%A7%E5%88%B6%E5%99%A8%E5%AE%9A%E4%B9%89
+// PID控制器定义
 user_pid_t L_Leg_L0_PID;     //常态
 user_pid_t R_Leg_L0_PID;     //
 
@@ -521,7 +521,7 @@ void LQR_calculate()
     + LQR_K[3][9] * d_pitch;
 }
 
-void slip_fliter()
+void off_ground_detect()
 {
     L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
     R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
@@ -574,10 +574,89 @@ void slip_fliter()
     }
 }
 
+//speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
+void Yaw_Error_Coculate()
+{
+    float Yaw_motor_position;
+    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (head_forward_angle);//减的是零点
+    
+    //套圈处理
+    if(Yaw_motor_position > PI)
+    {
+        Yaw_motor_position -= 2 * PI;
+    }
+    if(Yaw_motor_position < -PI)
+    {
+        Yaw_motor_position += 2 * PI;
+    }
+    yaw_error = Yaw_motor_position;
+    // alpha_yaw_error = Yaw_motor_position * Yaw_motor_position * 0.05f;//Yaw_motor_position越大，alpha越大，响应越慢，最大为0.5
+    // raw_yaw_error = Yaw_motor_position;
+
+    
+    float yaw_error_max = 0;
+    yaw_error_max = ((2.0f - fabsf(kalman_body_speed))/2.0f) * 1.5f;//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
+    if(yaw_error_max <= 0.05f)
+    {
+        yaw_error_max = 0.05f;
+    }
+
+    //这里Speed_Error_Set要用的是原生yaw_error，所以要写在yaw_error_max之上
+    Speed_Error_Set();
+
+    if(yaw_error > yaw_error_max)
+        yaw_error = yaw_error_max;
+    if(yaw_error < -yaw_error_max)
+        yaw_error = -yaw_error_max;
+
+    
+        // yaw_error = easy_Slope(raw_yaw_error, yaw_error, yaw_error_step);
+
+}
+
+//刚站起云台跟随底盘，底盘不动云台动
+void gimbal_follow_chassis()
+{
+    Yaw_Error_Coculate();
+    yaw_error = 0;//云台跟随底盘时，强制yaw误差为0，让底盘完全跟随云台
+    Speed_Error_Set();
+
+    PID_Set_Error(&gimbal_yaw_speed_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_angle_pid));
+    down_board_yaw_output = PID_coculate(&gimbal_yaw_speed_pid);
+
+
+}
+
+//小陀螺加速
+void spinning_up()
+{
+    PID_Set_Error(&spinning_pid, d_yaw, target_spinning_d_yaw);
+    yaw_error = PID_coculate(&spinning_pid);
+    Speed_Error_Set();
+}
+
+//小陀螺减速
+void spinning_down()
+{
+    PID_Set_Error(&spinning_pid, d_yaw, 0);
+    yaw_error = PID_coculate(&spinning_pid);
+    Speed_Error_Set();
+}
+
+//小陀螺急停
+void spinning_stop()
+{
+    PID_Set_Error(&spinning_speed_pid, yaw_angle_PI, 0);
+    float spinning_speed_output = PID_coculate(&spinning_speed_pid);
+    PID_Set_Error(&spinning_pid, d_yaw, spinning_speed_output);
+    yaw_error = PID_coculate(&spinning_pid);
+    Speed_Error_Set();
+}
+
 //站起
 void Standing()
 {
-//占用率检测用的，留着吧，看不懂也不影响vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E5%8D%A0%E7%94%A8%E7%8E%87%E6%A3%80%E6%B5%8B%E7%94%A8%E7%9A%84%EF%BC%8C%E7%95%99%E7%9D%80%E5%90%A7%EF%BC%8C%E7%9C%8B%E4%B8%8D%E6%87%82%E4%B9%9F%E4%B8%8D%E5%BD%B1%E5%93%8D
+//占用率检测用的，留着吧，看不懂也不影响
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
 
     //惯性导航、VMC、水平方向车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E3%80%81VMC%E3%80%81%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
@@ -585,15 +664,10 @@ void Standing()
     VMC_Coculate();
     Body_Speed_Coculate();
 
-    //算yaw的误差，以及根据yaw误差调整目标速度vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%AE%97yaw%E7%9A%84%E8%AF%AF%E5%B7%AE%EF%BC%8C%E4%BB%A5%E5%8F%8A%E6%A0%B9%E6%8D%AEyaw%E8%AF%AF%E5%B7%AE%E8%B0%83%E6%95%B4%E7%9B%AE%E6%A0%87%E9%80%9F%E5%BA%A6
+    //算yaw的误差，以及根据yaw误差调整目标速度
     if(gimbal_follow_flag == 1)
     {
-        Yaw_Error_Coculate();
-        yaw_error = 0;//云台跟随底盘时，强制yaw误差为0，让底盘完全跟随云台
-        Speed_Error_Set();
-
-        PID_Set_Error(&gimbal_yaw_speed_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_angle_pid));
-        down_board_yaw_output = PID_coculate(&gimbal_yaw_speed_pid);
+        gimbal_follow_chassis();
 
         if(fabsf(yaw_angle_PI) <= 0.1f)
         {
@@ -610,10 +684,7 @@ void Standing()
         //算小陀螺的
         if(Foot_Chassis.Chassis_Mode == 1 && spinning_usable == 1)
         {
-            PID_Set_Error(&spinning_pid, d_yaw, target_spinning_d_yaw);
-            yaw_error = PID_coculate(&spinning_pid);
-            Speed_Error_Set();
-
+            spinning_up();
             spinning_flag = 1;
         }
         else//普通运行
@@ -621,11 +692,8 @@ void Standing()
             if(spinning_flag == 1)//小陀螺减速
             {
                 spinning_usable = 0;
-                //小陀螺减速
-                // slope_target_spinning_d_yaw = easy_Slope(0, slope_target_spinning_d_yaw, spinning_ramp_accel * 0.002f);
-                PID_Set_Error(&spinning_pid, d_yaw, 0);
-                yaw_error = PID_coculate(&spinning_pid);
-                Speed_Error_Set();//TODO:不知道加不加
+
+                spinning_down();
 
                 if((fabsf(d_yaw) <= 10.0f && yaw_angle_PI >= 0) || (fabsf(d_yaw) <= 3.0f))
                 {
@@ -635,11 +703,7 @@ void Standing()
             else if(spinning_flag == 2)//双环减速，目标头方向
             {
                 //小陀螺急停
-                PID_Set_Error(&spinning_speed_pid, yaw_angle_PI, 0);
-                float spinning_speed_output = PID_coculate(&spinning_speed_pid);
-                PID_Set_Error(&spinning_pid, d_yaw, spinning_speed_output);
-                yaw_error = PID_coculate(&spinning_pid);
-                Speed_Error_Set();//TODO:不知道加不加
+                spinning_stop();
 
                 if((fabsf(yaw_angle_PI) <= 0.1f && fabsf(d_yaw) <= 4.0f) || (fabsf(d_yaw) <= 0.05f))
                 {
@@ -685,7 +749,7 @@ void Standing()
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
 
-    slip_fliter();
+    off_ground_detect();
 
     if(upstairs_flag == 1)
     {
