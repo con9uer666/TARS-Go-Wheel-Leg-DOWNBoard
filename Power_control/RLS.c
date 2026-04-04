@@ -53,7 +53,7 @@
      arm_mat_init_f32(&KAIN_M_XTMatrix, 3, 3, (float *)KAIN_M_XT);
      arm_mat_init_f32(&KAIN_M_XT_M_TRANSMatrix, 3, 3, (float *)KAIN_M_XT_M_TRANS);
  }
- extern float powerPredict;
+float powerPredict = 0;
 
  float PowerControl_AutoUpdateParam(float x1, float x2, float x3, float y,ChassisPower power)
 {

@@ -21,31 +21,22 @@
 #include "Slope.h"
 #include "Angle_about.h"
 #include "Wheel_Leg_about.h"
-
+#include "Spinning.h"
+#include "Variable.h"
 
 /*====================================== 附属函数变量 =========================================== */
 
 
 Foot_Chassis_t Foot_Chassis;//轮足底盘结构体 
-   
-float powerPredict;
-   
-   
-float L_b_phi0, R_b_phi0;  
-   
-float PITCH_OFFSET=-0.08;  
-   
+
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值  单位为弧度   
-float pitch_trans[2];                                                                                               
-float d_pitch;//pitch速度，单位为弧度每秒 
-float alpha_d_pitch = 1.0;//滤波系数                                          
-   
+
 float Leg_L_T; //模拟腿力矩
 float Leg_R_T; 
    
-float Wr, Wl;//加上杆角速度的车轮速度      
-float alpha_W = 0.9;//滤波系数   
-float body_speed_L, body_speed_R, body_speed; //当前车体速度 ,已正交，是水平方向的速度
+float Wr, Wl;//加上杆角速度的车轮速度
+
+
 float target_body_speed;//目标速度   
 float speed_limit = 1.3;   
 float speed_error; 
@@ -127,30 +118,7 @@ float K_Fit_Coefficients[40][6] = {
 };
 
 //
-// PID控制器定义
-user_pid_t L_Leg_L0_PID;     //常态
-user_pid_t R_Leg_L0_PID;     //
 
-user_pid_t L_Leg_L0_POS_PID; //收腿
-user_pid_t R_Leg_L0_POS_PID; //
-user_pid_t L_Leg_L0_SPD_PID; //
-user_pid_t R_Leg_L0_SPD_PID; //
-user_pid_t L_Leg_L0_POS_PID; //收腿
-user_pid_t R_Leg_L0_POS_PID; //
-user_pid_t L_Leg_L0_SPD_PID; //
-user_pid_t R_Leg_L0_SPD_PID; //
-
-user_pid_t spinning_pid;//小陀螺PID
-user_pid_t spinning_speed_pid;//小陀螺减速PID
-
-user_pid_t Roll_Comp_PID;    //ROLL补偿pid
-
-user_pid_t Leg_Phi0_PID;     //防劈叉pid
-
-user_pid_t gimbal_pitch_pid;//云台俯仰pid
-
-user_pid_t gimbal_yaw_speed_pid;//云台偏航速度环pid
-user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
 
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
 float alpha_target_L0 = 0.005f;//低通滤波系数，越小越平滑，但响应越慢
@@ -193,13 +161,12 @@ uint16_t motor_HZ = 500; //任务频率
 float head_forward_angle = 2.38024735f;//正视前方的yaw电机角度
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
-//?调参
-float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+
 
 //?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
 
-float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
+
 
 
 
@@ -627,31 +594,7 @@ void gimbal_follow_chassis()
 
 }
 
-//小陀螺加速
-void spinning_up()
-{
-    PID_Set_Error(&spinning_pid, d_yaw, target_spinning_d_yaw);
-    yaw_error = PID_coculate(&spinning_pid);
-    Speed_Error_Set();
-}
 
-//小陀螺减速
-void spinning_down()
-{
-    PID_Set_Error(&spinning_pid, d_yaw, 0);
-    yaw_error = PID_coculate(&spinning_pid);
-    Speed_Error_Set();
-}
-
-//小陀螺急停
-void spinning_stop()
-{
-    PID_Set_Error(&spinning_speed_pid, yaw_angle_PI, 0);
-    float spinning_speed_output = PID_coculate(&spinning_speed_pid);
-    PID_Set_Error(&spinning_pid, d_yaw, spinning_speed_output);
-    yaw_error = PID_coculate(&spinning_pid);
-    Speed_Error_Set();
-}
 
 //站起
 void Standing()

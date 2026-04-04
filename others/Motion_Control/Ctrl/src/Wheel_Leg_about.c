@@ -5,6 +5,7 @@
 #include "remoter.h"
 #include "VMC.h"
 #include "observe_task.h"
+#include "Variable.h"
 
 /*============================ 轮腿相关算法 ================================*/
 
@@ -127,6 +128,9 @@ void Distance_Error_Set()
     target_body_distance += (kalman_body_speed + speed_error) * 0.002f; //! kalman_body_speed + speed_error不等于target_body_speed，因为speed_error是经过限幅的，而target_body_speed是没有经过限幅的，始作俑者：25年丛庆
     body_distance_error = target_body_distance - body_distance;
 }
+
+float alpha_W = 0.9;//滤波系数
+float body_speed_L, body_speed_R, body_speed; //当前车体速度 ,已正交，是水平方向的速度
 /**
  * body_speed | 水平方向车身速度解算(VMC, INS.pitch_trans)
  */
@@ -147,6 +151,7 @@ void Body_Speed_Coculate()
 //! PS:这个注释不是我写的，是你自己的ai备注的hhhhhhhh甚至知道你叫丛庆
  
 
+float alpha_d_pitch = 1.0;//滤波系数
 
 //惯性导航系统数据处理，算出pitch_trans/yaw_trans/d_pitch/d_yaw
 void INS_Coculate()
