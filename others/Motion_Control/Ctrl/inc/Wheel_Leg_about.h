@@ -13,5 +13,6 @@ void INS_Coculate();
 void Yaw_Error_Coculate();
 
 extern float body_speed;
+extern float speed_error;
 
 #endif // WHEEL_LEG_ABOUT_H

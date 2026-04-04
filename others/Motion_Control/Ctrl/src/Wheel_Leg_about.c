@@ -38,22 +38,6 @@ void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, fl
     }
 }
 
-
-/**
- * @brief 横滚补偿
- * 
- */
-void Roll_Comp()
-{
-    if(speed_error <= 0.3 && speed_error >= -0.3)
-    target_roll = alpha_target_roll * (-((SBUS_CH.CH1 - 992.0f)/800.0f) * 12.0f) + (1 - alpha_target_roll) * target_roll;
-    else
-    target_roll = alpha_target_roll * target_roll + (1 - alpha_target_roll) * target_roll;
-
-    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 2);
-    PID_coculate(&Roll_Comp_PID);
-}
-
 //pd单环腿长控制函数
 void Leg_L0_Control()
 {
@@ -91,10 +75,13 @@ void Leg_L0_Control()
     PID_coculate(&R_Leg_L0_PID);                       
 }
 
+float target_body_speed;//目标速度
+float speed_limit = 2.2f;
+float speed_error;
+
 //speed_error | 计算前进速度误差 (yaw_error)
 void Speed_Error_Set()
 {
-    speed_limit = 2.2f;     //车子最大速
     // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
     // rampIterate(&Target_Speed_Ramp);
     target_body_speed = Foot_Chassis.Target_Vy;
@@ -169,3 +156,17 @@ void INS_Coculate()
     d_yaw = alpha_d_yaw * (temp/0.002f) + (1 - alpha_d_yaw) * d_yaw;
 }
 
+/**
+ * @brief 横滚补偿
+ * 
+ */
+void Roll_Comp()
+{
+    if(speed_error <= 0.3 && speed_error >= -0.3)
+    target_roll = alpha_target_roll * (-((SBUS_CH.CH1 - 992.0f)/800.0f) * 12.0f) + (1 - alpha_target_roll) * target_roll;
+    else
+    target_roll = alpha_target_roll * target_roll + (1 - alpha_target_roll) * target_roll;
+
+    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 2);
+    PID_coculate(&Roll_Comp_PID);
+}

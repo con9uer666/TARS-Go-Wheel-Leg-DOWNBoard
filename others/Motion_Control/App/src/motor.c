@@ -37,9 +37,11 @@ float Leg_R_T;
 float Wr, Wl;//加上杆角速度的车轮速度
 
 
-float target_body_speed;//目标速度   
-float speed_limit = 1.3;   
-float speed_error; 
+
+
+
+
+
 float alpha_target_body_speed = 1.0;   
 float alpha_body_speed = 1.0;//单侧算车体速度 滤波系数  
 float body_distance;

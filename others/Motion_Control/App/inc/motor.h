@@ -53,8 +53,6 @@ extern user_pid_t L_Leg_L0_PID;
 extern user_pid_t R_Leg_L0_PID; 
 extern float target_L_Leg_L0;
 extern float target_R_Leg_L0;
-extern float speed_limit;
-extern float target_body_speed;
 extern float yaw_error;
 extern float body_distance;
 extern float target_body_distance;
