@@ -5,7 +5,7 @@
 
 //?调参
 float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧度每秒
-
+extern float d_yaw;
 //小陀螺加速
 void spinning_up()
 {

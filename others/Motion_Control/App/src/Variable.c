@@ -30,3 +30,4 @@ float pitch_trans[2];
 float d_pitch;//pitch速度，单位为弧度每秒
 
 float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
+float yaw_error;

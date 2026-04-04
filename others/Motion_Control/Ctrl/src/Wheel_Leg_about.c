@@ -7,6 +7,8 @@
 #include "observe_task.h"
 #include "Variable.h"
 
+float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
+
 /*============================ 轮腿相关算法 ================================*/
 
 /**
@@ -78,6 +80,7 @@ void Leg_L0_Control()
 float target_body_speed;//目标速度
 float speed_limit = 2.2f;
 float speed_error;
+// float alpha_target_body_speed = 1.0;
 
 //speed_error | 计算前进速度误差 (yaw_error)
 void Speed_Error_Set()
@@ -96,7 +99,7 @@ void Speed_Error_Set()
     temp = 0.0;
 
     target_body_speed = target_body_speed * temp;//yaw误差越大，目标速度越小，最大为100%，最小为0
-    //// target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
+    // target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
     speed_error = target_body_speed - kalman_body_speed;
 
     if(speed_error >= speed_limit * 0.7f)
@@ -105,6 +108,9 @@ void Speed_Error_Set()
     speed_error = -speed_limit * 0.7f;
 }
 
+float body_distance;
+float target_body_distance = 2.0f;
+float body_distance_error;
 /**
  * @brief body_distance, target_body_distance, body_distance_error | 计算距离误差(kalman_body_speed, speed_error)，并且更新和
  * 
@@ -117,7 +123,9 @@ void Distance_Error_Set()
 }
 
 float alpha_W = 0.9;//滤波系数
+float alpha_body_speed = 1.0;//单侧算车体速度 滤波系数  
 float body_speed_L, body_speed_R, body_speed; //当前车体速度 ,已正交，是水平方向的速度
+float Wr, Wl;//加上杆角速度的车轮速度
 /**
  * body_speed | 水平方向车身速度解算(VMC, INS.pitch_trans)
  */
@@ -139,7 +147,8 @@ void Body_Speed_Coculate()
  
 
 float alpha_d_pitch = 1.0;//滤波系数
-
+float alpha_d_yaw = 1.0;
+float yaw_trans[2];
 //惯性导航系统数据处理，算出pitch_trans/yaw_trans/d_pitch/d_yaw
 void INS_Coculate()
 {
@@ -156,6 +165,8 @@ void INS_Coculate()
     d_yaw = alpha_d_yaw * (temp/0.002f) + (1 - alpha_d_yaw) * d_yaw;
 }
 
+float target_roll;
+float alpha_target_roll = 0.05;
 /**
  * @brief 横滚补偿
  * 

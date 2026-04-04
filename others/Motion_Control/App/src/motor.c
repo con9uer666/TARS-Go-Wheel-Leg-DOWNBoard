@@ -34,7 +34,6 @@ Foot_Chassis_t Foot_Chassis;//轮足底盘结构体
 float Leg_L_T; //模拟腿力矩
 float Leg_R_T; 
    
-float Wr, Wl;//加上杆角速度的车轮速度
 
 
 
@@ -42,28 +41,29 @@ float Wr, Wl;//加上杆角速度的车轮速度
 
 
 
-float alpha_target_body_speed = 1.0;   
-float alpha_body_speed = 1.0;//单侧算车体速度 滤波系数  
-float body_distance;
 
-float target_body_distance = 2.0f;
-float body_distance_error;
 
-float target_yaw, yaw_error;
-//!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值     单位为弧度
-float yaw_trans[2];
-float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
-float alpha_d_yaw = 1.0;
 
-float target_roll;
-float alpha_target_roll = 0.05;
-
-float Leg_F0_Limit = 500;
 
 float mg = 150.0f/2;
-float L_Ground_F0, R_Ground_F0; //地面支持力
 
-float b_phi0_offset = 0.2;
+
+
+
+//!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值     单位为弧度
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 float raw_yaw_error;
 float last_yaw_error;
@@ -437,6 +437,9 @@ void NotStanding_NotStairRetract()
     }
 }
 
+extern float d_yaw;
+extern float body_distance_error;
+float b_phi0_offset = 0.2;
 void LQR_calculate()
 {
     //算轮子力矩
@@ -490,6 +493,10 @@ void LQR_calculate()
     + LQR_K[3][9] * d_pitch;
 }
 
+
+extern float body_distance;
+extern float target_body_distance;
+float L_Ground_F0, R_Ground_F0; //地面支持力
 void off_ground_detect()
 {
     L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
@@ -517,7 +524,7 @@ void off_ground_detect()
     //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
     if(L_off_ground >= 15)//正常行驶过程离地
     {
-        //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
+        //离地后腿归中，轮子脱力
         Leg_L_T = 
         - LQR_K[2][4] * VMC_L.b_phi0 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
@@ -597,7 +604,7 @@ void gimbal_follow_chassis()
 }
 
 
-
+extern float d_yaw;
 //站起
 void Standing()
 {

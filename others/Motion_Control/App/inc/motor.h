@@ -43,8 +43,6 @@ extern uint8_t gimbal_follow_flag; // 1：刚站起来，云台跟随底盘 0：
 extern float down_board_yaw_output; // 下板yaw输出
 
 extern float speed_error; 
-extern float target_roll;
-extern float alpha_target_roll;
 extern user_pid_t Roll_Comp_PID;
 extern int leg_state_count;
 extern float target_Leg_L0;
@@ -53,19 +51,14 @@ extern user_pid_t L_Leg_L0_PID;
 extern user_pid_t R_Leg_L0_PID; 
 extern float target_L_Leg_L0;
 extern float target_R_Leg_L0;
-extern float yaw_error;
-extern float body_distance;
-extern float target_body_distance;
+
+
 extern uint8_t start_mode;
-extern float Wr, Wl;
-extern float yaw_trans[2];
 extern float d_pitch;
-extern float d_yaw;
-extern float alpha_d_yaw;
+
 extern float LQR_K[4][10];
 extern uint8_t start_mode;
-extern float body_distance_error;
-extern float alpha_body_speed;
+
 extern float head_forward_angle;
 
 /*====================================== 运动控制相关 =========================================== */
