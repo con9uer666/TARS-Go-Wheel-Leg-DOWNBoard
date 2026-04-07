@@ -76,6 +76,7 @@ extern uint8_t start_mode;
 extern float body_distance_error;
 extern float alpha_body_speed;
 extern float head_forward_angle;
+extern uint8_t user_start_mode_set;
 
 extern user_pid_t L_Leg_L0_POS_PID; //收腿
 extern user_pid_t R_Leg_L0_POS_PID; //

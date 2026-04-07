@@ -4,11 +4,13 @@ Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
 
 
-void DM_Joint_Motor_Init(Joint_Motor_t *Motor, float TMAX, float PMAX,float VMAX, uint16_t motor_id)
+void DM_Joint_Motor_Init(Joint_Motor_t *Motor, float TMAX, float PMAX, float VMAX, float KD_MIN, float KD_MAX, uint16_t motor_id)
 {
     Motor->TMAX = TMAX;
     Motor->PMAX = PMAX;
     Motor->VMAX = VMAX;
+    Motor->KD_MIN = KD_MIN;
+    Motor->KD_MAX = KD_MAX;
 
     Motor->motor_id = motor_id;
 }
@@ -114,6 +116,34 @@ void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, 
 	kp_tmp  = 0;
 	kd_tmp  = 0;
 	tor_tmp = float_to_uint(torq, -Motor.TMAX,  Motor.TMAX,  12);
+
+	data[0] = (pos_tmp >> 8);
+	data[1] = pos_tmp;
+	data[2] = (vel_tmp >> 4);
+	data[3] = ((vel_tmp&0xF)<<4)|(kp_tmp>>8);
+	data[4] = kp_tmp;
+	data[5] = (kd_tmp >> 4);
+	data[6] = ((kd_tmp&0xF)<<4)|(tor_tmp>>8);
+	data[7] = tor_tmp;
+
+    CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
+}
+
+void DM_Motor_MIT_Speed_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, float speed, float Kd)
+{
+	uint8_t data[8];
+	uint16_t pos_tmp,vel_tmp,kp_tmp,kd_tmp,tor_tmp;
+
+    if(speed >= Motor.TMAX)
+    speed = Motor.TMAX;
+    if(speed <= -Motor.TMAX)
+    speed = -Motor.TMAX;
+
+	pos_tmp = 0;
+	vel_tmp = float_to_uint(speed, -Motor.VMAX, Motor.VMAX, 12);
+	kp_tmp  = 0;
+	kd_tmp  = float_to_uint(Kd, -Motor.KD_MIN,  Motor.KD_MAX,  12);
+	tor_tmp = 0;
 
 	data[0] = (pos_tmp >> 8);
 	data[1] = pos_tmp;

@@ -22,15 +22,6 @@
 #include "Angle_about.h"
 #include "Wheel_Leg_about.h"
 
-int user_e = 0;
-int user_f = 0;
-int user_g = 0;
-int user_h = 0;
-int user_i = 0;
-int user_j = 0;
-int user_k = 0;
-int user_l = 0;
-int user_n = 0;
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -289,14 +280,14 @@ void rampInit(RampGenerator *ramp, float startValue, float targetValue, float ti
 //电机初始化参数及结构体
 void task_Motor_Init()
 {
-    DM_Joint_Motor_Init(&L_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0x01);
-    DM_Joint_Motor_Init(&L_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0x02);
+    DM_Joint_Motor_Init(&L_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0, 0, 0x01);
+    DM_Joint_Motor_Init(&L_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0, 0, 0x02);
 
-    DM_Joint_Motor_Init(&R_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0x01);
-    DM_Joint_Motor_Init(&R_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0x02);
+    DM_Joint_Motor_Init(&R_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0, 0, 0x01);
+    DM_Joint_Motor_Init(&R_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0, 0, 0x02);
 
-    DM_Joint_Motor_Init(&Yaw_DM4310, 10.0f, 3.14159265f, 30.0f, 0x10);
-    DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
+    DM_Joint_Motor_Init(&Yaw_DM4310, 10.0f, 3.14159265f, 30.0f, 0, 5, 0x10);
+    DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0, 0, 0x11);
 }
 
 //VMC赋值与初始化结构体
@@ -383,11 +374,9 @@ void NotStanding_NotStairRetract()
     if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
         Self_Righting_Step();
-        user_e = 1;//进入倒地自起
     }
     else
     {
-        user_f = 1;//没有进入倒地自起
         //倒地自起成功后复位Self_Righting_Step的状态机
         g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
         first_run = 0;//第一次运行完成
@@ -467,7 +456,6 @@ void NotStanding_NotStairRetract()
             L_Leg_State = 0;
         }
 
-        user_g = 1;
         //映射到电机力矩
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -568,7 +556,6 @@ void off_ground_detect()
         body_distance = 0;
         target_body_distance = 2.0;
     }
-    user_h = 1;//离地标志位
     if(R_off_ground >= 15)
     {
         Leg_R_T = 
@@ -661,6 +648,8 @@ void spinning_stop()
     Speed_Error_Set();
 }
 
+uint8_t user_follow_set = 0;//用户调试的跟随标志位，1为底盘跟随云台，2为云台跟随底盘
+
 //站起
 void Standing()
 {
@@ -673,7 +662,7 @@ void Standing()
     Body_Speed_Coculate();
 
     //算yaw的误差，以及根据yaw误差调整目标速度
-    if(gimbal_follow_flag == 1)
+    if(gimbal_follow_flag == 1 || user_follow_set == 2)
     {
         gimbal_follow_chassis();
 
@@ -688,7 +677,7 @@ void Standing()
         }
     }
     
-    if(gimbal_follow_flag == 0)
+    if(gimbal_follow_flag == 0 || user_follow_set == 1)
     {
         //算小陀螺的
         if(Foot_Chassis.Chassis_Mode == 1 && spinning_usable == 1)
@@ -754,7 +743,6 @@ void Standing()
 
     LQR_calculate();
 
-    user_i = 1;
     //常态下VMC解算，加入PID前馈
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
@@ -800,7 +788,6 @@ void Upstair_NotStairRetract()
     PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
 
-    user_j = 1;
     //上台阶过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -881,7 +868,6 @@ void StairRetract()
         PID_coculate(&R_Leg_dphi0_PID);
     }
 
-    user_k = 1;
     //收腿起立VMC，轮力矩解算
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -1032,7 +1018,6 @@ void Gravity_Compensation_Test_Function(void)
     VMC_Set_F0_T(&VMC_L, left_Leg_PID.L0_speed.output, left_Leg_PID.phi0_speed.output);
     VMC_Set_F0_T(&VMC_R, right_Leg_PID.L0_speed.output, right_Leg_PID.phi0_speed.output);
     
-    user_l = 1;
     if(count == 255)
     {
         if(left_mean_square_error <= 0.01f)
@@ -1066,7 +1051,8 @@ void Gravity_Compensation_Test_Function(void)
  *****************************************************************************************************/
 
 //调试接口
-uint8_t user_mode = 0;
+uint8_t user_mode_1 = 0;
+uint8_t user_start_mode_set = 3;//用户调试的start_mode模式选择，0到2分别对应三个模式，3为不干预
 
 void Motor_task(void const *argument)
 {
@@ -1083,33 +1069,31 @@ void Motor_task(void const *argument)
 
     for(;;)
     {
-        if(user_mode == 0)
+        if(user_mode_1 == 0)
         {
             //计算标零后角度值
             yaw_angle_PI = easy_angle_normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
 
             //刚启动收腿过程中
-            if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
+            if((start_mode == 0 && upstares_mode == 0 && user_start_mode_set == 3) || user_start_mode_set == 0)//未站起 + 未上楼收腿
             {  
                 NotStanding_NotStairRetract();
             }
 
-            else if(start_mode == 1)//站起
+            else if((start_mode == 1 && user_start_mode_set == 3) || user_start_mode_set == 1)//站起
             {
-                user_n = 2;
                 Standing();
             }
-            else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
+            else if((start_mode == 2 && upstares_mode == 0 && user_start_mode_set == 3) || user_start_mode_set == 2)//上楼梯模式 + 未上楼收腿
             {
                 Upstair_NotStairRetract();
-
             }
             else if(upstares_mode == 1)//收腿起立
             {
                 StairRetract();
             }
         }
-        if(user_mode == 1)
+        if(user_mode_1 == 1)
         {
             Gravity_Compensation_Test_Function();
         }
