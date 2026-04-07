@@ -37,6 +37,8 @@ typedef struct Joint_Motor{
     float TMAX;
     float PMAX;
     float VMAX;
+    float KD_MAX;
+    float KD_MIN;
     uint16_t motor_id;
 }Joint_Motor_t;
 
@@ -60,7 +62,7 @@ void DJI3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor);
 void Enable_DM_Motor_MIT(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
 void Disable_DM_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
 void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, float torq);
-void DM_Wheel_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Wheel_Motor_t Motor, float torq);
+void DM_Motor_MIT_Speed_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t motor, float pos, float vel, float tor, float kp, float kd);
 void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque);
 void Enable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
 void Disable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);

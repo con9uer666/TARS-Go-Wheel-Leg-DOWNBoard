@@ -127,21 +127,16 @@ void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, 
     CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
-void DM_Wheel_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Wheel_Motor_t Motor, float torq)
+void DM_Motor_MIT_Speed_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t motor, float pos, float vel, float tor, float kp, float kd)
 {
 	uint8_t data[8];
 	uint16_t pos_tmp,vel_tmp,kp_tmp,kd_tmp,tor_tmp;
 
-    if(torq >= Motor.TMAX)
-    torq = Motor.TMAX;
-    if(torq <= -Motor.TMAX)
-    torq = -Motor.TMAX;
-
-	pos_tmp = 0;
-	vel_tmp = 0;
-	kp_tmp  = 0;
-	kd_tmp  = 0;
-	tor_tmp = float_to_uint(torq, -Motor.TMAX,  Motor.TMAX,  12);
+	pos_tmp = float_to_uint(pos, -motor.PMAX, motor.PMAX, 16);
+	vel_tmp = float_to_uint(vel, -motor.VMAX, motor.VMAX, 12);
+	tor_tmp = float_to_uint(tor, -motor.TMAX, motor.TMAX, 12);
+	kp_tmp  = float_to_uint(kp,  0, 500, 12);
+	kd_tmp  = float_to_uint(kd,  0, 5, 12);
 
 	data[0] = (pos_tmp >> 8);
 	data[1] = pos_tmp;
@@ -152,7 +147,7 @@ void DM_Wheel_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Wheel_Motor_t M
 	data[6] = ((kd_tmp&0xF)<<4)|(tor_tmp>>8);
 	data[7] = tor_tmp;
 
-    CAN_Send_DM_Motor_Data(hfdcan, Motor.motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
+    CAN_Send_DM_Motor_Data(hfdcan, motor.motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
 void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque)

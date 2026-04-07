@@ -167,7 +167,6 @@ static float limit_function(float value, float max_mag)
 	return value;
 }
 
-int user_m = 0;
 
 //统一写入两条腿的输出，并更新调试变量，左右腿旋转方向没封装
 static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
@@ -179,7 +178,6 @@ static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 
 	VMC_Set_F0_T(&VMC_L, f_l, t_l);
 	VMC_Set_F0_T(&VMC_R, f_r, t_r);
-	user_m = 1;
 }
 
 //封装角度到0-2PI，方便后续判断转动卡住和是否到达目标角度

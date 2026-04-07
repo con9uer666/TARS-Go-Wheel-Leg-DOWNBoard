@@ -22,15 +22,6 @@
 #include "Angle_about.h"
 #include "Wheel_Leg_about.h"
 
-int user_e = 0;
-int user_f = 0;
-int user_g = 0;
-int user_h = 0;
-int user_i = 0;
-int user_j = 0;
-int user_k = 0;
-int user_l = 0;
-int user_n = 0;
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -330,7 +321,8 @@ void task_PID_Init()
     //云台pid
     PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 10000, 0);
     PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0);
-    PID_INIT(&gimbal_yaw_angle_pid, 80, 0,1, 6, 80, 10000, 0);
+    // PID_INIT(&gimbal_yaw_angle_pid, 80, 0,1, 6, 80, 10000, 0);
+    PID_INIT(&gimbal_yaw_angle_pid, 20, 0.01,1, 10, 0.5, 0.3, 0);
     PID_INIT(&gimbal_yaw_speed_pid, 0.3, 0.00, 0.3, 5, 80, 10000, 0);
     // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
 }
@@ -376,18 +368,17 @@ void NotStanding_NotStairRetract()
 
     //位速双环PID摆头防卡腿
     PID_Set_Error(&gimbal_yaw_angle_pid, yaw_angle_PI, 0);
-    PID_Set_Error(&gimbal_yaw_speed_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_angle_pid));
-    down_board_yaw_output = PID_coculate(&gimbal_yaw_speed_pid);
+    // PID_Set_Error(&gimbal_yaw_speed_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_angle_pid));
+    // down_board_yaw_output = PID_coculate(&gimbal_yaw_speed_pid);
+    down_board_yaw_output = PID_coculate(&gimbal_yaw_angle_pid);
 
     //是否姿态稳定在误差20°内的起立态
     if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
         Self_Righting_Step();
-        user_e = 1;//进入倒地自起
     }
     else
     {
-        user_f = 1;//没有进入倒地自起
         //倒地自起成功后复位Self_Righting_Step的状态机
         g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
         first_run = 0;//第一次运行完成
@@ -467,7 +458,6 @@ void NotStanding_NotStairRetract()
             L_Leg_State = 0;
         }
 
-        user_g = 1;
         //映射到电机力矩
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -568,7 +558,6 @@ void off_ground_detect()
         body_distance = 0;
         target_body_distance = 2.0;
     }
-    user_h = 1;//离地标志位
     if(R_off_ground >= 15)
     {
         Leg_R_T = 
@@ -754,7 +743,6 @@ void Standing()
 
     LQR_calculate();
 
-    user_i = 1;
     //常态下VMC解算，加入PID前馈
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
@@ -800,7 +788,6 @@ void Upstair_NotStairRetract()
     PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
 
-    user_j = 1;
     //上台阶过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -881,7 +868,6 @@ void StairRetract()
         PID_coculate(&R_Leg_dphi0_PID);
     }
 
-    user_k = 1;
     //收腿起立VMC，轮力矩解算
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -1032,7 +1018,6 @@ void Gravity_Compensation_Test_Function(void)
     VMC_Set_F0_T(&VMC_L, left_Leg_PID.L0_speed.output, left_Leg_PID.phi0_speed.output);
     VMC_Set_F0_T(&VMC_R, right_Leg_PID.L0_speed.output, right_Leg_PID.phi0_speed.output);
     
-    user_l = 1;
     if(count == 255)
     {
         if(left_mean_square_error <= 0.01f)
@@ -1066,7 +1051,7 @@ void Gravity_Compensation_Test_Function(void)
  *****************************************************************************************************/
 
 //调试接口
-uint8_t user_mode = 0;
+uint8_t user_Gravity_Compensation_Test_Function_set = 0;
 
 void Motor_task(void const *argument)
 {
@@ -1083,20 +1068,19 @@ void Motor_task(void const *argument)
 
     for(;;)
     {
-        if(user_mode == 0)
+        if(user_Gravity_Compensation_Test_Function_set == 0)
         {
             //计算标零后角度值
             yaw_angle_PI = easy_angle_normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
 
             //刚启动收腿过程中
             if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
-            {  
+            {
                 NotStanding_NotStairRetract();
             }
 
             else if(start_mode == 1)//站起
             {
-                user_n = 2;
                 Standing();
             }
             else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
@@ -1109,7 +1093,7 @@ void Motor_task(void const *argument)
                 StairRetract();
             }
         }
-        if(user_mode == 1)
+        if(user_Gravity_Compensation_Test_Function_set == 1)
         {
             Gravity_Compensation_Test_Function();
         }

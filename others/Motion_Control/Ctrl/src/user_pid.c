@@ -55,8 +55,8 @@ float PID_coculate(user_pid_t *PID)
 	}
 	else
 	{
-			if(PID->error >= 0)PID->error -= PID->deadzone;
-			if(PID->error <= 0)PID->error += PID->deadzone;
+        if(PID->error >= 0)PID->error -= PID->deadzone;
+        if(PID->error <= 0)PID->error += PID->deadzone;
 	}
 
 	//基本计算
