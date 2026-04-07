@@ -46,7 +46,7 @@ user_pid_t wheel_PID_r;
 user_pid_t anti_split_PID;
 
 /* 第一阶段（伸腿）目标与判定参数 */
-float g_sr_target_l0 = 0.41f;          /* 目标腿长（用户要求默认0.4）。 */
+float g_sr_target_l0 = LEG_MAX_LENTH;          /* 目标腿长（最长腿长）。 */
 float g_sr_l0_reached_tol = 0.02f;    /* 到达目标腿长的误差阈值。 */
 float g_sr_l0_ctrl_ramp_rate = 0.1f;   /* 伸腿力斜坡速率；0表示不用斜坡。 */
 float g_sr_l0_ctrl_f0_max = 20.0f;    /* 伸腿力F0上限。 */
@@ -167,6 +167,8 @@ static float limit_function(float value, float max_mag)
 	return value;
 }
 
+int user_m = 0;
+
 //统一写入两条腿的输出，并更新调试变量，左右腿旋转方向没封装
 static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 {
@@ -177,6 +179,7 @@ static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 
 	VMC_Set_F0_T(&VMC_L, f_l, t_l);
 	VMC_Set_F0_T(&VMC_R, f_r, t_r);
+	user_m = 1;
 }
 
 //封装角度到0-2PI，方便后续判断转动卡住和是否到达目标角度
@@ -278,9 +281,16 @@ uint8_t Self_Righting_Step(void)
                  * 这里是“单步调用”，是否使用斜坡由 g_sr_l0_ctrl_ramp_rate
                  * 决定。   
                  */
-        //算伸腿力，是否使用斜坡由 g_sr_l0_ctrl_ramp_rate决定 vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AE%97%E4%BC%B8%E8%85%BF%E5%8A%9B%EF%BC%8C%E6%98%AF%E5%90%A6%E4%BD%BF%E7%94%A8%E6%96%9C%E5%9D%A1%E7%94%B1+g_sr_l0_ctrl_ramp_rate%E5%86%B3%E5%AE%9A
-		f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+        //算伸腿力，是否使用斜坡由
+		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, g_sr_target_l0);
+		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, g_sr_target_l0);
+		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
+		PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, PID_coculate(&R_Leg_L0_POS_PID));
+
+		f_l = PID_coculate(&L_Leg_L0_SPD_PID);
+		f_r = PID_coculate(&R_Leg_L0_SPD_PID);
+		// f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		// f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
 
 		// 卡住检测vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F+%E5%8D%A1%E4%BD%8F%E6%A3%80%E6%B5%8B
 		l0_stuck_l = leg_length_stuck_detect(&VMC_L, g_sr_l0_stuck_thresh, 0.2f);
@@ -334,8 +344,13 @@ uint8_t Self_Righting_Step(void)
 
 
         //第二阶段保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
-		f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, g_sr_target_l0);
+		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, g_sr_target_l0);
+		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
+		PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, PID_coculate(&R_Leg_L0_POS_PID));
+
+		f_l = PID_coculate(&L_Leg_L0_SPD_PID);
+		f_r = PID_coculate(&R_Leg_L0_SPD_PID);
 
 		//第二阶段反向匀速转vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E5%8F%8D%E5%90%91%E5%8C%80%E9%80%9F%E8%BD%AC
 		t_l = leg_turn_speed_control(&VMC_L, g_sr_reverse_speed_l + PID_coculate(&anti_split_PID), g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
@@ -368,8 +383,13 @@ uint8_t Self_Righting_Step(void)
 		PID_coculate(&anti_split_PID);
 		
 		//第三阶段继续保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%E7%BB%A7%E7%BB%AD%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
-		f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, g_sr_target_l0);
+		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, g_sr_target_l0);
+		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
+		PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, PID_coculate(&R_Leg_L0_POS_PID));
+
+		f_l = PID_coculate(&L_Leg_L0_SPD_PID);
+		f_r = PID_coculate(&R_Leg_L0_SPD_PID);
 
 		//计算每条腿到目标角的剩余距离（绝对值用于比较远近）vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E8%AE%A1%E7%AE%97%E6%AF%8F%E6%9D%A1%E8%85%BF%E5%88%B0%E7%9B%AE%E6%A0%87%E8%A7%92%E7%9A%84%E5%89%A9%E4%BD%99%E8%B7%9D%E7%A6%BB%EF%BC%88%E7%BB%9D%E5%AF%B9%E5%80%BC%E7%94%A8%E4%BA%8E%E6%AF%94%E8%BE%83%E8%BF%9C%E8%BF%91%EF%BC%89
 		rem_l = fabsf(g_sr_target_angle_l - left_phi0_0_to_2PI);

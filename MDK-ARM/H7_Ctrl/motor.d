@@ -95,6 +95,7 @@ h7_ctrl\motor.o: ../IMU_coculate/imu_temp_ctrl.h
 h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\VMC.h
 h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\observe_task.h
 h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h
+h7_ctrl\motor.o: ..\others\Motion_Control\Ctrl\inc\Leg_Control.h
 h7_ctrl\motor.o: ..\others\Motion_Control\App\inc\Self_Righting.h
 h7_ctrl\motor.o: ../UserMiddlewares/include/Board2Board.h
 h7_ctrl\motor.o: ../Core/Inc/usart.h

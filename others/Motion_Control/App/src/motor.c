@@ -22,6 +22,15 @@
 #include "Angle_about.h"
 #include "Wheel_Leg_about.h"
 
+int user_e = 0;
+int user_f = 0;
+int user_g = 0;
+int user_h = 0;
+int user_i = 0;
+int user_j = 0;
+int user_k = 0;
+int user_l = 0;
+int user_n = 0;
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -135,10 +144,6 @@ user_pid_t L_Leg_L0_POS_PID; //收腿
 user_pid_t R_Leg_L0_POS_PID; //
 user_pid_t L_Leg_L0_SPD_PID; //
 user_pid_t R_Leg_L0_SPD_PID; //
-user_pid_t L_Leg_L0_POS_PID; //收腿
-user_pid_t R_Leg_L0_POS_PID; //
-user_pid_t L_Leg_L0_SPD_PID; //
-user_pid_t R_Leg_L0_SPD_PID; //
 
 user_pid_t spinning_pid;//小陀螺PID
 user_pid_t spinning_speed_pid;//小陀螺减速PID
@@ -153,7 +158,7 @@ user_pid_t gimbal_yaw_speed_pid;//云台偏航速度环pid
 user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
 
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
-float alpha_target_L0 = 0.005f;//低通滤波系数，越小越平滑，但响应越慢
+
 float target_L_Leg_L0 = LEG_MIN_LENTH;
 float target_R_Leg_L0 = LEG_MIN_LENTH;
 uint8_t i;
@@ -190,7 +195,7 @@ uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数�
 
 //?常量
 uint16_t motor_HZ = 500; //任务频率
-float head_forward_angle = 2.38024735f;//正视前方的yaw电机角度
+float head_forward_angle = -1.2278266f;//正视前方的yaw电机角度
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
@@ -358,59 +363,11 @@ void task_Motor_Enable()
 
 /*===============================================运动函数===============================================*/
 
+
+
 //未站起 + 未上楼收腿  函数
 void NotStanding_NotStairRetract()
 {
-    //腿长判断是否到达目标长度
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
-    {
-        L_Ready_Count ++;
-    }
-    if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
-    {
-        L_Leg_State = 1;    //收腿完成
-        L_Ready_Count = 0;  //归零
-    }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
-    {
-        R_Ready_Count ++;
-    }
-    if(R_Leg_State == 0 && R_Ready_Count >= 50)
-    {
-        R_Leg_State = 1;
-        R_Ready_Count = 0;
-    }
-
-    //腿长达标之后，判断腿角度是否到达目标角度
-    if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-    {
-        L_Ready_Count ++;
-    }
-    if(L_Leg_State == 1 && L_Ready_Count >= 50)
-    {
-        L_Leg_State = 2;
-        L_Ready_Count = 0;
-    }
-    if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-    {
-        R_Ready_Count ++;
-    }
-    if(R_Leg_State == 1 &&R_Ready_Count >= 50)
-    {
-        R_Leg_State = 2;
-        R_Ready_Count = 0;
-    }
-
-    if(R_Leg_State == 2 && L_Leg_State == 2)
-    {
-        start_mode = 1; // 收腿完成，进入正常模式
-        //归零
-        R_Leg_State = 0;
-        L_Leg_State = 0;
-    }
-
-
-
     //标志位
     gimbal_follow_flag = 1; //下板控制云台
 
@@ -426,9 +383,11 @@ void NotStanding_NotStairRetract()
     if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
         Self_Righting_Step();
+        user_e = 1;//进入倒地自起
     }
     else
     {
+        user_f = 1;//没有进入倒地自起
         //倒地自起成功后复位Self_Righting_Step的状态机
         g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
         first_run = 0;//第一次运行完成
@@ -460,6 +419,55 @@ void NotStanding_NotStairRetract()
             PID_coculate(&R_Leg_dphi0_PID);
         }
 
+        //腿长判断是否到达目标长度
+        if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
+        {
+            L_Ready_Count ++;
+        }
+        if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
+        {
+            L_Leg_State = 1;    //收腿完成
+            L_Ready_Count = 0;  //归零
+        }
+        if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
+        {
+            R_Ready_Count ++;
+        }
+        if(R_Leg_State == 0 && R_Ready_Count >= 50)
+        {
+            R_Leg_State = 1;
+            R_Ready_Count = 0;
+        }
+
+        //腿长达标之后，判断腿角度是否到达目标角度
+        if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+        {
+            L_Ready_Count ++;
+        }
+        if(L_Leg_State == 1 && L_Ready_Count >= 50)
+        {
+            L_Leg_State = 2;
+            L_Ready_Count = 0;
+        }
+        if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+        {
+            R_Ready_Count ++;
+        }
+        if(R_Leg_State == 1 &&R_Ready_Count >= 50)
+        {
+            R_Leg_State = 2;
+            R_Ready_Count = 0;
+        }
+
+        if(R_Leg_State == 2 && L_Leg_State == 2)
+        {
+            start_mode = 1; // 收腿完成，进入正常模式
+            //归零
+            R_Leg_State = 0;
+            L_Leg_State = 0;
+        }
+
+        user_g = 1;
         //映射到电机力矩
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -560,7 +568,7 @@ void off_ground_detect()
         body_distance = 0;
         target_body_distance = 2.0;
     }
-
+    user_h = 1;//离地标志位
     if(R_off_ground >= 15)
     {
         Leg_R_T = 
@@ -679,6 +687,7 @@ void Standing()
             gimbal_follow_flag_cnt = 0;
         }
     }
+    
     if(gimbal_follow_flag == 0)
     {
         //算小陀螺的
@@ -745,6 +754,7 @@ void Standing()
 
     LQR_calculate();
 
+    user_i = 1;
     //常态下VMC解算，加入PID前馈
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
@@ -769,27 +779,28 @@ void Upstair_NotStairRetract()
     R_LK9025.Target_Torque = 0.1;
 
     // 磕台阶过程中双环腿长控制
-    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.44);   //TODO: 写一个最大腿长的宏定义
-    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.44);
+    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);   //TODO: 写一个最大腿长的宏定义
+    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MAX_LENTH);
     PID_coculate(&L_Leg_L0_POS_PID);
     PID_coculate(&R_Leg_L0_POS_PID);
 
     PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
     PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
-    PID_coculate(&L_Leg_L0_SPD_PID);
+    PID_coculate(&L_Leg_L0_SPD_PID);   
     PID_coculate(&R_Leg_L0_SPD_PID);
 
     //磕台阶过程中双环腿角度控制
-    PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.2);
+    PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.5f);
     PID_coculate(&L_Leg_Middle_PID);
     PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
     PID_coculate(&L_Leg_dphi0_PID);
     
-    PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.2);
+    PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.5f);
     PID_coculate(&R_Leg_Middle_PID);
     PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
 
+    user_j = 1;
     //上台阶过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
@@ -826,7 +837,7 @@ void StairRetract()
     VMC_Coculate();
     Body_Speed_Coculate();
 
-    //收腿起立的腿长双环控制vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8B%E7%9A%84%E8%85%BF%E9%95%BF%E5%8F%8C%E7%8E%AF%E6%8E%A7%E5%88%B6
+    //收腿起立的腿长双环控制
     //!这他妈是史啊，写这段何意味
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16f);
     PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16f);
@@ -841,43 +852,44 @@ void StairRetract()
     
     if(L_Leg_State >= 1)//腿长缩短完成，腿后伸完成
     {
-        //收腿到准备起立态的角度双环vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E5%88%B0%E5%87%86%E5%A4%87%E8%B5%B7%E7%AB%8B%E6%80%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%8C%E7%8E%AF
-        PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
+        //收腿到准备起立态的角度双环
+        PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2f);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
         PID_coculate(&L_Leg_Middle_PID);
         PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
         PID_coculate(&L_Leg_dphi0_PID);
     }
     else 
     {
-        //伸腿到腿向后伸长态的角度双环vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%BC%B8%E8%85%BF%E5%88%B0%E8%85%BF%E5%90%91%E5%90%8E%E4%BC%B8%E9%95%BF%E6%80%81%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%8C%E7%8E%AF
-        PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.2);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
+        //伸腿到腿向后伸长态的角度双环
+        PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.5f);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
         PID_coculate(&L_Leg_Middle_PID);
         PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
         PID_coculate(&L_Leg_dphi0_PID);
     }
     if(R_Leg_State >= 1)
     {
-        PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+        PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2f);
         PID_coculate(&R_Leg_Middle_PID);
         PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
         PID_coculate(&R_Leg_dphi0_PID);
     }
     else
     {
-        PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.2);
+        PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.5f);
         PID_coculate(&R_Leg_Middle_PID);
         PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
         PID_coculate(&R_Leg_dphi0_PID);
     }
 
-    //收腿起立VMC，轮力矩解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%94%B6%E8%85%BF%E8%B5%B7%E7%AB%8BVMC%EF%BC%8C%E8%BD%AE%E5%8A%9B%E7%9F%A9%E8%A7%A3%E7%AE%97
+    user_k = 1;
+    //收腿起立VMC，轮力矩解算
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
     L_LK9025.Target_Torque = 0.5f;
     R_LK9025.Target_Torque = 0.5f;
 
-    //腿收短，后伸检测vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E6%94%B6%E7%9F%AD%EF%BC%8C%E5%90%8E%E4%BC%B8%E6%A3%80%E6%B5%8B
+    //腿收短，后伸检测
     if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
     {
         L_Ready_Count ++;
@@ -919,7 +931,7 @@ void StairRetract()
         R_LK9025.Target_Torque = 0;
     }
 
-    //状态量归位vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%8A%B6%E6%80%81%E9%87%8F%E5%BD%92%E4%BD%8D
+    //状态量归位
     if(R_Leg_State == 2 && L_Leg_State == 2)
     {
         upstares_mode = 0;
@@ -1019,7 +1031,8 @@ void Gravity_Compensation_Test_Function(void)
 
     VMC_Set_F0_T(&VMC_L, left_Leg_PID.L0_speed.output, left_Leg_PID.phi0_speed.output);
     VMC_Set_F0_T(&VMC_R, right_Leg_PID.L0_speed.output, right_Leg_PID.phi0_speed.output);
-
+    
+    user_l = 1;
     if(count == 255)
     {
         if(left_mean_square_error <= 0.01f)
@@ -1083,11 +1096,13 @@ void Motor_task(void const *argument)
 
             else if(start_mode == 1)//站起
             {
+                user_n = 2;
                 Standing();
             }
             else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
             {
                 Upstair_NotStairRetract();
+
             }
             else if(upstares_mode == 1)//收腿起立
             {

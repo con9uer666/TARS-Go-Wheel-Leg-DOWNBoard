@@ -6,6 +6,7 @@
 #include "Motor_Drv.h"
 
 #define LEG_MIN_LENTH 0.19f
+#define LEG_MAX_LENTH 0.37f   
 #define WHEEL_RADIUS 0.061f
 
 typedef struct RampGenerator
@@ -75,6 +76,11 @@ extern uint8_t start_mode;
 extern float body_distance_error;
 extern float alpha_body_speed;
 extern float head_forward_angle;
+
+extern user_pid_t L_Leg_L0_POS_PID; //收腿
+extern user_pid_t R_Leg_L0_POS_PID; //
+extern user_pid_t L_Leg_L0_SPD_PID; //
+extern user_pid_t R_Leg_L0_SPD_PID; //
 
 /*====================================== 运动控制相关 =========================================== */
 void task_Motor_Init();

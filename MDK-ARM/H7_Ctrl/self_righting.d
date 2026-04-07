@@ -50,3 +50,4 @@ h7_ctrl\self_righting.o: ..\others\Motion_Control\App\inc\motor.h
 h7_ctrl\self_righting.o: ..\others\Motion_Control\Drv\inc\Motor_Drv.h
 h7_ctrl\self_righting.o: ..\others\Motion_Control\Drv\inc\USER_CAN.h
 h7_ctrl\self_righting.o: ../Core/Inc/fdcan.h
+h7_ctrl\self_righting.o: ..\CommonLibs\inc\Angle_about.h

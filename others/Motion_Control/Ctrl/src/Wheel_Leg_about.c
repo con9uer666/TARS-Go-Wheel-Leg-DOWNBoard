@@ -53,6 +53,7 @@ void Roll_Comp()
     PID_coculate(&Roll_Comp_PID);
 }
 
+float alpha_target_L0 = 0.005f;//低通滤波系数，越小越平滑，但响应越慢
 //pd单环腿长控制函数
 void Leg_L0_Control()
 {
@@ -62,24 +63,23 @@ void Leg_L0_Control()
     }
 
     //低通滤波
-    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
-    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * 0.22) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
+    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * (LEG_MAX_LENTH - LEG_MIN_LENTH)) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
 
-    if(target_Leg_L0 >= 0.40f)          
-    target_Leg_L0 = 0.40f;              
+    if(target_Leg_L0 >= LEG_MAX_LENTH)          
+    target_Leg_L0 = LEG_MAX_LENTH;              
     if(target_Leg_L0 <= LEG_MIN_LENTH)  
     target_Leg_L0 = LEG_MIN_LENTH;      
 
     target_L_Leg_L0 = target_Leg_L0;    
     target_R_Leg_L0 = target_Leg_L0;    
 
-    if(target_L_Leg_L0 >= 0.40)         
-    target_L_Leg_L0 = 0.40;
+    if(target_L_Leg_L0 >= LEG_MAX_LENTH)         
+    target_L_Leg_L0 = LEG_MAX_LENTH;
     if(target_L_Leg_L0 <= LEG_MIN_LENTH)
     target_L_Leg_L0 = LEG_MIN_LENTH;
 
-    if(target_R_Leg_L0 >= 0.40)         
-    target_R_Leg_L0 = 0.40;             
+    if(target_R_Leg_L0 >= LEG_MAX_LENTH)         
+    target_R_Leg_L0 = LEG_MAX_LENTH;             
     if(target_R_Leg_L0 <= LEG_MIN_LENTH)
     target_R_Leg_L0 = LEG_MIN_LENTH;    
 
