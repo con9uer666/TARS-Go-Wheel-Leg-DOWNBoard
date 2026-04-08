@@ -160,7 +160,7 @@ void B2B_ParseUsart() // 先发低字节
 
 		txbuffer[45] = JUDGE_IsValid();
 
-		txbuffer[46] = start_mode;
+		txbuffer[46] = gimbal_follow_flag;
 
 		rs485_isvalid = 1;
 
