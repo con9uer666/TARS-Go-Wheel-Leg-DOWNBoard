@@ -4,8 +4,9 @@
 #include "main.h"
 #include <stdint.h>
 
-#define PI 3.1415926f
-
+#ifndef PI
+    #define PI 3.1415926f
+#endif
 typedef struct
 {
     uint8_t angle_range;    //角度范围，0：-PI到PI，1：0到2PI

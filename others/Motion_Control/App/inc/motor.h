@@ -1,9 +1,8 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-#include "user_pid.h"
 #include "main.h"
-#include "Motor_Drv.h"
+#include "user_pid.h"
 
 #define LEG_MIN_LENTH 0.19f
 #define LEG_MAX_LENTH 0.37f   
@@ -76,6 +75,7 @@ extern uint8_t start_mode;
 extern float body_distance_error;
 extern float alpha_body_speed;
 extern float head_forward_angle;
+extern uint8_t upstares_mode;
 
 extern user_pid_t L_Leg_L0_POS_PID; //收腿
 extern user_pid_t R_Leg_L0_POS_PID; //

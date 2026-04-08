@@ -5,6 +5,7 @@
 #include "remoter.h"
 #include "VMC.h"
 #include "observe_task.h"
+#include "Motor_Drv.h"
 
 /*============================ 轮腿相关算法 ================================*/
 

@@ -4,6 +4,7 @@
 #include "math.h"
 #include "RLS.h"
 #include "motor.h"
+#include "Motor_Drv.h"
 
 uint16_t SET_WHEELSPEED_MAX = 8000;
 

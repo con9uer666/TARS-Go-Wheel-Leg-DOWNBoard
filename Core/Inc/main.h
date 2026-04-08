@@ -62,10 +62,10 @@ void Error_Handler(void);
 #define GYRO_CS_Pin GPIO_PIN_3
 #define GYRO_CS_GPIO_Port GPIOC
 
-#define PI 3.14159265f
-
 /* USER CODE BEGIN Private defines */
-
+#ifndef PI
+    #define PI 3.1415926f
+#endif
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

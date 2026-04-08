@@ -60,6 +60,7 @@ osThreadId ObserveHandle;
 uint32_t ObserveBuffer[ 2048 ];
 osStaticThreadDef_t ObserveControlBlock;
 osThreadId Board2BoardTaskHandle;
+osThreadId Gimbal_TaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -75,6 +76,7 @@ void State_machine_task(void const * argument);
 void Motor_task(void const * argument);
 void Observe_Tasks(void const * argument);
 void OS_Board2BoardCallback(void const * argument);
+void Gimbal_task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -156,6 +158,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of Board2BoardTask */
   osThreadDef(Board2BoardTask, OS_Board2BoardCallback, osPriorityHigh, 0, 512);
   Board2BoardTaskHandle = osThreadCreate(osThread(Board2BoardTask), NULL);
+
+  /* definition and creation of Gimbal_Task */
+  osThreadDef(Gimbal_Task, Gimbal_task, osPriorityNormal, 0, 128);
+  Gimbal_TaskHandle = osThreadCreate(osThread(Gimbal_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -323,6 +329,24 @@ __weak void OS_Board2BoardCallback(void const * argument)
     osDelay(1);
   }
   /* USER CODE END OS_Board2BoardCallback */
+}
+
+/* USER CODE BEGIN Header_Gimbal_task */
+/**
+* @brief Function implementing the Gimbal_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Gimbal_task */
+__weak void Gimbal_task(void const * argument)
+{
+  /* USER CODE BEGIN Gimbal_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Gimbal_task */
 }
 
 /* Private application code --------------------------------------------------*/

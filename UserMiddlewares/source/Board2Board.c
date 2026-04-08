@@ -8,6 +8,9 @@
 #include "cmsis_os.h"
 #include "motor.h"
 #include <stdint.h>
+#include "User_State.h"
+#include "Gimbal.h"
+#include "Motor_Drv.h"
 
 extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
 extern DMA_HandleTypeDef hdma_usart1_rx;
@@ -91,7 +94,7 @@ void B2B_ParseUsart() // 先发低字节
 		visionFindcheck = visionFind;
 		vision_mode = visionMode;
 
-		Yaw_DM4310.Target_Torque = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
+		Yaw_DM4310.Target_Speed = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
 
 		Shooter_DM2325.Target_Torque = (float)((((int16_t)(usart2RxBuf[27] | usart2RxBuf[28] << 8))/1000.0f)*0.18f);
 

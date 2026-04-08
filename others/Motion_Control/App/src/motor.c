@@ -1,27 +1,30 @@
-#include "controller.h"
-#include "fdcan.h"
-#include "main.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "cmsis_os.h"
-#include "remoter.h"
-#include "user_pid.h"
+
 #include "motor.h"
+#include "user_pid.h"
+#include "Motor_Drv.h"
+#include "Gimbal.h"
+#include "User_State.h"
 #include "State.h"
 #include "arm_math.h"
-#include "imu_temp_ctrl.h"
 #include "USER_CAN.h"
 #include "VMC.h"
 #include "observe_task.h"
-#include <math.h>
-#include <stdint.h>
 #include "Leg_Control.h"
 #include "Self_Righting.h"
 #include "Board2Board.h"
 #include "Slope.h"
-#include "Angle_about.h"
 #include "Wheel_Leg_about.h"
-
+#include "controller.h"
+#include "remoter.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
+#include "fdcan.h"
+#include <math.h>
+#include <stdint.h>
+#include "imu_temp_ctrl.h"
+#include "Angle_about.h"
+#include "User_State.h"
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -145,8 +148,7 @@ user_pid_t Leg_Phi0_PID;     //防劈叉pid
 
 user_pid_t gimbal_pitch_pid;//云台俯仰pid
 
-user_pid_t gimbal_yaw_speed_pid;//云台偏航速度环pid
-user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
+
 
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
 
@@ -161,7 +163,7 @@ user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
 uint8_t first_run = 1;//是否是第一次运行，第一次运行需要特殊处理一些变量的初始值
 
-uint8_t start_mode = 0;//0为刚从急停退出来，1为正常行走，2为正在上楼模式
+
 uint8_t upstares_mode = 0;//0为未开始上楼收腿，1为开始上楼收腿
 int ready_count = 0;
 
@@ -173,7 +175,7 @@ RampGenerator Target_Speed_Ramp;//目标速度斜坡发生器
 /*============================= 任务变量 ================================= */
 
 //?标志位
-uint8_t gimbal_follow_flag = 0; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
+uint8_t gimbal_follow_flag = 1; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
 uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
 uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
 uint8_t L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
@@ -182,11 +184,11 @@ uint8_t L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立�
 uint16_t L_Ready_Count, R_Ready_Count;
 int L_off_ground = 0;   //必须是int类型，因为要减去计数器，不能无符号
 int R_off_ground = 0;   //必须是int类型，因为要减去计数器，不能无符号
-uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器
+
 
 //?常量
 uint16_t motor_HZ = 500; //任务频率
-float head_forward_angle = -1.2278266f;//正视前方的yaw电机角度
+
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
@@ -195,7 +197,7 @@ float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧�
 //?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
 
-float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
+
 
 
 
@@ -321,9 +323,7 @@ void task_PID_Init()
     //云台pid
     PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 10000, 0);
     PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0);
-    // PID_INIT(&gimbal_yaw_angle_pid, 80, 0,1, 6, 80, 10000, 0);
-    PID_INIT(&gimbal_yaw_angle_pid, 20, 0.01,1, 10, 0.5, 0.3, 0);
-    PID_INIT(&gimbal_yaw_speed_pid, 0.3, 0.00, 0.3, 5, 80, 10000, 0);
+    
     // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
 }
 
@@ -358,19 +358,11 @@ void task_Motor_Enable()
 
 
 //未站起 + 未上楼收腿  函数
-void NotStanding_NotStairRetract()
+void NotStanding_NotStairRetract_for_chassis()
 {
-    //标志位
-    gimbal_follow_flag = 1; //下板控制云台
 
     VMC_Coculate();
     Body_Speed_Coculate();//车身速度解算
-
-    //位速双环PID摆头防卡腿
-    PID_Set_Error(&gimbal_yaw_angle_pid, yaw_angle_PI, 0);
-    // PID_Set_Error(&gimbal_yaw_speed_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_angle_pid));
-    // down_board_yaw_output = PID_coculate(&gimbal_yaw_speed_pid);
-    down_board_yaw_output = PID_coculate(&gimbal_yaw_angle_pid);
 
     //是否姿态稳定在误差20°内的起立态
     if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
@@ -611,19 +603,6 @@ void Yaw_Error_Coculate()
 
 }
 
-//刚站起云台跟随底盘，底盘不动云台动
-void gimbal_follow_chassis()
-{
-    Yaw_Error_Coculate();
-    yaw_error = 0;//云台跟随底盘时，强制yaw误差为0，让底盘完全跟随云台
-    Speed_Error_Set();
-
-    PID_Set_Error(&gimbal_yaw_speed_pid, Yaw_DM4310.Rx_Data.Velocity, PID_coculate(&gimbal_yaw_angle_pid));
-    down_board_yaw_output = PID_coculate(&gimbal_yaw_speed_pid);
-
-
-}
-
 //小陀螺加速
 void spinning_up()
 {
@@ -664,17 +643,8 @@ void Standing()
     //算yaw的误差，以及根据yaw误差调整目标速度
     if(gimbal_follow_flag == 1)
     {
-        gimbal_follow_chassis();
-
-        if(fabsf(yaw_angle_PI) <= 0.1f)
-        {
-            gimbal_follow_flag_cnt ++;
-        }
-        if(gimbal_follow_flag_cnt >= 50)
-        {
-            gimbal_follow_flag = 0;//云台跟随底盘完成，切换到底盘跟随云台
-            gimbal_follow_flag_cnt = 0;
-        }
+        yaw_error = 0;//云台跟随底盘时，强制yaw误差为0，让底盘完全跟随云台
+        Speed_Error_Set();
     }
     
     if(gimbal_follow_flag == 0)
@@ -1050,8 +1020,7 @@ void Gravity_Compensation_Test_Function(void)
  *                                                                                                   * 
  *****************************************************************************************************/
 
-//调试接口
-uint8_t user_Gravity_Compensation_Test_Function_set = 0;
+
 
 void Motor_task(void const *argument)
 {
@@ -1070,13 +1039,12 @@ void Motor_task(void const *argument)
     {
         if(user_Gravity_Compensation_Test_Function_set == 0)
         {
-            //计算标零后角度值
-            yaw_angle_PI = easy_angle_normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
+
 
             //刚启动收腿过程中
             if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
             {
-                NotStanding_NotStairRetract();
+                NotStanding_NotStairRetract_for_chassis();
             }
 
             else if(start_mode == 1)//站起

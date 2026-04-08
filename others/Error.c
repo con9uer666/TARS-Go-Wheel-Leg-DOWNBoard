@@ -10,6 +10,7 @@
 #include "fdcan.h"
 #include "motor.h"
 #include "Board2Board.h"
+#include "Motor_Drv.h"
 
 extern SBUS_CH_Struct SBUS_CH;
 uint8_t Rx_Data[BUFF_SIZE];

@@ -34,6 +34,7 @@ typedef struct Rx_Data{
 typedef struct Joint_Motor{
     Rx_Data_t Rx_Data;
     float Target_Torque;
+    float Target_Speed;
     float TMAX;
     float PMAX;
     float VMAX;
