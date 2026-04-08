@@ -15,10 +15,11 @@
  */
 #include "QuaternionEKF.h"
 #include "arm_math.h"
+#include "math.h"
 
-static float __sqrtf(float input){
-    return sqrtf(input);
-} 
+//static float __sqrtf(float input){
+//    return sqrtf(input);
+//} 
 
 QEKF_INS_t QEKF_INS={0};
 
@@ -194,7 +195,7 @@ void IMU_QuaternionEKF_Update(float gx, float gy, float gz, float ax, float ay, 
 
     // set z,单位化重力加速度向量
     
-	QEKF_INS.accl_norm = __sqrtf(QEKF_INS.Accel[0] * QEKF_INS.Accel[0] + QEKF_INS.Accel[1] * QEKF_INS.Accel[1] + QEKF_INS.Accel[2] * QEKF_INS.Accel[2]);
+	QEKF_INS.accl_norm = sqrtf(QEKF_INS.Accel[0] * QEKF_INS.Accel[0] + QEKF_INS.Accel[1] * QEKF_INS.Accel[1] + QEKF_INS.Accel[2] * QEKF_INS.Accel[2]);
 	accelInvNorm = 1.0f / QEKF_INS.accl_norm;
 
 
@@ -203,7 +204,7 @@ void IMU_QuaternionEKF_Update(float gx, float gy, float gz, float ax, float ay, 
 	QEKF_INS.IMU_QuaternionEKF.MeasuredVector[2] = QEKF_INS.Accel[2] * accelInvNorm;
 
     // get body state
-    QEKF_INS.gyro_norm = __sqrtf(	QEKF_INS.Gyro[0] * QEKF_INS.Gyro[0] +
+    QEKF_INS.gyro_norm = sqrtf(	QEKF_INS.Gyro[0] * QEKF_INS.Gyro[0] +
                                     QEKF_INS.Gyro[1] * QEKF_INS.Gyro[1] +
                                     QEKF_INS.Gyro[2] * QEKF_INS.Gyro[2]);
 
@@ -596,6 +597,6 @@ void QEKF_GetMotionAccel_b(float *accel_b)
 static float invSqrt(float x)
 {
 	volatile float tmp = 1.0f;
-	tmp /= __sqrtf(x);
+	tmp /= sqrtf(x);
 	return tmp;
 }

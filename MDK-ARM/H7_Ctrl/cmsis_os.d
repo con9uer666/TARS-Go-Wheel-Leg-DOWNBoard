@@ -1,19 +1,17 @@
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
-h7_ctrl\cmsis_os.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-h7_ctrl\cmsis_os.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-h7_ctrl\cmsis_os.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-h7_ctrl\cmsis_os.o: ../Core/Inc/FreeRTOSConfig.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
-h7_ctrl\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-h7_ctrl\cmsis_os.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+h7_ctrl/cmsis_os.o: \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
+  ..\Core\Inc\FreeRTOSConfig.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\projdefs.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\portable.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\deprecated_definitions.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\portmacro.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\mpu_wrappers.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
+  ..\Drivers\CMSIS\Include\cmsis_gcc.h

@@ -1,1 +1,1 @@
-h7_ctrl\controlsystem.o: ..\math\source\ControlSystem.c
+h7_ctrl/controlsystem.o: ..\math\source\ControlSystem.c
