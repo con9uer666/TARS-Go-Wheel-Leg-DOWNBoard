@@ -23,6 +23,7 @@ void PID_INIT(user_pid_t *PID, float Kp, float Ki, float Kd, float out_limit, fl
 void PID_Reset_OutLimit(user_pid_t *PID, float new_limit);
 void PID_Clear(user_pid_t *PID);
 void PID_Set_Error(user_pid_t *PID, float now, float target);
+void PID_Set_AngleError(user_pid_t *pid, float current_angle, float target_angle);
 void PID_Error_Correct(user_pid_t *PID);
 float PID_coculate_speed(user_pid_t *PID);
 

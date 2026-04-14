@@ -389,14 +389,14 @@ void NotStanding_NotStairRetract_for_chassis()
         //腿角度控制
         if(L_Leg_State >= 1)
         {
-            PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
+            PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
             PID_coculate(&L_Leg_Middle_PID);
             PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
             PID_coculate(&L_Leg_dphi0_PID);
         }
         if(R_Leg_State >= 1)
         {
-            PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+            PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
             PID_coculate(&R_Leg_Middle_PID);
             PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
             PID_coculate(&R_Leg_dphi0_PID);

@@ -45,6 +45,42 @@ void PID_Set_Error(user_pid_t *PID, float now, float target)
     PID->error = target - now;
 }
 
+
+// --------------------------
+// 辅助函数1：将角度归一化到 [-π, π] 区间
+// --------------------------
+static float NormalizeAngle(float angle)
+{
+    angle = fmodf(angle, 2.0f * PI); // 先取模到 [-2π, 2π]
+    if (angle > PI) {
+        angle -= 2.0f * PI;
+    } else if (angle < -PI) {
+        angle += 2.0f * PI;
+    }
+    return angle;
+}
+
+// --------------------------
+// 辅助函数2：计算从当前角度到目标角度的最小角度差（结果在 [-π, π] 内）
+// --------------------------
+static float ShortestAngleDelta(float target_angle, float current_angle)
+{
+    target_angle = NormalizeAngle(target_angle);
+    current_angle = NormalizeAngle(current_angle);
+    
+    float delta = target_angle - current_angle;
+    return NormalizeAngle(delta); // 对差值再次归一化，确保是最小路径
+}
+
+
+//角度控制专用的PID误差设置函数
+void PID_Set_AngleError(user_pid_t *PID, float current_angle, float target_angle)
+{
+    // 计算最小角度差并赋值给PID的error
+    PID->error = ShortestAngleDelta(target_angle, current_angle);
+
+}
+
 //PID计算	//!只负责计算，不负责更新误差
 float PID_coculate(user_pid_t *PID)
 {
