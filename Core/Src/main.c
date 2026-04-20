@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "Judge.h"
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
@@ -109,6 +110,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   CAN_Init();
   B2B_Init();
+  JUDGE_Init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

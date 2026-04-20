@@ -12,7 +12,7 @@
 
 void JUDGE_GraphTest_KeyCallback(KeyType key, KeyCombineType combine, KeyEventType event);
 
-/*****************ÏµÍ³Êý¾Ý¶¨Òå**********************/
+/*****************ÏµÍ³ï¿½ï¿½ï¿½Ý¶ï¿½ï¿½ï¿½**********************/
 ext_game_status_t GameState;						   // 0x0001
 ext_game_result_t GameResult;						   // 0x0002
 ext_game_robot_HP_t GameRobotHP;					 // 0x0003
@@ -31,13 +31,13 @@ ext_dart_client_cmd_t DartClientCmd;				   // 0x020A
 
 remote_control_t RemoteControl; // 0x0304
 
-xFrameHeader FrameHeader; // ·¢ËÍÖ¡Í·ÐÅÏ¢
+xFrameHeader FrameHeader; // ï¿½ï¿½ï¿½ï¿½Ö¡Í·ï¿½ï¿½Ï¢
 /****************************************************/
-bool Judge_Data_TF = FALSE; // ²ÃÅÐÊý¾ÝÊÇ·ñ¿ÉÓÃ,¸¨Öúº¯Êýµ÷ÓÃ
+bool Judge_Data_TF = FALSE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-// ·¢ËÍ¶ÓÁÐ
+// ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½
 Queue judgeQueue = EMPTY_QUEUE;
-// ·¢ËÍ¶ÓÁÐÊý¾Ý±£´æÇø
+// ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½ï¿½ï¿½
 JudgeTxFrame judgeQueueBuf[JUDGE_QUEUE_SIZE];
 extern Line line;
 extern Rect rect;
@@ -48,52 +48,52 @@ extern Text text;
 extern FloatShape floatShape;
 extern IntShape intShape;
 
-// ´®¿Ú½ÓÊÕ»º³åÇø
+// ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½
 uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
 
-uint16_t shootNum = 0; // Í³¼Æ·¢µ¯Á¿
+uint16_t shootNum = 0; // Í³ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½
 
-/**************²ÃÅÐÏµÍ³Êý¾Ý¸¨Öú****************/
+/**************ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½****************/
 
 /**
- * @brief  ¶ÁÈ¡²ÃÅÐÊý¾Ý,ÖÐ¶ÏÖÐ¶ÁÈ¡±£Ö¤ËÙ¶È
- * @param  »º´æÊý¾Ý
- * @retval ÊÇ·ñ¶ÔÕýÎóÅÐ¶Ï×ö´¦Àí
- * @attention  ÔÚ´ËÅÐ¶ÏÖ¡Í·ºÍCRCÐ£Ñé,ÎÞÎóÔÙÐ´ÈëÊý¾Ý£¬²»ÖØ¸´ÅÐ¶ÏÖ¡Í·
+ * @brief  ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Ð¶ï¿½ï¿½Ð¶ï¿½È¡ï¿½ï¿½Ö¤ï¿½Ù¶ï¿½
+ * @param  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @retval ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * @attention  ï¿½Ú´ï¿½ï¿½Ð¶ï¿½Ö¡Í·ï¿½ï¿½CRCÐ£ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ð¶ï¿½Ö¡Í·
  */
 bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 {
-	bool retval_tf = FALSE; // Êý¾ÝÕýÈ·Óë·ñ±êÖ¾,Ã¿´Îµ÷ÓÃ¶ÁÈ¡²ÃÅÐÏµÍ³Êý¾Ýº¯Êý¶¼ÏÈÄ¬ÈÏÎª´íÎó
+	bool retval_tf = FALSE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½Ö¾,Ã¿ï¿½Îµï¿½ï¿½Ã¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ýºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 
-	uint16_t judge_length; // Í³¼ÆÒ»Ö¡Êý¾Ý³¤¶È
-	int CmdID = 0;		   // Êý¾ÝÃüÁîÂë½âÎö
+	uint16_t judge_length; // Í³ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+	int CmdID = 0;		   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	/***------------------*****/
-	// ÎÞÊý¾Ý°ü£¬Ôò²»×÷ÈÎºÎ´¦Àí
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎºÎ´ï¿½ï¿½ï¿½
 	if (ReadFromUsart == NULL)
 	{
 		return -1;
 	}
-	// Ð´ÈëÖ¡Í·Êý¾Ý,ÓÃÓÚÅÐ¶ÏÊÇ·ñ¿ªÊ¼´æ´¢²ÃÅÐÊý¾Ý
+	// Ð´ï¿½ï¿½Ö¡Í·ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Ê¼ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	memcpy(&FrameHeader, ReadFromUsart, LEN_HEADER);
 
-	// ÅÐ¶ÏÖ¡Í·Êý¾ÝÊÇ·ñÎª0xA5
+	// ï¿½Ð¶ï¿½Ö¡Í·ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îª0xA5
 	if (ReadFromUsart[SOF] == JUDGE_FRAME_HEADER)
 	{
-		// Ö¡Í·CRC8Ð£Ñé
+		// Ö¡Í·CRC8Ð£ï¿½ï¿½
 		if (Verify_CRC8_Check_Sum(ReadFromUsart, LEN_HEADER) == TRUE)
 		{
-			// Í³¼ÆÒ»Ö¡Êý¾Ý³¤¶È,ÓÃÓÚCR16Ð£Ñé
+			// Í³ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CR16Ð£ï¿½ï¿½
 			judge_length = ReadFromUsart[DATA_LENGTH] + LEN_HEADER + LEN_CMDID + LEN_TAIL;
 			;
 
-			// Ö¡Î²CRC16Ð£Ñé
+			// Ö¡Î²CRC16Ð£ï¿½ï¿½
 			if (Verify_CRC16_Check_Sum(ReadFromUsart, judge_length) == TRUE)
 			{
-				retval_tf = TRUE; // ¶¼Ð£Ñé¹ýÁËÔòËµÃ÷Êý¾Ý¿ÉÓÃ
+				retval_tf = TRUE; // ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½
 
 				CmdID = (ReadFromUsart[6] << 8 | ReadFromUsart[5]);
-				// ½âÎöÊý¾ÝÃüÁîÂë,½«Êý¾Ý¿½±´µ½ÏàÓ¦½á¹¹ÌåÖÐ(×¢Òâ¿½±´Êý¾ÝµÄ³¤¶È)
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½(×¢ï¿½â¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½)
 				switch (CmdID)
 				{
 				case ID_game_state: // 0x0001
@@ -153,7 +153,7 @@ bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 
 				case ID_shoot_data: // 0x0207
 					memcpy(&ShootData, (ReadFromUsart + DATA), LEN_shoot_data);
-					shootNum++; // ´¥·¢Ò»´ÎÔòÊÇ·¢ÉäÁËÒ»¿Å
+					shootNum++; // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 					// Vision_SendShootSpeed(ShootData.bullet_speed);
 					break;
 
@@ -169,32 +169,32 @@ bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 					memcpy(&RemoteControl, (ReadFromUsart + DATA), LEN_remote_control);
 					break;
 				}
-				// Ê×µØÖ·¼ÓÖ¡³¤¶È,Ö¸ÏòCRC16ÏÂÒ»×Ö½Ú,ÓÃÀ´ÅÐ¶ÏÊÇ·ñÎª0xA5,ÓÃÀ´ÅÐ¶ÏÒ»¸öÊý¾Ý°üÊÇ·ñÓÐ¶àÖ¡Êý¾Ý
+				// ï¿½×µï¿½Ö·ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½,Ö¸ï¿½ï¿½CRC16ï¿½ï¿½Ò»ï¿½Ö½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Îª0xA5,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½Ç·ï¿½ï¿½Ð¶ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½
 				if (*(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL) == 0xA5)
 				{
-					// Èç¹ûÒ»¸öÊý¾Ý°ü³öÏÖÁË¶àÖ¡Êý¾Ý,ÔòÔÙ´Î¶ÁÈ¡
+					// ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ù´Î¶ï¿½È¡
 					JUDGE_Read_Data(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL);
 				}
 			}
 		}
-		// Ê×µØÖ·¼ÓÖ¡³¤¶È,Ö¸ÏòCRC16ÏÂÒ»×Ö½Ú,ÓÃÀ´ÅÐ¶ÏÊÇ·ñÎª0xA5,ÓÃÀ´ÅÐ¶ÏÒ»¸öÊý¾Ý°üÊÇ·ñÓÐ¶àÖ¡Êý¾Ý
+		// ï¿½×µï¿½Ö·ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½,Ö¸ï¿½ï¿½CRC16ï¿½ï¿½Ò»ï¿½Ö½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Îª0xA5,ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½Ç·ï¿½ï¿½Ð¶ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½
 		if (*(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL) == 0xA5)
 		{
-			// Èç¹ûÒ»¸öÊý¾Ý°ü³öÏÖÁË¶àÖ¡Êý¾Ý,ÔòÔÙ´Î¶ÁÈ¡
+			// ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ù´Î¶ï¿½È¡
 			JUDGE_Read_Data(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL);
 		}
 	}
 
 	if (retval_tf == TRUE)
 	{
-		Judge_Data_TF = TRUE; // ¸¨Öúº¯ÊýÓÃ
+		Judge_Data_TF = TRUE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
-	else // Ö»ÒªCRC16Ð£Ñé²»Í¨¹ý¾ÍÎªFALSE
+	else // Ö»ÒªCRC16Ð£ï¿½é²»Í¨ï¿½ï¿½ï¿½ï¿½ÎªFALSE
 	{
-		Judge_Data_TF = FALSE; // ¸¨Öúº¯ÊýÓÃ
+		Judge_Data_TF = FALSE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
-	return retval_tf; // ¶ÔÊý¾ÝÕýÎó×ö´¦Àí
+	return retval_tf; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
  void USART1_dma_init()
@@ -223,7 +223,7 @@ void USER_USART1_IRQHandler(void)
 //    {
 //        LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);               
 ////        int usart1RxLen=JUDGE_MAX_RX_LENGTH - LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_0);
-//        // ½âÎö´®¿ÚÊý¾Ý       
+//        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½       
 //                JUDGE_Read_Data(usart1RxBuf);
 ////                judgedata_update();
 //                memset(usart1RxBuf,0,sizeof(usart1RxBuf));                         
@@ -233,14 +233,14 @@ void USER_USART1_IRQHandler(void)
 //    }
 }
 
-////´®¿Ú1ÖÐ¶Ï»Øµ÷
+////ï¿½ï¿½ï¿½ï¿½1ï¿½Ð¶Ï»Øµï¿½
 //void USER_USART1_IRQHandler()
 //{
 //	if (LL_USART_IsActiveFlag_IDLE(USART1) && LL_USART_IsEnabledIT_IDLE(USART1))
 //	{
 //		LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);
 
-//		// »ñÈ¡½ÓÊÕµ½µÄÊý¾Ý³¤¶È
+//		// ï¿½ï¿½È¡ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
 //		uint16_t rxLen = JUDGE_MAX_RX_LENGTH - LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_0);
 //		JUDGE_Read_Data(usart1RxBuf);
 //		
@@ -259,7 +259,7 @@ void USART1_DMA_Send(uint8_t *tx_buffer, uint16_t size)
 //	while (LL_DMA_IsEnabledStream(DMA2, LL_DMA_STREAM_1) &&
 //		   !LL_DMA_IsActiveFlag_TC1(DMA2))
 //	{
-//		// ÉèÖÃ³¬Ê±£¬±ÜÃâËÀµÈ
+//		// ï¿½ï¿½ï¿½Ã³ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		static uint32_t timeout = 0;
 //		if (++timeout > 10000)
 //		{
@@ -285,7 +285,7 @@ void USART1_DMA_Send(uint8_t *tx_buffer, uint16_t size)
 
 extern DMA_HandleTypeDef hdma_usart1_rx;
 
-// ²ÃÅÐÏµÍ³µôÏß»Øµ÷º¯Êý
+// ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ß»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 void Judge_UartLostCallback()
 {
 	
@@ -293,7 +293,7 @@ void Judge_UartLostCallback()
 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
 	
 //	LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);
-//	// Çå³ýËùÓÐ±êÖ¾Î»
+//	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½Ö¾Î»
 //	LL_USART_ClearFlag_IDLE(USART1);
 //	LL_USART_ClearFlag_ORE(USART1);
 //	LL_USART_ClearFlag_FE(USART1);
@@ -307,7 +307,7 @@ void Judge_UartLostCallback()
 //	LL_USART_EnableIT_IDLE(USART1);
 //	LL_DMA_EnableStream(DMA2, LL_DMA_STREAM_0);
 }
-// ²ÃÅÐÏµÍ³³õÊ¼»¯
+// ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½Ê¼ï¿½ï¿½
 
 
 void JUDGE_Init()
@@ -326,13 +326,13 @@ void JUDGE_SendTextStruct(graphic_data_struct_t *textConf, uint8_t text[30], uin
 	textData.txFrameHeader.SOF = 0xA5;
 	textData.txFrameHeader.DataLength = sizeof(ext_student_interactive_header_data_t) + sizeof(ext_client_custom_character_t);
 	textData.txFrameHeader.Seq = 0;
-	memcpy(txFrame.data, &textData.txFrameHeader, sizeof(xFrameHeader)); // Ð´ÈëÖ¡Í·Êý¾Ý
-	Append_CRC8_Check_Sum(txFrame.data, sizeof(xFrameHeader));			 // Ð´ÈëÖ¡Í·CRC8Ð£ÑéÂë
+	memcpy(txFrame.data, &textData.txFrameHeader, sizeof(xFrameHeader)); // Ð´ï¿½ï¿½Ö¡Í·ï¿½ï¿½ï¿½ï¿½
+	Append_CRC8_Check_Sum(txFrame.data, sizeof(xFrameHeader));			 // Ð´ï¿½ï¿½Ö¡Í·CRC8Ð£ï¿½ï¿½ï¿½ï¿½
 
-	textData.CmdID = 0x301;										// Êý¾ÝÖ¡ID
-	textData.dataFrameHeader.data_cmd_id = 0x0110;				// Êý¾Ý¶ÎID
-	textData.dataFrameHeader.send_ID = JUDGE_GetSelfID();		// ·¢ËÍÕßµÄID
-	textData.dataFrameHeader.receiver_ID = JUDGE_GetClientID(); // ¿Í»§¶ËµÄID£¬Ö»ÄÜÎª·¢ËÍÕß»úÆ÷ÈË¶ÔÓ¦µÄ¿Í»§¶Ë
+	textData.CmdID = 0x301;										// ï¿½ï¿½ï¿½ï¿½Ö¡ID
+	textData.dataFrameHeader.data_cmd_id = 0x0110;				// ï¿½ï¿½ï¿½Ý¶ï¿½ID
+	textData.dataFrameHeader.send_ID = JUDGE_GetSelfID();		// ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½ID
+	textData.dataFrameHeader.receiver_ID = JUDGE_GetClientID(); // ï¿½Í»ï¿½ï¿½Ëµï¿½IDï¿½ï¿½Ö»ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ß»ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½Ó¦ï¿½Ä¿Í»ï¿½ï¿½ï¿½
 
 	textData.textData.grapic_data_struct = *textConf;
 	memcpy(textData.textData.data, text, len);
@@ -354,13 +354,13 @@ void JUDGE_SendGraphStruct(graphic_data_struct_t *data)
 	graphData.txFrameHeader.SOF = 0xA5;
 	graphData.txFrameHeader.DataLength = sizeof(ext_student_interactive_header_data_t) + sizeof(ext_client_custom_graphic_single_t);
 	graphData.txFrameHeader.Seq = 0;
-	memcpy(txFrame.data, &graphData.txFrameHeader, sizeof(xFrameHeader)); // Ð´ÈëÖ¡Í·Êý¾Ý
-	Append_CRC8_Check_Sum(txFrame.data, sizeof(xFrameHeader));			  // Ð´ÈëÖ¡Í·CRC8Ð£ÑéÂë
+	memcpy(txFrame.data, &graphData.txFrameHeader, sizeof(xFrameHeader)); // Ð´ï¿½ï¿½Ö¡Í·ï¿½ï¿½ï¿½ï¿½
+	Append_CRC8_Check_Sum(txFrame.data, sizeof(xFrameHeader));			  // Ð´ï¿½ï¿½Ö¡Í·CRC8Ð£ï¿½ï¿½ï¿½ï¿½
 
-	graphData.CmdID = 0x301;									 // Êý¾ÝÖ¡ID
-	graphData.dataFrameHeader.data_cmd_id = 0x0101;				 // Êý¾Ý¶ÎID
-	graphData.dataFrameHeader.send_ID = JUDGE_GetSelfID();		 // ·¢ËÍÕßµÄID
-	graphData.dataFrameHeader.receiver_ID = JUDGE_GetClientID(); // ¿Í»§¶ËµÄID£¬Ö»ÄÜÎª·¢ËÍÕß»úÆ÷ÈË¶ÔÓ¦µÄ¿Í»§¶Ë
+	graphData.CmdID = 0x301;									 // ï¿½ï¿½ï¿½ï¿½Ö¡ID
+	graphData.dataFrameHeader.data_cmd_id = 0x0101;				 // ï¿½ï¿½ï¿½Ý¶ï¿½ID
+	graphData.dataFrameHeader.send_ID = JUDGE_GetSelfID();		 // ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½ID
+	graphData.dataFrameHeader.receiver_ID = JUDGE_GetClientID(); // ï¿½Í»ï¿½ï¿½Ëµï¿½IDï¿½ï¿½Ö»ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ß»ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½Ó¦ï¿½Ä¿Í»ï¿½ï¿½ï¿½
 
 	graphData.graphData.grapic_data_struct = *data;
 
@@ -374,45 +374,45 @@ void JUDGE_SendGraphStruct(graphic_data_struct_t *data)
 	Queue_Enqueue(&judgeQueue, &txFrame);
 }
 
-// »ñÈ¡¼º·½ÑÕÉ«
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«
 RobotColor JUDGE_GetSelfColor()
 {
-	if (JUDGE_GetSelfID() > 10) // À¶·½
+	if (JUDGE_GetSelfID() > 10) // ï¿½ï¿½ï¿½ï¿½
 	{
 		return RobotColor_Blue;
 	}
-	else // ºì·½
+	else // ï¿½ì·½
 	{
 		return RobotColor_Red;
 	}
 }
 
-// »ñÈ¡×ÔÉíID
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ID
 uint8_t JUDGE_GetSelfID()
 {
 	return GameRobotStat.robot_id;
 }
 
-// »ñÈ¡¿Í»§¶ËID
+// ï¿½ï¿½È¡ï¿½Í»ï¿½ï¿½ï¿½ID
 uint16_t JUDGE_GetClientID()
 {
 	return 0x100 + GameRobotStat.robot_id;
 }
 
-// »ñÈ¡»úÆ÷ÈË×ø±ê
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void JUDGE_GetPosition(float *x, float *y)
 {
 	*x = GameRobotPos.x;
 	*y = GameRobotPos.y;
 }
 
-// »ñÈ¡µ×ÅÌ¹¦ÂÊÏÞÖÆ
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 uint8_t JUDGE_GetChassisPowerLimit()
 {
 	return GameRobotStat.chassis_power_limit;
 }
 
-// ÅÐ¶Ï·¢ÉäµçÔ´ÊÇ·ñÊä³ö
+// ï¿½Ð¶Ï·ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 bool JUDGE_GetShooterOutputState()
 {
 	return GameRobotStat.power_management_shooter_output;
@@ -423,55 +423,55 @@ bool JUDGE_GetGimbalOutputState()
 	return GameRobotStat.power_management_gimbal_output;
 }
 
-// »ñÈ¡Ç¹¿ÚÈÈÁ¿ÏÞÖÆ
+// ï¿½ï¿½È¡Ç¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 uint16_t JUDGE_GetHeatLimit()
 {
 	return GameRobotStat.shooter_barrel_heat_limit;
 }
 
-// »ñÈ¡ÉäËÙÏÞÖÆ
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 uint16_t JUDGE_GetShootSpeedLimit()
 {
 	return 25;
 }
 
-// »ñÈ¡µ×ÅÌ»º³åÄÜÁ¿
+// ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ì»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 uint16_t JUDGE_GetPowerBuffer()
 {
 	return PowerHeatData.chassis_power_buffer;
 }
 
-// »ñÈ¡Ê£ÓàÇ¹¿ÚÈÈÁ¿
+// ï¿½ï¿½È¡Ê£ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int16_t JUDGE_GetRemainHeat()
 {
 	return (int16_t)GameRobotStat.shooter_barrel_heat_limit - (int16_t)PowerHeatData.shooter_id1_17mm_cooling_heat;
 }
 
-// Ê£Óà17·¢µ¯Êý
+// Ê£ï¿½ï¿½17ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 uint16_t JUDGE_GetRemain_42_Num()
 {
 	return BulletRemaining.projectile_allowance_42mm;
 }
 
-// ²ÃÅÐÏµÍ³Êý¾ÝÊÇ·ñÓÐÐ§
+// ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ð§
 bool JUDGE_IsValid(void)
 {
 	return Judge_Data_TF;
 }
 
-// ¿ÛÑªÔ­Òò
+// ï¿½ï¿½ÑªÔ­ï¿½ï¿½
 uint8_t HP_deduction_reason()
 {
 	return RobotHurt.hurt_type;
 }
 
-// ¶ÁÈ¡µ±Ç°ÑªÁ¿
+// ï¿½ï¿½È¡ï¿½ï¿½Ç°Ñªï¿½ï¿½
 uint16_t JUDGE_GetHP()
 {
 	return GameRobotStat.current_HP;
 }
 
-// »ñÈ¡ÀäÈ´ËÙ¶È
+// ï¿½ï¿½È¡ï¿½ï¿½È´ï¿½Ù¶ï¿½
 uint16_t JUDGE_GetCoolingValue()
 {
 	return GameRobotStat.shooter_barrel_cooling_value;
@@ -479,16 +479,16 @@ uint16_t JUDGE_GetCoolingValue()
 
 
 
-/**********************freertosÈÎÎñ*********************************/
-// ²ÃÅÐÏµÍ³·¢ËÍÈÎÎñ»Øµ÷
+/**********************freertosï¿½ï¿½ï¿½ï¿½*********************************/
+// ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½
 void Task_Judge_Callback()
 {
-//	if (Queue_IsEmpty(&judgeQueue))
-//		return;
-//	// È¡¶ÓÍ·µÄÏûÏ¢·¢ËÍ
-//	JudgeTxFrame *frame = (JudgeTxFrame *)Queue_Dequeue(&judgeQueue);
-////	USART1_DMA_Send((uint8_t *)frame->data, frame->frameLength);
-//	HAL_UART_Transmit_DMA(&huart1,(uint8_t*)frame->data,frame->frameLength);
+	if (Queue_IsEmpty(&judgeQueue))
+		return;
+	// È¡ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
+	JudgeTxFrame *frame = (JudgeTxFrame *)Queue_Dequeue(&judgeQueue);
+//	USART1_DMA_Send((uint8_t *)frame->data, frame->frameLength);
+	HAL_UART_Transmit_DMA(&huart1,(uint8_t*)frame->data,frame->frameLength);
 }
 
 

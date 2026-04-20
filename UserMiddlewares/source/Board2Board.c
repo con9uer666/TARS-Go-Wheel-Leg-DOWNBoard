@@ -177,7 +177,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
 	if (huart == &huart1)
 	{
-		// JUDGE_Read_Data(usart1RxBuf);
+		JUDGE_Read_Data(usart1RxBuf);
 		Detect_Update(DeviceID_Judge);
 	}
 
