@@ -51,21 +51,22 @@ typedef enum
 
 	ID: 0x0001  Byte:  11    比赛状态数据       			发送频率 1Hz      
 	ID: 0x0002  Byte:  1    比赛结果数据         		比赛结束后发送      
-	ID: 0x0003  Byte:  32    比赛机器人血量数据   		1Hz发送  
+	ID: 0x0003  Byte:  16    比赛机器人血量数据   		1Hz发送    //2026.3.14修改 16byte
 	ID: 0x0101  Byte:  4    场地事件数据   				事件改变后发送
-	ID: 0x0102  Byte:  4    场地补给站动作标识数据    	动作改变后发送
-	ID: 0x0104	Byte: 	2		裁判警告信息
-	ID: 0x0105	Byte: 	1		飞镖发射口倒计时
-	ID: 0X0201  Byte: 27    机器人状态数据        		10Hz
+	ID: 0x0102  Byte:  4    场地补给站动作标识数据    	动作改变后发送 
+	ID: 0x0104	Byte: 	3		裁判警告信息				//2026.3.14修改 3byte
+	ID: 0x0105	Byte: 	3		飞镖发射口倒计时		//2026.3.14修改 3byte
+	ID: 0X0201  Byte: 13    机器人状态数据        		10Hz		//2026.3.14修改 13byte
 	ID: 0X0202  Byte: 14    实时功率热量数据   			50Hz       
-	ID: 0x0203  Byte: 16    机器人位置数据           	10Hz
-	ID: 0x0204  Byte:  1    机器人增益数据           	增益状态改变后发送
+	ID: 0x0203  Byte: 12    机器人位置数据           	10Hz
+	ID: 0x0204  Byte:  8    机器人增益数据           	增益状态改变后发送
 	ID: 0x0206  Byte:  1    伤害状态数据           		伤害发生后发送
 	ID: 0x0207  Byte:  7    实时射击数据           		子弹发射后发送
-	ID: 0x0208  Byte:  6    子弹剩余发射数
-	ID: 0x0209  Byte:  4    机器人RFID状态
+	ID: 0x0208  Byte:  6    子弹剩余发射数					//2026.3.14修改 6byte
+	ID: 0x0209  Byte:  5    机器人RFID状态					//2026.3.14修改 5byte
 	ID: 0x020A  Byte:  6    飞镖机器人客户端指令数据
-	ID: 0x0301  Byte:  n    机器人间交互数据           	发送方触发发送,10Hz
+	ID: 0x020D Byte:  6		哨兵机器人当前状态
+	ID: 0x0301  Byte:  118    机器人间交互数据           	发送方触发发送,10Hz  //2026.3.14修改 16byte
 */
 
 
@@ -86,48 +87,30 @@ typedef enum
 	ID_shoot_data								= 0x0207,//实时射击数据
 	ID_bullet_remaining					= 0x0208,//子弹剩余发射数
 	ID_rfid_status							= 0x0209,//机器人RFID状态  *
-	ID_game_remote_control			= 0x0304//图传链路	
+	ID_sentry_status          	= 0x020D,
 	
 } CmdID;
 
 
 
 //命令码数据段长,根据官方协议来定义长度
-//typedef enum
-//{
-//	LEN_game_state       					= 11,	//0x0001
-//	LEN_game_result       				= 1,	//0x0002
-//	LEN_game_robot_HP							= 32,	//0x0003
-//	LEN_event_data  							= 4,	//0x0101
-//	LEN_referee_warning						= 2,	//0x0104
-//	LEN_dart_remaining_time				= 1,	//0x0105
-//	LEN_game_robot_state    			= 27,	//0x0201
-//	LEN_power_heat_data   				= 16,	//0x0202
-//	LEN_game_robot_pos        		= 16,	//0x0203
-//	LEN_buff_musk        					= 1,	//0x0204
-//	LEN_robot_hurt        				= 1,	//0x0206
-//	LEN_shoot_data       					= 7,	//0x0207
-//	LEN_bullet_remaining					= 6,	//0x0208
-//	LEN_rfid_status								= 4,	//0x0209
-//	LEN_dart_client_cmd						= 6,	//0x020A
-//} JudgeDataLength;
 typedef enum
 {
 	LEN_game_state       					= 11,	//0x0001
 	LEN_game_result       				= 1,	//0x0002
-	LEN_game_robot_HP							= 32,	//0x0003
+	LEN_game_robot_HP							= 16,	//0x0003
 	LEN_event_data  							= 4,	//0x0101
 	LEN_referee_warning						= 3,	//0x0104
 	LEN_dart_remaining_time				= 3,	//0x0105
 	LEN_game_robot_state    			= 13,	//0x0201
 	LEN_power_heat_data   				= 16,	//0x0202
-	LEN_game_robot_pos        		= 12,	//0x0203  //12
-	LEN_buff_musk        					= 7,	//0x0204
+	LEN_game_robot_pos        		= 12,	//0x0203  
+	LEN_buff_musk        					= 8,	//0x0204
 	LEN_robot_hurt        				= 1,	//0x0206
 	LEN_shoot_data       					= 7,	//0x0207
 	LEN_bullet_remaining					= 6,	//0x0208
-	LEN_rfid_status								= 4,	//0x0209
-	LEN_remote_control             =12	//0x0304
+	LEN_rfid_status								= 5,	//0x0209
+	LEN_sentry_status   					= 6,  //0x020D
 } JudgeDataLength;
 
 
@@ -153,6 +136,15 @@ typedef __packed struct
 	uint8_t  CRC8;
 } xFrameHeader;
 
+
+typedef __packed struct{
+	uint16_t data_cmd_id;    
+	uint16_t send_ID;    
+	uint16_t receiver_ID;	
+	uint32_t 		sentry_cmd;
+}sentry_cmd_t;
+
+
 /* ID: 0x0001  Byte:  11    比赛状态数据 */
 typedef __packed struct
 {
@@ -168,33 +160,62 @@ typedef __packed struct
 	uint8_t winner;
 } ext_game_result_t; 
 
-/* ID: 0x0003  Byte:  32    比赛机器人血量数据 */
+/* ID: 0x0003  Byte:  16    比赛机器人血量数据 */
 typedef __packed struct
 {
-	uint16_t red_1_robot_HP;
-	uint16_t red_2_robot_HP;
-	uint16_t red_3_robot_HP;
-	uint16_t red_4_robot_HP;
-	uint16_t reserved_1;
-	uint16_t red_7_robot_HP;
-	uint16_t red_outpost_HP;
-	uint16_t red_base_HP;
-	uint16_t blue_1_robot_HP;
-	uint16_t blue_2_robot_HP;
-	uint16_t blue_3_robot_HP;
-	uint16_t blue_4_robot_HP;
-	uint16_t reserved_2;
-	uint16_t blue_7_robot_HP;
-	uint16_t blue_outpost_HP;
-	uint16_t blue_base_HP;
+	uint16_t ally_1_robot_HP;
+	uint16_t ally_2_robot_HP;
+	uint16_t ally_3_robot_HP;
+	uint16_t ally_4_robot_HP;
+	uint16_t reserved;
+	uint16_t ally_7_robot_HP;
+	uint16_t ally_outpost_HP;
+	uint16_t ally_base_HP;
 } ext_game_robot_HP_t;
  
 /* ID: 0x0101  Byte:  4    场地事件数据 */
-typedef __packed struct 
-{ 
-//	uint32_t event_type;
-	uint32_t event_data;
+typedef __packed struct 					//2026.3.14修改
+{ 	
+	//	uint32_t event_data;
+	
+	//以下是队内自定义结构体 
+	//0：未占领/未激活  1：已占领/已激活 
+	/*bit 0-2： 
+		bit 0：己方与兑换区不重叠的补给区占领状态，1为已占领 
+		bit 1：己方与兑换区重叠的补给区占领状态，1为已占领 
+		bit 2：己方补给区的占领状态，1为已占领（仅 RMUL 适用） 
+		bit 3-6：己方能量机关状态 
+		bit 3-4：己方小能量机关的激活状态，0为未激活，1为已激活，2为正在激活
+		bit 5-6：己方大能量机关的激活状态，0为未激活，1为已激活，2为正在激活
+		bit 7-8：己方中央高地的占领状态，1为被己方占领，2为被对方占领 
+		bit 9-10：己方梯形高地的占领状态，1为已占领 
+		bit 11-19：对方飞镖最后一次击中己方前哨站或基地的时间（0-420，开局默认为0） 
+		bit 20-22：对方飞镖最后一次击中己方前哨站或基地的具体目标，开局默认为0，
+							 1为击中前哨站，2为击中基地固定目标，3为击中基地随机
+							 固定目标，4为击中基地随机移动目标 5为击中基地末端移动目标
+		bit 23-24：中心增益点的占领状态，0为未被占领，1为被己方占领，2
+							 为被对方占领，3为被双方占领。（仅RMUL适用） 
+		bit 25-26：己方堡垒增益点的占领状态，0为未被占领，1为被己方占
+							 领，2为被对方占领，3为被双方占领。
+		bit 27-28：己方前哨站增益点的占领状态， 0 为未被占领， 1 为被己方
+							 占领， 2 为被对方占领
+		bit 29：己方基地增益点的占领状态， 1 为已占领							 */
+	
+	uint8_t supply_area_state : 3;
+	uint8_t own_buff_state : 4;
+	uint8_t own_central_land_state : 2;
+	uint8_t own_trapezoidal_land_state : 2;
+	uint16_t darts_hitted_time : 9;
+	uint8_t darts_hitted_target : 3;
+	uint8_t center_gain_state : 2;
+	uint8_t own_fortress_state :2;
+	uint8_t own_outpost_state : 2;   // bit27-28 己方前哨站增益点状态
+	uint8_t own_base_state : 1;      // bit29 己方基地增益点状态
+	
+	uint32_t reserved : 2;
+	
 } ext_event_data_t; 
+
 
 
 
@@ -206,7 +227,7 @@ typedef __packed struct
   uint8_t count; 
 } ext_referee_warning_t;
 
-/* ID: 0x105    Byte: 2    飞镖发射口倒计时 */
+/* ID: 0x105    Byte: 3    飞镖发射口倒计时 */
 typedef __packed struct 
 { 
   uint8_t dart_remaining_time; 
@@ -229,7 +250,7 @@ typedef __packed struct
 } ext_game_robot_status_t;
 
 
-/* ID: 0X0202  Byte: 16    实时功率热量数据 */
+/* ID: 0X0202  Byte: 14    实时功率热量数据 */
 typedef __packed struct
 {
 	uint16_t reserved_1;
@@ -237,12 +258,11 @@ typedef __packed struct
 	float reserved_3;
 	uint16_t chassis_power_buffer;
 	uint16_t shooter_id1_17mm_cooling_heat;
-	uint16_t shooter_id2_17mm_cooling_heat;
 	uint16_t shooter_id1_42mm_cooling_heat;
 } ext_power_heat_data_t;
 
 
-/* ID: 0x0203  Byte: 16    机器人位置数据 */
+/* ID: 0x0203  Byte: 12    机器人位置数据 */
 typedef __packed struct 
 { 
   float x; 
@@ -251,11 +271,11 @@ typedef __packed struct
 } ext_game_robot_pos_t; 
 
 
-/* ID: 0x0204  Byte:  1    机器人增益数据 */
+/* ID: 0x0204  Byte:  8    机器人增益数据 */
 typedef __packed struct 
 { 
   uint8_t recovery_buff;  
-  uint8_t cooling_buff;  
+  uint16_t cooling_buff;  
   uint8_t defence_buff;  
   uint8_t vulnerability_buff; 
   uint16_t attack_buff; 
@@ -263,7 +283,7 @@ typedef __packed struct
 } ext_buff_musk_t; 
 
 
-/* ID: 0x0206  Byte:  1    伤害状态数据 */
+/* ID: 0x0206  Byte:  2    伤害状态数据 */
 typedef __packed struct 
 { 
 	uint8_t armor_id : 4; 
@@ -280,18 +300,20 @@ typedef __packed struct
   float initial_speed; 
 } ext_shoot_data_t;
 
-/* ID: 0x0208  Byte:  6    子弹剩余发射数 */
+/* ID: 0x0208  Byte:  8   子弹剩余发射数 */
 typedef __packed struct
 {
 	uint16_t projectile_allowance_17mm; 
   uint16_t projectile_allowance_42mm;  
-  uint16_t remaining_gold_coin;
+  uint16_t remaining_gold_coin; 
+  uint16_t projectile_allowance_fortress;
 } ext_bullet_remaining_t;
 
-/* ID: 0x0209  Byte:  4    机器人RFID状态 */
+/* ID: 0x0209  Byte:  5    机器人RFID状态 */
 typedef __packed struct
 {
 	uint32_t rfid_status;
+	uint8_t rfid_status_2;
 } ext_rfid_status_t;
 
 /* ID: 0x020A  Byte:  6    飞镖机器人客户端指令数据 */
@@ -303,6 +325,13 @@ typedef __packed struct
   uint16_t latest_launch_cmd_time; 
 } ext_dart_client_cmd_t;
 
+
+/* ID: 0x020D  Byte:  6    哨兵机器人当前状态数据 */
+typedef __packed struct
+{
+	uint32_t sentry_info;
+	uint16_t sentry_info_2;
+}sentry_info_t;
 /* 
 	
 	交互数据，包括一个统一的数据段头结构，
@@ -510,7 +539,7 @@ void Judge_UartLostCallback(void);
 extern ext_game_robot_pos_t				GameRobotPos;
 extern ext_shoot_data_t						ShootData;
 extern ext_game_robot_status_t		GameRobotStat;
-extern remote_control_t RemoteControl; // 0x0304
+//extern remote_control_t RemoteControl; // 0x0304
 
 
 #endif //头文件

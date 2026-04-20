@@ -15,7 +15,7 @@ void JUDGE_GraphTest_KeyCallback(KeyType key, KeyCombineType combine, KeyEventTy
 /*****************ϵͳ���ݶ���**********************/
 ext_game_status_t GameState;						   // 0x0001
 ext_game_result_t GameResult;						   // 0x0002
-ext_game_robot_HP_t GameRobotHP;					 // 0x0003
+ext_game_robot_HP_t GameRobotHP;					   // 0x0003
 ext_event_data_t EventData;							   // 0x0101
 ext_referee_warning_t RefereeWarning;				   // 0x0104
 ext_dart_info_t DartRemainingTime;					   // 0x0105
@@ -28,8 +28,7 @@ ext_shoot_data_t ShootData;							   // 0x0207
 ext_bullet_remaining_t BulletRemaining;				   // 0x0208
 ext_rfid_status_t RfidStatus;						   // 0x0209
 ext_dart_client_cmd_t DartClientCmd;				   // 0x020A
-
-remote_control_t RemoteControl; // 0x0304
+sentry_info_t    SentryDecision;			//0x20D
 
 xFrameHeader FrameHeader; // ����֡ͷ��Ϣ
 /****************************************************/
@@ -61,6 +60,8 @@ uint16_t shootNum = 0; // ͳ�Ʒ�����
  * @retval �Ƿ�������ж�������
  * @attention  �ڴ��ж�֡ͷ��CRCУ��,������д�����ݣ����ظ��ж�֡ͷ
  */
+
+ extern int aaaa;
 bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 {
 	bool retval_tf = FALSE; // ������ȷ����־,ÿ�ε��ö�ȡ����ϵͳ���ݺ�������Ĭ��Ϊ����
@@ -91,7 +92,7 @@ bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 			if (Verify_CRC16_Check_Sum(ReadFromUsart, judge_length) == TRUE)
 			{
 				retval_tf = TRUE; // ��У�������˵�����ݿ���
-
+				aaaa ++;
 				CmdID = (ReadFromUsart[6] << 8 | ReadFromUsart[5]);
 				// ��������������,�����ݿ�������Ӧ�ṹ����(ע�⿽�����ݵĳ���)
 				switch (CmdID)
@@ -163,10 +164,6 @@ bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 
 				case ID_rfid_status: // 0x0209
 					memcpy(&RfidStatus, (ReadFromUsart + DATA), LEN_rfid_status);
-					break;
-
-				case ID_game_remote_control://0x0304
-					memcpy(&RemoteControl, (ReadFromUsart + DATA), LEN_remote_control);
 					break;
 				}
 				// �׵�ַ��֡����,ָ��CRC16��һ�ֽ�,�����ж��Ƿ�Ϊ0xA5,�����ж�һ�����ݰ��Ƿ��ж�֡����
@@ -483,14 +480,15 @@ uint16_t JUDGE_GetCoolingValue()
 // ����ϵͳ��������ص�
 void Task_Judge_Callback()
 {
-	if (Queue_IsEmpty(&judgeQueue))
-		return;
-	// ȡ��ͷ����Ϣ����
-	JudgeTxFrame *frame = (JudgeTxFrame *)Queue_Dequeue(&judgeQueue);
-//	USART1_DMA_Send((uint8_t *)frame->data, frame->frameLength);
-	HAL_UART_Transmit_DMA(&huart1,(uint8_t*)frame->data,frame->frameLength);
+//	if (Queue_IsEmpty(&judgeQueue))
+//		return;
+//	// ȡ��ͷ����Ϣ����
+//	JudgeTxFrame *frame = (JudgeTxFrame *)Queue_Dequeue(&judgeQueue);
+////	USART1_DMA_Send((uint8_t *)frame->data, frame->frameLength);
+//	HAL_UART_Transmit_DMA(&huart1,(uint8_t*)frame->data,frame->frameLength);
 }
-
+extern int aaaa;
+int aaaaa;
 
 #ifdef EN_JUDGE_TASK
 void OS_JudgeCallback(void const *argument)
@@ -499,8 +497,10 @@ void OS_JudgeCallback(void const *argument)
 	osDelay(500);
 	for (;;)
 	{
-		Task_Judge_Callback();
-		osDelay(100);
+		// Task_Judge_Callback();
+		aaaaa = aaaa;
+		aaaa = 0;
+		osDelay(1000);
 	}
 }
 #endif

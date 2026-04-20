@@ -86,7 +86,7 @@ void B2B_ParseUsart() // 先发低字节
 		uint8_t visionFind = (usart2RxBuf[29] >> 4) & 0x01;	 // 第5位+
 		uint8_t visionMode = (usart2RxBuf[29] >> 2) & 0x03;	 // 第3-4位
 		cap_fastMode=(usart2RxBuf[29] >> 1) & 0x01;
-		RemoteControl.keyboard_value.bit.C = usart2RxBuf[29] & 0x01;
+		// RemoteControl.keyboard_value.bit.C = usart2RxBuf[29] & 0x01;
 		
 		// 更新相应的变量
 		STOPFLAG = stopFlag;
@@ -172,6 +172,8 @@ uint16_t B2B_offline_cnt = 0;
 uint16_t pre_B2B_offline_cnt = 0;
 uint8_t B2B_time_cnt = 0;
 uint8_t B2B_offline_flag = 0;
+
+int aaaa;
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {

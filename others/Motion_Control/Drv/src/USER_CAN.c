@@ -187,7 +187,7 @@ void CAN_Transmit(void const * argument)
 		DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, 0);
 		DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
 		osDelay(1);
-		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 1);
         DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 
     }
