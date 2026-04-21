@@ -8,9 +8,12 @@
 user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
 
 float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
-float head_forward_angle = -1.2278266f;//正视前方的yaw电机角度
+float head_forward_angle = 0.070324659f;//正视前方的yaw电机角度
 
 uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器
+
+uint16_t user_e = 0; // 用户调试变量e
+uint16_t user_f = 0; // 用户调试变量f
 
 void Gimbal_task(void const * argument)
 {
@@ -27,14 +30,18 @@ void Gimbal_task(void const * argument)
             PID_Set_Error(&gimbal_yaw_angle_pid, yaw_angle_PI, 0);
             down_board_yaw_output = PID_coculate(&gimbal_yaw_angle_pid);
 
-            if(fabsf(yaw_angle_PI) <= 0.1f)
+            if(fabsf(yaw_angle_PI) <= 0.03f)
             {
                 gimbal_follow_flag_cnt ++;
+
+                user_f ++;
             }
-            if(gimbal_follow_flag_cnt >= 50)
+            if(gimbal_follow_flag_cnt >= 100)
             {
                 gimbal_follow_flag = 0;//云台跟随底盘完成，切换到底盘跟随云台
                 gimbal_follow_flag_cnt = 0;
+
+                user_e ++;
             }
         }
         else

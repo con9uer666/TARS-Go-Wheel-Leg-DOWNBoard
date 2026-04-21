@@ -1,7 +1,22 @@
 #ifndef _POWERCTRAL_H_
 #define _POWERCTRAL_H_
 
-#include "struct_typedef.h"
+#include "main.h"
+
+/* 编译期总开关：0=关闭功率控制逻辑，1=启用。 */
+#ifndef POWER_CTRL_MODULE_ENABLE
+#define POWER_CTRL_MODULE_ENABLE 1
+#endif
+
+/* 编译期观测量门控开关：0=不缩放 LQR 观测量，1=启用。 */
+#ifndef POWER_CTRL_OBSERVER_GATE_ENABLE
+#define POWER_CTRL_OBSERVER_GATE_ENABLE 1
+#endif
+
+/* 编译期缓冲能量 PID 闭环开关：0=关闭，1=启用。 */
+#ifndef POWER_CTRL_BUFFER_PID_ENABLE
+#define POWER_CTRL_BUFFER_PID_ENABLE 1
+#endif
 
 #define TOQUE_CONST  600 // 电机扭矩系数
 
@@ -33,6 +48,36 @@ typedef struct
 }ChassisPower;
 
 extern ChassisPower whell_power;
+
+/* 运行时开关：可在调试中动态启停模块。 */
+extern uint8_t g_power_ctrl_enable;
+extern uint8_t g_power_obs_gate_enable;
+extern uint8_t g_power_buffer_pid_enable;
+
+/* 当前观测量缩放系数，便于上位机观测。 */
+extern float g_power_obs_lambda;
+
+/* 缓冲能量 PID 闭环调试量。 */
+extern float g_power_buffer_target;
+extern float g_power_buffer_measure;
+extern float g_power_buffer_pid_out;
+
+void PowerCtralInit(ChassisPower* whell_power);
 void PowerCtrl();
+
+/* 运行时开关控制接口。 */
+void PowerCtrl_SetEnable(uint8_t enable);
+void PowerCtrl_SetObserverGateEnable(uint8_t enable);
+void PowerCtrl_SetBufferPidEnable(uint8_t enable);
+void PowerCtrl_SetBufferTarget(float target);
+
+/*
+ * 对 LQR 观测量应用功率门控。
+ * 建议在 LQR_calculate() 内调用。
+ */
+void PowerCtrl_ApplyObserverGate(float *body_distance_error,
+								 float *speed_error,
+								 float *yaw_error,
+								 float *d_yaw);
 
 #endif

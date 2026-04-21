@@ -25,6 +25,7 @@
 #include "imu_temp_ctrl.h"
 #include "Angle_about.h"
 #include "User_State.h"
+#include "PowerCtrl.h"
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -290,6 +291,9 @@ void task_Motor_Init()
 
     DM_Joint_Motor_Init(&Yaw_DM4310, 10.0f, 3.14159265f, 30.0f, 0x10);
     DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
+
+    // 功率控制模块初始化（仅初始化参数，不改变现有控制流）。
+    PowerCtralInit(&whell_power);
 }
 
 //VMC赋值与初始化结构体
@@ -460,12 +464,20 @@ void NotStanding_NotStairRetract_for_chassis()
 
 void LQR_calculate()
 {
+	float lqr_body_distance_error = body_distance_error;
+	float lqr_speed_error = speed_error;
+	float lqr_yaw_error = yaw_error;
+	float lqr_d_yaw = d_yaw;
+
+	// 在进入 LQR 前，对运动相关观测量做功率门控缩放。
+	PowerCtrl_ApplyObserverGate(&lqr_body_distance_error, &lqr_speed_error, &lqr_yaw_error, &lqr_d_yaw);
+
     //算轮子力矩
     L_LK9025.Target_Torque = 
-    + LQR_K[0][0] * body_distance_error
-    + LQR_K[0][1] * (speed_error) 
-    + LQR_K[0][2] * (yaw_error)
-    - LQR_K[0][3] * d_yaw
+    + LQR_K[0][0] * lqr_body_distance_error
+    + LQR_K[0][1] * (lqr_speed_error)
+    + LQR_K[0][2] * (lqr_yaw_error)
+    - LQR_K[0][3] * lqr_d_yaw
     - LQR_K[0][4] * VMC_L.b_phi0 
     - LQR_K[0][5] * VMC_L.d_b_phi0 
     - LQR_K[0][6] * VMC_R.b_phi0 
@@ -474,10 +486,10 @@ void LQR_calculate()
     + LQR_K[0][9] * d_pitch;
 
     R_LK9025.Target_Torque = 
-    + LQR_K[1][0] * body_distance_error
-    + LQR_K[1][1] * (speed_error) 
-    + LQR_K[1][2] * (yaw_error)
-    - LQR_K[1][3] * d_yaw
+    + LQR_K[1][0] * lqr_body_distance_error
+    + LQR_K[1][1] * (lqr_speed_error) 
+    + LQR_K[1][2] * (lqr_yaw_error)
+    - LQR_K[1][3] * lqr_d_yaw
     - LQR_K[1][4] * VMC_L.b_phi0 
     - LQR_K[1][5] * VMC_L.d_b_phi0 
     - LQR_K[1][6] * VMC_R.b_phi0 
@@ -487,10 +499,10 @@ void LQR_calculate()
 
     //算模拟腿力矩
     Leg_L_T = 
-    + LQR_K[2][0] * body_distance_error
-    + LQR_K[2][1] * (speed_error)
-    + LQR_K[2][2] * (-yaw_error)
-    - LQR_K[2][3] * d_yaw
+    + LQR_K[2][0] * lqr_body_distance_error
+    + LQR_K[2][1] * (lqr_speed_error)
+    + LQR_K[2][2] * (-lqr_yaw_error)
+    - LQR_K[2][3] * lqr_d_yaw
     - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
     - LQR_K[2][5] * VMC_L.d_b_phi0 
     - LQR_K[2][6] * VMC_R.b_phi0 
@@ -499,10 +511,10 @@ void LQR_calculate()
     + LQR_K[2][9] * d_pitch;
 
     Leg_R_T = 
-    + LQR_K[3][0] * body_distance_error
-    + LQR_K[3][1] * (speed_error)
-    + LQR_K[3][2] * (-yaw_error)
-    - LQR_K[3][3] * d_yaw
+    + LQR_K[3][0] * lqr_body_distance_error
+    + LQR_K[3][1] * (lqr_speed_error)
+    + LQR_K[3][2] * (-lqr_yaw_error)
+    - LQR_K[3][3] * lqr_d_yaw
     - LQR_K[3][4] * VMC_L.b_phi0 
     - LQR_K[3][5] * VMC_L.d_b_phi0 
     - LQR_K[3][6] * (VMC_R.b_phi0 - b_phi0_offset)
@@ -710,6 +722,9 @@ void Standing()
         i = 0;
         LQR_Get_K(LQR_K, K_Fit_Coefficients, VMC_L.L0, VMC_R.L0);
     }
+
+	// 更新功率门控缩放系数（不直接限制扭矩，只作用于观测量）。
+	PowerCtrl();
 
     LQR_calculate();
 

@@ -56,7 +56,10 @@ h7_ctrl/powerctrl.o: ..\Power_control\PowerCtrl.c \
   C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\Power_control\RLS.h ..\others\Motion_Control\App\inc\motor.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\Power_control\RLS.h ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\App\inc\motor.h \
+  ..\others\Motion_Control\Ctrl\inc\observe_task.h \
+  ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h \
   ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h
+  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\UI\include\Judge.h ..\Power_control\PowerObserverLimit.h

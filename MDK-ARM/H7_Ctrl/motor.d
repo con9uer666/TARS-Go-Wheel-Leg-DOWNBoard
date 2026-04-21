@@ -85,4 +85,5 @@ h7_ctrl/motor.o: ..\others\Motion_Control\App\src\motor.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\IMU_coculate\imu_temp_ctrl.h ..\CommonLibs\inc\Angle_about.h
+  ..\IMU_coculate\imu_temp_ctrl.h ..\CommonLibs\inc\Angle_about.h \
+  ..\Power_control\PowerCtrl.h
