@@ -3,14 +3,9 @@
 #include "arm_math.h"
 #include "math.h"
 #include "RLS.h"
-#include "motor.h"
-#include "Motor_Drv.h"
+#include "moto.h"
 
 uint16_t SET_WHEELSPEED_MAX = 8000;
-
-float power_measure;
-
-extern float LQR_K[4][10];
 
 ChassisPower turn_power;
 ChassisPower whell_power;
@@ -67,15 +62,15 @@ void PowerCtralInit(ChassisPower* turn_power,ChassisPower* whell_power)
 	PowerControl_AutoUpdateParamInit(whell_power);
 }
 
-//�ֵ�����ʿ���
+//轮电机功率控制
 void Whellv1PowerCtral()
 {
 	whell_power.a = fmaxf(1e-7, whell_power.paramVector[1][0]);
 	whell_power.k2 = fmaxf(whell_power.paramVector[0][0], 1e-7);
 	whell_power.constant = fmaxf(0.7f, whell_power.paramVector[2][0]);
-	whell_power.kp = 1/sqrt(2*whell_power.a*0.3*0.3*(-0.5*(LQR_K[0][2]+LQR_K[1][2]))*(-0.5*(LQR_K[0][2]+LQR_K[1][2])));
+	whell_power.kp = 1/sqrt(2*whell_power.a*0.3*0.3*(-0.5*(k[1][2]+k[2][2]))*(-0.5*(k[1][2]+k[2][2])))
 	
-	//��������
+	//参数初始化
 	whell_power.SumPowerSpeed = 0;
 	whell_power.SumPowerTorque = 0;
 	whell_power.EffetivePower = 0;
@@ -83,7 +78,7 @@ void Whellv1PowerCtral()
 	whell_power.scaleFactor = 0;
 	whell_power.PredictPower = 0;
 	
-	//��ȡ�����
+	//设置功率上限，读取缓冲能量
 	//whell_power.MaxPowerLimit = JUDGE_GetChassisPowerLimit();
 	//chassis_power_buffer = JUDGE_GetPowerBuffer();
 	// if (whell_power.MaxPowerLimit < 15 || whell_power.MaxPowerLimit > 200)
@@ -91,30 +86,35 @@ void Whellv1PowerCtral()
 		whell_power.MaxPowerLimit = whell_power.UserPowerLimit;
 	//}
 	
-	//���������
-			whell_power.SumPowerSpeed += L_LK9025.Rx_Data.Speed * L_LK9025.Rx_Data.Speed + R_LK9025.Rx_Data.Speed*R_LK9025.Rx_Data.Speed;
-			whell_power.SumPowerTorque+= whell_power.LastOutput[0] * whell_power.LastOutput[0] + whell_power.LastOutput[1]*whell_power.LastOutput[1];
-			whell_power.EffetivePower += (whell_power.toque_coefficient * L_LK9025.Rx_Data.Speed * whell_power.LastOutput[0]) + (whell_power.toque_coefficient * R_LK9025.Rx_Data.Speed * whell_power.LastOutput[1]);
-
-	whell_power.PredictPower = whell_power.paramVector[1][0] * whell_power.SumPowerTorque + whell_power.paramVector[0][0] * whell_power.SumPowerSpeed + 2 * whell_power.paramVector[2][0] + whell_power.EffetivePower;
-	// power_measure = cap.receive_data.bus_power / 100.0f;
+	//拟合当前功率
+	for (uint8_t i = 0;i<2;i++)
+	{
+			whell_power.SumPowerSpeed += chassis.M3508[i].speed*chassis.M3508[i].speed;
+			whell_power.SumPowerTorque+= whell_power.LastOutput[i]*whell_power.LastOutput[i];
+			whell_power.EffetivePower += whell_power.toque_coefficient*chassis.M3508[i].speed*whell_power.LastOutput[i];
+	}
+	whell_power.PredictPower = whell_power.paramVector[1][0] * whell_power.SumPowerTorque + whell_power.paramVector[0][0] * whell_power.SumPowerSpeed + 4 * whell_power.paramVector[2][0] + whell_power.EffetivePower;
+	power.MeasurePower = cap.receive_data.bus_power / 100.0f;
 		if (whell_power.EffetivePower > 10 && whell_power.MeasurePower>10 )//&& chassis.move.fastMode == 0)
 	{
+		//自动拟合
 		PowerControl_AutoUpdateParam(whell_power.SumPowerSpeed / 2.0f, whell_power.SumPowerTorque / 2.0f, 1, (whell_power.MeasurePower-whell_power.EffetivePower) / 2.0f,whell_power);
 	}
-	//�ֵ�������
 	whell_power.InputPower = whell_power.MaxPowerLimit;
 	LIMIT(whell_power.InputPower,5, whell_power.MaxPowerLimit+20);
 	
 	whell_power.sdmax = whell_power.kp*sqrt(whell_power.InputPower);
 
-		// LIMIT(chassis.M3508[i].speedPID.output,-16000,16000);
-		whell_power.LastOutput[0] = L_LK9025.TX_data;
-		whell_power.LastOutput[1] = R_LK9025.TX_data;
+	for(uint8_t i=0;i<4;i++)
+	{
+		LIMIT(chassis.M3508[i].speedPID.output,-16000,16000);
+		whell_power.LastOutput[i] = chassis.M3508[i].speedPID.output;
+	}
 	
 }
 
 void PowerCtrl()
 {
+	TurnPowerCtral();
 	Whellv1PowerCtral();
 }
