@@ -24,8 +24,8 @@
 //��������ɫ
 typedef enum
 {
-	RobotColor_Red,
-	RobotColor_Blue
+	RobotColor_Red = 0,
+	RobotColor_Blue = 1
 }RobotColor;
 
 typedef enum 
@@ -53,7 +53,6 @@ typedef enum
 	ID: 0x0002  Byte:  1    �����������         		������������      
 	ID: 0x0003  Byte:  16    ����������Ѫ������   		1Hz����    //2026.3.14�޸� 16byte
 	ID: 0x0101  Byte:  4    �����¼�����   				�¼��ı����
-	ID: 0x0102  Byte:  4    ���ز���վ������ʶ����    	�����ı���� 
 	ID: 0x0104	Byte: 	3		���о�����Ϣ				//2026.3.14�޸� 3byte
 	ID: 0x0105	Byte: 	3		���ڷ���ڵ���ʱ		//2026.3.14�޸� 3byte
 	ID: 0X0201  Byte: 13    ������״̬����        		10Hz		//2026.3.14�޸� 13byte
@@ -62,7 +61,7 @@ typedef enum
 	ID: 0x0204  Byte:  8    ��������������           	����״̬�ı����
 	ID: 0x0206  Byte:  1    �˺�״̬����           		�˺���������
 	ID: 0x0207  Byte:  7    ʵʱ�������           		�ӵ��������
-	ID: 0x0208  Byte:  6    �ӵ�ʣ�෢����					//2026.3.14�޸� 6byte
+	ID: 0x0208  Byte:  8    �ӵ�ʣ�෢����					//2026.3.14�޸� 6byte
 	ID: 0x0209  Byte:  5    ������RFID״̬					//2026.3.14�޸� 5byte
 	ID: 0x020A  Byte:  6    ���ڻ����˿ͻ���ָ������
 	ID: 0x020D Byte:  6		�ڱ������˵�ǰ״̬
@@ -72,7 +71,7 @@ typedef enum
 
 //������ID,�����жϽ��յ���ʲô����
 typedef enum
-{ 
+{
 	ID_game_state       				= 0x0001,//����״̬����
 	ID_game_result 	   					= 0x0002,//�����������
 	ID_game_robot_HP      			= 0x0003,//����������Ѫ������
@@ -86,9 +85,8 @@ typedef enum
 	ID_robot_hurt								= 0x0206,//�˺�״̬����
 	ID_shoot_data								= 0x0207,//ʵʱ�������
 	ID_bullet_remaining					= 0x0208,//�ӵ�ʣ�෢����
-	ID_rfid_status							= 0x0209,//������RFID״̬  *
+	ID_rfid_status							= 0x0209,//������RFID״̬  *	
 	ID_sentry_status          	= 0x020D,
-	
 } CmdID;
 
 
@@ -103,7 +101,7 @@ typedef enum
 	LEN_referee_warning						= 3,	//0x0104
 	LEN_dart_remaining_time				= 3,	//0x0105
 	LEN_game_robot_state    			= 13,	//0x0201
-	LEN_power_heat_data   				= 16,	//0x0202
+	LEN_power_heat_data   				= 14,	//0x0202
 	LEN_game_robot_pos        		= 12,	//0x0203  
 	LEN_buff_musk        					= 8,	//0x0204
 	LEN_robot_hurt        				= 1,	//0x0206
@@ -125,10 +123,8 @@ typedef enum
 //}ext_CommunatianData_t;
 
 
-
-
 /* �Զ���֡ͷ */
-typedef __packed struct
+typedef __packed struct //����ϵͳ֡ͷ
 {
 	uint8_t  SOF;
 	uint16_t DataLength;
@@ -136,13 +132,13 @@ typedef __packed struct
 	uint8_t  CRC8;
 } xFrameHeader;
 
-
 typedef __packed struct{
 	uint16_t data_cmd_id;    
 	uint16_t send_ID;    
 	uint16_t receiver_ID;	
 	uint32_t 		sentry_cmd;
 }sentry_cmd_t;
+
 
 
 /* ID: 0x0001  Byte:  11    ����״̬���� */
@@ -160,7 +156,7 @@ typedef __packed struct
 	uint8_t winner;
 } ext_game_result_t; 
 
-/* ID: 0x0003  Byte:  16    ����������Ѫ������ */
+/* ID: 0x0003  Byte:  32    ����������Ѫ������ */   //2026.3.14 �Ķ�
 typedef __packed struct
 {
 	uint16_t ally_1_robot_HP;
@@ -176,7 +172,7 @@ typedef __packed struct
 /* ID: 0x0101  Byte:  4    �����¼����� */
 typedef __packed struct 					//2026.3.14�޸�
 { 	
-	//	uint32_t event_data;
+	uint32_t event_data;
 	
 	//�����Ƕ����Զ���ṹ�� 
 	//0��δռ��/δ����  1����ռ��/�Ѽ��� 
@@ -201,21 +197,20 @@ typedef __packed struct 					//2026.3.14�޸�
 							 ռ�죬 2 Ϊ���Է�ռ��
 		bit 29����������������ռ��״̬�� 1 Ϊ��ռ��							 */
 	
-	uint8_t supply_area_state : 3;
-	uint8_t own_buff_state : 4;
-	uint8_t own_central_land_state : 2;
-	uint8_t own_trapezoidal_land_state : 2;
-	uint16_t darts_hitted_time : 9;
-	uint8_t darts_hitted_target : 3;
-	uint8_t center_gain_state : 2;
-	uint8_t own_fortress_state :2;
-	uint8_t own_outpost_state : 2;   // bit27-28 ����ǰ��վ�����״̬
-	uint8_t own_base_state : 1;      // bit29 �������������״̬
-	
-	uint32_t reserved : 2;
+//	uint8_t supply_area_state : 3;
+//	uint8_t own_buff_state : 4;
+//	uint8_t own_central_land_state : 2;
+//	uint8_t own_trapezoidal_land_state : 2;
+//	uint16_t darts_hitted_time : 9;
+//	uint8_t darts_hitted_target : 3;
+//	uint8_t center_gain_state : 2;
+//	uint8_t own_fortress_state :2;
+//	uint8_t own_outpost_state : 2;   // bit27-28 ����ǰ��վ�����״̬
+//	uint8_t own_base_state : 1;      // bit29 �������������״̬
+//	
+//	uint32_t reserved : 2;
 	
 } ext_event_data_t; 
-
 
 
 
@@ -227,7 +222,7 @@ typedef __packed struct
   uint8_t count; 
 } ext_referee_warning_t;
 
-/* ID: 0x105    Byte: 3    ���ڷ���ڵ���ʱ */
+/* ID: 0x105    Byte: 3    ���ڷ���ڵ���ʱ */  
 typedef __packed struct 
 { 
   uint8_t dart_remaining_time; 
@@ -250,7 +245,7 @@ typedef __packed struct
 } ext_game_robot_status_t;
 
 
-/* ID: 0X0202  Byte: 14    ʵʱ������������ */
+/* ID: 0X0202  Byte: 16    ʵʱ������������ */
 typedef __packed struct
 {
 	uint16_t reserved_1;
@@ -309,7 +304,7 @@ typedef __packed struct
   uint16_t projectile_allowance_fortress;
 } ext_bullet_remaining_t;
 
-/* ID: 0x0209  Byte:  5    ������RFID״̬ */
+/* ID: 0x0209  Byte:  5    ������RFID״̬ */ //2026.3.14�޸�
 typedef __packed struct
 {
 	uint32_t rfid_status;
@@ -323,8 +318,7 @@ typedef __packed struct
   uint8_t reserved;  
   uint16_t target_change_time;  
   uint16_t latest_launch_cmd_time; 
-} ext_dart_client_cmd_t;
-
+} ext_dart_client_cmd_t;	
 
 /* ID: 0x020D  Byte:  6    �ڱ������˵�ǰ״̬���� */
 typedef __packed struct
@@ -332,6 +326,7 @@ typedef __packed struct
 	uint32_t sentry_info;
 	uint16_t sentry_info_2;
 }sentry_info_t;
+
 /* 
 	
 	�������ݣ�����һ��ͳһ�����ݶ�ͷ�ṹ��
@@ -363,7 +358,7 @@ typedef __packed struct
 	0x0116�����в����ֿͻ���(��)�� 
 */
 /* �������ݽ�����Ϣ��0x0301  */
-typedef __packed struct 
+typedef __packed struct 	//2026.3.14�޸�
 { 
 	uint16_t data_cmd_id;    
 	uint16_t send_ID;    
@@ -388,45 +383,10 @@ typedef __packed struct
 */
 typedef __packed struct 
 { 
-	uint8_t data[110]; //���ݶ�,n��ҪС��113
+	uint8_t data[106]; //���ݶ�,n��ҪС��113
 } robot_interactive_data_t;
 
-/* �ͻ��� �ͻ����Զ���ͼ�Σ�cmd_id:0x030 */
-//ͼ������
-typedef __packed struct {
-	uint8_t graphic_name[3]; 
-	uint32_t operate_tpye:3; 
-	uint32_t graphic_tpye:3; 
-	uint32_t layer:4; 
-	uint32_t color:4; 
-	uint32_t start_angle:9; 
-	uint32_t end_angle:9; 
-	uint32_t width:10; 
-	uint32_t start_x:11; 
-	uint32_t start_y:11;
-	uint32_t radius:10; 
-	uint32_t end_x:11; 
-	uint32_t end_y:11; 
-} graphic_data_struct_t;
 
-//ɾ��ͼ�� data_cmd_id=0x0100
-typedef __packed struct
-{
-	uint8_t operate_tpye;
-	uint8_t layer;
-} ext_client_custom_graphic_delete_t;
-
-//����һ��ͼ�� data_cmd_id=0x0101
-typedef __packed struct
-{
-	graphic_data_struct_t grapic_data_struct;
-} ext_client_custom_graphic_single_t;
-
-//�������� data_cmd_id=0x0110
-typedef __packed struct {
-	graphic_data_struct_t grapic_data_struct; 
-	uint8_t data[30];
-} ext_client_custom_character_t;
 
 //�����˽�����Ϣ
 typedef __packed struct
@@ -438,35 +398,7 @@ typedef __packed struct
 	uint16_t		 						FrameTail;//֡β
 }ext_CommunatianData_t;
 
-//�ͻ����Զ���ͼ����Ϣ
-typedef __packed struct
-{
-	xFrameHeader   							txFrameHeader;//֡ͷ
-	uint16_t								CmdID;//������
-	ext_student_interactive_header_data_t   dataFrameHeader;//���ݶ�ͷ�ṹ
-	ext_client_custom_graphic_single_t  	 			graphData;//���ݶ�
-	uint16_t		 						FrameTail;//֡β
-}ext_GraphData_t;
 
-//�ͻ����Զ���������Ϣ
-typedef __packed struct
-{
-	xFrameHeader   							txFrameHeader;//֡ͷ
-	uint16_t								CmdID;//������
-	ext_student_interactive_header_data_t   dataFrameHeader;//���ݶ�ͷ�ṹ
-	ext_client_custom_character_t  	 			textData;//���ݶ�
-	uint16_t		 						FrameTail;//֡β
-}ext_TextData_t;
-
-//�ͻ����Զ���UIɾ����״
-typedef __packed struct
-{
-	xFrameHeader   							txFrameHeader;//֡ͷ
-	uint16_t								CmdID;//������
-	ext_student_interactive_header_data_t   dataFrameHeader;//���ݶ�ͷ�ṹ
-	ext_client_custom_graphic_delete_t  	 			deleteData;//���ݶ�
-	uint16_t		 						FrameTail;//֡β
-}ext_DeleteData_t;
 
 //����ϵͳ��������֡
 typedef struct
@@ -475,37 +407,33 @@ typedef struct
 	uint16_t frameLength;
 }JudgeTxFrame;
 
-typedef __packed struct 
-{ 
-	int16_t mouse_x; 
-	int16_t mouse_y; 
-	int16_t mouse_z; 
-	int8_t left_button_down; 
-	int8_t right_button_down; 
-	__packed	union {
-    uint16_t key_code;
-  __packed  struct
-    {
-      uint16_t W : 1;
-      uint16_t S : 1;
-      uint16_t A : 1;
-      uint16_t D : 1;
-      uint16_t SHIFT : 1;
-      uint16_t CTRL : 1;
-      uint16_t Q : 1;
-      uint16_t E : 1;
-      uint16_t R : 1;
-      uint16_t F : 1;
-      uint16_t G : 1;
-      uint16_t Z : 1;
-      uint16_t X : 1;
-      uint16_t C : 1;
-      uint16_t V : 1;
-      uint16_t B : 1;
-    } bit;
-  } keyboard_value;
-	uint16_t reserved; 
-}remote_control_t; 
+typedef __packed struct{
+	uint8_t game_progress; // ��ǰ����״̬ 0:δ��ʼ���� 1:׼���׶� 2:�Լ�׶� 3:���뵹��ʱ 4:������ 5:����������
+	uint16_t remain_time;  // ����ʣ��ʱ�� ��λ:s
+	uint16_t current_hp;   // ��ǰѪ��
+	uint16_t projectile;   // ���ֻ�ʣ���ٵ�
+	uint8_t sentry_info;   // bit 0: װ�װ��Ƿ񱻹��� 0:�� 1:��
+											 	 // bit 1: �Ƿ���ս 0:�� 1:��
+												 // bit 2: RFID �Ƿ��⵽���� 0:�� 1:��
+													 // bit 3: RFID �Ƿ��⵽������(��һ�վ���ص�) 0:�� 1:��
+													 // bit 4: RFID �Ƿ��⵽������(��һ�վ�ص�) 0:�� 1:��
+													 // bit 5: ��ǰʣ������ֵ�Ƿ�С��30% 0:�� 1:��
+													 // bit 6-7: 0
+													 // building state
+	uint16_t red_outpost_hp;  // �췽ǰ��վѪ��
+	uint16_t red_base_hp;     // �췽����Ѫ��
+	uint16_t blue_outpost_hp; // ����ǰ��վѪ��
+	uint16_t blue_base_hp;    // ��������Ѫ��
+/***********����Ϊ����ai��**************/
+	uint16_t shooter_barrel_cooling_value;  // ��ȴ�ٶ�
+	uint16_t shooter_barrel_heat_limit; 		//��������
+	uint8_t power_management_gimbal_output : 1;
+	uint8_t power_management_chassis_output : 1;
+	uint8_t power_management_shooter_output : 1;
+	uint16_t shooter_17mm_barrel_heat;			//ʣ������
+	float initial_speed;										//����
+	uint8_t self_color;
+}JudgeData_t;
 
 /****************��������***************/
 void JUDGE_Init(void);
@@ -527,20 +455,20 @@ uint8_t HP_deduction_reason(void);
 uint16_t JUDGE_GetHP(void);
 uint16_t JUDGE_GetCoolingValue(void);
 
-void JUDGE_SendTextStruct(graphic_data_struct_t *textConf,uint8_t text[30],uint8_t len);
-void JUDGE_SendGraphStruct(graphic_data_struct_t *data);
+
 //����6�жϻص�
 void USER_USART1_IRQHandler(void);
 //����ص�
 void Task_Judge_Callback(void);
 //���߻ص�
 void Judge_UartLostCallback(void);
-/****************�ⲿ����***************/
-extern ext_game_robot_pos_t				GameRobotPos;
-extern ext_shoot_data_t						ShootData;
-extern ext_game_robot_status_t		GameRobotStat;
-extern ext_power_heat_data_t			PowerHeatData;
-//extern remote_control_t RemoteControl; // 0x0304
 
+void Judge_Receive(void);
+/****************�ⲿ����***************/
+extern ext_game_robot_pos_t			GameRobotPos;
+extern ext_shoot_data_t				ShootData;
+extern ext_game_robot_status_t		GameRobotStat;
+extern JudgeData_t 					USER_JudgeData;
+extern ext_power_heat_data_t 		PowerHeatData;
 
 #endif //ͷ�ļ�

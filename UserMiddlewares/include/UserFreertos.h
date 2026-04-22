@@ -5,7 +5,7 @@
 #define WS2812_SPI_UNIT     hspi6
 extern SPI_HandleTypeDef WS2812_SPI_UNIT;
 
-//cubeÉú³ÉµÄ¹©Íâ²¿ÎÄ¼şµ÷ÓÃµÄ±äÁ¿
+//cubeç”Ÿæˆçš„ä¾›å¤–éƒ¨æ–‡ä»¶è°ƒç”¨çš„å˜é‡
 //task
 extern  osThreadId IMUTaskHandle;
 extern  osThreadId LEDTaskHandle;

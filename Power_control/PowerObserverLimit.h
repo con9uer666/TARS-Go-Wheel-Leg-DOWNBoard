@@ -1,7 +1,13 @@
 #ifndef POWER_OBSERVER_LIMIT_H
 #define POWER_OBSERVER_LIMIT_H
 
-#include <stdint.h>
+/*
+ * 本头文件定义“观测量门控”模块：
+ * 输入：功率限制、缓冲能量、预测功率；
+ * 输出：观测缩放系数 lambda 及门控后的 LQR 观测量。
+ */
+
+#include <stdint.h> // 基础整型定义。
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,15 +71,27 @@ typedef struct
     float lambda;               /* 本周期使用的缩放系数 */
 } PowerObsOutput;
 
-/* 填充一组稳定可用的默认参数。 */
+/*
+ * @brief 填充一组稳定可用的默认参数。
+ * @param param 输出参数结构体指针。
+ */
 void PowerObsCtrl_DefaultParam(PowerObsCtrlParam *param);
 
-/* 初始化控制器状态，可传入自定义参数，传 NULL 则使用默认参数。 */
+/*
+ * @brief 初始化控制器状态。
+ * @param ctrl 控制器对象指针。
+ * @param param 参数指针，传 NULL 时使用默认参数。
+ */
 void PowerObsCtrl_Init(PowerObsCtrl *ctrl, const PowerObsCtrlParam *param);
 
 /*
- * 结合功率限制、缓冲能量与预测功率，更新并返回 lambda。
- * dt_s 为控制周期，单位秒。
+ * @brief 结合功率限制、缓冲能量与预测功率，更新并返回 lambda。
+ * @param ctrl 控制器对象指针。
+ * @param power_limit 本周期功率限制（W）。
+ * @param power_buffer 本周期缓冲能量（J）。
+ * @param predicted_power 本周期预测功率（W）。
+ * @param dt_s 控制周期（s）。
+ * @return 本周期更新后的 lambda。
  */
 float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
                                  float power_limit,
@@ -82,8 +100,10 @@ float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
                                  float dt_s);
 
 /*
- * 对输入观测量执行缩放。
- * ctrl 为 NULL 时按 lambda=1 处理，不改变输入。
+ * @brief 对输入观测量执行缩放。
+ * @param ctrl 控制器对象指针，传 NULL 时按 lambda=1 处理。
+ * @param in 门控前输入观测量。
+ * @param out 门控后输出观测量。
  */
 void PowerObsCtrl_Apply(const PowerObsCtrl *ctrl,
                         const PowerObsInput *in,

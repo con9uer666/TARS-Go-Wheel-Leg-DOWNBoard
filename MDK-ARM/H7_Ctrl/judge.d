@@ -33,8 +33,8 @@ h7_ctrl/judge.o: ..\UI\source\Judge.c ..\UI\include\Judge.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\UI\include\cRc.h ..\Core\Inc\usart.h ..\UI\include\Detect.h \
-  ..\UI\include\Graphics.h ..\UserMiddlewares\include\userfreertos.h \
+  ..\UI\include\cRc.h ..\Core\Inc\usart.h \
+  ..\UserMiddlewares\include\userfreertos.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \

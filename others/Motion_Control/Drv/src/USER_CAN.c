@@ -158,28 +158,28 @@ void CAN_Transmit(void const * argument)
     for(;;)
     {
 		//输出开关vscode://lirentech.file-ref-tags?filePath=USER_CAN.c&snippet=%2F%2F%E8%BE%93%E5%87%BA%E5%BC%80%E5%85%B3
-
-		// DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_LK9025.Target_Torque);
-        // DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_LK9025.Target_Torque);
-        // osDelay(1);
-		// DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
-        // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
-        // DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
-        // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
-		// osDelay(1);
+		
+		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_LK9025.Target_Torque);
+        DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_LK9025.Target_Torque);
+        osDelay(1);
+		DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
+        DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
+        DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
+        DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
+		osDelay(1);
 		DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, down_board_yaw_output, 0, 0, 2);
         DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, Shooter_DM2325.Target_Torque);
 
-        osDelay(1);
-		DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-        DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
-        DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
-        DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+        // osDelay(1);
+		// DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+        // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+        // DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+        // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 		// DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, 0);
 		// DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
-		osDelay(1);
-		DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
-        DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+		// osDelay(1);
+		// DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+        // DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 
     }
 }
