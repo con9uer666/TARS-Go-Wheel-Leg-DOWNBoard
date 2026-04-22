@@ -6,7 +6,7 @@
 #include "user_pid.h" // 通用 PID 控制器。
 #include "motor.h" // LQR 状态量与目标量定义。
 #include "observe_task.h" // kalman_body_speed 状态估计值。
-#include "Motor_Drv.h" // 轮电机实时速度与目标扭矩。
+#include "Motor_Drv.h" // 轮电机实时速度与目标电流指令（字段名沿用 Target_Torque）。
 #include "Judge.h" // 裁判系统功率限制与缓冲读数。
 #include "PowerObserverLimit.h" // 观测量门控逻辑。
 
@@ -46,6 +46,9 @@ static const float POWER_MEASURE_VALID_MAX_W = 500.0f; // 允许用于 RLS 更�
 static float g_power_buffer_last = 50.0f; // 上一次缓冲测量值（J）。
 static float g_power_buffer_drop_rate = 0.0f; // 当前缓冲掉速估计（J/s）。
 
+/* -------------------------------- 调参区 -------------------------------- */
+
+
 /*
  * @brief 浮点限幅函数。
  * @param x 输入值。
@@ -64,6 +67,18 @@ static float PowerCtrl_Clampf(float x, float lo, float hi)
 		return hi;
 	}
 	return x;
+}
+
+/*
+ * @brief 将电机扭矩指令换算为 DJI 电流指令值。
+ * @note 该公式与 Motor_Drv.c 中 DJI_Motor_Torque_Ctrl 保持一致。
+ */
+static float PowerCtrl_TorqueToDJICurrent(float torque)
+{
+	float current;
+
+	current = ((((torque / 14.88f) / 0.02f) / 20.0f) * 16384.0f);
+	return PowerCtrl_Clampf(current, -16384.0f, 16384.0f);
 }
 
 /*
@@ -93,7 +108,7 @@ static void PowerCtrl_InitBufferPid(void)
  */
 void PowerInit3508v1(ChassisPower* whell_power_out)
 {
-	/* 模型参数：loss = a*w^2 + b*t^2 + c。 */
+	/* 模型参数：loss = a*w^2 + b*i^2 + c。 */
 	whell_power_out->toque_coefficient = 2.4324e-6f;
 	whell_power_out->paramVector[0][0] = 1.2158888e-7f;
 	whell_power_out->paramVector[1][0] = 1.5822148e-7f;
@@ -350,8 +365,8 @@ void Whellv1PowerCtral(void)
 #if POWER_CTRL_MODULE_ENABLE
 	float wl; // 左轮速度（rad/s）。
 	float wr; // 右轮速度（rad/s）。
-	float tl; // 左轮目标扭矩（N*m）。
-	float tr; // 右轮目标扭矩（N*m）。
+	float il; // 左轮电流指令值（-16384~16384）。
+	float ir; // 右轮电流指令值（-16384~16384）。
 	float base_power_limit; // 裁判基础功率上限（W）。
 	float power_limit; // PID 修正后功率上限（W）。
 	float power_buffer; // 当前缓冲值（J）。
@@ -372,25 +387,25 @@ void Whellv1PowerCtral(void)
 		return;
 	}
 
-	/* 步骤3：采集轮组实时状态（速度与目标扭矩）。 */
+	/* 步骤3：采集轮组实时状态（速度与电流指令）。 */
 	wl = L_LK9025.Rx_Data.Velocity;
 	wr = R_LK9025.Rx_Data.Velocity;
-	tl = L_LK9025.Target_Torque;
-	tr = R_LK9025.Target_Torque;
+	il = PowerCtrl_TorqueToDJICurrent(L_LK9025.Target_Torque);
+	ir = PowerCtrl_TorqueToDJICurrent(R_LK9025.Target_Torque);
 
 	/* 步骤4：更新用于观测与建模的中间量。 */
 	whell_power.SumPowerSpeed = wl * wl + wr * wr;
-	whell_power.SumPowerTorque = tl * tl + tr * tr;
-	whell_power.EffetivePower = whell_power.toque_coefficient * (wl * tl + wr * tr);
+	whell_power.SumPowerTorque = il * il + ir * ir;
+	whell_power.EffetivePower = whell_power.toque_coefficient * (wl * il + wr * ir);
 
 	/* 步骤5：先用当前模型参数计算预测功率。 */
-	whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, tl, tr, &whell_power);
+	whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, il, ir, &whell_power);
 	powerPredict = whell_power.PredictPower;
 
 	/*
 	 * 步骤6：RLS 在线更新（新增）。
 	 * 6.1 读取裁判实测功率；
-	 * 6.2 将实测总功率减去机械功，得到损耗项样本 y；
+	 * 6.2 将实测总功率减去速度-电流耦合功率项，得到损耗项样本 y；
 	 * 6.3 调用 RLS 更新参数向量；
 	 * 6.4 立即用新参数重算预测功率，提升当前周期门控精度。
 	 */
@@ -407,7 +422,7 @@ void Whellv1PowerCtral(void)
 		                            measured_loss,
 		                            whell_power);
 
-		whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, tl, tr, &whell_power);
+		whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, il, ir, &whell_power);
 		powerPredict = whell_power.PredictPower;
 	}
 
@@ -415,7 +430,7 @@ void Whellv1PowerCtral(void)
 	base_power_limit = PowerCtrl_GetPowerLimit();
 	power_buffer = PowerCtrl_GetPowerBuffer();
 
-	/* 步骤8：用缓冲 PID + 保护逻辑计算最终功率预算。 */
+	/* 步骤8：用缓冲 PID + 保护逻辑计算 //!最大功率。 */
 	power_limit = PowerCtrl_GetPidAdjustedLimit(base_power_limit, power_buffer);
 	whell_power.MaxPowerLimit = (uint16_t)base_power_limit;
 	whell_power.InputPower = power_limit;

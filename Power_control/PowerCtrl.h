@@ -18,7 +18,7 @@
 #define POWER_CTRL_BUFFER_PID_ENABLE 1
 #endif
 
-#define TOQUE_CONST  600 // 历史保留扭矩系数宏（当前功率控制主链路未直接使用）。
+#define TOQUE_CONST  600 // 历史保留系数宏（当前功率控制主链路未直接使用）。
 
 /*
  * @brief 轮组功率控制对象。
@@ -32,8 +32,8 @@ typedef struct
 	float output; // 历史保留输出字段（当前主链路未使用）。
 	float LastOutput[4]; // 历史保留：上周期输出缓存。
 	float SumPowerSpeed; // 当前周期轮速平方和：wl^2 + wr^2。
-	float SumPowerTorque; // 当前周期轮扭矩平方和：tl^2 + tr^2。
-	float EffetivePower; // 机械功率估计：k_t * (wl*tl + wr*tr)。
+	float SumPowerTorque; // 历史命名，当前语义为轮电流指令平方和：il^2 + ir^2。
+	float EffetivePower; // 历史命名，当前语义为速度-电流耦合功率项：k_i * (wl*il + wr*ir)。
 	float InitialGivePower[4]; // 历史保留：分配前功率。
 	float InitialTotalPower; // 历史保留：分配前总功率。
 	float PredictPower; // 当前预测总电功率（W）。
@@ -42,7 +42,7 @@ typedef struct
 	float scaleFactor; // 历史保留：缩放因子。
 	float paramVector[3][1]; // 功率模型参数向量 [a b c]^T。
 	float transVector[3][3]; // RLS 协方差矩阵 P。
-	float toque_coefficient; // 机械功系数 k_t。
+	float toque_coefficient; // 历史命名，当前语义为速度-电流耦合系数 k_i。
 	float a; // 历史保留参数。
 	float k2; // 历史保留参数。
 	float constant; // 历史保留参数。

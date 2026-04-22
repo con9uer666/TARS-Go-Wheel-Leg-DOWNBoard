@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed Apr 22 12:11:34 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed Apr 22 18:10:51 2026
 <BR><P>
 <H3>Maximum Stack Usage =        456 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2599,7 +2599,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[a2]"></a>Motor_task</STRONG> (Thumb, 432 bytes, Stack size 8 bytes, motor.o(.text.Motor_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 408<LI>Call Chain = Motor_task &rArr; Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 424<LI>Call Chain = Motor_task &rArr; Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
@@ -2752,7 +2752,7 @@ Global Symbols
 <LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerCtralInit
 </UL>
 
-<P><STRONG><a name="[1db]"></a>PowerControl_WheelPowerPredict</STRONG> (Thumb, 80 bytes, Stack size 0 bytes, rls.o(.text.PowerControl_WheelPowerPredict))
+<P><STRONG><a name="[1db]"></a>PowerControl_WheelPowerPredict</STRONG> (Thumb, 152 bytes, Stack size 0 bytes, rls.o(.text.PowerControl_WheelPowerPredict))
 <BR><BR>[Called By]<UL><LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
 </UL>
 
@@ -2769,7 +2769,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1c0]"></a>PowerCtrl</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, powerctrl.o(.text.PowerCtrl))
-<BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
 </UL>
@@ -2883,7 +2883,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1b2]"></a>Standing</STRONG> (Thumb, 1072 bytes, Stack size 56 bytes, motor.o(.text.Standing))
-<BR><BR>[Stack]<UL><LI>Max Depth = 400<LI>Call Chain = Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_cos_f32
@@ -3141,8 +3141,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
 
-<P><STRONG><a name="[1c1]"></a>Whellv1PowerCtral</STRONG> (Thumb, 1108 bytes, Stack size 240 bytes, powerctrl.o(.text.Whellv1PowerCtral))
-<BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<P><STRONG><a name="[1c1]"></a>Whellv1PowerCtral</STRONG> (Thumb, 1188 bytes, Stack size 256 bytes, powerctrl.o(.text.Whellv1PowerCtral))
+<BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerObsCtrl_ComputeLambda
 <LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate

@@ -66,7 +66,7 @@ extern float powerPredict; // 外部预测功率变量。
 /*
  * @brief 使用模型参数预测损耗项。
  * @param x1 轮速平方和。
- * @param x2 轮扭矩平方和。
+ * @param x2 轮电流指令平方和。
  * @param x3 常数项（双轮一般为 2）。
  * @param power 功率对象指针。
  * @return 损耗功率估计值。
@@ -85,35 +85,58 @@ float PowerControl_ModelLossPredict(float x1, float x2, float x3, const ChassisP
  * @brief 预测轮组总电功率。
  * @param wl 左轮速度（rad/s）。
  * @param wr 右轮速度（rad/s）。
- * @param tl 左轮扭矩（N*m）。
- * @param tr 右轮扭矩（N*m）。
+ * @param il 左轮电流指令值（-16384~16384）。
+ * @param ir 右轮电流指令值（-16384~16384）。
  * @param power 功率对象指针。
  * @return 预测总电功率（W）。
  */
-float PowerControl_WheelPowerPredict(float wl, float wr, float tl, float tr, const ChassisPower *power)
+float PowerControl_WheelPowerPredict(float wl, float wr, float il, float ir, const ChassisPower *power)
 {
     float x1;
     float x2;
     float x3;
-    float loss_power;
-    float mech_power;
-    float total_power;
+    float il_limited;
+    float ir_limited;
+    float loss_power;//模型损耗功率项
+    float mech_power;//速度-电流耦合功率项
+    float total_power;//总预测电功率
 
     if (power == NULL)
     {
         return 0.0f;
     }
 
-    // 步骤1：构造模型输入向量。
+    // 步骤1：对输入电流做限幅，避免异常值污染模型。
+    il_limited = il;
+    ir_limited = ir;
+    if (il_limited > 16384.0f)
+    {
+        il_limited = 16384.0f;
+    }
+    else if (il_limited < -16384.0f)
+    {
+        il_limited = -16384.0f;
+    }
+
+    if (ir_limited > 16384.0f)
+    {
+        ir_limited = 16384.0f;
+    }
+    else if (ir_limited < -16384.0f)
+    {
+        ir_limited = -16384.0f;
+    }
+
+    // 步骤2：构造模型输入向量。
     x1 = wl * wl + wr * wr;
-    x2 = tl * tl + tr * tr;
+    x2 = il_limited * il_limited + ir_limited * ir_limited;
     x3 = 2.0f; // 两个轮电机的常数项总和。
 
-    // 步骤2：计算损耗功率项与机械功项。
+    // 步骤3：计算损耗功率项与机械功项。
     loss_power = PowerControl_ModelLossPredict(x1, x2, x3, power);
-    mech_power = power->toque_coefficient * (wl * tl + wr * tr);
+    mech_power = power->toque_coefficient * (wl * il_limited + wr * ir_limited);
 
-    // 步骤3：合成总电功率预测值并做下限保护。
+    // 步骤4：合成总电功率预测值并做下限保护。
     total_power = loss_power + mech_power;
 
     if (total_power < 0.0f)
@@ -127,7 +150,7 @@ float PowerControl_WheelPowerPredict(float wl, float wr, float tl, float tr, con
 /*
  * @brief 根据输入/输出样本执行 RLS 在线更新。
  * @param x1 输入样本1（轮速平方和）。
- * @param x2 输入样本2（轮扭矩平方和）。
+ * @param x2 输入样本2（轮电流指令平方和）。
  * @param x3 输入样本3（常数项）。
  * @param y 输出样本（实测损耗功率）。
  * @param power 功率对象（按值传入，供异常分支访问参数）。
@@ -139,7 +162,7 @@ float PowerControl_AutoUpdateParam(float x1, float x2, float x3, float y,Chassis
      {
          return PowerControl_ModelLossPredict(Xsample[0][0], Xsample[1][0], Xsample[2][0], &power); // 返回当前模型输出。
      } // 异常分支结束。
-// x1 为 电机转速平方和，x2 为电机扭矩平方和，x3 为常数项（偏置项），y 为总功率，effectivePower 为机械功率 // 输入含义说明。
+// x1 为电机转速平方和，x2 为电机电流指令平方和，x3 为常数项（偏置项），y 为损耗功率样本。 // 输入含义说明。
 // 若使用 setCurrent，需要保证 x2 与当前电机实际输出一致，需要根据实际情况对当前功率进行修正 // 使用说明。
 
     // 步骤1：写入本周期输入/输出样本。
