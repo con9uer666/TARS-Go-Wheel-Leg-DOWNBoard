@@ -118,6 +118,7 @@ float wheel_ki = 0;
 float wheel_kd = 0.01;
 float wheel_out_limit = 3;
 float wheel_i_limit = 0;
+float wheel_I_step = 0;
 float wheel_Integraldead_zone = 0;
 float wheel_deadzone = 0.01;
 
@@ -127,6 +128,7 @@ float anti_split_ki = 0;
 float anti_split_kd = 0;
 float anti_split_out_limit = 3;
 float anti_split_i_limit = 0;
+float anti_split_I_step = 0;
 float anti_split_Integraldead_zone = 0;
 float anti_split_deadzone = 0;
 
@@ -239,13 +241,13 @@ void Self_Righting_Reset(void)
 uint8_t Self_Righting_Step(void)
 {
 	//锁死轮子vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E9%94%81%E6%AD%BB%E8%BD%AE%E5%AD%90
-	PID_INIT(&wheel_PID_l, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_Integraldead_zone, wheel_deadzone);
-	PID_INIT(&wheel_PID_r, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_Integraldead_zone, wheel_deadzone);
+	PID_INIT(&wheel_PID_l, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_I_step, wheel_Integraldead_zone, wheel_deadzone);
+	PID_INIT(&wheel_PID_r, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_I_step, wheel_Integraldead_zone, wheel_deadzone);
 
 	PID_Set_Error(&wheel_PID_l, L_LK9025.Rx_Data.Speed, 0);
 	PID_Set_Error(&wheel_PID_r, R_LK9025.Rx_Data.Speed, 0);
 
-	PID_INIT(&anti_split_PID, anti_split_kp, anti_split_ki, anti_split_kd, anti_split_out_limit, anti_split_i_limit, anti_split_Integraldead_zone, anti_split_deadzone);
+	PID_INIT(&anti_split_PID, anti_split_kp, anti_split_ki, anti_split_kd, anti_split_out_limit, anti_split_i_limit, anti_split_I_step, anti_split_Integraldead_zone, anti_split_deadzone);
 
 	//封装的0-2PI的角度变量，方便后续判断转动卡住和是否到达目标角度vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%B0%81%E8%A3%85%E7%9A%840-2PI%E7%9A%84%E8%A7%92%E5%BA%A6%E5%8F%98%E9%87%8F%EF%BC%8C%E6%96%B9%E4%BE%BF%E5%90%8E%E7%BB%AD%E5%88%A4%E6%96%AD%E8%BD%AC%E5%8A%A8%E5%8D%A1%E4%BD%8F%E5%92%8C%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6
 	update_phi0_0_to_2PI();

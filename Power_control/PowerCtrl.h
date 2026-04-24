@@ -3,20 +3,7 @@
 
 #include "main.h" // uint8_t/uint16_t 等基础类型。
 
-/* 编译期总开关：0=关闭功率控制逻辑，1=启用。 */
-#ifndef POWER_CTRL_MODULE_ENABLE
-#define POWER_CTRL_MODULE_ENABLE 1
-#endif
-
-/* 编译期观测量门控开关：0=不缩放 LQR 观测量，1=启用。 */
-#ifndef POWER_CTRL_OBSERVER_GATE_ENABLE
-#define POWER_CTRL_OBSERVER_GATE_ENABLE 1
-#endif
-
 /* 编译期缓冲能量 PID 闭环开关：0=关闭，1=启用。 */
-#ifndef POWER_CTRL_BUFFER_PID_ENABLE
-#define POWER_CTRL_BUFFER_PID_ENABLE 1
-#endif
 
 #define TOQUE_CONST  600 // 历史保留系数宏（当前功率控制主链路未直接使用）。
 
@@ -33,7 +20,7 @@ typedef struct
 	float LastOutput[4]; // 历史保留：上周期输出缓存。
 	float SumPowerSpeed; // 当前周期轮速平方和：wl^2 + wr^2。
 	float SumPowerTorque; // 历史命名，当前语义为轮电流指令平方和：il^2 + ir^2。
-	float EffetivePower; // 历史命名，当前语义为速度-电流耦合功率项：k_i * (wl*il + wr*ir)。
+	float EffetivePower; // 有效做功
 	float InitialGivePower[4]; // 历史保留：分配前功率。
 	float InitialTotalPower; // 历史保留：分配前总功率。
 	float PredictPower; // 当前预测总电功率（W）。
@@ -42,7 +29,7 @@ typedef struct
 	float scaleFactor; // 历史保留：缩放因子。
 	float paramVector[3][1]; // 功率模型参数向量 [a b c]^T。
 	float transVector[3][3]; // RLS 协方差矩阵 P。
-	float toque_coefficient; // 历史命名，当前语义为速度-电流耦合系数 k_i。
+	float toque_coefficient; //有效做功系数
 	float a; // 历史保留参数。
 	float k2; // 历史保留参数。
 	float constant; // 历史保留参数。

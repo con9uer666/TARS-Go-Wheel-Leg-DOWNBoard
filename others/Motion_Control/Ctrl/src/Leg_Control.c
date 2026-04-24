@@ -58,8 +58,8 @@ static void leg_ctrl_pid_init(VMC_t *VMC)
     }
 
     // 使用默认参数初始化PID控制器。
-    PID_INIT(&speed_PID[idx], 5.0f, 0.05f, 1.0f, 10.0f, 20.0f, 2000.0f, 0.0f);    //TODO: 调参
-    PID_INIT(&L0_PID[idx], 2000.0f, 0.0f, 25000.0f, 150.0f, 0.0f, 0.0f, 0.0f);       //TODO: 调参
+    PID_INIT(&speed_PID[idx], 5.0f, 0.05f, 1.0f, 10.0f, 20.0f, 0.0, 2000.0f, 0.0f);    //TODO: 调参
+    PID_INIT(&L0_PID[idx], 2000.0f, 0.0f, 25000.0f, 150.0f, 0.0f, 0.0, 0.0f, 0.0f);       //TODO: 调参
     s_pid_inited[idx] = 1; // 标记PID控制器已初始化。
 }
 

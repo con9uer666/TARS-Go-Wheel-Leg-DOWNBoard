@@ -9,6 +9,7 @@ typedef struct {
     float Ki;
     float I;
     float I_limit;
+    float I_step;
     float out_limit;
     float error;
     float pre_error;
@@ -19,7 +20,7 @@ typedef struct {
 
 
 float PID_coculate(user_pid_t *PID);
-void PID_INIT(user_pid_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float Integraldead_zone, float deadzone);
+void PID_INIT(user_pid_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float I_step, float Integraldead_zone, float deadzone);
 void PID_Reset_OutLimit(user_pid_t *PID, float new_limit);
 void PID_Clear(user_pid_t *PID);
 void PID_Set_Error(user_pid_t *PID, float now, float target);

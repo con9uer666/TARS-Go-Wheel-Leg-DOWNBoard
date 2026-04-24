@@ -93,6 +93,7 @@ static void PowerCtrl_InitBufferPid(void)
 	         0.0f,
 	         45.0f,
 	         30.0f,
+			 0.0,
 	         100.0f,
 	         0.0f);
 	PID_Clear(&g_power_buffer_pid);
@@ -109,7 +110,7 @@ static void PowerCtrl_InitBufferPid(void)
 void PowerInit3508v1(ChassisPower* whell_power_out)
 {
 	/* 模型参数：loss = a*w^2 + b*i^2 + c。 */
-	whell_power_out->toque_coefficient = 2.4324e-6f;
+	whell_power_out->toque_coefficient = 2.4324e-6f;//有效做功系数
 	whell_power_out->paramVector[0][0] = 1.2158888e-7f;
 	whell_power_out->paramVector[1][0] = 1.5822148e-7f;
 	whell_power_out->paramVector[2][0] = 3.04855824f;
@@ -129,12 +130,12 @@ void PowerInit3508v1(ChassisPower* whell_power_out)
  */
 void PowerCtralInit(ChassisPower* whell_power_out)
 {
-	PowerObsCtrlParam obs_param; // 门控参数缓存（先取默认值，再写入控制器）。
+	PowerObsCtrlParam obs_param; // 门控参数缓存（先取默认值，再写入控制器）
 
 	PowerInit3508v1(whell_power_out); // 1) 初始化功率模型参数。
 	PowerControl_AutoUpdateParamInit(whell_power_out); // 2) 初始化 RLS 内部矩阵对象。
 
-	PowerObsCtrl_DefaultParam(&obs_param); // 3) 加载默认门控参数。
+	PowerObsCtrl_DefaultParam(&obs_param); // 3) 初始化门控参数。
 	PowerObsCtrl_Init(&g_power_obs_ctrl, &obs_param); // 4) 初始化门控状态。
 
 	PowerCtrl_InitBufferPid(); // 5) 初始化缓冲 PID。
@@ -299,7 +300,6 @@ static float PowerCtrl_GetPidAdjustedLimit(float base_power_limit, float power_b
 	float effective_target; // 实际生效的缓冲目标（J）。
 	float auto_target; // 按功率上限自动推导的缓冲目标上限（J）。
 
-#if POWER_CTRL_BUFFER_PID_ENABLE
 	/* 开关关闭时直接返回基础上限。 */
 	if (g_power_buffer_pid_enable == 0)
 	{
@@ -349,116 +349,6 @@ static float PowerCtrl_GetPidAdjustedLimit(float base_power_limit, float power_b
 
 	/* 常规工况限幅：允许略高于基础上限以提升动态恢复。 */
 	return PowerCtrl_Clampf(adjusted_limit, 5.0f, base_power_limit + 20.0f);
-#else
-	(void)power_buffer;
-	g_power_buffer_pid_out = 0.0f;
-	return base_power_limit;
-#endif
-}
-
-/*
- * @brief 轮组功率控制主函数。
- * @note 本函数在每个控制周期更新：预测功率、可用功率预算、观测门控系数。
- */
-void Whellv1PowerCtral(void)
-{
-#if POWER_CTRL_MODULE_ENABLE
-	float wl; // 左轮速度（rad/s）。
-	float wr; // 右轮速度（rad/s）。
-	float il; // 左轮电流指令值（-16384~16384）。
-	float ir; // 右轮电流指令值（-16384~16384）。
-	float base_power_limit; // 裁判基础功率上限（W）。
-	float power_limit; // PID 修正后功率上限（W）。
-	float power_buffer; // 当前缓冲值（J）。
-	float measured_power; // 实测底盘功率（W），用于 RLS 更新。
-	float measured_loss; // 由实测功率反推的损耗功率样本（W）。
-
-	/* 步骤1：首次进入时执行初始化。 */
-	if (g_power_obs_inited == 0)
-	{
-		PowerCtralInit(&whell_power);
-	}
-
-	/* 步骤2：总开关关闭时直接旁路，门控系数复位为 1。 */
-	if (g_power_ctrl_enable == 0)
-	{
-		g_power_obs_ctrl.lambda = 1.0f;
-		g_power_obs_lambda = 1.0f;
-		return;
-	}
-
-	/* 步骤3：采集轮组实时状态（速度与电流指令）。 */
-	wl = L_LK9025.Rx_Data.Velocity;
-	wr = R_LK9025.Rx_Data.Velocity;
-	il = PowerCtrl_TorqueToDJICurrent(L_LK9025.Target_Torque);
-	ir = PowerCtrl_TorqueToDJICurrent(R_LK9025.Target_Torque);
-
-	/* 步骤4：更新用于观测与建模的中间量。 */
-	whell_power.SumPowerSpeed = wl * wl + wr * wr;
-	whell_power.SumPowerTorque = il * il + ir * ir;
-	whell_power.EffetivePower = whell_power.toque_coefficient * (wl * il + wr * ir);
-
-	/* 步骤5：先用当前模型参数计算预测功率。 */
-	whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, il, ir, &whell_power);
-	powerPredict = whell_power.PredictPower;
-
-	/*
-	 * 步骤6：RLS 在线更新（新增）。
-	 * 6.1 读取裁判实测功率；
-	 * 6.2 将实测总功率减去速度-电流耦合功率项，得到损耗项样本 y；
-	 * 6.3 调用 RLS 更新参数向量；
-	 * 6.4 立即用新参数重算预测功率，提升当前周期门控精度。
-	 */
-	measured_power = PowerCtrl_GetMeasuredChassisPower();
-	whell_power.MeasurePower = measured_power;
-	if (measured_power >= POWER_MEASURE_VALID_MIN_W)
-	{
-		measured_loss = measured_power - whell_power.EffetivePower;
-		measured_loss = PowerCtrl_Clampf(measured_loss, 0.0f, POWER_MEASURE_VALID_MAX_W);
-
-		PowerControl_AutoUpdateParam(whell_power.SumPowerSpeed,
-		                            whell_power.SumPowerTorque,
-		                            2.0f,
-		                            measured_loss,
-		                            whell_power);
-
-		whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, il, ir, &whell_power);
-		powerPredict = whell_power.PredictPower;
-	}
-
-	/* 步骤7：读取裁判功率上限与缓冲。 */
-	base_power_limit = PowerCtrl_GetPowerLimit();
-	power_buffer = PowerCtrl_GetPowerBuffer();
-
-	/* 步骤8：用缓冲 PID + 保护逻辑计算 //!最大功率。 */
-	power_limit = PowerCtrl_GetPidAdjustedLimit(base_power_limit, power_buffer);
-	whell_power.MaxPowerLimit = (uint16_t)base_power_limit;
-	whell_power.InputPower = power_limit;
-
-#if POWER_CTRL_OBSERVER_GATE_ENABLE
-	/* 步骤9：根据预算/缓冲/预测功率计算门控系数 lambda。 */
-	if (g_power_obs_gate_enable != 0)
-	{
-		g_power_obs_lambda = PowerObsCtrl_ComputeLambda(&g_power_obs_ctrl,
-		                                               power_limit,
-		                                               power_buffer,
-		                                               whell_power.PredictPower,
-		                                               POWER_CTRL_DT_S);
-	}
-	else
-	{
-		g_power_obs_ctrl.lambda = 1.0f;
-		g_power_obs_lambda = 1.0f;
-	}
-#else
-	(void)power_buffer;
-	g_power_obs_ctrl.lambda = 1.0f;
-	g_power_obs_lambda = 1.0f;
-#endif
-
-#else
-	g_power_obs_lambda = 1.0f;
-#endif
 }
 
 /*
@@ -473,7 +363,6 @@ void PowerCtrl_ApplyObserverGate(float *body_distance_error,
                                  float *yaw_error,
                                  float *d_yaw)
 {
-#if POWER_CTRL_MODULE_ENABLE && POWER_CTRL_OBSERVER_GATE_ENABLE
 	PowerObsInput in; // 门控前观测量。
 	PowerObsOutput out; // 门控后观测量。
 	float speed_mag; // 当前车速幅值（m/s）。
@@ -525,13 +414,119 @@ void PowerCtrl_ApplyObserverGate(float *body_distance_error,
 
 	/* 步骤7：同步对外调试量。 */
 	g_power_obs_lambda = out.lambda;
-#else
-	(void)body_distance_error;
-	(void)speed_error;
-	(void)yaw_error;
-	(void)d_yaw;
-#endif
 }
+
+
+
+
+
+
+
+
+
+
+/**
+ * 此函数内部使用的局部变量
+ */
+float wl; // 左轮速度（rad/s）。
+float wr; // 右轮速度（rad/s）。
+float il; // 左轮电流指令值（-16384~16384）。
+float ir; // 右轮电流指令值（-16384~16384）。
+float base_power_limit; // 裁判基础功率上限（W）。
+float power_limit; // PID 修正后功率上限（W）。
+float power_buffer; // 当前缓冲值（J）。
+float measured_power; // 实测底盘功率（W），用于 RLS 更新。
+float measured_loss; // 由实测功率反推的损耗功率样本（W）。
+/*
+ * @brief 轮组功率控制主函数。
+ * @note 本函数在每个控制周期更新：预测功率、可用功率预算、观测门控系数。//!说白了最后改的是门控系数，前面都是为了更准确地计算这个系数做的准备工作。
+ */
+void Whellv1PowerCtral(void)
+{
+	/* 步骤1：首次进入时执行初始化。 */
+	if (g_power_obs_inited == 0)
+	{
+		PowerCtralInit(&whell_power);
+	}
+
+	/* 步骤2：总开关关闭时直接旁路，门控系数复位为 1。 */
+	if (g_power_ctrl_enable == 0)
+	{
+		g_power_obs_ctrl.lambda = 1.0f;
+		g_power_obs_lambda = 1.0f;
+		return;
+	}
+
+	/* 步骤3：采集轮组实时状态（速度与电流指令）。 */
+	wl = L_LK9025.Rx_Data.Velocity;
+	wr = R_LK9025.Rx_Data.Velocity;
+	il = PowerCtrl_TorqueToDJICurrent(L_LK9025.Target_Torque);
+	ir = PowerCtrl_TorqueToDJICurrent(R_LK9025.Target_Torque);
+
+	/* 步骤4：更新用于观测与建模的中间量。 */
+	whell_power.SumPowerSpeed = wl * wl + wr * wr;
+	whell_power.SumPowerTorque = il * il + ir * ir;
+	whell_power.EffetivePower = whell_power.toque_coefficient * (wl * il + wr * ir);//有效做功
+
+	/* 步骤5：先用当前模型参数计算预测功率。 */
+	whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, il, ir, &whell_power);
+	powerPredict = whell_power.PredictPower;
+
+	/*
+	 * 步骤6：RLS 在线更新（新增）。
+	 * 6.1 读取裁判实测功率；
+	 * 6.2 将实测总功率减去速度-电流耦合功率项，得到损耗项样本 y；
+	 * 6.3 调用 RLS 更新参数向量；
+	 * 6.4 立即用新参数重算预测功率，提升当前周期门控精度。
+	 */
+	measured_power = PowerCtrl_GetMeasuredChassisPower();
+	whell_power.MeasurePower = measured_power;
+	if (measured_power >= POWER_MEASURE_VALID_MIN_W)
+	{
+		measured_loss = measured_power - whell_power.EffetivePower;
+		measured_loss = PowerCtrl_Clampf(measured_loss, 0.0f, POWER_MEASURE_VALID_MAX_W);
+
+		//模型拟合的时候就要除2
+		PowerControl_AutoUpdateParam(whell_power.SumPowerSpeed / 2,
+		                            whell_power.SumPowerTorque / 2,
+		                            1.0f,
+		                            measured_loss / 2,
+		                            whell_power);
+
+		whell_power.PredictPower = PowerControl_WheelPowerPredict(wl, wr, il, ir, &whell_power);
+		powerPredict = whell_power.PredictPower;
+	}
+
+	/* 步骤7：读取裁判功率上限与缓冲。 */
+	base_power_limit = PowerCtrl_GetPowerLimit();
+	power_buffer = PowerCtrl_GetPowerBuffer();
+
+	/* 步骤8：用缓冲 PID + 保护逻辑计算 //!最大功率。 */
+	power_limit = PowerCtrl_GetPidAdjustedLimit(base_power_limit, power_buffer);
+	whell_power.MaxPowerLimit = (uint16_t)base_power_limit;
+	whell_power.InputPower = power_limit;
+
+	//上交思路
+	/* 步骤9：根据预算/缓冲/预测功率计算门控系数 lambda。 */
+	if (g_power_obs_gate_enable != 0)
+	{
+		g_power_obs_lambda = PowerObsCtrl_ComputeLambda(&g_power_obs_ctrl,
+		                                               power_limit,
+		                                               power_buffer,
+		                                               whell_power.PredictPower,
+		                                               POWER_CTRL_DT_S);
+	}
+	else
+	{
+		g_power_obs_ctrl.lambda = 1.0f;
+		g_power_obs_lambda = 1.0f;
+	}
+
+	//港科思路
+	
+}
+
+
 
 /*
  * @brief 功率控制总入口。

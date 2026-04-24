@@ -11,16 +11,18 @@
  * @param Kd 
  * @param out_limit 
  * @param i_limit 
+ * @param I_step 积分变化率限制
  * @param Integraldead_zone 积分累加死区范围，当error在这个范围外时，积分不累加
  * @param deadzone 输出死区范围
  */
-void PID_INIT(user_pid_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float Integraldead_zone, float deadzone)
+void PID_INIT(user_pid_t *PID, float Kp, float Ki, float Kd, float out_limit, float i_limit, float I_step, float Integraldead_zone, float deadzone)
 {
     PID->Kp = Kp;
     PID->Ki = Ki;
     PID->Kd = Kd;
     PID->out_limit = out_limit;
     PID->I_limit = i_limit;
+    PID->I_step = I_step;
     PID->Integraldead_zone = Integraldead_zone;
     PID->deadzone = deadzone;
 
@@ -100,9 +102,28 @@ float PID_coculate(user_pid_t *PID)
     P = PID->Kp * PID->error;
     D = PID->Kd * (PID->error - PID->pre_error);
 
-    //积分累加
-	if(PID->error <= PID->Integraldead_zone && PID->error >= -PID->Integraldead_zone)
-		PID->I += PID->Ki * PID->error;
+    if (PID->error <= PID->Integraldead_zone && PID->error >= -PID->Integraldead_zone)
+{
+    float I_target = PID->I + PID->Ki * PID->error;
+
+    // I_step = 0 时直接走原始积分
+    if (PID->I_step <= 0.0f)
+    {
+        PID->I = I_target;
+    }
+    else
+    {
+        float delta = I_target - PID->I;
+
+        // I变化率限制
+        if (delta > PID->I_step)
+            delta = PID->I_step;
+        else if (delta < -PID->I_step)
+            delta = -PID->I_step;
+
+        PID->I += delta;
+    }
+}
 
 	//积分限幅
     if(PID->I>=PID->I_limit || PID->I<=-PID->I_limit)

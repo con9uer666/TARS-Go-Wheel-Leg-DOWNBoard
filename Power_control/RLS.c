@@ -147,6 +147,80 @@ float PowerControl_WheelPowerPredict(float wl, float wr, float il, float ir, con
     return total_power;
 }
 
+/**
+ * @brief 根据单轮功率限制反解最大允许电流指令（扭矩）。
+ * @param w 轮转速 (rad/s)
+ * @param power_limit 允许的最大电功率 (W)
+ * @param power 底盘功率参数指针
+ * @return 最大允许电流指令 (-16384 ~ 16384)
+ */
+float PowerControl_SingleWheelCurrentFromPower(float w, float power_limit, const ChassisPower *power)
+{
+    if (power == NULL)
+        return 0.0f;
+
+    float a = power->paramVector[0][0];      // w² 项系数
+    float b = power->paramVector[1][0];      // i² 项系数
+    float c = power->paramVector[2][0];   // 常数项（单电机）
+    float Kt = power->toque_coefficient; // 扭矩系数
+
+    // 二次方程系数：b*i^2 + (Kt*w)*i + (a*w^2 + c - P_limit) = 0
+    float A = b;
+    float B = Kt * w;
+    float C = a * w * w + c - power_limit;
+
+    // 处理 A=0 的退化情况（损耗模型无 i² 项）
+    if (fabsf(A) < 1e-9f) 
+    {
+        // 方程退化为 B*i + C = 0
+        if (fabsf(B) < 1e-9f) 
+        {
+            return 0.0f; // 无解
+        }
+        float i_root = -C / B;
+        // 钳位到合法范围
+        if (i_root > 16384.0f) i_root = 16384.0f;
+        if (i_root < -16384.0f) i_root = -16384.0f;
+        return i_root;
+    }
+
+    // 计算判别式
+    float delta = B * B - 4.0f * A * C;
+    if (delta < 0.0f) 
+    {
+        // 无实数解，功率限制过低，返回0
+        return 0.0f;
+    }
+
+    float sqrt_delta = sqrtf(delta);
+    float i1 = (-B + sqrt_delta) / (2.0f * A);
+    float i2 = (-B - sqrt_delta) / (2.0f * A);
+
+    // 选择与转速同号的根（驱动工况，同号时机械功率为正，符合通常功率限制意图）
+    // 若转速为0，则取绝对值较小的根（因为此时纯损耗）
+    float i_sel;
+    if (w > 0.0f) 
+    {
+        i_sel = (i1 > 0.0f) ? i1 : i2;
+    } 
+    else if (w < 0.0f) 
+    {
+        i_sel = (i1 < 0.0f) ? i1 : i2;
+    } 
+    else 
+    {
+        // w == 0，选择绝对值较小的根（损耗功率只与 i² 有关）
+        i_sel = (fabsf(i1) < fabsf(i2)) ? i1 : i2;
+    }
+
+    // 钳位到电机电流范围
+    if (i_sel > 16384.0f) i_sel = 16384.0f;
+    if (i_sel < -16384.0f) i_sel = -16384.0f;
+
+    return i_sel;
+}
+
+
 /*
  * @brief 根据输入/输出样本执行 RLS 在线更新。
  * @param x1 输入样本1（轮速平方和）。

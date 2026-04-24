@@ -17,7 +17,7 @@ uint16_t user_f = 0; // 用户调试变量f
 
 void Gimbal_task(void const * argument)
 {
-    PID_INIT(&gimbal_yaw_angle_pid, 20, 0.01,1, 10, 0.5, 0.3, 0);
+    PID_INIT(&gimbal_yaw_angle_pid, 20, 0.01,1, 10, 0.5, 0, 0.3, 0);
     TickType_t xLastWakeTime = xTaskGetTickCount(); 
     for(;;)
     {

@@ -1,11 +1,11 @@
 /**
   ****************************(C) COPYRIGHT 2019 DJI****************************
   * @file       pid.c/h
-  * @brief      pidʵ�ֺ�����������ʼ����PID���㺯����
+  * @brief      pid实锟街猴拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷始锟斤拷锟斤拷PID锟斤拷锟姐函锟斤拷锟斤拷
   * @note       
   * @history
   *  Version    Date            Author          Modification
-  *  V1.0.0     Dec-26-2018     RM              1. ���
+  *  V1.0.0     Dec-26-2018     RM              1. 锟斤拷锟�
   *
   @verbatim
   ==============================================================================
@@ -42,12 +42,12 @@
   */
 /**
   * @brief          pid struct data init
-  * @param[out]     pid: PID�ṹ����ָ��
-  * @param[in]      mode: PID_POSITION:��ͨPID
-  *                 PID_DELTA: ���PID
+  * @param[out]     pid: PID锟结构锟斤拷锟斤拷指锟斤拷
+  * @param[in]      mode: PID_POSITION:锟斤拷通PID
+  *                 PID_DELTA: 锟斤拷锟絇ID
   * @param[in]      PID: 0: kp, 1: ki, 2:kd
-  * @param[in]      max_out: pid������
-  * @param[in]      max_iout: pid���������
+  * @param[in]      max_out: pid锟斤拷锟斤拷锟斤拷
+  * @param[in]      max_iout: pid锟斤拷锟斤拷锟斤拷锟斤拷锟�
   * @retval         none
   */
 void PID_init(pid_type_def *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, fp32 max_iout)
@@ -74,11 +74,11 @@ void PID_init(pid_type_def *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, 
   * @retval         pid out
   */
 /**
-  * @brief          pid����
-  * @param[out]     pid: PID�ṹ����ָ��
-  * @param[in]      ref: ��������
-  * @param[in]      set: �趨ֵ
-  * @retval         pid���
+  * @brief          pid锟斤拷锟斤拷
+  * @param[out]     pid: PID锟结构锟斤拷锟斤拷指锟斤拷
+  * @param[in]      ref: 锟斤拷锟斤拷锟斤拷锟斤拷
+  * @param[in]      set: 锟借定值
+  * @retval         pid锟斤拷锟�
   */
 fp32 PID_calc(pid_type_def *pid, fp32 ref, fp32 set)
 {
@@ -124,8 +124,8 @@ fp32 PID_calc(pid_type_def *pid, fp32 ref, fp32 set)
   * @retval         none
   */
 /**
-  * @brief          pid ������
-  * @param[out]     pid: PID�ṹ����ָ��
+  * @brief          pid 锟斤拷锟斤拷锟斤拷
+  * @param[out]     pid: PID锟结构锟斤拷锟斤拷指锟斤拷
   * @retval         none
   */
 void PID_clear(pid_type_def *pid)

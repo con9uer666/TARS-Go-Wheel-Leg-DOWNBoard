@@ -193,7 +193,7 @@ uint16_t motor_HZ = 500; //任务频率
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
-float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
 
 //?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
@@ -306,27 +306,27 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0);
-    PID_INIT(&Leg_Phi0_PID, 300, 0.1, 5, 150, 150, 50000, 0);
-    PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 10000, 0);
+    PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0, 0);
+    PID_INIT(&Leg_Phi0_PID, 300, 0.1, 5, 150, 150, 0, 50000, 0);
+    PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
-    PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0);
-    PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0);
-    PID_INIT(&L_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 2000, 0);
-    PID_INIT(&R_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 2000, 0);
+    PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0, 0);
+    PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0, 0);
+    PID_INIT(&L_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 0, 2000, 0);
+    PID_INIT(&R_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 0, 2000, 0);
 
-    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
-    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 200, 0);
-    PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
-    PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 2000, 0);
+    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 0, 200, 0);
+    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 0, 200, 0);
+    PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
+    PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
 
     //小陀螺pid
-    PID_INIT(&spinning_pid, 0.0f, 0.0025f, 0, 3.0f, 6.0f, 20.0f, 0);
+    PID_INIT(&spinning_pid, 0.0f, 0.0025f, 0, 3.0f, 6.0f, 0.008, 20.0f, 0);
 
     //云台pid
-    PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 10000, 0);
-    PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0);
+    PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 0, 10000, 0);
+    PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0, 0);
     
     // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
 }

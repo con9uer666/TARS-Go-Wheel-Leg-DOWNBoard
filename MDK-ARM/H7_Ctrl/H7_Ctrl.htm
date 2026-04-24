@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed Apr 22 18:10:51 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Fri Apr 24 19:17:21 2026
 <BR><P>
 <H3>Maximum Stack Usage =        456 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -738,8 +738,8 @@ Global Symbols
 <LI><a href="#[18d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Measure
 <LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Update
 <LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Init
-<LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[188]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Measure
+<LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 </UL>
 
 <P><STRONG><a name="[22a]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
@@ -1301,7 +1301,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INS_Task
 </UL>
 
-<P><STRONG><a name="[a5]"></a>Gimbal_task</STRONG> (Thumb, 236 bytes, Stack size 8 bytes, gimbal.o(.text.Gimbal_task))
+<P><STRONG><a name="[a5]"></a>Gimbal_task</STRONG> (Thumb, 240 bytes, Stack size 8 bytes, gimbal.o(.text.Gimbal_task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Gimbal_task &rArr; osDelayUntil &rArr; vTaskDelayUntil &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
@@ -1313,7 +1313,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.text.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[10a]"></a>Gravity_Compensation_Test_Function</STRONG> (Thumb, 628 bytes, Stack size 40 bytes, motor.o(.text.Gravity_Compensation_Test_Function))
+<P><STRONG><a name="[10a]"></a>Gravity_Compensation_Test_Function</STRONG> (Thumb, 632 bytes, Stack size 40 bytes, motor.o(.text.Gravity_Compensation_Test_Function))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = Gravity_Compensation_Test_Function &rArr; VMC_Coculate &rArr; VMC_Get_L0_phi0
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Set_F0_T
@@ -2308,10 +2308,10 @@ Global Symbols
 <LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mat_trans_f32
 <LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mat_add_f32
 <LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mat_mult_f32
-<LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatUpdate
-<LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
 <LI><a href="#[18b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatMinusUpdate
 <LI><a href="#[188]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Measure
+<LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatUpdate
+<LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
 <LI><a href="#[16f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Observe_Tasks
@@ -2599,7 +2599,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[a2]"></a>Motor_task</STRONG> (Thumb, 432 bytes, Stack size 8 bytes, motor.o(.text.Motor_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 424<LI>Call Chain = Motor_task &rArr; Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = Motor_task &rArr; Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
@@ -2654,8 +2654,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
 <LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
-<LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[186]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Init
+<LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.text.MX_FREERTOS_Init)
 </UL>
@@ -2664,7 +2664,7 @@ Global Symbols
 <LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerCtralInit
 </UL>
 
-<P><STRONG><a name="[104]"></a>PID_INIT</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, user_pid.o(.text.PID_INIT))
+<P><STRONG><a name="[104]"></a>PID_INIT</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, user_pid.o(.text.PID_INIT))
 <BR><BR>[Called By]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 <LI><a href="#[1c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[1b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
@@ -2699,7 +2699,7 @@ Global Symbols
 <LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
 </UL>
 
-<P><STRONG><a name="[109]"></a>PID_coculate</STRONG> (Thumb, 264 bytes, Stack size 0 bytes, user_pid.o(.text.PID_coculate))
+<P><STRONG><a name="[109]"></a>PID_coculate</STRONG> (Thumb, 320 bytes, Stack size 0 bytes, user_pid.o(.text.PID_coculate))
 <BR><BR>[Called By]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 <LI><a href="#[1c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gravity_Compensation_Test_Function
@@ -2756,7 +2756,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
 </UL>
 
-<P><STRONG><a name="[1ad]"></a>PowerCtralInit</STRONG> (Thumb, 248 bytes, Stack size 40 bytes, powerctrl.o(.text.PowerCtralInit))
+<P><STRONG><a name="[1ad]"></a>PowerCtralInit</STRONG> (Thumb, 252 bytes, Stack size 40 bytes, powerctrl.o(.text.PowerCtralInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = PowerCtralInit &rArr; PowerObsCtrl_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
@@ -2769,7 +2769,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1c0]"></a>PowerCtrl</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, powerctrl.o(.text.PowerCtrl))
-<BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 352<LI>Call Chain = PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
 </UL>
@@ -2851,7 +2851,7 @@ Global Symbols
 <P><STRONG><a name="[6]"></a>SVC_Handler</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, port.o(.text.SVC_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
-<P><STRONG><a name="[1b5]"></a>Self_Righting_Step</STRONG> (Thumb, 2636 bytes, Stack size 56 bytes, self_righting.o(.text.Self_Righting_Step))
+<P><STRONG><a name="[1b5]"></a>Self_Righting_Step</STRONG> (Thumb, 2680 bytes, Stack size 56 bytes, self_righting.o(.text.Self_Righting_Step))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Self_Righting_Step &rArr; leg_turn_speed_control
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_detect
@@ -2883,7 +2883,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1b2]"></a>Standing</STRONG> (Thumb, 1072 bytes, Stack size 56 bytes, motor.o(.text.Standing))
-<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 408<LI>Call Chain = Standing &rArr; PowerCtrl &rArr; Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_cos_f32
@@ -3141,8 +3141,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
 
-<P><STRONG><a name="[1c1]"></a>Whellv1PowerCtral</STRONG> (Thumb, 1188 bytes, Stack size 256 bytes, powerctrl.o(.text.Whellv1PowerCtral))
-<BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
+<P><STRONG><a name="[1c1]"></a>Whellv1PowerCtral</STRONG> (Thumb, 1356 bytes, Stack size 248 bytes, powerctrl.o(.text.Whellv1PowerCtral))
+<BR><BR>[Stack]<UL><LI>Max Depth = 352<LI>Call Chain = Whellv1PowerCtral &rArr; PowerObsCtrl_ComputeLambda &rArr; __hardfp_powf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerObsCtrl_ComputeLambda
 <LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
@@ -3182,11 +3182,11 @@ Global Symbols
 <LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatUpdate
 <LI><a href="#[18e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
 <LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatMinusUpdate
+<LI><a href="#[18b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatMinusUpdate
+<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 <LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatUpdate
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
-<LI><a href="#[18b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatMinusUpdate
-<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 </UL>
 
 <P><STRONG><a name="[16e]"></a>arm_mat_init_f32</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, matrixfunctions.o(.text.arm_mat_init_f32))
@@ -3215,11 +3215,11 @@ Global Symbols
 <LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatUpdate
 <LI><a href="#[18e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
 <LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatMinusUpdate
+<LI><a href="#[18b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatMinusUpdate
+<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 <LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatUpdate
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
-<LI><a href="#[18b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatMinusUpdate
-<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 </UL>
 
 <P><STRONG><a name="[1bb]"></a>arm_mat_scale_f32</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, matrixfunctions.o(.text.arm_mat_scale_f32))
@@ -3230,9 +3230,9 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Update
 <LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_xhatUpdate
+<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 <LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_xhatUpdate
-<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 </UL>
 
 <P><STRONG><a name="[175]"></a>arm_mat_trans_f32</STRONG> (Thumb, 66 bytes, Stack size 16 bytes, matrixfunctions.o(.text.arm_mat_trans_f32))
@@ -3241,9 +3241,9 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_xhatUpdate
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Update
 <LI><a href="#[18e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_SetK
+<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 <LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_SetK
-<LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerControl_AutoUpdateParam
 </UL>
 
 <P><STRONG><a name="[1da]"></a>arm_sin_f32</STRONG> (Thumb, 124 bytes, Stack size 0 bytes, fastmathfunctions.o(.text.arm_sin_f32))
@@ -3288,7 +3288,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
 </UL>
 
-<P><STRONG><a name="[1c8]"></a>leg_turn_speed_control</STRONG> (Thumb, 308 bytes, Stack size 64 bytes, leg_control.o(.text.leg_turn_speed_control))
+<P><STRONG><a name="[1c8]"></a>leg_turn_speed_control</STRONG> (Thumb, 320 bytes, Stack size 64 bytes, leg_control.o(.text.leg_turn_speed_control))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = leg_turn_speed_control
 </UL>
 <BR>[Calls]<UL><LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
@@ -3417,7 +3417,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1af]"></a>task_PID_Init</STRONG> (Thumb, 704 bytes, Stack size 72 bytes, motor.o(.text.task_PID_Init))
+<P><STRONG><a name="[1af]"></a>task_PID_Init</STRONG> (Thumb, 764 bytes, Stack size 72 bytes, motor.o(.text.task_PID_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = task_PID_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
@@ -3680,8 +3680,8 @@ Global Symbols
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerObsCtrl_Apply
-<LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerObsCtrl_ComputeLambda
+<BR>[Called By]<UL><LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerObsCtrl_ComputeLambda
+<LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerObsCtrl_Apply
 </UL>
 
 <P><STRONG><a name="[239]"></a>__mathlib_powf</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, powf.o(i.__hardfp_powf), UNUSED)
