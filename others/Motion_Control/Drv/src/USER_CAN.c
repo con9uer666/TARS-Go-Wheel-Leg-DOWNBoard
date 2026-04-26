@@ -172,7 +172,7 @@ void CAN_Transmit(void const * argument)
 
         // osDelay(1);
 		// DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-        // DM_Motor_MIT_Torque_ctrl(11111	·&hfdcan1, R_DM8009[1], 0);
+        // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
         // DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
         // DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 		// DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, 0);
