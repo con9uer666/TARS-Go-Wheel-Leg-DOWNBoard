@@ -47,6 +47,9 @@ void Gimbal_task(void const * argument)
         else
         {
             down_board_yaw_output = Yaw_DM4310.Target_Speed;
+
+            user_f = 0;
+            user_e = 0;
         }
 
         osDelayUntil(&xLastWakeTime, 2);//精确延时2毫秒，同时更新xLastWakeTime的值为当前时间

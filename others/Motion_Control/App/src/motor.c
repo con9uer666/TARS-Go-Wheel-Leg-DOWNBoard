@@ -372,94 +372,94 @@ void NotStanding_NotStairRetract_for_chassis()
     if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
         Self_Righting_Step();
+        return ;
     }
-    else
+
+    //倒地自起成功后复位Self_Righting_Step的状态机
+    g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
+    first_run = 0;//第一次运行完成
+
+    //收腿过程腿长控制
+    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
+    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
+    PID_coculate(&L_Leg_L0_POS_PID);
+    PID_coculate(&R_Leg_L0_POS_PID);
+
+    PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
+    PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
+    PID_coculate(&L_Leg_L0_SPD_PID);
+    PID_coculate(&R_Leg_L0_SPD_PID);
+
+    //腿角度控制
+    if(L_Leg_State >= 1)
     {
-        //倒地自起成功后复位Self_Righting_Step的状态机
-        g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
-        first_run = 0;//第一次运行完成
-
-        //收腿过程腿长控制
-        PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
-        PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
-        PID_coculate(&L_Leg_L0_POS_PID);
-        PID_coculate(&R_Leg_L0_POS_PID);
-
-        PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
-        PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
-        PID_coculate(&L_Leg_L0_SPD_PID);
-        PID_coculate(&R_Leg_L0_SPD_PID);
-
-        //腿角度控制
-        if(L_Leg_State >= 1)
-        {
-            PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
-            PID_coculate(&L_Leg_Middle_PID);
-            PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
-            PID_coculate(&L_Leg_dphi0_PID);
-        }
-        if(R_Leg_State >= 1)
-        {
-            PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
-            PID_coculate(&R_Leg_Middle_PID);
-            PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
-            PID_coculate(&R_Leg_dphi0_PID);
-        }
-
-        //腿长判断是否到达目标长度
-        if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
-        {
-            L_Ready_Count ++;
-        }
-        if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
-        {
-            L_Leg_State = 1;    //收腿完成
-            L_Ready_Count = 0;  //归零
-        }
-        if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
-        {
-            R_Ready_Count ++;
-        }
-        if(R_Leg_State == 0 && R_Ready_Count >= 50)
-        {
-            R_Leg_State = 1;
-            R_Ready_Count = 0;
-        }
-
-        //腿长达标之后，判断腿角度是否到达目标角度
-        if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-        {
-            L_Ready_Count ++;
-        }
-        if(L_Leg_State == 1 && L_Ready_Count >= 50)
-        {
-            L_Leg_State = 2;
-            L_Ready_Count = 0;
-        }
-        if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-        {
-            R_Ready_Count ++;
-        }
-        if(R_Leg_State == 1 &&R_Ready_Count >= 50)
-        {
-            R_Leg_State = 2;
-            R_Ready_Count = 0;
-        }
-
-        if(R_Leg_State == 2 && L_Leg_State == 2)
-        {
-            start_mode = 1; // 收腿完成，进入正常模式
-            //归零
-            R_Leg_State = 0;
-            L_Leg_State = 0;
-        }
-
-        //映射到电机力矩
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
-        L_LK9025.Target_Torque = 0;
-        R_LK9025.Target_Torque = 0;
+        PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
+        PID_coculate(&L_Leg_Middle_PID);
+        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+        PID_coculate(&L_Leg_dphi0_PID);
     }
+    if(R_Leg_State >= 1)
+    {
+        PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+        PID_coculate(&R_Leg_Middle_PID);
+        PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+        PID_coculate(&R_Leg_dphi0_PID);
+    }
+
+    //腿长判断是否到达目标长度
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
+    {
+        L_Ready_Count ++;
+    }
+    if(L_Leg_State == 0 && L_Ready_Count >= 50)//腿到目标长度
+    {
+        L_Leg_State = 1;    //收腿完成
+        L_Ready_Count = 0;  //归零
+    }
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
+    {
+        R_Ready_Count ++;
+    }
+    if(R_Leg_State == 0 && R_Ready_Count >= 50)
+    {
+        R_Leg_State = 1;
+        R_Ready_Count = 0;
+    }
+
+    //腿长达标之后，判断腿角度是否到达目标角度
+    if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+    {
+        L_Ready_Count ++;
+    }
+    if(L_Leg_State == 1 && L_Ready_Count >= 50)
+    {
+        L_Leg_State = 2;
+        L_Ready_Count = 0;
+    }
+    if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+    {
+        R_Ready_Count ++;
+    }
+    if(R_Leg_State == 1 &&R_Ready_Count >= 50)
+    {
+        R_Leg_State = 2;
+        R_Ready_Count = 0;
+    }
+
+    if(R_Leg_State == 2 && L_Leg_State == 2)
+    {
+        start_mode = 1; // 收腿完成，进入正常模式
+        //归零
+        R_Leg_State = 0;
+        L_Leg_State = 0;
+    }
+
+    //映射到电机力矩
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
+    L_LK9025.Target_Torque = 0;
+    R_LK9025.Target_Torque = 0;
+
 }
 
 void LQR_calculate()
@@ -1060,6 +1060,7 @@ void Motor_task(void const *argument)
             if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
             {
                 NotStanding_NotStairRetract_for_chassis();
+                gimbal_follow_flag = 1;
             }
 
             else if(start_mode == 1)//站起
@@ -1069,7 +1070,6 @@ void Motor_task(void const *argument)
             else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
             {
                 Upstair_NotStairRetract();
-
             }
             else if(upstares_mode == 1)//收腿起立
             {
@@ -1086,3 +1086,40 @@ void Motor_task(void const *argument)
 
     
 }
+
+
+/**
+ * 行为树（未启用）
+ */
+// void Action_Tree(void)
+// {
+//     起立
+//         IF(处于倒地)
+//         {
+//             倒地自起动作组 
+//             return
+//         }
+//         后伸腿动作组
+
+//     站起
+//         小陀螺动作组
+//         正常开
+//         IF(侧翻检测)
+//         {
+//             底盘脱力动作组
+//             IF(持续侧翻)
+//             {
+//                 返回起立态
+//                 return
+//             }
+//         }
+
+//     上台阶
+//         上台阶动作组
+
+//     下台阶
+//         下台阶动作组
+// }
+
+
+// 摆头

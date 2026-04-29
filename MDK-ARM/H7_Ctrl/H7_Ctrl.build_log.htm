@@ -22,67 +22,12 @@ Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
 C:\Users\WXR\Desktop\robomaster\Code\RM_missions\2025TARS-GO\Wheel_Leg\Wheel_Leg_VScode20260314\MDK-ARM\H7_Ctrl.uvprojx
-Project File Date:  04/28/2026
+Project File Date:  04/29/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.24', folder: 'C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'H7_Ctrl'
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(22): warning: In file included from...
-../IMU_coculate\user_lib.h(99): warning: 'packed' attribute ignored [-Wignored-attributes]
-   99 | typedef __packed struct
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(46): warning: 'packed' attribute ignored [-Wignored-attributes]
-   46 | typedef __packed struct
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(96): warning: 'packed' attribute ignored [-Wignored-attributes]
-   96 | typedef __packed struct
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(102): warning: 'packed' attribute ignored [-Wignored-attributes]
-  102 | typedef __packed struct pid_t
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(171): warning: 'packed' attribute ignored [-Wignored-attributes]
-  171 | typedef __packed struct
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(210): warning: 'packed' attribute ignored [-Wignored-attributes]
-  210 | typedef __packed struct
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-../others/Motion_Control/App/src/motor.c(17): warning: In file included from...
-../IMU_coculate\controller.h(253): warning: 'packed' attribute ignored [-Wignored-attributes]
-  253 | typedef __packed struct
-      |         ^
-../Drivers/STM32H7xx_HAL_Driver/Inc\stm32h7xx_hal_def.h(117): note: expanded from macro '__packed'
-  117 |     #define __packed  __attribute__((packed))
-      |                                      ^
-7 warnings generated.
-compiling motor.c...
-linking...
-Program Size: Code=85964 RO-data=4496 RW-data=1576 ZI-data=53240  
-FromELF: creating hex file...
-"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 7 Warning(s).
+"H7_Ctrl\H7_Ctrl.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -115,42 +60,42 @@ Package Vendor: Keil
       Include file:  CMSIS/Core/Include/tz_context.h
 
    * Component: ARM::CMSIS:DSP&Source@1.16.2
-      Source file:   Source/SupportFunctions/SupportFunctionsF16.c
-      Source file:   Source/FastMathFunctions/FastMathFunctionsF16.c
-      Source file:   Source/BayesFunctions/BayesFunctionsF16.c
-      Source file:   Source/StatisticsFunctions/StatisticsFunctionsF16.c
-      Source file:   Source/SVMFunctions/SVMFunctionsF16.c
-      Source file:   Source/DistanceFunctions/DistanceFunctionsF16.c
-      Source file:   Source/ControllerFunctions/ControllerFunctions.c
-      Source file:   Source/DistanceFunctions/DistanceFunctions.c
-      Source file:   Source/SVMFunctions/SVMFunctions.c
-      Include file:  Include/arm_common_tables_f16.h
-      Include file:  Include/arm_const_structs.h
-      Source file:   Source/CommonTables/CommonTables.c
-      Include file:  Include/arm_math.h
-      Include file:  Include/arm_const_structs_f16.h
-      Source file:   Source/QuaternionMathFunctions/QuaternionMathFunctions.c
-      Source file:   Source/ComplexMathFunctions/ComplexMathFunctions.c
-      Source file:   Source/MatrixFunctions/MatrixFunctions.c
-      Include file:  Include/arm_common_tables.h
       Source file:   Source/BasicMathFunctions/BasicMathFunctions.c
-      Source file:   Source/FastMathFunctions/FastMathFunctions.c
-      Source file:   Source/FilteringFunctions/FilteringFunctions.c
-      Source file:   Source/StatisticsFunctions/StatisticsFunctions.c
-      Source file:   Source/SupportFunctions/SupportFunctions.c
-      Include file:  Include/arm_math_f16.h
-      Source file:   Source/TransformFunctions/TransformFunctions.c
-      Source file:   Source/InterpolationFunctions/InterpolationFunctions.c
+      Include file:  Include/arm_math.h
+      Source file:   Source/QuaternionMathFunctions/QuaternionMathFunctions.c
       Source file:   Source/BayesFunctions/BayesFunctions.c
-      Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
-      Source file:   Source/ComplexMathFunctions/ComplexMathFunctionsF16.c
-      Source file:   Source/CommonTables/CommonTablesF16.c
-      Source file:   Source/TransformFunctions/TransformFunctionsF16.c
-      Source file:   Source/WindowFunctions/WindowFunctions.c
+      Include file:  Include/arm_common_tables_f16.h
+      Include file:  Include/arm_math_f16.h
+      Include file:  Include/arm_const_structs.h
+      Include file:  Include/arm_const_structs_f16.h
+      Include file:  Include/arm_common_tables.h
+      Source file:   Source/MatrixFunctions/MatrixFunctions.c
+      Source file:   Source/ControllerFunctions/ControllerFunctions.c
+      Source file:   Source/SupportFunctions/SupportFunctionsF16.c
+      Source file:   Source/ComplexMathFunctions/ComplexMathFunctions.c
       Source file:   Source/MatrixFunctions/MatrixFunctionsF16.c
+      Source file:   Source/StatisticsFunctions/StatisticsFunctionsF16.c
+      Source file:   Source/FilteringFunctions/FilteringFunctions.c
+      Source file:   Source/FastMathFunctions/FastMathFunctionsF16.c
+      Source file:   Source/DistanceFunctions/DistanceFunctionsF16.c
+      Source file:   Source/BayesFunctions/BayesFunctionsF16.c
       Source file:   Source/InterpolationFunctions/InterpolationFunctionsF16.c
+      Source file:   Source/WindowFunctions/WindowFunctions.c
+      Source file:   Source/TransformFunctions/TransformFunctionsF16.c
+      Source file:   Source/InterpolationFunctions/InterpolationFunctions.c
+      Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
+      Source file:   Source/CommonTables/CommonTables.c
+      Source file:   Source/ComplexMathFunctions/ComplexMathFunctionsF16.c
+      Source file:   Source/StatisticsFunctions/StatisticsFunctions.c
+      Source file:   Source/SVMFunctions/SVMFunctions.c
+      Source file:   Source/DistanceFunctions/DistanceFunctions.c
+      Source file:   Source/SupportFunctions/SupportFunctions.c
       Source file:   Source/FilteringFunctions/FilteringFunctionsF16.c
-Build Time Elapsed:  00:00:06
+      Source file:   Source/SVMFunctions/SVMFunctionsF16.c
+      Source file:   Source/FastMathFunctions/FastMathFunctions.c
+      Source file:   Source/TransformFunctions/TransformFunctions.c
+      Source file:   Source/CommonTables/CommonTablesF16.c
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

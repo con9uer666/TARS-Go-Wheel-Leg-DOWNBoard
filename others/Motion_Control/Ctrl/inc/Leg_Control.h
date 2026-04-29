@@ -5,7 +5,7 @@
 #include "VMC.h"
 #include <stdint.h>
 
-extern int HZ;
+extern uint16_t HZ;
 extern float torque_limit;
 extern float torque_release_rate;
 extern float stuck_counter_time_s;
