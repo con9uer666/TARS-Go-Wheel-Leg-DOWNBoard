@@ -2,23 +2,19 @@
 #include "string.h"
 #include "cRc.h"
 #include "usart.h"
-#include "Detect.h"
-#include "Graphics.h"
 #include "userfreertos.h"
 #include "usart.h"
 #include "Board2Board.h"
 #include "myQueue.h"
 #define EN_JUDGE_TASK
 
-void JUDGE_GraphTest_KeyCallback(KeyType key, KeyCombineType combine, KeyEventType event);
-
-/*****************ÏµÍ³Êı¾İ¶¨Òå**********************/
+/*****************ç³»ç»Ÿæ•°æ®å®šä¹‰**********************/
 ext_game_status_t GameState;						   // 0x0001
 ext_game_result_t GameResult;						   // 0x0002
-ext_game_robot_HP_t GameRobotHP;					 // 0x0003
+ext_game_robot_HP_t GameRobotHP;					   // 0x0003
 ext_event_data_t EventData;							   // 0x0101
 ext_referee_warning_t RefereeWarning;				   // 0x0104
-ext_dart_info_t DartRemainingTime;					   // 0x0105
+ext_dart_info_t DartRemainingTime;					   // 0x0105	
 ext_game_robot_status_t GameRobotStat;				   // 0x0201
 ext_power_heat_data_t PowerHeatData;				   // 0x0202
 ext_game_robot_pos_t GameRobotPos;					   // 0x0203
@@ -28,72 +24,67 @@ ext_shoot_data_t ShootData;							   // 0x0207
 ext_bullet_remaining_t BulletRemaining;				   // 0x0208
 ext_rfid_status_t RfidStatus;						   // 0x0209
 ext_dart_client_cmd_t DartClientCmd;				   // 0x020A
+sentry_info_t    SentryDecision;			//0x20D
 
-remote_control_t RemoteControl; // 0x0304
 
-xFrameHeader FrameHeader; // ·¢ËÍÖ¡Í·ĞÅÏ¢
+xFrameHeader FrameHeader; // å‘é€å¸§å¤´ä¿¡æ¯
 /****************************************************/
-bool Judge_Data_TF = FALSE; // ²ÃÅĞÊı¾İÊÇ·ñ¿ÉÓÃ,¸¨Öúº¯Êıµ÷ÓÃ
 
-// ·¢ËÍ¶ÓÁĞ
+JudgeData_t USER_JudgeData;
+
+bool Judge_Data_TF = FALSE; // è£åˆ¤æ•°æ®æ˜¯å¦å¯ç”¨,è¾…åŠ©å‡½æ•°è°ƒç”¨
+
+// å‘é€é˜Ÿåˆ—
 Queue judgeQueue = EMPTY_QUEUE;
-// ·¢ËÍ¶ÓÁĞÊı¾İ±£´æÇø
+// å‘é€é˜Ÿåˆ—æ•°æ®ä¿å­˜åŒº
 JudgeTxFrame judgeQueueBuf[JUDGE_QUEUE_SIZE];
-extern Line line;
-extern Rect rect;
-extern Circle circle;
-extern Oval oval;
-extern Arc arc;
-extern Text text;
-extern FloatShape floatShape;
-extern IntShape intShape;
 
-// ´®¿Ú½ÓÊÕ»º³åÇø
+// ä¸²å£æ¥æ”¶ç¼“å†²åŒº
 uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
 
-uint16_t shootNum = 0; // Í³¼Æ·¢µ¯Á¿
+uint16_t shootNum = 0; // ç»Ÿè®¡å‘å¼¹é‡
 
-/**************²ÃÅĞÏµÍ³Êı¾İ¸¨Öú****************/
+/**************è£åˆ¤ç³»ç»Ÿæ•°æ®è¾…åŠ©****************/
 
 /**
- * @brief  ¶ÁÈ¡²ÃÅĞÊı¾İ,ÖĞ¶ÏÖĞ¶ÁÈ¡±£Ö¤ËÙ¶È
- * @param  »º´æÊı¾İ
- * @retval ÊÇ·ñ¶ÔÕıÎóÅĞ¶Ï×ö´¦Àí
- * @attention  ÔÚ´ËÅĞ¶ÏÖ¡Í·ºÍCRCĞ£Ñé,ÎŞÎóÔÙĞ´ÈëÊı¾İ£¬²»ÖØ¸´ÅĞ¶ÏÖ¡Í·
+ * @brief  è¯»å–è£åˆ¤æ•°æ®,ä¸­æ–­ä¸­è¯»å–ä¿è¯é€Ÿåº¦
+ * @param  ç¼“å­˜æ•°æ®
+ * @retval æ˜¯å¦å¯¹æ­£è¯¯åˆ¤æ–­åšå¤„ç†
+ * @attention  åœ¨æ­¤åˆ¤æ–­å¸§å¤´å’ŒCRCæ ¡éªŒ,æ— è¯¯å†å†™å…¥æ•°æ®ï¼Œä¸é‡å¤åˆ¤æ–­å¸§å¤´
  */
 bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 {
-	bool retval_tf = FALSE; // Êı¾İÕıÈ·Óë·ñ±êÖ¾,Ã¿´Îµ÷ÓÃ¶ÁÈ¡²ÃÅĞÏµÍ³Êı¾İº¯Êı¶¼ÏÈÄ¬ÈÏÎª´íÎó
+	bool retval_tf = FALSE; // æ•°æ®æ­£ç¡®ä¸å¦æ ‡å¿—,æ¯æ¬¡è°ƒç”¨è¯»å–è£åˆ¤ç³»ç»Ÿæ•°æ®å‡½æ•°éƒ½å…ˆé»˜è®¤ä¸ºé”™è¯¯
 
-	uint16_t judge_length; // Í³¼ÆÒ»Ö¡Êı¾İ³¤¶È
-	int CmdID = 0;		   // Êı¾İÃüÁîÂë½âÎö
+	uint16_t judge_length; // ç»Ÿè®¡ä¸€å¸§æ•°æ®é•¿åº¦
+	int CmdID = 0;		   // æ•°æ®å‘½ä»¤ç è§£æ
 
 	/***------------------*****/
-	// ÎŞÊı¾İ°ü£¬Ôò²»×÷ÈÎºÎ´¦Àí
+	// æ— æ•°æ®åŒ…ï¼Œåˆ™ä¸ä½œä»»ä½•å¤„ç†
 	if (ReadFromUsart == NULL)
 	{
 		return -1;
 	}
-	// Ğ´ÈëÖ¡Í·Êı¾İ,ÓÃÓÚÅĞ¶ÏÊÇ·ñ¿ªÊ¼´æ´¢²ÃÅĞÊı¾İ
+	// å†™å…¥å¸§å¤´æ•°æ®,ç”¨äºåˆ¤æ–­æ˜¯å¦å¼€å§‹å­˜å‚¨è£åˆ¤æ•°æ®
 	memcpy(&FrameHeader, ReadFromUsart, LEN_HEADER);
 
-	// ÅĞ¶ÏÖ¡Í·Êı¾İÊÇ·ñÎª0xA5
+	// åˆ¤æ–­å¸§å¤´æ•°æ®æ˜¯å¦ä¸º0xA5
 	if (ReadFromUsart[SOF] == JUDGE_FRAME_HEADER)
 	{
-		// Ö¡Í·CRC8Ğ£Ñé
+		// å¸§å¤´CRC8æ ¡éªŒ
 		if (Verify_CRC8_Check_Sum(ReadFromUsart, LEN_HEADER) == TRUE)
 		{
-			// Í³¼ÆÒ»Ö¡Êı¾İ³¤¶È,ÓÃÓÚCR16Ğ£Ñé
+			// ç»Ÿè®¡ä¸€å¸§æ•°æ®é•¿åº¦,ç”¨äºCR16æ ¡éªŒ
 			judge_length = ReadFromUsart[DATA_LENGTH] + LEN_HEADER + LEN_CMDID + LEN_TAIL;
 			;
 
-			// Ö¡Î²CRC16Ğ£Ñé
+			// å¸§å°¾CRC16æ ¡éªŒ
 			if (Verify_CRC16_Check_Sum(ReadFromUsart, judge_length) == TRUE)
 			{
-				retval_tf = TRUE; // ¶¼Ğ£Ñé¹ıÁËÔòËµÃ÷Êı¾İ¿ÉÓÃ
+				retval_tf = TRUE; // éƒ½æ ¡éªŒè¿‡äº†åˆ™è¯´æ˜æ•°æ®å¯ç”¨
 
 				CmdID = (ReadFromUsart[6] << 8 | ReadFromUsart[5]);
-				// ½âÎöÊı¾İÃüÁîÂë,½«Êı¾İ¿½±´µ½ÏàÓ¦½á¹¹ÌåÖĞ(×¢Òâ¿½±´Êı¾İµÄ³¤¶È)
+				// è§£ææ•°æ®å‘½ä»¤ç ,å°†æ•°æ®æ‹·è´åˆ°ç›¸åº”ç»“æ„ä½“ä¸­(æ³¨æ„æ‹·è´æ•°æ®çš„é•¿åº¦)
 				switch (CmdID)
 				{
 				case ID_game_state: // 0x0001
@@ -153,7 +144,7 @@ bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 
 				case ID_shoot_data: // 0x0207
 					memcpy(&ShootData, (ReadFromUsart + DATA), LEN_shoot_data);
-					shootNum++; // ´¥·¢Ò»´ÎÔòÊÇ·¢ÉäÁËÒ»¿Å
+					shootNum++; // è§¦å‘ä¸€æ¬¡åˆ™æ˜¯å‘å°„äº†ä¸€é¢—
 					// Vision_SendShootSpeed(ShootData.bullet_speed);
 					break;
 
@@ -164,37 +155,36 @@ bool JUDGE_Read_Data(uint8_t *ReadFromUsart)
 				case ID_rfid_status: // 0x0209
 					memcpy(&RfidStatus, (ReadFromUsart + DATA), LEN_rfid_status);
 					break;
-
-				case ID_game_remote_control://0x0304
-					memcpy(&RemoteControl, (ReadFromUsart + DATA), LEN_remote_control);
+				case ID_sentry_status: // 0x020D
+					memcpy(&SentryDecision, (ReadFromUsart + DATA), LEN_sentry_status);
 					break;
 				}
-				// Ê×µØÖ·¼ÓÖ¡³¤¶È,Ö¸ÏòCRC16ÏÂÒ»×Ö½Ú,ÓÃÀ´ÅĞ¶ÏÊÇ·ñÎª0xA5,ÓÃÀ´ÅĞ¶ÏÒ»¸öÊı¾İ°üÊÇ·ñÓĞ¶àÖ¡Êı¾İ
+				// é¦–åœ°å€åŠ å¸§é•¿åº¦,æŒ‡å‘CRC16ä¸‹ä¸€å­—èŠ‚,ç”¨æ¥åˆ¤æ–­æ˜¯å¦ä¸º0xA5,ç”¨æ¥åˆ¤æ–­ä¸€ä¸ªæ•°æ®åŒ…æ˜¯å¦æœ‰å¤šå¸§æ•°æ®
 				if (*(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL) == 0xA5)
 				{
-					// Èç¹ûÒ»¸öÊı¾İ°ü³öÏÖÁË¶àÖ¡Êı¾İ,ÔòÔÙ´Î¶ÁÈ¡
+					// å¦‚æœä¸€ä¸ªæ•°æ®åŒ…å‡ºç°äº†å¤šå¸§æ•°æ®,åˆ™å†æ¬¡è¯»å–
 					JUDGE_Read_Data(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL);
 				}
 			}
 		}
-		// Ê×µØÖ·¼ÓÖ¡³¤¶È,Ö¸ÏòCRC16ÏÂÒ»×Ö½Ú,ÓÃÀ´ÅĞ¶ÏÊÇ·ñÎª0xA5,ÓÃÀ´ÅĞ¶ÏÒ»¸öÊı¾İ°üÊÇ·ñÓĞ¶àÖ¡Êı¾İ
+		// é¦–åœ°å€åŠ å¸§é•¿åº¦,æŒ‡å‘CRC16ä¸‹ä¸€å­—èŠ‚,ç”¨æ¥åˆ¤æ–­æ˜¯å¦ä¸º0xA5,ç”¨æ¥åˆ¤æ–­ä¸€ä¸ªæ•°æ®åŒ…æ˜¯å¦æœ‰å¤šå¸§æ•°æ®
 		if (*(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL) == 0xA5)
 		{
-			// Èç¹ûÒ»¸öÊı¾İ°ü³öÏÖÁË¶àÖ¡Êı¾İ,ÔòÔÙ´Î¶ÁÈ¡
+			// å¦‚æœä¸€ä¸ªæ•°æ®åŒ…å‡ºç°äº†å¤šå¸§æ•°æ®,åˆ™å†æ¬¡è¯»å–
 			JUDGE_Read_Data(ReadFromUsart + sizeof(xFrameHeader) + LEN_CMDID + FrameHeader.DataLength + LEN_TAIL);
 		}
 	}
 
 	if (retval_tf == TRUE)
 	{
-		Judge_Data_TF = TRUE; // ¸¨Öúº¯ÊıÓÃ
+		Judge_Data_TF = TRUE; // è¾…åŠ©å‡½æ•°ç”¨
 	}
-	else // Ö»ÒªCRC16Ğ£Ñé²»Í¨¹ı¾ÍÎªFALSE
+	else // åªè¦CRC16æ ¡éªŒä¸é€šè¿‡å°±ä¸ºFALSE
 	{
-		Judge_Data_TF = FALSE; // ¸¨Öúº¯ÊıÓÃ
+		Judge_Data_TF = FALSE; // è¾…åŠ©å‡½æ•°ç”¨
 	}
 
-	return retval_tf; // ¶ÔÊı¾İÕıÎó×ö´¦Àí
+	return retval_tf; // å¯¹æ•°æ®æ­£è¯¯åšå¤„ç†
 }
 
  void USART1_dma_init()
@@ -223,7 +213,7 @@ void USER_USART1_IRQHandler(void)
 //    {
 //        LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);               
 ////        int usart1RxLen=JUDGE_MAX_RX_LENGTH - LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_0);
-//        // ½âÎö´®¿ÚÊı¾İ       
+//        // è§£æä¸²å£æ•°æ®       
 //                JUDGE_Read_Data(usart1RxBuf);
 ////                judgedata_update();
 //                memset(usart1RxBuf,0,sizeof(usart1RxBuf));                         
@@ -233,14 +223,14 @@ void USER_USART1_IRQHandler(void)
 //    }
 }
 
-////´®¿Ú1ÖĞ¶Ï»Øµ÷
+////ä¸²å£1ä¸­æ–­å›è°ƒ
 //void USER_USART1_IRQHandler()
 //{
 //	if (LL_USART_IsActiveFlag_IDLE(USART1) && LL_USART_IsEnabledIT_IDLE(USART1))
 //	{
 //		LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);
 
-//		// »ñÈ¡½ÓÊÕµ½µÄÊı¾İ³¤¶È
+//		// è·å–æ¥æ”¶åˆ°çš„æ•°æ®é•¿åº¦
 //		uint16_t rxLen = JUDGE_MAX_RX_LENGTH - LL_DMA_GetDataLength(DMA2, LL_DMA_STREAM_0);
 //		JUDGE_Read_Data(usart1RxBuf);
 //		
@@ -259,7 +249,7 @@ void USART1_DMA_Send(uint8_t *tx_buffer, uint16_t size)
 //	while (LL_DMA_IsEnabledStream(DMA2, LL_DMA_STREAM_1) &&
 //		   !LL_DMA_IsActiveFlag_TC1(DMA2))
 //	{
-//		// ÉèÖÃ³¬Ê±£¬±ÜÃâËÀµÈ
+//		// è®¾ç½®è¶…æ—¶ï¼Œé¿å…æ­»ç­‰
 //		static uint32_t timeout = 0;
 //		if (++timeout > 10000)
 //		{
@@ -285,7 +275,7 @@ void USART1_DMA_Send(uint8_t *tx_buffer, uint16_t size)
 
 extern DMA_HandleTypeDef hdma_usart1_rx;
 
-// ²ÃÅĞÏµÍ³µôÏß»Øµ÷º¯Êı
+// è£åˆ¤ç³»ç»Ÿæ‰çº¿å›è°ƒå‡½æ•°
 void Judge_UartLostCallback()
 {
 	
@@ -293,7 +283,7 @@ void Judge_UartLostCallback()
 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
 	
 //	LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);
-//	// Çå³ıËùÓĞ±êÖ¾Î»
+//	// æ¸…é™¤æ‰€æœ‰æ ‡å¿—ä½
 //	LL_USART_ClearFlag_IDLE(USART1);
 //	LL_USART_ClearFlag_ORE(USART1);
 //	LL_USART_ClearFlag_FE(USART1);
@@ -307,7 +297,7 @@ void Judge_UartLostCallback()
 //	LL_USART_EnableIT_IDLE(USART1);
 //	LL_DMA_EnableStream(DMA2, LL_DMA_STREAM_0);
 }
-// ²ÃÅĞÏµÍ³³õÊ¼»¯
+// è£åˆ¤ç³»ç»Ÿåˆå§‹åŒ–
 
 
 void JUDGE_Init()
@@ -319,100 +309,46 @@ void JUDGE_Init()
 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
 }
 
-void JUDGE_SendTextStruct(graphic_data_struct_t *textConf, uint8_t text[30], uint8_t len)
-{
-	JudgeTxFrame txFrame;
-	ext_TextData_t textData;
-	textData.txFrameHeader.SOF = 0xA5;
-	textData.txFrameHeader.DataLength = sizeof(ext_student_interactive_header_data_t) + sizeof(ext_client_custom_character_t);
-	textData.txFrameHeader.Seq = 0;
-	memcpy(txFrame.data, &textData.txFrameHeader, sizeof(xFrameHeader)); // Ğ´ÈëÖ¡Í·Êı¾İ
-	Append_CRC8_Check_Sum(txFrame.data, sizeof(xFrameHeader));			 // Ğ´ÈëÖ¡Í·CRC8Ğ£ÑéÂë
 
-	textData.CmdID = 0x301;										// Êı¾İÖ¡ID
-	textData.dataFrameHeader.data_cmd_id = 0x0110;				// Êı¾İ¶ÎID
-	textData.dataFrameHeader.send_ID = JUDGE_GetSelfID();		// ·¢ËÍÕßµÄID
-	textData.dataFrameHeader.receiver_ID = JUDGE_GetClientID(); // ¿Í»§¶ËµÄID£¬Ö»ÄÜÎª·¢ËÍÕß»úÆ÷ÈË¶ÔÓ¦µÄ¿Í»§¶Ë
-
-	textData.textData.grapic_data_struct = *textConf;
-	memcpy(textData.textData.data, text, len);
-
-	memcpy(
-		txFrame.data + sizeof(xFrameHeader),
-		(uint8_t *)&textData.CmdID,
-		sizeof(textData.CmdID) + sizeof(textData.dataFrameHeader) + sizeof(textData.textData));
-	Append_CRC16_Check_Sum(txFrame.data, sizeof(textData));
-
-	txFrame.frameLength = sizeof(textData);
-	Queue_Enqueue(&judgeQueue, &txFrame);
-}
-
-void JUDGE_SendGraphStruct(graphic_data_struct_t *data)
-{
-	JudgeTxFrame txFrame;
-	ext_GraphData_t graphData;
-	graphData.txFrameHeader.SOF = 0xA5;
-	graphData.txFrameHeader.DataLength = sizeof(ext_student_interactive_header_data_t) + sizeof(ext_client_custom_graphic_single_t);
-	graphData.txFrameHeader.Seq = 0;
-	memcpy(txFrame.data, &graphData.txFrameHeader, sizeof(xFrameHeader)); // Ğ´ÈëÖ¡Í·Êı¾İ
-	Append_CRC8_Check_Sum(txFrame.data, sizeof(xFrameHeader));			  // Ğ´ÈëÖ¡Í·CRC8Ğ£ÑéÂë
-
-	graphData.CmdID = 0x301;									 // Êı¾İÖ¡ID
-	graphData.dataFrameHeader.data_cmd_id = 0x0101;				 // Êı¾İ¶ÎID
-	graphData.dataFrameHeader.send_ID = JUDGE_GetSelfID();		 // ·¢ËÍÕßµÄID
-	graphData.dataFrameHeader.receiver_ID = JUDGE_GetClientID(); // ¿Í»§¶ËµÄID£¬Ö»ÄÜÎª·¢ËÍÕß»úÆ÷ÈË¶ÔÓ¦µÄ¿Í»§¶Ë
-
-	graphData.graphData.grapic_data_struct = *data;
-
-	memcpy(
-		txFrame.data + sizeof(xFrameHeader),
-		(uint8_t *)&graphData.CmdID,
-		sizeof(graphData.CmdID) + sizeof(graphData.dataFrameHeader) + sizeof(graphData.graphData));
-	Append_CRC16_Check_Sum(txFrame.data, sizeof(graphData));
-
-	txFrame.frameLength = sizeof(graphData);
-	Queue_Enqueue(&judgeQueue, &txFrame);
-}
-
-// »ñÈ¡¼º·½ÑÕÉ«
+// è·å–å·±æ–¹é¢œè‰²
 RobotColor JUDGE_GetSelfColor()
 {
-	if (JUDGE_GetSelfID() > 10) // À¶·½
+	if (JUDGE_GetSelfID() > 10) // è“æ–¹
 	{
 		return RobotColor_Blue;
 	}
-	else // ºì·½
+	else // çº¢æ–¹
 	{
 		return RobotColor_Red;
 	}
 }
 
-// »ñÈ¡×ÔÉíID
+// è·å–è‡ªèº«ID
 uint8_t JUDGE_GetSelfID()
 {
 	return GameRobotStat.robot_id;
 }
 
-// »ñÈ¡¿Í»§¶ËID
+// è·å–å®¢æˆ·ç«¯ID
 uint16_t JUDGE_GetClientID()
 {
 	return 0x100 + GameRobotStat.robot_id;
 }
 
-// »ñÈ¡»úÆ÷ÈË×ø±ê
+// è·å–æœºå™¨äººåæ ‡
 void JUDGE_GetPosition(float *x, float *y)
 {
 	*x = GameRobotPos.x;
 	*y = GameRobotPos.y;
 }
 
-// »ñÈ¡µ×ÅÌ¹¦ÂÊÏŞÖÆ
+// è·å–åº•ç›˜åŠŸç‡é™åˆ¶
 uint8_t JUDGE_GetChassisPowerLimit()
 {
 	return GameRobotStat.chassis_power_limit;
 }
 
-// ÅĞ¶Ï·¢ÉäµçÔ´ÊÇ·ñÊä³ö
+// åˆ¤æ–­å‘å°„ç”µæºæ˜¯å¦è¾“å‡º
 bool JUDGE_GetShooterOutputState()
 {
 	return GameRobotStat.power_management_shooter_output;
@@ -423,69 +359,181 @@ bool JUDGE_GetGimbalOutputState()
 	return GameRobotStat.power_management_gimbal_output;
 }
 
-// »ñÈ¡Ç¹¿ÚÈÈÁ¿ÏŞÖÆ
+bool JUDGE_GetChassisOutputState()
+{
+	return GameRobotStat.power_management_chassis_output;
+}
+
+// è·å–æªå£çƒ­é‡é™åˆ¶
 uint16_t JUDGE_GetHeatLimit()
 {
 	return GameRobotStat.shooter_barrel_heat_limit;
 }
 
-// »ñÈ¡ÉäËÙÏŞÖÆ
+// è·å–å°„é€Ÿé™åˆ¶
 uint16_t JUDGE_GetShootSpeedLimit()
 {
 	return 25;
 }
 
-// »ñÈ¡µ×ÅÌ»º³åÄÜÁ¿
+// è·å–åº•ç›˜ç¼“å†²èƒ½é‡
 uint16_t JUDGE_GetPowerBuffer()
 {
 	return PowerHeatData.chassis_power_buffer;
 }
 
-// »ñÈ¡Ê£ÓàÇ¹¿ÚÈÈÁ¿
+// è·å–å‰©ä½™æªå£çƒ­é‡
 int16_t JUDGE_GetRemainHeat()
 {
 	return (int16_t)GameRobotStat.shooter_barrel_heat_limit - (int16_t)PowerHeatData.shooter_id1_17mm_cooling_heat;
 }
 
-// Ê£Óà17·¢µ¯Êı
-uint16_t JUDGE_GetRemain_42_Num()
+// å‰©ä½™å‘å¼¹æ•°
+uint16_t JUDGE_GetRemain_17_Num()
 {
-	return BulletRemaining.projectile_allowance_42mm;
+	return BulletRemaining.projectile_allowance_17mm;
 }
 
-// ²ÃÅĞÏµÍ³Êı¾İÊÇ·ñÓĞĞ§
+// è£åˆ¤ç³»ç»Ÿæ•°æ®æ˜¯å¦æœ‰æ•ˆ
 bool JUDGE_IsValid(void)
 {
 	return Judge_Data_TF;
 }
 
-// ¿ÛÑªÔ­Òò
+// æ‰£è¡€åŸå› 
 uint8_t HP_deduction_reason()
 {
 	return RobotHurt.hurt_type;
 }
 
-// ¶ÁÈ¡µ±Ç°ÑªÁ¿
+// è¯»å–å½“å‰è¡€é‡
 uint16_t JUDGE_GetHP()
 {
 	return GameRobotStat.current_HP;
 }
 
-// »ñÈ¡ÀäÈ´ËÙ¶È
+// è·å–å†·å´é€Ÿåº¦
 uint16_t JUDGE_GetCoolingValue()
 {
 	return GameRobotStat.shooter_barrel_cooling_value;
 }
 
+//è·å–å¼¹é€Ÿ
+float JUDGE_GetInitial_speed()
+{
+	return ShootData.initial_speed;
+}
+
+void JUDGE_ResetHurtArmorID()
+{
+	RobotHurt.armor_id=0;
+}
+
+uint8_t JUDGE_GetHurtArmorID()
+{
+	return RobotHurt.armor_id;
+}
 
 
-/**********************freertosÈÎÎñ*********************************/
-// ²ÃÅĞÏµÍ³·¢ËÍÈÎÎñ»Øµ÷
+
+void Judge_Receive()
+{
+			JUDGE_Read_Data(usart1RxBuf);
+			memset(usart1RxBuf,0,sizeof(usart1RxBuf));
+}
+
+
+
+void Judge_update()
+{
+		USER_JudgeData.game_progress = GameState.game_progress;
+		USER_JudgeData.remain_time = GameState.stage_remain_time;
+		USER_JudgeData.current_hp = JUDGE_GetHP();
+		USER_JudgeData.projectile = JUDGE_GetRemain_17_Num();
+		//æ˜¯å¦æŒ¨æ bit0
+    if (JUDGE_GetHurtArmorID()!=0&&RobotHurt.hurt_type == 0)// è¢«å¼¹ä¸¸
+		{
+			USER_JudgeData.sentry_info |= (1 << 0);
+			JUDGE_ResetHurtArmorID();
+		}
+		else
+		{
+			USER_JudgeData.sentry_info &=~(1 << 0);
+		}
+		
+		//æ˜¯å¦è„±æˆ˜ bit1
+		if(SentryDecision.sentry_info_2 & 0x01)	
+		{
+			USER_JudgeData.sentry_info|=(1<<1);	
+		}
+		else
+		{
+			USER_JudgeData.sentry_info&=~(1<<1);
+		}
+		// bit2 æ˜¯å¦æ£€æµ‹åˆ°å ¡å’
+		if (RfidStatus.rfid_status & (1 << 17))
+				USER_JudgeData.sentry_info |= (1 << 2);
+		else
+				USER_JudgeData.sentry_info &= ~(1 << 2);
+
+		// bit3 æ˜¯å¦æ£€æµ‹åˆ°è¡¥ç»™åŒºï¼ˆä¸å…‘æ¢ç«™ä¸é‡å ï¼‰
+		if (RfidStatus.rfid_status & (1 << 19))
+				USER_JudgeData.sentry_info |= (1 << 3);
+		else
+				USER_JudgeData.sentry_info &= ~(1 << 3);
+
+		// bit4 è¡¥ç»™åŒºï¼ˆä¸å…‘æ¢ç«™é‡å ï¼‰
+		if (RfidStatus.rfid_status & (1 << 20))
+				USER_JudgeData.sentry_info |= (1 << 4);
+		else
+				USER_JudgeData.sentry_info &= ~(1 << 4);
+
+		// bit5 èƒ½é‡ <30%
+		if (BuffMusk.remaining_energy != 0x80)
+		{
+				if (BuffMusk.remaining_energy & (1 << 3))
+						USER_JudgeData.sentry_info &= ~(1 << 5);
+				else
+						USER_JudgeData.sentry_info |= (1 << 5);
+		}
+		else
+		{
+				USER_JudgeData.sentry_info &= ~(1 << 5);
+		}
+
+		// å¯¹æ–¹å‰å“¨ç«™å¢ç›Šç‚¹ bit6
+		if (RfidStatus.rfid_status & (1 << 18))
+				USER_JudgeData.sentry_info |= (1 << 6);
+		else
+				USER_JudgeData.sentry_info &= ~(1 << 6);
+
+		// å¯¹æ–¹å ¡å’å¢ç›Šç‚¹ bit7
+		if (RfidStatus.rfid_status & (1 << 24))
+				USER_JudgeData.sentry_info |= (1 << 7);
+		else
+				USER_JudgeData.sentry_info &= ~(1 << 7);
+		USER_JudgeData.red_outpost_hp = 0;
+		USER_JudgeData.red_base_hp = 0;
+		USER_JudgeData.blue_outpost_hp = 0;
+		USER_JudgeData.blue_base_hp = 0;
+
+		USER_JudgeData.shooter_barrel_cooling_value = JUDGE_GetCoolingValue();	// è·å–å†·å´é€Ÿåº¦
+		USER_JudgeData.shooter_barrel_heat_limit = JUDGE_GetHeatLimit();				//è·å–çƒ­é‡é™åˆ¶
+		USER_JudgeData.power_management_chassis_output = JUDGE_GetChassisOutputState();
+		USER_JudgeData.power_management_gimbal_output = JUDGE_GetGimbalOutputState();
+		USER_JudgeData.power_management_shooter_output = JUDGE_GetShooterOutputState();
+		USER_JudgeData.shooter_17mm_barrel_heat = JUDGE_GetRemainHeat(); 			//è·å–å‰©ä½™çƒ­é‡
+		USER_JudgeData.initial_speed = JUDGE_GetInitial_speed();				 			//è·å–å½“å‰å¼¹é€Ÿ
+		USER_JudgeData.self_color = JUDGE_GetSelfColor();
+}
+
+/**********************freertosä»»åŠ¡*********************************/
+// è£åˆ¤ç³»ç»Ÿå‘é€ä»»åŠ¡å›è°ƒ
 void Task_Judge_Callback()
 {
 //	if (Queue_IsEmpty(&judgeQueue))
 //		return;
-//	// È¡¶ÓÍ·µÄÏûÏ¢·¢ËÍ
+//	// å–é˜Ÿå¤´çš„æ¶ˆæ¯å‘é€
 //	JudgeTxFrame *frame = (JudgeTxFrame *)Queue_Dequeue(&judgeQueue);
 ////	USART1_DMA_Send((uint8_t *)frame->data, frame->frameLength);
 //	HAL_UART_Transmit_DMA(&huart1,(uint8_t*)frame->data,frame->frameLength);
@@ -499,7 +547,8 @@ void OS_JudgeCallback(void const *argument)
 	osDelay(500);
 	for (;;)
 	{
-		Task_Judge_Callback();
+		Judge_update();
+//		Task_Judge_Callback();
 		osDelay(100);
 	}
 }

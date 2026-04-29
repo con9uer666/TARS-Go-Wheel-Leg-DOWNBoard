@@ -8,6 +8,9 @@
 #include "cmsis_os.h"
 #include "motor.h"
 #include <stdint.h>
+#include "User_State.h"
+#include "Gimbal.h"
+#include "Motor_Drv.h"
 
 extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
 extern DMA_HandleTypeDef hdma_usart1_rx;
@@ -83,7 +86,7 @@ void B2B_ParseUsart() // 先发低字节
 		uint8_t visionFind = (usart2RxBuf[29] >> 4) & 0x01;	 // 第5位+
 		uint8_t visionMode = (usart2RxBuf[29] >> 2) & 0x03;	 // 第3-4位
 		cap_fastMode=(usart2RxBuf[29] >> 1) & 0x01;
-		RemoteControl.keyboard_value.bit.C = usart2RxBuf[29] & 0x01;
+		// RemoteControl.keyboard_value.bit.C = usart2RxBuf[29] & 0x01;
 		
 		// 更新相应的变量
 		STOPFLAG = stopFlag;
@@ -91,7 +94,7 @@ void B2B_ParseUsart() // 先发低字节
 		visionFindcheck = visionFind;
 		vision_mode = visionMode;
 
-		Yaw_DM4310.Target_Torque = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
+		Yaw_DM4310.Target_Speed = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
 
 		Shooter_DM2325.Target_Torque = (float)((((int16_t)(usart2RxBuf[27] | usart2RxBuf[28] << 8))/1000.0f)*0.18f);
 
@@ -157,7 +160,7 @@ void B2B_ParseUsart() // 先发低字节
 
 		txbuffer[45] = JUDGE_IsValid();
 
-		txbuffer[46] = start_mode;
+		txbuffer[46] = gimbal_follow_flag;
 
 		rs485_isvalid = 1;
 
@@ -170,11 +173,13 @@ uint16_t pre_B2B_offline_cnt = 0;
 uint8_t B2B_time_cnt = 0;
 uint8_t B2B_offline_flag = 0;
 
+int aaaa;
+
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
 	if (huart == &huart1)
 	{
-		// JUDGE_Read_Data(usart1RxBuf);
+		JUDGE_Read_Data(usart1RxBuf);
 		Detect_Update(DeviceID_Judge);
 	}
 

@@ -1,30 +1,35 @@
-h7_ctrl\pid.o: ..\others\pid.c
-h7_ctrl\pid.o: ..\others\pid.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h
-h7_ctrl\pid.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-h7_ctrl\pid.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\float.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_memory.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/none.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/utils.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/basic_math_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/interpolation_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/bayes_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/statistics_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/fast_math_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/matrix_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/complex_math_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/controller_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/support_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/distance_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/svm_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/svm_defines.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/transform_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/filtering_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/quaternion_math_functions.h
-h7_ctrl\pid.o: C:\Users\WXR\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/window_functions.h
+h7_ctrl/pid.o: ..\IMU_coculate\pid.c ..\IMU_coculate\pid.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+  ..\Core\Inc\stm32h7xx_hal_conf.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h723xx.h \
+  ..\Drivers\CMSIS\Include\core_cm7.h \
+  ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdma.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_exti.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cortex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_adc.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_fdcan.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hsem.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h

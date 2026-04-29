@@ -7,18 +7,18 @@
 // #include  "user_can.h"
 // #include "fdcan.h"
 // //#include  "ins_task.h"
-// //freertos²âÊÔ³ÌĞò ÂÌµÆÉÁË¸ ÉÏ±¨ÈÎÎñÕ¼ÓĞÂÊ
-// /************½ö¹©²âÊÔÊ¹ÓÃ£¬ÔÚ²úÆ··¢²¼Ê±Ó¦¹Ø±Õ**************/
+// //freertosæµ‹è¯•ç¨‹åº ç»¿ç¯é—ªçƒ ä¸ŠæŠ¥ä»»åŠ¡å æœ‰ç‡
+// /************ä»…ä¾›æµ‹è¯•ä½¿ç”¨ï¼Œåœ¨äº§å“å‘å¸ƒæ—¶åº”å…³é—­**************/
 // /*
-//     Ïà¹Øºê¶¨ÒåconfigGENERATE_RUN_TIME_STATS  
+//     ç›¸å…³å®å®šä¹‰configGENERATE_RUN_TIME_STATS  
 //               configUSE_STATS_FORMATTING_FUNCTIONS  
 //               configUSE_TRACE_FACILITY
-//     Ïà¹Øº¯Êı  configureTimerForRunTimeStats()   
+//     ç›¸å…³å‡½æ•°  configureTimerForRunTimeStats()   
 //               getRunTimeCounterValue()    
 //               vTaskListv((char *)&CPU_RunInfo)
 //               TaskGetRunTimeStats((char *)&CPU_RunInfo)
 //               HAL_TIM_PeriodElapsedCallback(&htim5)  
-//     Ïà¹Ø±äÁ¿  RUN_Time
+//     ç›¸å…³å˜é‡  RUN_Time
 //               CPU_RunInfo
 // */
 
@@ -36,7 +36,7 @@
 
 // //  uint8_t CPU_RunInfo[400];
 
-// // DMA ´«ÊäÍê³É»Øµ÷º¯Êı
+// // DMA ä¼ è¾“å®Œæˆå›è°ƒå‡½æ•°
 // void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 // {
 //     HAL_TIM_PWM_Stop_DMA(&htim3,TIM_CHANNEL_2);
@@ -77,25 +77,25 @@
 		
 // 		 osDelay(500);
 	
-//     /**************ÉÏ±¨ÈÎÎñÕ¼ÓĞÇé¿ö******************/
-// //    memset(CPU_RunInfo,0,400); //ĞÅÏ¢»º³åÇøÇåÁã
-// //    vTaskList((char *)&CPU_RunInfo); //»ñÈ¡ÈÎÎñÔËĞĞÊ±¼äĞÅÏ¢
-// //    usb_printf("ÈÎÎñÃû   ÈÎÎñ×´Ì¬   ÓÅÏÈ¼¶   Ê£ÓàÕ»   ÈÎÎñĞòºÅ\r\n");
+//     /**************ä¸ŠæŠ¥ä»»åŠ¡å æœ‰æƒ…å†µ******************/
+// //    memset(CPU_RunInfo,0,400); //ä¿¡æ¯ç¼“å†²åŒºæ¸…é›¶
+// //    vTaskList((char *)&CPU_RunInfo); //è·å–ä»»åŠ¡è¿è¡Œæ—¶é—´ä¿¡æ¯
+// //    usb_printf("ä»»åŠ¡å   ä»»åŠ¡çŠ¶æ€   ä¼˜å…ˆçº§   å‰©ä½™æ ˆ   ä»»åŠ¡åºå·\r\n");
 // //    usb_printf("%s", CPU_RunInfo);
 // //
 // //    
-// //    memset(CPU_RunInfo,0,400); //ĞÅÏ¢»º³åÇøÇåÁã
+// //    memset(CPU_RunInfo,0,400); //ä¿¡æ¯ç¼“å†²åŒºæ¸…é›¶
 // //    vTaskGetRunTimeStats((char *)&CPU_RunInfo);
-// //    usb_printf("ÈÎÎñÃû         ÔËĞĞ¼ÆÊı         Ê¹ÓÃÂÊ\r\n");
+// //    usb_printf("ä»»åŠ¡å         è¿è¡Œè®¡æ•°         ä½¿ç”¨ç‡\r\n");
 // //    usb_printf("%s", CPU_RunInfo);
 // //    osDelay(500);
 //   }
 // }
 
-// //´íÎó´¦Àí(¼±Í£)ÈÎÎñ 
+// //é”™è¯¯å¤„ç†(æ€¥åœ)ä»»åŠ¡ 
 // /*
-//  ÎŞos_delay×î¸ßÓÅÏÈ¼¶ ÔÚ³ÌĞòÕı³£ÔËĞĞÊ±²»Ó¦¸Ã±»µ÷ÓÃ 
-//  ÔÚ»Ö¸´Ö´ĞĞÊ±Õ¼¾İÈ«²¿Ê±¼äÆ¬¶öËÀÆäËûÈÎÎñ
+//  æ— os_delayæœ€é«˜ä¼˜å…ˆçº§ åœ¨ç¨‹åºæ­£å¸¸è¿è¡Œæ—¶ä¸åº”è¯¥è¢«è°ƒç”¨ 
+//  åœ¨æ¢å¤æ‰§è¡Œæ—¶å æ®å…¨éƒ¨æ—¶é—´ç‰‡é¥¿æ­»å…¶ä»–ä»»åŠ¡
 // */
 
 
@@ -104,7 +104,7 @@
 // void OS_ErrorCallback(void const * argument)
 // {
 // 	B2B_Init();
-//  osThreadSuspend(ErrorTaskHandle); //µÚÒ»´ÎÖ´ĞĞ¹ÒÆğ×ÔÉí 
+//  osThreadSuspend(ErrorTaskHandle); //ç¬¬ä¸€æ¬¡æ‰§è¡ŒæŒ‚èµ·è‡ªèº« 
 // 	HAL_Delay(10);
 // 	USER_CAN_SetMotorCurrent(&hfdcan2, 0x144, 0x8000, 0,
 // 					0, 0);
@@ -122,15 +122,15 @@
 //  for(;;)
 //  {
 // 		B2B_Init();
-// 		USER_CAN_SetMotorCurrent(&hfdcan1,0x200,0,0,0,0);//¹Ø¶Ïµç»ú	
+// 		USER_CAN_SetMotorCurrent(&hfdcan1,0x200,0,0,0,0);//å…³æ–­ç”µæœº	
 // 		HAL_Delay(1);
 // 		USER_CAN_SendCapData(&hfdcan3,0x1aa,0,0,0);
 // 		HAL_Delay(1);
 // 		FEEDBACK = 1;
 // 		B2B_ParseUsart();
 // 		if(STOPFLAG != 1 && detectList[DeviceID_B2B].isLost != 1)        
-//      HAL_NVIC_SystemReset();  //ÓÒ²¦¸Ë»Øµ½ÖĞ¼äÖØÆôÏµÍ³
-//    //ºìµÆÉÁË¸    
+//      HAL_NVIC_SystemReset();  //å³æ‹¨æ†å›åˆ°ä¸­é—´é‡å¯ç³»ç»Ÿ
+//    //çº¢ç¯é—ªçƒ    
 
 // 		HAL_TIM_PWM_Start_DMA(&htim3,TIM_CHANNEL_2,(uint32_t *)LEDRED,(104)); 
 //    HAL_Delay(75);
@@ -138,6 +138,6 @@
 //    HAL_TIM_PWM_Start_DMA(&htim3,TIM_CHANNEL_2,(uint32_t *)LEDTurnOff,(104));
 //    HAL_Delay(75);
 
-//  }                                 //ÎŞos_delay ×î¸ßÓÅÏÈ¼¶ 
+//  }                                 //æ— os_delay æœ€é«˜ä¼˜å…ˆçº§ 
 // }
 

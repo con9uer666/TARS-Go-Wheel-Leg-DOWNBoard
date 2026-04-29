@@ -21,8 +21,6 @@ endif()
 # Set the project name
 set(CMAKE_PROJECT_NAME H7_Ctrl)
 
-# Include toolchain file
-include("cmake/gcc-arm-none-eabi.cmake")
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -49,13 +47,18 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
-file(GLOB_RECURSE THREAD
+file(GLOB_RECURSE THREAD CONFIGURE_DEPENDS
         "IMU_coculate/*.c"
         "others/*.c"
+            "others/Device/src/*.c"
+            "others/Motion_Control/App/src/*.c"
+            "others/Motion_Control/Ctrl/src/*.c"
+            "others/Motion_Control/Drv/src/*.c"
         "UI/*.c"
         "UserMiddlewares/*.c"
         "math/*.c"
         "Power_control/*.c"
+        "CommonLibs/*.c"
 )
 
 # Add sources to executable
@@ -67,11 +70,16 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 # Add include paths
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/others
+    ${CMAKE_CURRENT_LIST_DIR}/others/Device/inc
+    ${CMAKE_CURRENT_LIST_DIR}/others/Motion_Control/App/inc
+    ${CMAKE_CURRENT_LIST_DIR}/others/Motion_Control/Ctrl/inc
+    ${CMAKE_CURRENT_LIST_DIR}/others/Motion_Control/Drv/inc
     ${CMAKE_CURRENT_LIST_DIR}/IMU_coculate
     ${CMAKE_CURRENT_LIST_DIR}/UI/include
     ${CMAKE_CURRENT_LIST_DIR}/UserMiddlewares/include
     ${CMAKE_CURRENT_LIST_DIR}/math/include
     ${CMAKE_CURRENT_LIST_DIR}/Power_control
+    ${CMAKE_CURRENT_LIST_DIR}/CommonLibs/inc
 )
 
 # Add project symbols (macros)

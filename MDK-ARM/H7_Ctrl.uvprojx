@@ -10,8 +10,8 @@
       <TargetName>H7_Ctrl</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
+      <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32H723VGTx</Device>
@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -323,13 +323,13 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>5</v6Lang>
+            <v6Lang>3</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_PWR_LDO_SUPPLY,USE_HAL_DRIVER,STM32H723xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../IMU_coculate;../math/include;../others;../UI/include;../UserMiddlewares/include;../Power_control;../CommonLibs/inc;../others/Device/inc;../others/Motion_Control/App/inc;../others/Motion_Control/Ctrl/inc;../others/Motion_Control/Drv/inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -423,11 +423,6 @@
               <FileName>fdcan.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/fdcan.c</FilePath>
-            </File>
-            <File>
-              <FileName>memorymap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/memorymap.c</FilePath>
             </File>
             <File>
               <FileName>spi.c</FileName>
@@ -652,77 +647,7 @@
             <File>
               <FileName>port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>others</GroupName>
-          <Files>
-            <File>
-              <FileName>buzzer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\buzzer.c</FilePath>
-            </File>
-            <File>
-              <FileName>Error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\Error.c</FilePath>
-            </File>
-            <File>
-              <FileName>kalman_filter1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\kalman_filter1.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\LED.c</FilePath>
-            </File>
-            <File>
-              <FileName>motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>observe_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\observe_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>pid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\pid.c</FilePath>
-            </File>
-            <File>
-              <FileName>remoter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\remoter.c</FilePath>
-            </File>
-            <File>
-              <FileName>State.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\State.c</FilePath>
-            </File>
-            <File>
-              <FileName>USER_CAN.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\USER_CAN.c</FilePath>
-            </File>
-            <File>
-              <FileName>VMC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\VMC.c</FilePath>
-            </File>
-            <File>
-              <FileName>Leg_Control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\Leg_Control.c</FilePath>
-            </File>
-            <File>
-              <FileName>Self_Righting.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\others\Self_Righting.c</FilePath>
+              <FilePath>..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\port.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -818,57 +743,6 @@
               <FileName>jlui.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\UI\source\jlui.cpp</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>2</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls>--cpp11</MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
             </File>
           </Files>
         </Group>
@@ -904,11 +778,6 @@
               <FileName>SMC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\math\source\SMC.c</FilePath>
-            </File>
-            <File>
-              <FileName>Angle_about.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\math\source\Angle_about.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -955,6 +824,141 @@
               <FileType>5</FileType>
               <FilePath>..\Power_control\RLS.h</FilePath>
             </File>
+            <File>
+              <FileName>PowerObserverLimit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Power_control\PowerObserverLimit.c</FilePath>
+            </File>
+            <File>
+              <FileName>PowerObserverLimit.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Power_control\PowerObserverLimit.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CommonLibs</GroupName>
+          <Files>
+            <File>
+              <FileName>Angle_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CommonLibs\src\Angle_about.c</FilePath>
+            </File>
+            <File>
+              <FileName>Trigger_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CommonLibs\src\Trigger_about.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others</GroupName>
+          <Files>
+            <File>
+              <FileName>Error.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Error.c</FilePath>
+            </File>
+            <File>
+              <FileName>State.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\State.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Device\src</GroupName>
+          <Files>
+            <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\buzzer.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\LED.c</FilePath>
+            </File>
+            <File>
+              <FileName>remoter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\remoter.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Motion_Control\App\src</GroupName>
+          <Files>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>Self_Righting.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\Self_Righting.c</FilePath>
+            </File>
+            <File>
+              <FileName>Gimbal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\Gimbal.c</FilePath>
+            </File>
+            <File>
+              <FileName>User_State.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\User_State.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Motion_Control\Ctrl\src</GroupName>
+          <Files>
+            <File>
+              <FileName>kalman_filter1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\kalman_filter1.c</FilePath>
+            </File>
+            <File>
+              <FileName>Leg_Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\Leg_Control.c</FilePath>
+            </File>
+            <File>
+              <FileName>observe_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\observe_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>VMC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\VMC.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\user_pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>Wheel_Leg_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\Wheel_Leg_about.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>others\Motion_Control\Drv\src</GroupName>
+          <Files>
+            <File>
+              <FileName>Motor_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Drv\src\Motor_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>USER_CAN.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Drv\src\USER_CAN.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -967,13 +971,13 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="6.1.1" condition="ARMv6_7_8-M Device">
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="6.1.1" condition="ARMv6_7_8-M Device" ymlID="CMSIS:CORE">
         <package name="CMSIS" schemaVersion="1.7.40" url="https://www.keil.com/pack/" vendor="ARM" version="6.2.0"/>
         <targetInfos>
           <targetInfo name="H7_Ctrl"/>
         </targetInfos>
       </component>
-      <component Cclass="CMSIS" Cgroup="DSP" Cvariant="Source" Cvendor="ARM" Cversion="1.16.2" condition="CMSISCORE">
+      <component Cclass="CMSIS" Cgroup="DSP" Cvariant="Source" Cvendor="ARM" Cversion="1.16.2" condition="CMSISCORE" ymlID="CMSIS:DSP&amp;Source">
         <package name="CMSIS-DSP" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="1.16.2"/>
         <targetInfos>
           <targetInfo name="H7_Ctrl">

@@ -172,10 +172,10 @@ void OS_UICallBack(void const *argument)
 			UI_time -= 2;
 		JLUI_10HzTick();
 
-		if (RemoteControl.keyboard_value.bit.C == 1)
-		{
-			UI_RES = 1;
-		}
+		// if (RemoteControl.keyboard_value.bit.C == 1)
+		// {
+		// 	UI_RES = 1;
+		// }
 		if (UI_RES == 1)
 		{
 //			JLUI_DeleteAll();

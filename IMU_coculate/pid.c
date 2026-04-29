@@ -1,11 +1,11 @@
 /**
   ****************************(C) COPYRIGHT 2019 DJI****************************
   * @file       pid.c/h
-  * @brief      pidÊµÏÖº¯Êı£¬°üÀ¨³õÊ¼»¯£¬PID¼ÆËãº¯Êı£¬
+  * @brief      pidå®é”Ÿè¡—çŒ´æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·å§‹é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·PIDé”Ÿæ–¤æ‹·é”Ÿå§å‡½é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
   * @note       
   * @history
   *  Version    Date            Author          Modification
-  *  V1.0.0     Dec-26-2018     RM              1. Íê³É
+  *  V1.0.0     Dec-26-2018     RM              1. é”Ÿæ–¤æ‹·é”Ÿï¿½
   *
   @verbatim
   ==============================================================================
@@ -42,12 +42,12 @@
   */
 /**
   * @brief          pid struct data init
-  * @param[out]     pid: PID½á¹¹Êı¾İÖ¸Õë
-  * @param[in]      mode: PID_POSITION:ÆÕÍ¨PID
-  *                 PID_DELTA: ²î·ÖPID
+  * @param[out]     pid: PIDé”Ÿç»“æ„é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·æŒ‡é”Ÿæ–¤æ‹·
+  * @param[in]      mode: PID_POSITION:é”Ÿæ–¤æ‹·é€šPID
+  *                 PID_DELTA: é”Ÿæ–¤æ‹·é”Ÿçµ‡ID
   * @param[in]      PID: 0: kp, 1: ki, 2:kd
-  * @param[in]      max_out: pid×î´óÊä³ö
-  * @param[in]      max_iout: pid×î´ó»ı·ÖÊä³ö
+  * @param[in]      max_out: pidé”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
+  * @param[in]      max_iout: pidé”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿï¿½
   * @retval         none
   */
 void PID_init(pid_type_def *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, fp32 max_iout)
@@ -74,11 +74,11 @@ void PID_init(pid_type_def *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, 
   * @retval         pid out
   */
 /**
-  * @brief          pid¼ÆËã
-  * @param[out]     pid: PID½á¹¹Êı¾İÖ¸Õë
-  * @param[in]      ref: ·´À¡Êı¾İ
-  * @param[in]      set: Éè¶¨Öµ
-  * @retval         pidÊä³ö
+  * @brief          pidé”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
+  * @param[out]     pid: PIDé”Ÿç»“æ„é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·æŒ‡é”Ÿæ–¤æ‹·
+  * @param[in]      ref: é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
+  * @param[in]      set: é”Ÿå€Ÿå®šå€¼
+  * @retval         pidé”Ÿæ–¤æ‹·é”Ÿï¿½
   */
 fp32 PID_calc(pid_type_def *pid, fp32 ref, fp32 set)
 {
@@ -124,8 +124,8 @@ fp32 PID_calc(pid_type_def *pid, fp32 ref, fp32 set)
   * @retval         none
   */
 /**
-  * @brief          pid Êä³öÇå³ı
-  * @param[out]     pid: PID½á¹¹Êı¾İÖ¸Õë
+  * @brief          pid é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
+  * @param[out]     pid: PIDé”Ÿç»“æ„é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·æŒ‡é”Ÿæ–¤æ‹·
   * @retval         none
   */
 void PID_clear(pid_type_def *pid)

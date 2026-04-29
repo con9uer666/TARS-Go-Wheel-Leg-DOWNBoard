@@ -63,7 +63,9 @@ void Error_Handler(void);
 #define GYRO_CS_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
-
+#ifndef PI
+    #define PI 3.1415926f
+#endif
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

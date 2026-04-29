@@ -18,11 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "Judge.h"
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
 #include "fdcan.h"
-#include "memorymap.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -80,9 +80,7 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-	
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -112,6 +110,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   CAN_Init();
   B2B_Init();
+  JUDGE_Init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
