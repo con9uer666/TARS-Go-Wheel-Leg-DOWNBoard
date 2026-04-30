@@ -135,6 +135,16 @@ extern uint8_t FEEDBACK;
 extern uint8_t upstairs_flag;
 extern uint8_t B2B_offline_flag;
 
+// TFmini Plus 激光雷达数据结构体
+typedef struct {
+    uint16_t distance;    // 距离 cm (0~1200)
+    uint16_t strength;    // 信号强度 (0~65535)
+    float temperature;    // 温度 ℃ (公式: raw/8 - 256)
+    uint8_t valid;        // 数据有效标志: 1=有效, 0=无效 (强度<100或==65535时无效)
+} TFmini_Data_t;
+
+extern TFmini_Data_t tfmini_data; // TFmini Plus 最新有效数据
+
 void B2B_ParseUsart(void);
 //RC初始化
 void B2B_Init(void);
