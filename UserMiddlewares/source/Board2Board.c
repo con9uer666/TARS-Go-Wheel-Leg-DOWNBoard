@@ -15,6 +15,8 @@
 extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
+extern DMA_HandleTypeDef hdma_uart7_rx;
+extern DMA_HandleTypeDef hdma_usart10_rx;
 extern osThreadId ErrorHandle;
 
 uint8_t rs485_isvalid = 0;
@@ -172,6 +174,8 @@ uint16_t B2B_offline_cnt = 0;
 uint16_t pre_B2B_offline_cnt = 0;
 uint8_t B2B_time_cnt = 0;
 uint8_t B2B_offline_flag = 0;
+uint8_t usart7RxBuf[128];
+uint8_t usart10RxBuf[128];
 
 int aaaa;
 
@@ -185,14 +189,28 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
 	{
+		//启动下一次UART1接收
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
+
+
 		receive_times ++;
 		B2B_ParseUsart();
 		Detect_Update(DeviceID_B2B);
 		detectList[DeviceID_B2B].isLost = 0;
 
 		B2B_offline_cnt ++;
+	}
+	//功率计模块
+	if (huart == &huart7)
+	{
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart7, usart7RxBuf, sizeof(usart7RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_uart7_rx, DMA_IT_HT);
+	}
+	if (huart == &huart10)
+	{
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart10, usart10RxBuf, sizeof(usart10RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_usart10_rx, DMA_IT_HT);
 	}
 }
 
