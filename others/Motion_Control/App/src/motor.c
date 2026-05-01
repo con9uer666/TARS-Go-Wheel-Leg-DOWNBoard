@@ -457,8 +457,8 @@ void NotStanding_NotStairRetract_for_chassis()
     //映射到电机力矩
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
-    L_LK9025.Target_Torque = 0;
-    R_LK9025.Target_Torque = 0;
+    L_DJ3508.Target_Torque = 0;
+    R_DJ3508.Target_Torque = 0;
 
 }
 
@@ -473,7 +473,7 @@ void LQR_calculate()
 	PowerCtrl_ApplyObserverGate(&lqr_body_distance_error, &lqr_speed_error, &lqr_yaw_error, &lqr_d_yaw);
 
     //算轮子力矩
-    L_LK9025.Target_Torque = 
+    L_DJ3508.Target_Torque = 
     + LQR_K[0][0] * lqr_body_distance_error
     + LQR_K[0][1] * (lqr_speed_error)
     + LQR_K[0][2] * (lqr_yaw_error)
@@ -485,7 +485,7 @@ void LQR_calculate()
     + LQR_K[0][8] * (pitch_trans[0] - PITCH_OFFSET)
     + LQR_K[0][9] * d_pitch;
 
-    R_LK9025.Target_Torque = 
+    R_DJ3508.Target_Torque = 
     + LQR_K[1][0] * lqr_body_distance_error
     + LQR_K[1][1] * (lqr_speed_error) 
     + LQR_K[1][2] * (lqr_yaw_error)
@@ -555,7 +555,7 @@ void off_ground_detect()
         - LQR_K[2][4] * VMC_L.b_phi0 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
         Leg_L_T *= 0.7; //收腿力度参数
-        L_LK9025.Target_Torque = 0;//离地轮子脱力
+        L_DJ3508.Target_Torque = 0;//离地轮子脱力
         //正常行驶过程离地VMC解算
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);//VMC解算
         //离地距离相关量归零
@@ -568,7 +568,7 @@ void off_ground_detect()
         - LQR_K[3][6] * VMC_R.b_phi0 
         - LQR_K[3][7] * VMC_R.d_b_phi0;
         Leg_R_T *= 0.7;
-        R_LK9025.Target_Torque = 0;
+        R_DJ3508.Target_Torque = 0;
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)), -Leg_R_T);
         body_distance = 0;
         target_body_distance = 2.0;
@@ -748,8 +748,8 @@ void Upstair_NotStairRetract()
     Body_Speed_Coculate();
 
     //上台阶过程中轮子正转，防止滑下来
-    L_LK9025.Target_Torque = 0.1;
-    R_LK9025.Target_Torque = 0.1;
+    L_DJ3508.Target_Torque = 0.1;
+    R_DJ3508.Target_Torque = 0.1;
 
     // 磕台阶过程中双环腿长控制
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);   //TODO: 写一个最大腿长的宏定义
@@ -857,8 +857,8 @@ void StairRetract()
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
-    L_LK9025.Target_Torque = 0.5f;
-    R_LK9025.Target_Torque = 0.5f;
+    L_DJ3508.Target_Torque = 0.5f;
+    R_DJ3508.Target_Torque = 0.5f;
 
     //腿收短，后伸检测
     if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
@@ -889,7 +889,7 @@ void StairRetract()
     {
         L_Leg_State = 2;
         L_Ready_Count = 0;
-        L_LK9025.Target_Torque = 0;
+        L_DJ3508.Target_Torque = 0;
     }
     if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
     {
@@ -899,7 +899,7 @@ void StairRetract()
     {
         R_Leg_State = 2;
         R_Ready_Count = 0;
-        R_LK9025.Target_Torque = 0;
+        R_DJ3508.Target_Torque = 0;
     }
 
     //状态量归位

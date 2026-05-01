@@ -134,11 +134,11 @@ void Distance_Error_Set()
 void Body_Speed_Coculate()
 {
     //算单侧轮子速度
-    Wl = alpha_W * (-L_LK9025.Rx_Data.Velocity + VMC_L.d_b_phi0) + (1 - alpha_W) * Wl;
+    Wl = alpha_W * (-L_DJ3508.Rx_Data.Velocity + VMC_L.d_b_phi0) + (1 - alpha_W) * Wl;
     //算单侧车身速度
     body_speed_L = alpha_body_speed * ((Wl * WHEEL_RADIUS) + VMC_L.d_b_phi0 * VMC_L.L0 * arm_cos_f32(VMC_L.b_phi0)) + (1 - alpha_body_speed) * body_speed_L;
 
-    Wr = alpha_W * (R_LK9025.Rx_Data.Velocity + VMC_R.d_b_phi0) + (1 - alpha_W) * Wr;
+    Wr = alpha_W * (R_DJ3508.Rx_Data.Velocity + VMC_R.d_b_phi0) + (1 - alpha_W) * Wr;
     body_speed_R = alpha_body_speed * ((Wr * WHEEL_RADIUS) + VMC_R.d_b_phi0 * VMC_R.L0 * arm_cos_f32(VMC_R.b_phi0)) + (1 - alpha_body_speed) * body_speed_R;
 
     body_speed = (body_speed_L + body_speed_R) / 2.0f;

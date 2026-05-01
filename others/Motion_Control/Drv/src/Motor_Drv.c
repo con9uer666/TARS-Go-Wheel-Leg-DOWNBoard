@@ -1,6 +1,6 @@
 #include "Motor_Drv.h"
 
-Wheel_Motor_t L_LK9025, R_LK9025;//!这是3508啊啊啊，没改名    
+Wheel_Motor_t L_DJ3508, R_DJ3508;
 Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
 
 
@@ -47,7 +47,7 @@ void DM8009_Get_Data(uint8_t *Data, Joint_Motor_t *Motor)
     Motor->Rx_Data.T_Rotor = (float)Data[7];
 }
 
-void DJI3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
+void DJ3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
 {
     Motor->Rx_Data.Position = (uint16_t)(Data[0] << 8 | Data[1]);
     Motor->Rx_Data.Velocity = ((((int16_t)(Data[2] << 8 | Data[3])) / 60.0f) * 2 * PI) / 14.88f;
@@ -55,17 +55,6 @@ void DJI3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
     Motor->Rx_Data.Torque = (int16_t)(Data[4] << 8 | Data[5]);
     Motor->Rx_Data.temperate = Data[6];
 }
-
-// void LK9025_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor)
-// {
-//     if(Data[0] == 0x9c || Data[0] == 0xa4 || Data[0] == 0xa2 ||Data[0] == 0xa8 ||Data[0] == 0xa1)
-//     {
-//         Motor->Rx_Data.T_Rotor = Data[1];
-//         Motor->Rx_Data.Torque = (Data[3] << 8 | Data[2]);
-//         Motor->Rx_Data.Velocity = (((int16_t)(Data[5] << 8 | Data[4])) / 180.0f) * PI;
-//         Motor->Rx_Data.Position = (Data[7] << 8 | Data[6]);
-//     }
-// }
 
 void Enable_DM_Motor_MIT(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
 {
@@ -158,12 +147,12 @@ void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float
 
     if(hfdcan == &hfdcan2)
     {
-        L_LK9025.TX_data = tqControl;
+        L_DJ3508.TX_data = tqControl;
     }
 
     if(hfdcan == &hfdcan1)
     {
-        R_LK9025.TX_data = tqControl;
+        R_DJ3508.TX_data = tqControl;
     }
 
     data[0] = tqControl >> 8;
@@ -174,60 +163,6 @@ void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float
     data[5] = tqControl;
     data[6] = tqControl >> 8;
     data[7] = tqControl;
-
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
-}
-
-void Enable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
-{
-    uint8_t data[8] = {0};
-    data[0] = 0x88;
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
-}
-
-void Disable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
-{
-    uint8_t data[8] = {0};
-    data[0] = 0x80;
-    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
-}
-
-/**
- * @brief 9025电机的转矩控制函数
- * 
- * @param hfdcan 
- * @param motor_id 
- * @param torque 力矩值，单位牛米
- */
-void LK_MF9025_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque)
-{
-    uint8_t data[8] = {0};
-    int16_t iqControl = 0;
-
-    if(torque >= 0.338959944)
-    {
-        iqControl = (int16_t)(403.44f * torque - 36.75f);
-    }
-    else if(torque <= -0.338959944)
-    {
-        iqControl = (int16_t)(403.44f * torque + 36.75f);
-    }
-    else
-    {
-        iqControl = (int16_t)(295.0201097f * torque);
-    }
-
-    if(iqControl >=  2048)iqControl =  2048;
-    if(iqControl <= -2048)iqControl = -2048;
-
-    data[0] = 0xA1;
-    data[1] = 0;
-    data[2] = 0;
-    data[3] = 0;
-    data[4] = (uint8_t)(iqControl & 0xFF);
-    data[5] = (uint8_t)((iqControl >> 8) & 0xFF);
-    data[6] = 0;
-    data[7] = 0;
 
     CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }

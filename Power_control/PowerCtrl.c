@@ -458,10 +458,10 @@ void Whellv1PowerCtral(void)
 	}
 
 	/* 步骤3：采集轮组实时状态（速度与电流指令）。 */
-	wl = L_LK9025.Rx_Data.Velocity;
-	wr = R_LK9025.Rx_Data.Velocity;
-	il = PowerCtrl_TorqueToDJICurrent(L_LK9025.Target_Torque);
-	ir = PowerCtrl_TorqueToDJICurrent(R_LK9025.Target_Torque);
+	wl = L_DJ3508.Rx_Data.Velocity;
+	wr = R_DJ3508.Rx_Data.Velocity;
+	il = PowerCtrl_TorqueToDJICurrent(L_DJ3508.Target_Torque);
+	ir = PowerCtrl_TorqueToDJICurrent(R_DJ3508.Target_Torque);
 
 	/* 步骤4：更新用于观测与建模的中间量。 */
 	whell_power.SumPowerSpeed = wl * wl + wr * wr;

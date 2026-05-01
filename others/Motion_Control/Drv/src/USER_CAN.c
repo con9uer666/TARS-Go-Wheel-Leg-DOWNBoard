@@ -28,8 +28,8 @@ static volatile uint32_t rx_cnt_L_DM8009_0 = 0;  // L_DM8009[0]
 static volatile uint32_t rx_cnt_L_DM8009_1 = 0;  // L_DM8009[1]
 static volatile uint32_t rx_cnt_R_DM8009_0 = 0;  // R_DM8009[0]
 static volatile uint32_t rx_cnt_R_DM8009_1 = 0;  // R_DM8009[1]
-static volatile uint32_t rx_cnt_L_LK9025    = 0;  // L_LK9025
-static volatile uint32_t rx_cnt_R_LK9025    = 0;  // R_LK9025
+static volatile uint32_t rx_cnt_L_DJ3508    = 0;  // L_DJ3508
+static volatile uint32_t rx_cnt_R_DJ3508    = 0;  // R_DJ3508
 static volatile uint32_t rx_cnt_4310        = 0;  // Yaw_DM4310
 static volatile uint32_t rx_cnt_2325        = 0;  // Shooter_DM2325
 
@@ -38,8 +38,8 @@ static uint32_t last_rx_cnt_L_DM8009_0 = 0;
 static uint32_t last_rx_cnt_L_DM8009_1 = 0;
 static uint32_t last_rx_cnt_R_DM8009_0 = 0;
 static uint32_t last_rx_cnt_R_DM8009_1 = 0;
-static uint32_t last_rx_cnt_L_LK9025    = 0;
-static uint32_t last_rx_cnt_R_LK9025    = 0;
+static uint32_t last_rx_cnt_L_DJ3508    = 0;
+static uint32_t last_rx_cnt_R_DJ3508    = 0;
 static uint32_t last_rx_cnt_4310        = 0;
 static uint32_t last_rx_cnt_2325        = 0;
 
@@ -47,7 +47,7 @@ static uint32_t last_rx_cnt_2325        = 0;
 static uint32_t last_heartbeat_check_tick = 0;
 
 // 掉线状态（被CAN_Transmit消费后保持，用于掉线→重连边沿检测）
-static uint8_t lost_8009_9025 = 0;
+static uint8_t lost_8009_3508 = 0;
 static uint8_t lost_4310      = 0;
 static uint8_t lost_2325      = 0;
 
@@ -103,15 +103,10 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 				rx_cnt_R_DM8009_1++;
 				break;
 			}
-			// case 0x141:
-			// {
-			// 	LK9025_Get_Data(rx_data, &R_LK9025);
-			// 	break;
-			// }
 			case 0x205:
 			{
-				DJI3508_Get_Data(rx_data, &R_LK9025);
-				rx_cnt_R_LK9025++;
+				DJ3508_Get_Data(rx_data, &R_DJ3508);
+				rx_cnt_R_DJ3508++;
 				break;
 			}
 		}
@@ -133,15 +128,10 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 				rx_cnt_L_DM8009_1++;
 				break;
 			}
-			// case 0x141:
-			// {
-			// 	LK9025_Get_Data(rx_data, &L_LK9025);
-			// 	break;
-			// }
 			case 0x203:
 			{
-				DJI3508_Get_Data(rx_data, &L_LK9025);
-				rx_cnt_L_LK9025++;
+				DJ3508_Get_Data(rx_data, &L_DJ3508);
+				rx_cnt_L_DJ3508++;
 				break;
 			}
 		}
@@ -230,27 +220,27 @@ void CAN_Transmit(void const * argument)
 			uint32_t cur_L_DM8009_1 = rx_cnt_L_DM8009_1;
 			uint32_t cur_R_DM8009_0 = rx_cnt_R_DM8009_0;
 			uint32_t cur_R_DM8009_1 = rx_cnt_R_DM8009_1;
-			uint32_t cur_L_LK9025   = rx_cnt_L_LK9025;
-			uint32_t cur_R_LK9025   = rx_cnt_R_LK9025;
+			uint32_t cur_L_DJ3508   = rx_cnt_L_DJ3508;
+			uint32_t cur_R_DJ3508   = rx_cnt_R_DJ3508;
 			uint32_t cur_4310       = rx_cnt_4310;
 			uint32_t cur_2325       = rx_cnt_2325;
 
-			// 任意一个8009/9025计数器未增长 -> 该组掉线
-			uint8_t any_8009_9025_lost = 
+			// 任意一个8009/3508计数器未增长 -> 该组掉线
+			uint8_t any_8009_3508_lost = 
 				(cur_L_DM8009_0 == last_rx_cnt_L_DM8009_0) ||
 				(cur_L_DM8009_1 == last_rx_cnt_L_DM8009_1) ||
 				(cur_R_DM8009_0 == last_rx_cnt_R_DM8009_0) ||
 				(cur_R_DM8009_1 == last_rx_cnt_R_DM8009_1) ||
-				(cur_L_LK9025   == last_rx_cnt_L_LK9025)   ||
-				(cur_R_LK9025   == last_rx_cnt_R_LK9025);
+				(cur_L_DJ3508   == last_rx_cnt_L_DJ3508)   ||
+				(cur_R_DJ3508   == last_rx_cnt_R_DJ3508);
 
 			// 记录上一次的掉线状态（用于恢复边沿检测）
-			uint8_t prev_lost_8009_9025 = lost_8009_9025;
+			uint8_t prev_lost_8009_3508 = lost_8009_3508;
 			uint8_t prev_lost_4310      = lost_4310;
 			uint8_t prev_lost_2325      = lost_2325;
 
 			// 更新掉线状态
-			lost_8009_9025 = any_8009_9025_lost;
+			lost_8009_3508 = any_8009_3508_lost;
 			lost_4310      = (cur_4310 == last_rx_cnt_4310);
 			lost_2325      = (cur_2325 == last_rx_cnt_2325);
 
@@ -259,14 +249,14 @@ void CAN_Transmit(void const * argument)
 			last_rx_cnt_L_DM8009_1 = cur_L_DM8009_1;
 			last_rx_cnt_R_DM8009_0 = cur_R_DM8009_0;
 			last_rx_cnt_R_DM8009_1 = cur_R_DM8009_1;
-			last_rx_cnt_L_LK9025   = cur_L_LK9025;
-			last_rx_cnt_R_LK9025   = cur_R_LK9025;
+			last_rx_cnt_L_DJ3508   = cur_L_DJ3508;
+			last_rx_cnt_R_DJ3508   = cur_R_DJ3508;
 			last_rx_cnt_4310       = cur_4310;
 			last_rx_cnt_2325       = cur_2325;
 
 			/*========== 恢复检测：掉线→重连边沿处理 ==========*/
-			// 8009/9025恢复
-			if (prev_lost_8009_9025 && !lost_8009_9025)
+			// 8009/3508恢复
+			if (prev_lost_8009_3508 && !lost_8009_3508)
 			{
 				start_mode = 0;
 				first_run = 1;
@@ -280,7 +270,7 @@ void CAN_Transmit(void const * argument)
 		}
 
 		/*========== 按优先级发送电机指令 ==========*/
-		// 优先级：4310掉线 > 8009/9025掉线 > 2325掉线 > 正常
+		// 优先级：4310掉线 > 8009/3508掉线 > 2325掉线 > 正常
 		if (lost_4310)
 		{
 			// 4310掉线：全部电机输出零力矩
@@ -297,10 +287,10 @@ void CAN_Transmit(void const * argument)
 		}
 		else
 		{
-			// 4310正常，检查8009/9025
-			if (lost_8009_9025)
+			// 4310正常，检查8009/3508
+			if (lost_8009_3508)
 			{
-				// 8009/9025掉线：仅8009和9025输出零力矩
+				// 8009/3508掉线：仅8009和3508输出零力矩
 				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
 				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 				osDelay(1);
@@ -311,9 +301,9 @@ void CAN_Transmit(void const * argument)
 			}
 			else
 			{
-				// 8009/9025正常
-				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_LK9025.Target_Torque);
-				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_LK9025.Target_Torque);
+				// 8009/3508正常
+				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_DJ3508.Target_Torque);
+				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_DJ3508.Target_Torque);
 				osDelay(1);
 				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
 				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);

@@ -3,15 +3,6 @@
 
 #include "main.h"
 #include "USER_CAN.h"
-typedef struct LK_Rx_Data{
-    uint8_t ID;
-    uint8_t State;
-    int16_t Position;
-    float Velocity;
-    int16_t Torque;
-    int16_t T_Mos;
-    int16_t T_Rotor;
-}LK_Rx_Data_t;
 
 typedef struct DJI_Rx_Data{
     uint16_t Position;
@@ -58,18 +49,14 @@ void DM_Wheel_Motor_Init(Wheel_Motor_t *Motor, float TMAX, float PMAX,float VMAX
 int float_to_uint(float x_float, float x_min, float x_max, int bits);
 float uint_to_float(int x_int, float x_min, float x_max, int bits);
 void DM8009_Get_Data(uint8_t *Data, Joint_Motor_t *Motor);
-void DJI3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor);
-// void LK9025_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor);
+void DJ3508_Get_Data(uint8_t *Data, Wheel_Motor_t *Motor);
 void Enable_DM_Motor_MIT(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
 void Disable_DM_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
 void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, float torq);
 void DM_Motor_MIT_Speed_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t motor, float pos, float vel, float tor, float kp, float kd);
 void DJI_Motor_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque);
-void Enable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
-void Disable_LK_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id);
-void LK_MF9025_Torque_Ctrl(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id, float torque);
 
-extern Wheel_Motor_t L_LK9025, R_LK9025;
+extern Wheel_Motor_t L_DJ3508, R_DJ3508;
 extern Joint_Motor_t L_DM8009[2], R_DM8009[2], Yaw_DM4310, Shooter_DM2325;
 
 #endif

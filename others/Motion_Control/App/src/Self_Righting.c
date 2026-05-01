@@ -244,8 +244,8 @@ uint8_t Self_Righting_Step(void)
 	PID_INIT(&wheel_PID_l, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_I_step, wheel_Integraldead_zone, wheel_deadzone);
 	PID_INIT(&wheel_PID_r, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_I_step, wheel_Integraldead_zone, wheel_deadzone);
 
-	PID_Set_Error(&wheel_PID_l, L_LK9025.Rx_Data.Speed, 0);
-	PID_Set_Error(&wheel_PID_r, R_LK9025.Rx_Data.Speed, 0);
+	PID_Set_Error(&wheel_PID_l, L_DJ3508.Rx_Data.Speed, 0);
+	PID_Set_Error(&wheel_PID_r, R_DJ3508.Rx_Data.Speed, 0);
 
 	PID_INIT(&anti_split_PID, anti_split_kp, anti_split_ki, anti_split_kd, anti_split_out_limit, anti_split_i_limit, anti_split_I_step, anti_split_Integraldead_zone, anti_split_deadzone);
 
@@ -378,8 +378,8 @@ uint8_t Self_Righting_Step(void)
 	/* ===================== 第三阶段：大力矩匀速转到目标角 ===================== */
 	else if ((g_self_righting_stage == SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE && SR_test_state == 0) || (SR_test_state == 3))
 	{
-		L_LK9025.Target_Torque = -PID_coculate(&wheel_PID_l);
-		R_LK9025.Target_Torque = PID_coculate(&wheel_PID_r);
+		L_DJ3508.Target_Torque = -PID_coculate(&wheel_PID_l);
+		R_DJ3508.Target_Torque = PID_coculate(&wheel_PID_r);
 
 		PID_coculate(&anti_split_PID);
 		
