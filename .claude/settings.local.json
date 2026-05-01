@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmake --build build/Debug)",
+      "Bash(where cmake.exe)",
+      "Bash(\"C:/Program Files/CMake/bin/cmake.exe\" --version)",
+      "Bash(git checkout *)"
+    ]
+  }
+}

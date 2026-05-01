@@ -4,34 +4,34 @@
 #include "judge.h"
 #include "Board2Board.h"
 
-/****ÄÚ²¿º¯ÊıÉùÃ÷****/
-// Ä¬ÈÏµôÏß´¦Àíº¯Êı
+/****å†…éƒ¨å‡½æ•°å£°æ˜****/
+// é»˜è®¤æ‰çº¿å¤„ç†å‡½æ•°
 void Detect_DefaultLostHandler(uint8_t deviceID);
-// Ä¬ÈÏÉÏÏß´¦Àíº¯Êı
+// é»˜è®¤ä¸Šçº¿å¤„ç†å‡½æ•°
 void Detect_DefaultRecoverHandler(uint8_t deviceID);
-// ³õÊ¼»¯µ¥¸öÉè±¸
+// åˆå§‹åŒ–å•ä¸ªè®¾å¤‡
 void Detect_InitDevice(uint8_t deviceID, uint32_t maxInterval, void (*lostFunc)(void), void (*recoverFunc)(void));
 
-// Éè±¸ÀëÏßĞÅÏ¢ÁĞ±í
+// è®¾å¤‡ç¦»çº¿ä¿¡æ¯åˆ—è¡¨
 DetectDevice detectList[DETECT_DEVICE_NUM];
 
-// ¸üĞÂÖ¸¶¨idÉè±¸µÄ×´Ì¬
+// æ›´æ–°æŒ‡å®šidè®¾å¤‡çš„çŠ¶æ€
 void Detect_Update(uint8_t deviceID)
 {
 	detectList[deviceID].lastRecieveTime = HAL_GetTick();
 }
-// Ä¬ÈÏµôÏß´¦Àíº¯Êı£¬ÈôlostFunc==NULLÔòµ÷ÓÃ
+// é»˜è®¤æ‰çº¿å¤„ç†å‡½æ•°ï¼Œè‹¥lostFunc==NULLåˆ™è°ƒç”¨
 void Detect_DefaultLostHandler(uint8_t deviceID)
 {
 
 }
 
-// Ä¬ÈÏµôÏß´¦Àíº¯Êı£¬ÈôrecoverFunc==NULLÔòµ÷ÓÃ
+// é»˜è®¤æ‰çº¿å¤„ç†å‡½æ•°ï¼Œè‹¥recoverFunc==NULLåˆ™è°ƒç”¨
 void Detect_DefaultRecoverHandler(uint8_t deviceID)
 {
 }
 
-// ³õÊ¼»¯Ò»¸öÉè±¸µÄµôÏß¼ì²âĞÅÏ¢(Éè±¸id£¬Êı¾İ½ÓÊÕ×î´ó¼ä¸ô£¬µôÏß´¦Àí»Øµ÷º¯Êı)
+// åˆå§‹åŒ–ä¸€ä¸ªè®¾å¤‡çš„æ‰çº¿æ£€æµ‹ä¿¡æ¯(è®¾å¤‡idï¼Œæ•°æ®æ¥æ”¶æœ€å¤§é—´éš”ï¼Œæ‰çº¿å¤„ç†å›è°ƒå‡½æ•°)
 void Detect_InitDevice(uint8_t deviceID, uint32_t maxInterval, void (*lostFunc)(void), void (*recoverFunc)(void))
 {
 	detectList[deviceID].maxInterval = maxInterval;
@@ -40,7 +40,7 @@ void Detect_InitDevice(uint8_t deviceID, uint32_t maxInterval, void (*lostFunc)(
 	detectList[deviceID].recoverFunc = recoverFunc;
 }
 
-// ³õÊ¼»¯ËùÓĞÉè±¸µÄµôÏß¼ì²âĞÅÏ¢
+// åˆå§‹åŒ–æ‰€æœ‰è®¾å¤‡çš„æ‰çº¿æ£€æµ‹ä¿¡æ¯
 void Detect_InitAll()
 {
 	Detect_InitDevice(DeviceID_ChassisMotor1, 50, NULL, NULL);
@@ -55,7 +55,7 @@ void Detect_InitAll()
 
 	Detect_InitDevice(DeviceID_YawMotor, 50, NULL, NULL);
 
-	detectList[DeviceID_YawMotor].isLost = 1;//Ä¬ÈÏµôÏß
+	detectList[DeviceID_YawMotor].isLost = 1;//é»˜è®¤æ‰çº¿
 	
 	Detect_InitDevice(DeviceID_TrigMotor, 50, NULL, NULL);
 
@@ -66,7 +66,7 @@ void Detect_InitAll()
 
 extern uint8_t FLAG;
 
-// µôÏß¼ì²âÈÎÎñ»Øµ÷
+// æ‰çº¿æ£€æµ‹ä»»åŠ¡å›è°ƒ
 void Task_Detect_Callback()
 {
 	uint32_t presentTime = HAL_GetTick();
@@ -74,33 +74,33 @@ void Task_Detect_Callback()
 	{
 		for (uint8_t id = 0; id < DETECT_DEVICE_NUM; id++)
 		{
-			// ÅĞ¶¨ÊÇ·ñµôÏß
+			// åˆ¤å®šæ˜¯å¦æ‰çº¿
 			if (presentTime - detectList[id].lastRecieveTime > detectList[id].maxInterval)
 			{
-				// ÅĞ¶¨Ö´ĞĞÄ¬ÈÏ»¹ÊÇ×Ô¶¨ÒåµÄ´¦Àíº¯Êı
+				// åˆ¤å®šæ‰§è¡Œé»˜è®¤è¿˜æ˜¯è‡ªå®šä¹‰çš„å¤„ç†å‡½æ•°
 				if (detectList[id].lostFunc == NULL)
 					Detect_DefaultLostHandler(id);
 				else
 					detectList[id].lostFunc();
-				// ¸üĞÂ±êÊ¶
+				// æ›´æ–°æ ‡è¯†
 				detectList[id].isLost = 1;
 			}
 			else if (presentTime - detectList[id].lastRecieveTime <= detectList[id].maxInterval && detectList[id].isLost == 1)
 			{
-				// ÅĞ¶¨Ö´ĞĞÄ¬ÈÏ»¹ÊÇ×Ô¶¨ÒåµÄ´¦Àíº¯Êı
+				// åˆ¤å®šæ‰§è¡Œé»˜è®¤è¿˜æ˜¯è‡ªå®šä¹‰çš„å¤„ç†å‡½æ•°
 				if (detectList[id].recoverFunc == NULL)
 					Detect_DefaultRecoverHandler(id);
 				else
 					detectList[id].recoverFunc();
-				// ¸üĞÂ±êÊ¶
+				// æ›´æ–°æ ‡è¯†
 				detectList[id].isLost = 0;
 			}
 		}
 	}
 }
 
-// »ñÈ¡Éè±¸ÀëÏßÇé¿ö
-// ·µ»ØÖµ 1-ÀëÏß 0-ÔÚÏß
+// è·å–è®¾å¤‡ç¦»çº¿æƒ…å†µ
+// è¿”å›å€¼ 1-ç¦»çº¿ 0-åœ¨çº¿
 uint8_t Detect_IsDeviceLost(uint8_t deviceID)
 {
 	return detectList[deviceID].isLost;

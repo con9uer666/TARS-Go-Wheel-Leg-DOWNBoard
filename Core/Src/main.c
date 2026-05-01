@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "Judge.h"
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
@@ -32,6 +31,7 @@
 /* USER CODE BEGIN Includes */
 #include "USER_CAN.h"
 #include "Board2Board.h"
+#include "Judge.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,6 +107,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_FDCAN3_Init();
+  MX_UART7_Init();
+  MX_USART10_UART_Init();
   /* USER CODE BEGIN 2 */
   CAN_Init();
   B2B_Init();

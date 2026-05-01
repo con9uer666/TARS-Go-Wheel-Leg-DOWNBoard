@@ -33,7 +33,6 @@ h7_ctrl/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\UI\include\Judge.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \
@@ -51,4 +50,4 @@ h7_ctrl/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Core\Inc\adc.h ..\Core\Inc\dma.h ..\Core\Inc\fdcan.h \
   ..\Core\Inc\spi.h ..\Core\Inc\tim.h ..\Core\Inc\usart.h \
   ..\Core\Inc\gpio.h ..\others\Motion_Control\Drv\inc\USER_CAN.h \
-  ..\UserMiddlewares\include\Board2Board.h
+  ..\UserMiddlewares\include\Board2Board.h ..\UI\include\Judge.h
