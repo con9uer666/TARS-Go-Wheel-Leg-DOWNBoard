@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Fri May  1 11:37:28 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Fri May  1 12:17:47 2026
 <BR><P>
 <H3>Maximum Stack Usage =        456 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1231,12 +1231,8 @@ Global Symbols
 <LI><a href="#[19f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_UART5_Init
 </UL>
 
-<P><STRONG><a name="[ab]"></a>Error_task</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, error.o(.text.Error_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104 + In Cycle
-<LI>Call Chain = Error_task &rArr;  Error_task (Cycle)
-</UL>
-<BR>[Calls]<UL><LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
+<P><STRONG><a name="[ab]"></a>Error_task</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, error.o(.text.Error_task))
+<BR><BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
@@ -2684,11 +2680,11 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[fe]"></a>PID_INIT</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, user_pid.o(.text.PID_INIT))
-<BR><BR>[Called By]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<BR><BR>[Called By]<UL><LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
 <LI><a href="#[1a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_PID_Init
 <LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 </UL>
 
 <P><STRONG><a name="[1d9]"></a>PID_Reset_OutLimit</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Reset_OutLimit))
@@ -2704,8 +2700,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[101]"></a>PID_Set_Error</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Set_Error))
-<BR><BR>[Called By]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<BR><BR>[Called By]<UL><LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gravity_Compensation_Test_Function
 <LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StairRetract
 <LI><a href="#[1ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Upstair_NotStairRetract
@@ -2715,11 +2710,11 @@ Global Symbols
 <LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
 <LI><a href="#[1ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NotStanding_NotStairRetract_for_chassis
 <LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 </UL>
 
 <P><STRONG><a name="[102]"></a>PID_coculate</STRONG> (Thumb, 320 bytes, Stack size 0 bytes, user_pid.o(.text.PID_coculate))
-<BR><BR>[Called By]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<BR><BR>[Called By]<UL><LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gravity_Compensation_Test_Function
 <LI><a href="#[1ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StairRetract
 <LI><a href="#[1ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Upstair_NotStairRetract
@@ -2729,6 +2724,7 @@ Global Symbols
 <LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
 <LI><a href="#[1ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NotStanding_NotStairRetract_for_chassis
 <LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Whellv1PowerCtral
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 </UL>
 
 <P><STRONG><a name="[173]"></a>PID_init</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, pid.o(.text.PID_init))
@@ -2947,7 +2943,7 @@ Global Symbols
 <P><STRONG><a name="[94]"></a>SystemInit</STRONG> (Thumb, 210 bytes, Stack size 0 bytes, system_stm32h7xx.o(.text.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(.text)
 </UL>
-<P><STRONG><a name="[15a]"></a>TFmini_Parse</STRONG> (Thumb, 212 bytes, Stack size 24 bytes, board2board.o(.text.TFmini_Parse))
+<P><STRONG><a name="[15a]"></a>TFmini_Parse</STRONG> (Thumb, 212 bytes, Stack size 24 bytes, tfmini.o(.text.TFmini_Parse))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = TFmini_Parse
 </UL>
 <BR>[Called By]<UL><LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_RxEventCallback
@@ -3362,7 +3358,6 @@ Global Symbols
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED_task
 <LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Run_Remind
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;State_machine_task
-<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OS_Board2BoardCallback
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Transmit
 </UL>
@@ -3372,9 +3367,9 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
+<BR>[Called By]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Observe_Tasks
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 </UL>
 
 <P><STRONG><a name="[1da]"></a>osKernelStart</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, cmsis_os.o(.text.osKernelStart))
@@ -3597,10 +3592,10 @@ Global Symbols
 
 <P><STRONG><a name="[f9]"></a>xTaskGetTickCount</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, tasks.o(.text.xTaskGetTickCount))
 <BR><BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_tasks
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Transmit
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Observe_Tasks
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 </UL>
 
 <P><STRONG><a name="[1c7]"></a>xTaskIncrementTick</STRONG> (Thumb, 384 bytes, Stack size 40 bytes, tasks.o(.text.xTaskIncrementTick))

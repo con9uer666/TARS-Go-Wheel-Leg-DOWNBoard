@@ -884,6 +884,11 @@
               <FileType>1</FileType>
               <FilePath>..\others\Device\src\remoter.c</FilePath>
             </File>
+            <File>
+              <FileName>tfmini.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\tfmini.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

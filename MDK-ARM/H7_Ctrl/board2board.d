@@ -56,4 +56,5 @@ h7_ctrl/board2board.o: ..\UserMiddlewares\source\Board2Board.c \
   ..\others\Motion_Control\Ctrl\inc\user_pid.h \
   ..\others\Motion_Control\App\inc\User_State.h \
   ..\others\Motion_Control\App\inc\Gimbal.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h
+  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
+  ..\others\Device\inc\tfmini.h
