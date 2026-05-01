@@ -113,6 +113,7 @@ void Error_task(void const * argument)
 			// 	HAL_NVIC_SystemReset();																							
 			// }																																		
 			// HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));																																								
-			// __HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);																															
+			// __HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);			
+			osDelay(1);																												
     }																														
 }																																										

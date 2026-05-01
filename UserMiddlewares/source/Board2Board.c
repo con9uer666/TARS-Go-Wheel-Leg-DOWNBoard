@@ -13,6 +13,8 @@
 #include "Motor_Drv.h"
 
 extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
+uint8_t usart7RxBuf[128];
+uint8_t usart10RxBuf[128];
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_uart7_rx;
@@ -52,8 +54,13 @@ void B2B_Init()
 {
 	HAL_UARTEx_ReceiveToIdle_DMA(&huart2, usart2RxBuf, sizeof(usart2RxBuf));
 	__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
-}
 
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart7, usart7RxBuf, sizeof(usart7RxBuf));
+	__HAL_DMA_DISABLE_IT(&hdma_uart7_rx, DMA_IT_HT);
+
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart10, usart10RxBuf, sizeof(usart10RxBuf));
+	__HAL_DMA_DISABLE_IT(&hdma_usart10_rx, DMA_IT_HT);
+}
 
 void B2B_LostCallback()
 {
@@ -174,8 +181,6 @@ uint16_t B2B_offline_cnt = 0;
 uint16_t pre_B2B_offline_cnt = 0;
 uint8_t B2B_time_cnt = 0;
 uint8_t B2B_offline_flag = 0;
-uint8_t usart7RxBuf[128];
-uint8_t usart10RxBuf[128];
 
 // TFmini Plus 激光雷达 — see Board2Board.h for struct definition
 TFmini_Data_t tfmini_data;         // 解析后的最新有效数据（供外部读取）

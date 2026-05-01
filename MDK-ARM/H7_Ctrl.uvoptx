@@ -485,6 +485,31 @@
           <WinNumber>1</WinNumber>
           <ItemText>g_power_obs_lambda</ItemText>
         </Ww>
+        <Ww>
+          <count>66</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>stopFlag</ItemText>
+        </Ww>
+        <Ww>
+          <count>67</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>usart7RxBuf</ItemText>
+        </Ww>
+        <Ww>
+          <count>68</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>usart10RxBuf</ItemText>
+        </Ww>
+        <Ww>
+          <count>69</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tfmini_data</ItemText>
+        </Ww>
+        <Ww>
+          <count>70</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>huart10</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

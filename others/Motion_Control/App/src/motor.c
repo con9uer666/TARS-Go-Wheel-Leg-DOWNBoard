@@ -293,7 +293,7 @@ void task_Motor_Init()
     DM_Joint_Motor_Init(&Shooter_DM2325, 10.0f, 3.14159265f, 200.0f, 0x11);
 
     // 功率控制模块初始化（仅初始化参数，不改变现有控制流）。
-    PowerCtralInit(&whell_power);
+    // PowerCtralInit(&whell_power);
 }
 
 //VMC赋值与初始化结构体
