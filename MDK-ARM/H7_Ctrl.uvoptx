@@ -510,6 +510,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>huart10</ItemText>
         </Ww>
+        <Ww>
+          <count>71</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tfmini_data</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

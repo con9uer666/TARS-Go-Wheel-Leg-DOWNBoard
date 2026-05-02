@@ -9,6 +9,7 @@
 #include "VMC.h"
 #include "arm_math.h"
 #include "Motor_Drv.h"
+#include "wattmeter.h"
 
 extern uint8_t first_run;
 extern uint8_t start_mode;
@@ -151,6 +152,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			{
 				DM8009_Get_Data(rx_data, &Shooter_DM2325);
 				rx_cnt_2325++;
+				break;
+			}
+			case 0x213:
+			{
+				WattMeter_CAN_Parse(rx_data);
 				break;
 			}
 		}
