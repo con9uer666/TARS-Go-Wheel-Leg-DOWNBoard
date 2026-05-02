@@ -9,6 +9,7 @@
 #include "Motor_Drv.h" // 轮电机实时速度与目标电流指令（字段名沿用 Target_Torque）。
 #include "Judge.h" // 裁判系统功率限制与缓冲读数。
 #include "PowerObserverLimit.h" // 观测量门控逻辑。
+#include "wattmeter.h" // 外部功率计实测功率。
 
 extern float powerPredict; // 上位机观测：当前功率预测值（W）。
 
@@ -268,16 +269,7 @@ static float PowerCtrl_GetMeasuredChassisPower(void)
 {
 	float measured_power;
 
-	if (!JUDGE_IsValid())
-	{
-		return -1.0f;
-	}
-
-	/*
-	 * 当前协议头文件中该字段名为 reserved_3，
-	 * 但按照实际数据含义使用为“实测底盘功率（W）”。
-	 */
-	measured_power = PowerHeatData.reserved_3;
+	measured_power = wattmeter_data.power;
 
 	if ((measured_power < POWER_MEASURE_VALID_MIN_W) || (measured_power > POWER_MEASURE_VALID_MAX_W))
 	{
