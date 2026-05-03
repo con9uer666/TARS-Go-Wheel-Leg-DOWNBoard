@@ -4,7 +4,10 @@
       "Bash(cmake --build build/Debug)",
       "Bash(where cmake.exe)",
       "Bash(\"C:/Program Files/CMake/bin/cmake.exe\" --version)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(cmd.exe /c \"where cmake\")",
+      "Bash(cmd.exe /c \"where arm-none-eabi-gcc\")",
+      "Bash(cmd.exe /c \"where ninja\")"
     ]
   }
 }
