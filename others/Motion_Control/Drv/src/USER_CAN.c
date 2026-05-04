@@ -19,7 +19,8 @@ extern float down_board_yaw_output;
 uint16_t can_send_error,can_receive_error;
 
 /*====================================== 电机输出总开关 ====================================== */
-uint8_t motor_output_enable = 1;  // 1=正常输出力矩, 0=强制全部电机输出零力矩
+uint8_t motor_output_enable = 1;      // 1=正常输出力矩, 0=强制全部电机输出零力矩
+uint8_t wheel_leg_output_enable = 1;  // 1=正常输出, 0=仅关断3508和8009（4310/2325不受影响）
 
 /*====================================== 心跳检测 =========================================== */
 #define HEARTBEAT_CHECK_INTERVAL_MS  10    // 每10ms检测一次
@@ -307,14 +308,27 @@ void CAN_Transmit(void const * argument)
 			}
 			else
 			{
-				// 8009/3508正常
-				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_DJ3508.Target_Torque);
-				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_DJ3508.Target_Torque);
-				osDelay(1);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
+				// 8009/3508正常，但受wheel_leg_output_enable控制
+				if (!wheel_leg_output_enable)
+				{
+					DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+					DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+					osDelay(1);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+				}
+				else
+				{
+					DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_DJ3508.Target_Torque);
+					DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_DJ3508.Target_Torque);
+					osDelay(1);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
+					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
+				}
 			}
 			osDelay(1);
 			// 4310正常时，始终发送4310指令

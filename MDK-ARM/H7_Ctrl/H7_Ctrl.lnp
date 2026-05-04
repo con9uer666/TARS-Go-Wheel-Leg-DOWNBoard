@@ -85,6 +85,7 @@
 "h7_ctrl\led.o"
 "h7_ctrl\remoter.o"
 "h7_ctrl\tfmini.o"
+"h7_ctrl\wattmeter.o"
 "h7_ctrl\motor.o"
 "h7_ctrl\self_righting.o"
 "h7_ctrl\gimbal.o"

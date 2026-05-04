@@ -246,7 +246,7 @@ float PowerControl_AutoUpdateParam(float x1, float x2, float x3, float y,Chassis
     Ysample[0][0] = y;
 
     // 步骤2：当样本有效时执行标准 RLS 更新流程。
-    if (y > 1) // 观测值足够大时更新参数。
+    if (y > 40) // 观测值足够大时更新参数。
     {
         arm_mat_trans_f32(&XsampleMatrix, &XTMatrix); // 计算输入转置。
         arm_mat_mult_f32(&transMatrix, &XsampleMatrix, &TRANS_M_XMatrix); // 计算协方差与输入乘积。

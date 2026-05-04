@@ -889,6 +889,11 @@
               <FileType>1</FileType>
               <FilePath>..\others\Device\src\tfmini.c</FilePath>
             </File>
+            <File>
+              <FileName>wattmeter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\wattmeter.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
