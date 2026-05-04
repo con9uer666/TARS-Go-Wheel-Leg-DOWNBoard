@@ -83,6 +83,8 @@ int receive_times;
 extern float target_body_speed;
 float Foot_Target_Relative_Angle;//!目前没用。以后可能会用
 uint8_t upstairs_flag = 0;//0：常态；1：上台阶的瞬间
+uint8_t sit_mode_enable = 0;//0：正常，1：坐地模式
+uint8_t sit_debug_force = 0;   // 调试用：debugger中设为1可强制进入坐地模式
 
 
 void B2B_ParseUsart() // 先发低字节
@@ -127,7 +129,8 @@ void B2B_ParseUsart() // 先发低字节
 		// {
 		// 	upstairs_flag = 1;
 		// }
-		upstairs_flag = usart2RxBuf[44];
+			upstairs_flag = usart2RxBuf[44];
+			sit_mode_enable = usart2RxBuf[45] | sit_debug_force;
 		// for(int i = 0; i <= 127; i++)
 		// {
 		// 	usart2RxBuf[i] = 0;

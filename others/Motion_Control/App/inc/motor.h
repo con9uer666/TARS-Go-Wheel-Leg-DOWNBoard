@@ -92,6 +92,11 @@ void NotStanding_NotStairRetract();
 void Standing();
 void Upstair_NotStairRetract();
 void StairRetract();
+void Sit_On_Ground(void);
+
+extern uint8_t sit_mode_enable;
+extern uint16_t sit_debug_counter;
+extern uint8_t sit_ramp_done;
 
 
 #endif

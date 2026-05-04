@@ -739,6 +739,11 @@ void Standing()
         start_mode = 2;
     }
 
+    if(sit_mode_enable == 1)
+    {
+        start_mode = 3;
+    }
+
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
 }
 
@@ -1027,12 +1032,95 @@ void Gravity_Compensation_Test_Function(void)
 }
 
 
+/*====================================== 坐地模式 =========================================== */
+
+#define SIT_TARGET_L0_L      0.163f
+#define SIT_TARGET_L0_R      0.169f
+#define SIT_TARGET_PHI0_L    0.938f
+#define SIT_TARGET_PHI0_R    2.21f
+#define SIT_RAMP_TIME        1.5f
+#define SIT_WHEEL_TORQUE     0.0f
+#define SIT_GRAVITY_RATIO    0.3f
+
+static uint8_t sit_first_entry = 1;
+static RampGenerator sit_L0_ramp_L, sit_L0_ramp_R;
+static RampGenerator sit_phi0_ramp_L, sit_phi0_ramp_R;
+
+uint16_t sit_debug_counter = 0;  // 坐地模式执行周期计数，debug用
+uint8_t sit_ramp_done = 0;       // 斜坡过渡是否完成
+
+void Sit_On_Ground(void)
+{
+    VMC_Coculate();
+
+    if (sit_first_entry)
+    {
+        rampInit(&sit_L0_ramp_L, VMC_L.L0, SIT_TARGET_L0_L, SIT_RAMP_TIME, 0.002f);
+        rampInit(&sit_L0_ramp_R, VMC_R.L0, SIT_TARGET_L0_R, SIT_RAMP_TIME, 0.002f);
+        rampInit(&sit_phi0_ramp_L, VMC_L.phi0, SIT_TARGET_PHI0_L, SIT_RAMP_TIME, 0.002f);
+        rampInit(&sit_phi0_ramp_R, VMC_R.phi0, SIT_TARGET_PHI0_R, SIT_RAMP_TIME, 0.002f);
+        sit_first_entry = 0;
+    }
+
+    sit_debug_counter++;
+
+    rampIterate(&sit_L0_ramp_L);
+    rampIterate(&sit_L0_ramp_R);
+    rampIterate(&sit_phi0_ramp_L);
+    rampIterate(&sit_phi0_ramp_R);
+
+    sit_ramp_done = (fabsf(sit_L0_ramp_L.currentValue - SIT_TARGET_L0_L) < 0.001f)
+                 && (fabsf(sit_L0_ramp_R.currentValue - SIT_TARGET_L0_R) < 0.001f)
+                 && (fabsf(sit_phi0_ramp_L.currentValue - SIT_TARGET_PHI0_L) < 0.001f)
+                 && (fabsf(sit_phi0_ramp_R.currentValue - SIT_TARGET_PHI0_R) < 0.001f);
+
+    // 左腿腿长双环PID
+    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, sit_L0_ramp_L.currentValue);
+    PID_coculate(&L_Leg_L0_POS_PID);
+    PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
+    PID_coculate(&L_Leg_L0_SPD_PID);
+
+    // 右腿腿长双环PID
+    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, sit_L0_ramp_R.currentValue);
+    PID_coculate(&R_Leg_L0_POS_PID);
+    PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
+    PID_coculate(&R_Leg_L0_SPD_PID);
+
+    // 左腿角度双环PID
+    PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, sit_phi0_ramp_L.currentValue);
+    PID_coculate(&L_Leg_Middle_PID);
+    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+    PID_coculate(&L_Leg_dphi0_PID);
+
+    // 右腿角度双环PID
+    PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, sit_phi0_ramp_R.currentValue);
+    PID_coculate(&R_Leg_Middle_PID);
+    PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+    PID_coculate(&R_Leg_dphi0_PID);
+
+    // VMC映射到电机力矩
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) * SIT_GRAVITY_RATIO, L_Leg_dphi0_PID.output);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) * SIT_GRAVITY_RATIO, -R_Leg_dphi0_PID.output);
+
+    // 轮子小力矩锁死
+    L_DJ3508.Target_Torque = SIT_WHEEL_TORQUE;
+    R_DJ3508.Target_Torque = -SIT_WHEEL_TORQUE;
+
+    // 检测退出
+    if (!sit_mode_enable)
+    {
+        start_mode = 0;
+        first_run = 1;
+        sit_first_entry = 1;
+    }
+}
+
 /*****************************************************************************************************
- *                                                                                                   * 
- *                                                                                                   * 
+ *                                                                                                   *
+ *                                                                                                   *
  *                                            控制任务                                                *
- *                                                                                                   * 
- *                                                                                                   * 
+ *                                                                                                   *
+ *                                                                                                   *
  *****************************************************************************************************/
 
 
@@ -1070,6 +1158,10 @@ void Motor_task(void const *argument)
             else if(start_mode == 2 && upstares_mode == 0)//上楼梯模式 + 未上楼收腿
             {
                 Upstair_NotStairRetract();
+            }
+            else if(start_mode == 3)//坐地模式
+            {
+                Sit_On_Ground();
             }
             else if(upstares_mode == 1)//收腿起立
             {
