@@ -462,15 +462,16 @@ void NotStanding_NotStairRetract_for_chassis()
 
 }
 
+float lqr_body_distance_error ;
+float lqr_speed_error;
+float lqr_yaw_error;
+float lqr_d_yaw;
 void LQR_calculate()
 {
-	float lqr_body_distance_error = body_distance_error;
-	float lqr_speed_error = speed_error;
-	float lqr_yaw_error = yaw_error;
-	float lqr_d_yaw = d_yaw;
-
-	// 在进入 LQR 前，对运动相关观测量做功率门控缩放。
-	PowerCtrl_ApplyObserverGate(&lqr_body_distance_error, &lqr_speed_error, &lqr_yaw_error, &lqr_d_yaw);
+	lqr_body_distance_error = body_distance_error;
+	lqr_speed_error = speed_error;
+	lqr_yaw_error = yaw_error;
+	lqr_d_yaw = d_yaw;
 
     //算轮子力矩
     L_DJ3508.Target_Torque = 

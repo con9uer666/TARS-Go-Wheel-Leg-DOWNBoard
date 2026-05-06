@@ -19,19 +19,13 @@ typedef struct
 extern ChassisPower whell_power;
 
 extern uint8_t g_power_ctrl_enable;
-extern uint8_t g_power_obs_gate_enable;
 
 extern float g_power_obs_lambda;
 
 void PowerCtralInit(ChassisPower* whell_power);
 void PowerCtrl(void);
 
-void PowerCtrl_SetEnable(uint8_t enable);
-void PowerCtrl_SetObserverGateEnable(uint8_t enable);
-
-void PowerCtrl_ApplyObserverGate(float *body_distance_error,
-								 float *speed_error,
-								 float *yaw_error,
-								 float *d_yaw);
+// 根据当前 lambda 限制目标速度幅值，在 Speed_Error_Set 里调用
+float PowerCtrl_LimitTargetSpeed(float raw_target_speed, float speed_limit);
 
 #endif

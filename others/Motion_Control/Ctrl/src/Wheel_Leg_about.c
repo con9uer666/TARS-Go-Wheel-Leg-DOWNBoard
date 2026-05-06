@@ -3,6 +3,7 @@
 #include "user_pid.h"
 #include "motor.h"
 #include "remoter.h"
+#include "PowerCtrl.h"
 #include "VMC.h"
 #include "observe_task.h"
 #include "Motor_Drv.h"
@@ -103,7 +104,9 @@ void Speed_Error_Set()
     target_body_speed = speed_limit;
     else if(target_body_speed <= -speed_limit)
     target_body_speed = -speed_limit;
-    
+
+    target_body_speed = PowerCtrl_LimitTargetSpeed(target_body_speed, speed_limit);
+
     float temp = ((0.7f - fabsf(yaw_error))/0.7f);//速度和转速功率分配倍率为0.7
     if(temp < 0.0)
     temp = 0.0;

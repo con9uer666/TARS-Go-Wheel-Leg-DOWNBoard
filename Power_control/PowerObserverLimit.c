@@ -1,5 +1,8 @@
 #include "PowerObserverLimit.h"
 #include <math.h>
+#include <stddef.h>
+
+/* ======================================================================= */
 
 static float clampf(float x, float lo, float hi)
 {
@@ -8,52 +11,13 @@ static float clampf(float x, float lo, float hi)
     return x;
 }
 
-void PowerObsCtrl_DefaultParam(PowerObsCtrlParam *param)
+void PowerObsCtrl_Reset(PowerObsCtrl *ctrl)
 {
-    if (param == NULL) return;
-
-    // ===== 调参区 =====
-    param->buffer_min       = 10.0f;  // 缓冲低于此值时功率上限降到最小（J）
-    param->buffer_max       = 60.0f;  // 缓冲高于此值时功率上限 = 裁判上限（J）
-
-    param->lambda_min       = 0.15f;  // lambda 最低值，防止完全失控
-    param->lambda_rise_rate = 5.0f;   // 功率恢复后 lambda 上升速率（1/s），越大恢复越快
-    param->lambda_fall_rate = 15.0f;  // 功率超限时 lambda 下降速率（1/s），越大收紧越快
-
-    param->lambda_pi_ki     = 0.002f; // I 增益，补偿 lambda 跟踪误差；太大会震荡
-    // ==================
-}
-
-void PowerObsCtrl_Init(PowerObsCtrl *ctrl, const PowerObsCtrlParam *param)
-{
-    PowerObsCtrlParam fallback;
-
     if (ctrl == NULL) return;
-
-    if (param == NULL)
-    {
-        PowerObsCtrl_DefaultParam(&fallback);
-        param = &fallback;
-    }
-
-    ctrl->param        = *param;
-    ctrl->lambda       = 1.0f;
-    ctrl->bias         = 0.0f;
-    ctrl->allowed_power = 0.0f;
+    ctrl->lambda   = 1.0f;
+    ctrl->integral = 0.0f;
 }
 
-/*
- * 计算并更新 lambda。
- *
- * 逻辑：
- *   若 measured_power > power_limit（功率超限）：
- *     feedforward = power_limit / measured_power  （立即给出比例估计）
- *     bias -= Ki * (measured - limit) * dt        （I 项补偿跟踪误差）
- *     lambda_target = clamp(feedforward + bias, lambda_min, 1)
- *   否则（功率在限内）：
- *     bias 清零，lambda_target = 1
- *   最后对 lambda 做斜坡限制，防止突变。
- */
 float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
                                  float power_limit,
                                  float measured_power,
@@ -65,32 +29,29 @@ float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
 
     if (ctrl == NULL) return 1.0f;
 
-    ctrl->allowed_power = power_limit;
-
     if ((measured_power > power_limit) && (measured_power > 1.0f))
     {
-        float feedforward = power_limit / measured_power;
-        float error       = measured_power - power_limit;
+        float error = measured_power - power_limit;
 
-        ctrl->bias -= ctrl->param.lambda_pi_ki * error * dt_s;
-        // bias 只允许为负（进一步压低 lambda），上限为 0
-        ctrl->bias = clampf(ctrl->bias, -(1.0f - ctrl->param.lambda_min), 0.0f);
+        ctrl->integral += error * dt_s;
+        // 积分限幅，防止饱和（最多让 lambda 额外下降 0.5）
+        ctrl->integral = clampf(ctrl->integral, 0.0f, 0.5f / obs_lambda_ki);
 
-        lambda_target = clampf(feedforward + ctrl->bias,
-                               ctrl->param.lambda_min, 1.0f);
+        float correction = obs_lambda_kp * error + obs_lambda_ki * ctrl->integral;
+        lambda_target = clampf(1.0f - correction, obs_lambda_min, 1.0f);
     }
     else
     {
-        ctrl->bias    = 0.0f;
-        lambda_target = 1.0f;
+        ctrl->integral = 0.0f;
+        lambda_target  = 1.0f;
     }
 
     // 斜坡限制：下降用 fall_rate，上升用 rise_rate
     delta    = lambda_target - ctrl->lambda;
-    max_step = (delta < 0.0f) ? ctrl->param.lambda_fall_rate * dt_s
-                              : ctrl->param.lambda_rise_rate * dt_s;
+    max_step = (delta < 0.0f) ? obs_lambda_fall_rate * dt_s
+                              : obs_lambda_rise_rate * dt_s;
     ctrl->lambda = clampf(ctrl->lambda + clampf(delta, -max_step, max_step),
-                          ctrl->param.lambda_min, 1.0f);
+                          obs_lambda_min, 1.0f);
 
     return ctrl->lambda;
 }
