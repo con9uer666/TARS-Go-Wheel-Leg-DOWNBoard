@@ -824,16 +824,6 @@
               <FileType>5</FileType>
               <FilePath>..\Power_control\RLS.h</FilePath>
             </File>
-            <File>
-              <FileName>PowerObserverLimit.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Power_control\PowerObserverLimit.c</FilePath>
-            </File>
-            <File>
-              <FileName>PowerObserverLimit.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\Power_control\PowerObserverLimit.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

@@ -76,7 +76,6 @@
 "h7_ctrl\userfreertos.o"
 "h7_ctrl\powerctrl.o"
 "h7_ctrl\rls.o"
-"h7_ctrl\powerobserverlimit.o"
 "h7_ctrl\angle_about.o"
 "h7_ctrl\trigger_about.o"
 "h7_ctrl\error.o"

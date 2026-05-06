@@ -620,7 +620,10 @@ void Yaw_Error_Coculate()
 //小陀螺加速
 void spinning_up()
 {
-    PID_Set_Error(&spinning_pid, d_yaw, target_spinning_d_yaw);
+    float spinning_setpoint = (g_filtered_power > power_limit)
+                            ? target_spinning_d_yaw * g_power_obs_lambda
+                            : target_spinning_d_yaw;
+    PID_Set_Error(&spinning_pid, d_yaw, spinning_setpoint);
     yaw_error = PID_coculate(&spinning_pid);
     Speed_Error_Set();
 }
