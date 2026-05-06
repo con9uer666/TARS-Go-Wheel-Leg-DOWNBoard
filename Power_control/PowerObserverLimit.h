@@ -33,17 +33,18 @@ void  PowerObsCtrl_Reset(PowerObsCtrl *ctrl);
 float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
                                  float power_limit,
                                  float measured_power,
-                                 float dt_s);
+                                 float dt_s,
+                                 float kp,
+                                 float ki,
+                                 float alpha_fall,
+                                 float alpha_rise,
+                                 float lambda_min);
 
 void  PowerObsCtrl_Apply(const PowerObsCtrl *ctrl,
                          const PowerObsInput *in,
                          PowerObsOutput *out);
 
 extern float obs_lambda_min;
-extern float obs_lambda_kp;
-extern float obs_lambda_ki;
-extern float obs_lambda_rise_rate;
-extern float obs_lambda_fall_rate;
 
 #ifdef __cplusplus
 }

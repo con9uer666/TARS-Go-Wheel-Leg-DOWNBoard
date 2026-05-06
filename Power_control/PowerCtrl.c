@@ -19,27 +19,60 @@ float g_power_obs_lambda = 1.0f; // 当前门控系数，供上位机观测
 
 /* ================================ 调参区 ================================
  *
- * 功率上限随缓冲能量的映射：
- *   缓冲 <= power_buffer_min  →  power_limit = power_limit_min（最保守）
- *   缓冲 >= power_buffer_max  →  power_limit = 裁判上限（全力）
- *   中间线性插值
+ * 按裁判功率档位（45~100W，步长5）配置参数，共12档。
+ * 索引0对应45W，索引11对应100W。
  *
- * lambda 是目标速度的缩放系数（0~1），越小限速越猛。
- * 纯 PI 控制 lambda，目标是让 measured_power 跟随 power_limit。
+ * 不随档位变化的参数：
+ *   power_limit_min  — 功率上限最低值（W）
+ *   obs_lambda_min   — lambda 下限
  *
  * ======================================================================= */
 
-float power_buffer_min = 30.0f;  // 缓冲低阈值（J）
-float power_buffer_max = 60.0f;  // 缓冲高阈值（J）
-float power_limit_min  = 10.0f;  // 功率上限最低值（W）
+#define POWER_LEVEL_COUNT 12
+#define POWER_LEVEL_BASE  45
+#define POWER_LEVEL_STEP  5
 
-float obs_lambda_min       = 0.15f;
-float obs_lambda_kp        = 0.007f;
-float obs_lambda_ki        = 0.001f;
-float obs_lambda_rise_rate = 1.0f;
-float obs_lambda_fall_rate = 1.0f;
+typedef struct
+{
+    float power_buffer_min;   // 缓冲低阈值（J）
+    float power_buffer_max;   // 缓冲高阈值（J）
+    float obs_lambda_kp;
+    float obs_lambda_ki;
+    float obs_lambda_alpha_fall;
+    float obs_lambda_alpha_rise;
+} PowerLevelParam;
+
+// 索引 0=45W, 1=50W, ..., 11=100W
+static PowerLevelParam g_power_level_params[POWER_LEVEL_COUNT] = {
+    /* 45W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 50W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 55W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 60W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 65W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 70W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 75W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 80W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 85W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 90W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 95W  */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+    /* 100W */ { 30.0f, 60.0f, 0.007f, 0.001f, 0.01f, 0.01f },
+};
+
+float power_limit_min = 10.0f;  // 功率上限最低值（W），不随档位变化
+float obs_lambda_min  = 0.15f;  // lambda 下限，不随档位变化
+
+// 当前档位参数指针，由 PowerCtrl_SelectLevelParam() 更新
+static const PowerLevelParam *g_cur_param = &g_power_level_params[0];
 
 /* ======================================================================= */
+
+static void PowerCtrl_SelectLevelParam(float base_limit)
+{
+    int idx = (int)((base_limit - POWER_LEVEL_BASE) / POWER_LEVEL_STEP + 0.5f);
+    if (idx < 0) idx = 0;
+    if (idx >= POWER_LEVEL_COUNT) idx = POWER_LEVEL_COUNT - 1;
+    g_cur_param = &g_power_level_params[idx];
+}
 
 static const float POWER_CTRL_DT_S          = 0.002f;
 static const float POWER_MEASURE_VALID_MIN_W = 1.0f;
@@ -94,7 +127,7 @@ static float PowerCtrl_GetMeasuredPower(void)
 
 static float PowerCtrl_ComputePowerLimit(float buffer, float base_limit)
 {
-	float ratio = (buffer - power_buffer_min) / (power_buffer_max - power_buffer_min);
+	float ratio = (buffer - g_cur_param->power_buffer_min) / (g_cur_param->power_buffer_max - g_cur_param->power_buffer_min);
 	ratio = PowerCtrl_Clampf(ratio, 0.0f, 1.0f);
 	return power_limit_min + ratio * (base_limit - power_limit_min);
 }
@@ -119,8 +152,6 @@ void PowerCtrl(void)
 {
 	float measured_power;
 	float lambda_target;
-	float delta;
-	float max_step;
 
 	if (g_power_ctrl_enable == 0)
 	{
@@ -146,10 +177,13 @@ void PowerCtrl(void)
 	}
 	else
 	{
-		base_power_limit = 60;
+		base_power_limit = 45;
 	}
 
 	power_buffer = (float)JUDGE_GetPowerBuffer();
+
+	// 步骤2.5：根据档位选参数
+	PowerCtrl_SelectLevelParam(base_power_limit);
 
 	// 步骤3：计算功率上限
 	power_limit = PowerCtrl_ComputePowerLimit(power_buffer, base_power_limit);
@@ -161,8 +195,8 @@ void PowerCtrl(void)
 	{
 		float error = g_last_measured_power - power_limit;
 		g_lambda_integral += error * POWER_CTRL_DT_S;
-		g_lambda_integral = PowerCtrl_Clampf(g_lambda_integral, 0.0f, 0.5f / obs_lambda_ki);
-		float correction = obs_lambda_kp * error + obs_lambda_ki * g_lambda_integral;
+		g_lambda_integral = PowerCtrl_Clampf(g_lambda_integral, 0.0f, 0.5f / g_cur_param->obs_lambda_ki);
+		float correction = g_cur_param->obs_lambda_kp * error + g_cur_param->obs_lambda_ki * g_lambda_integral;
 		lambda_target = PowerCtrl_Clampf(1.0f - correction, obs_lambda_min, 1.0f);
 	}
 	else
@@ -171,11 +205,9 @@ void PowerCtrl(void)
 		lambda_target     = 1.0f;
 	}
 
-	// 斜坡限制
-	delta    = lambda_target - g_power_obs_lambda;
-	max_step = (delta < 0.0f) ? obs_lambda_fall_rate * POWER_CTRL_DT_S
-	                          : obs_lambda_rise_rate * POWER_CTRL_DT_S;
+	// 低通滤波
+	float alpha = (lambda_target < g_power_obs_lambda) ? g_cur_param->obs_lambda_alpha_fall : g_cur_param->obs_lambda_alpha_rise;
 	g_power_obs_lambda = PowerCtrl_Clampf(
-		g_power_obs_lambda + PowerCtrl_Clampf(delta, -max_step, max_step),
+		alpha * lambda_target + (1.0f - alpha) * g_power_obs_lambda,
 		obs_lambda_min, 1.0f);
 }

@@ -21,11 +21,14 @@ void PowerObsCtrl_Reset(PowerObsCtrl *ctrl)
 float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
                                  float power_limit,
                                  float measured_power,
-                                 float dt_s)
+                                 float dt_s,
+                                 float kp,
+                                 float ki,
+                                 float alpha_fall,
+                                 float alpha_rise,
+                                 float lambda_min)
 {
     float lambda_target;
-    float delta;
-    float max_step;
 
     if (ctrl == NULL) return 1.0f;
 
@@ -34,11 +37,10 @@ float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
         float error = measured_power - power_limit;
 
         ctrl->integral += error * dt_s;
-        // 积分限幅，防止饱和（最多让 lambda 额外下降 0.5）
-        ctrl->integral = clampf(ctrl->integral, 0.0f, 0.5f / obs_lambda_ki);
+        ctrl->integral = clampf(ctrl->integral, 0.0f, 0.5f / ki);
 
-        float correction = obs_lambda_kp * error + obs_lambda_ki * ctrl->integral;
-        lambda_target = clampf(1.0f - correction, obs_lambda_min, 1.0f);
+        float correction = kp * error + ki * ctrl->integral;
+        lambda_target = clampf(1.0f - correction, lambda_min, 1.0f);
     }
     else
     {
@@ -46,12 +48,10 @@ float PowerObsCtrl_ComputeLambda(PowerObsCtrl *ctrl,
         lambda_target  = 1.0f;
     }
 
-    // 斜坡限制：下降用 fall_rate，上升用 rise_rate
-    delta    = lambda_target - ctrl->lambda;
-    max_step = (delta < 0.0f) ? obs_lambda_fall_rate * dt_s
-                              : obs_lambda_rise_rate * dt_s;
-    ctrl->lambda = clampf(ctrl->lambda + clampf(delta, -max_step, max_step),
-                          obs_lambda_min, 1.0f);
+    // 低通滤波
+    float alpha = (lambda_target < ctrl->lambda) ? alpha_fall : alpha_rise;
+    ctrl->lambda = clampf(alpha * lambda_target + (1.0f - alpha) * ctrl->lambda,
+                          lambda_min, 1.0f);
 
     return ctrl->lambda;
 }
