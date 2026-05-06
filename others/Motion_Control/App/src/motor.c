@@ -37,7 +37,7 @@ float powerPredict;
    
 float L_b_phi0, R_b_phi0;  
    
-float PITCH_OFFSET=-0.08;  
+float PITCH_OFFSET=-0.05;  
    
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值  单位为弧度   
 float pitch_trans[2];                                                                                               
@@ -57,7 +57,7 @@ float alpha_target_body_speed = 1.0;
 float alpha_body_speed = 1.0;//单侧算车体速度 滤波系数  
 float body_distance;
 
-float target_body_distance = 2.0f;
+float target_body_distance = 1.0f;
 float body_distance_error;
 
 float target_yaw, yaw_error;
@@ -312,13 +312,13 @@ void task_PID_Init()
     PID_INIT(&Leg_Phi0_PID, 300, 1.5, 5, 150, 150, 0, 50000, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
-    PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0, 0);
-    PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0, 0);
+    PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 4.0, 4.0, 0, 0, 0);
+    PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 4.0, 4.0, 0, 0, 0);
     PID_INIT(&L_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 0, 2000, 0);
     PID_INIT(&R_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 0, 2000, 0);
 
-    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 0, 200, 0);
-    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 1.0, 1.0, 0, 200, 0);
+    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 2.0, 2.0, 0, 200, 0);
+    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 2.0, 2.0, 0, 200, 0);
     PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
     PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
 
@@ -453,6 +453,8 @@ void NotStanding_NotStairRetract_for_chassis()
         //归零
         R_Leg_State = 0;
         L_Leg_State = 0;
+        body_distance = 0;
+        target_body_distance = -1.5;
     }
 
     //映射到电机力矩
@@ -711,6 +713,18 @@ void Standing()
 
     //计算距离误差
     Distance_Error_Set();
+    if (spinning_flag == 1) { body_distance_error = 0; body_distance = 0; target_body_distance = 0; }
+
+    // spin车身速度积分，补偿稳态漂移
+    static float spin_speed_I = 0;
+    if (spinning_flag == 1) {
+        spin_speed_I += kalman_body_speed * 0.01f;
+        if (spin_speed_I >  0.5f) spin_speed_I =  0.5f;
+        if (spin_speed_I < -0.5f) spin_speed_I = -0.5f;
+        speed_error -= spin_speed_I;
+    } else {
+        spin_speed_I = 0;
+    }
 
     //横滚补偿和PD单环腿长控制
     Roll_Comp();
@@ -793,7 +807,7 @@ void Upstair_NotStairRetract()
     {
         L_Ready_Count ++;
     }
-    if(L_Leg_State == 0 && L_Ready_Count >= 250)
+    if(L_Leg_State == 0 && L_Ready_Count >= 120)
     {
         L_Leg_State = 2;
         L_Ready_Count = 0;
@@ -802,7 +816,7 @@ void Upstair_NotStairRetract()
     {
         R_Ready_Count ++;
     }
-    if(R_Leg_State == 0 && R_Ready_Count >= 250)
+    if(R_Leg_State == 0 && R_Ready_Count >= 120)
     {
         R_Leg_State = 2;
         R_Ready_Count = 0;
@@ -1040,10 +1054,10 @@ void Gravity_Compensation_Test_Function(void)
 
 /*====================================== 坐地模式 =========================================== */
 
-#define SIT_TARGET_L0_L      0.163f
-#define SIT_TARGET_L0_R      0.169f
-#define SIT_TARGET_PHI0_L    0.938f
-#define SIT_TARGET_PHI0_R    2.21f
+#define SIT_TARGET_L0_L      0.172f
+#define SIT_TARGET_L0_R      0.173f
+#define SIT_TARGET_PHI0_L    0.749f
+#define SIT_TARGET_PHI0_R    2.319f
 #define SIT_RAMP_TIME        0.8f
 #define SIT_WHEEL_TORQUE     0.0f
 #define SIT_GRAVITY_RATIO    0.3f
