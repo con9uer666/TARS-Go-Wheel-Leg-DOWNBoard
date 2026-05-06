@@ -194,6 +194,7 @@ float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
 float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+float centrifugal_comp_gain = 0.5f;  // spin离心补偿系数
 
 //?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
@@ -308,7 +309,7 @@ void task_PID_Init()
 {
     PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0, 0);
     PID_INIT(&R_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0, 0);
-    PID_INIT(&Leg_Phi0_PID, 300, 0.1, 5, 150, 150, 0, 50000, 0);
+    PID_INIT(&Leg_Phi0_PID, 300, 1.5, 5, 150, 150, 0, 50000, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
     PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 2.0, 2.0, 0, 0, 0);
@@ -322,7 +323,7 @@ void task_PID_Init()
     PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
 
     //小陀螺pid
-    PID_INIT(&spinning_pid, 0.0f, 0.0025f, 0, 3.0f, 6.0f, 0.008, 20.0f, 0);
+    PID_INIT(&spinning_pid, 0, 0.003f, 0, 6.0f, 6.0f, 0.008f, 20.0f, 0);
 
     //云台pid
     PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 0, 10000, 0);
@@ -730,8 +731,9 @@ void Standing()
     LQR_calculate();
 
     //常态下VMC解算，加入PID前馈
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
+    float centrifugal_comp = centrifugal_comp_gain * d_yaw * d_yaw;
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output - centrifugal_comp);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output - centrifugal_comp);
 
     off_ground_detect();
 
@@ -1039,7 +1041,7 @@ void Gravity_Compensation_Test_Function(void)
 #define SIT_TARGET_L0_R      0.169f
 #define SIT_TARGET_PHI0_L    0.938f
 #define SIT_TARGET_PHI0_R    2.21f
-#define SIT_RAMP_TIME        1.5f
+#define SIT_RAMP_TIME        0.8f
 #define SIT_WHEEL_TORQUE     0.0f
 #define SIT_GRAVITY_RATIO    0.3f
 
