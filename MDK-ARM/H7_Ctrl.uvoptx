@@ -605,7 +605,7 @@
         <Ww>
           <count>17</count>
           <WinNumber>2</WinNumber>
-          <ItemText>pitch</ItemText>
+          <ItemText>g_power_obs_lambda</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

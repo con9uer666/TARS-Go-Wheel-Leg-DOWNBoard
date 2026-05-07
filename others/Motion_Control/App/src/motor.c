@@ -722,6 +722,9 @@ void Standing()
         if (spin_speed_I >  0.5f) spin_speed_I =  0.5f;
         if (spin_speed_I < -0.5f) spin_speed_I = -0.5f;
         speed_error -= spin_speed_I;
+        //轮速共模P控制，快锁两轮转速相等
+        float wheel_common = (R_DJ3508.Rx_Data.Velocity - L_DJ3508.Rx_Data.Velocity) * 0.0305f;
+        speed_error -= wheel_common * 0.5f;
     } else {
         spin_speed_I = 0;
     }
@@ -788,12 +791,12 @@ void Upstair_NotStairRetract()
     PID_coculate(&R_Leg_L0_SPD_PID);
 
     //磕台阶过程中双环腿角度控制
-    PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.5f);
+    PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.5f);
     PID_coculate(&L_Leg_Middle_PID);
     PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
     PID_coculate(&L_Leg_dphi0_PID);
-    
-    PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.5f);
+
+    PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.5f);
     PID_coculate(&R_Leg_Middle_PID);
     PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
@@ -835,7 +838,6 @@ void StairRetract()
     Body_Speed_Coculate();
 
     //收腿起立的腿长双环控制
-    //!这他妈是史啊，写这段何意味
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16f);
     PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16f);
     PID_coculate(&L_Leg_L0_POS_PID);
@@ -846,37 +848,16 @@ void StairRetract()
     PID_coculate(&L_Leg_L0_SPD_PID);
     PID_coculate(&R_Leg_L0_SPD_PID);
 
-    
-    if(L_Leg_State >= 1)//腿长缩短完成，腿后伸完成
-    {
-        //收腿到准备起立态的角度双环
-        PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2f);//这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
-        PID_coculate(&L_Leg_Middle_PID);
-        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
-        PID_coculate(&L_Leg_dphi0_PID);
-    }
-    else 
-    {
-        //伸腿到腿向后伸长态的角度双环
-        PID_Set_Error(&L_Leg_Middle_PID, VMC_L.phi0, PI/2+1.5f);//这个PI/2+1.2是为了让腿在收腿过程中先向后伸长，再收回来的时候更平滑
-        PID_coculate(&L_Leg_Middle_PID);
-        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
-        PID_coculate(&L_Leg_dphi0_PID);
-    }
-    if(R_Leg_State >= 1)
-    {
-        PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2f);
-        PID_coculate(&R_Leg_Middle_PID);
-        PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
-        PID_coculate(&R_Leg_dphi0_PID);
-    }
-    else
-    {
-        PID_Set_Error(&R_Leg_Middle_PID, VMC_R.phi0, PI/2-1.5f);
-        PID_coculate(&R_Leg_Middle_PID);
-        PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
-        PID_coculate(&R_Leg_dphi0_PID);
-    }
+    //收腿同时摆角到准备起立态（合并原两段为一段）
+    PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2f);
+    PID_coculate(&L_Leg_Middle_PID);
+    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+    PID_coculate(&L_Leg_dphi0_PID);
+
+    PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2f);
+    PID_coculate(&R_Leg_Middle_PID);
+    PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+    PID_coculate(&R_Leg_dphi0_PID);
 
     //收腿起立VMC，轮力矩解算
     VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
@@ -885,42 +866,22 @@ void StairRetract()
     L_DJ3508.Target_Torque = 0.5f;
     R_DJ3508.Target_Torque = 0.5f;
 
-    //腿收短，后伸检测
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.01)//腿长和腿角度都到位了
+    //判断腿长和腿角度是否都到位
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
     {
         L_Ready_Count ++;
     }
-    if(L_Leg_State == 0 && L_Ready_Count >= 100)//
-    {
-        L_Leg_State = 1;//腿长缩短完成，腿后伸完成，准备收腿
-        L_Ready_Count = 0;
-    }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.01)
-    {
-        R_Ready_Count ++;
-    }
-    if(R_Leg_State == 0 && R_Ready_Count >= 100)
-    {
-        R_Leg_State = 1;
-        R_Ready_Count = 0;
-    }
-
-    //腿长缩短完成，腿后伸完成之后，判断腿角度是否到达准备起立的目标角度，达到后轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E8%85%BF%E9%95%BF%E7%BC%A9%E7%9F%AD%E5%AE%8C%E6%88%90%EF%BC%8C%E8%85%BF%E5%90%8E%E4%BC%B8%E5%AE%8C%E6%88%90%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%88%A4%E6%96%AD%E8%85%BF%E8%A7%92%E5%BA%A6%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E5%87%86%E5%A4%87%E8%B5%B7%E7%AB%8B%E7%9A%84%E7%9B%AE%E6%A0%87%E8%A7%92%E5%BA%A6%EF%BC%8C%E8%BE%BE%E5%88%B0%E5%90%8E%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
-    if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-    {
-        L_Ready_Count ++;
-    }
-    if(L_Leg_State == 1 && L_Ready_Count >= 50)
+    if(L_Leg_State == 0 && L_Ready_Count >= 80)
     {
         L_Leg_State = 2;
         L_Ready_Count = 0;
         L_DJ3508.Target_Torque = 0;
     }
-    if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
     {
         R_Ready_Count ++;
     }
-    if(R_Leg_State == 1 &&R_Ready_Count >= 50)
+    if(R_Leg_State == 0 && R_Ready_Count >= 80)
     {
         R_Leg_State = 2;
         R_Ready_Count = 0;
