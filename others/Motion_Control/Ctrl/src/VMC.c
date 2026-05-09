@@ -7,12 +7,14 @@
 #include "imu_temp_ctrl.h"
 #include <math.h>
 #include "Motor_Drv.h"
+#include "Gas_Spring.h"
 // #include <stdint.h>
 
 VMC_t VMC_L, VMC_R;
 
 float alpha_d_phi0 = 1.0;
 float alpha_phi0 = 1.0;//滤波系数
+float alpha_F = 0.5f;
 extern float pitch_trans[2];
 
 void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5, uint8_t isLeft)
@@ -69,7 +71,8 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
     VMC->L0 = L0;
     arm_atan2_f32(VMC->Yc, (VMC->Xc - (VMC->l5 / 2)), &VMC->phi0);
 
-    VMC->d_phi0 = (VMC->phi0 - VMC->last_phi0) / 0.002f;
+    VMC->last_d_phi0 = VMC->d_phi0;
+    VMC->d_phi0 = alpha_d_phi0 * ((VMC->phi0 - VMC->last_phi0) / 0.002f) + (1 - alpha_d_phi0) * VMC->d_phi0;
     VMC->d_b_phi0 = (VMC->b_phi0 - VMC->last_b_phi0) / 0.002f;
 
     VMC->d_L0 = (VMC->L0 - VMC->last_L0)/0.002f;
@@ -98,6 +101,9 @@ void VMC_Set_F0_T(VMC_t *VMC, float F, float T)
 {
     float matrix[4];
     VMC->F = F;
+    VMC->F -= Gas_Spring_GetForce(VMC->L0);
+    VMC->F = alpha_F * VMC->F + (1 - alpha_F) * VMC->last_F;
+    VMC->last_F = VMC->F;
     VMC->T = T;
     matrix[0] = (VMC->l1 * arm_sin_f32(VMC->phi0 - VMC->phi3) * arm_sin_f32(VMC->phi1 - VMC->phi2))/arm_sin_f32(VMC->phi3 - VMC->phi2);
     matrix[1] = (VMC->l1 * arm_cos_f32(VMC->phi0 - VMC->phi3) * arm_sin_f32(VMC->phi1 - VMC->phi2))/(VMC->L0 * arm_sin_f32(VMC->phi3 - VMC->phi2));
@@ -116,7 +122,7 @@ float VMC_Get_Ground_F0(VMC_t *VMC)
     float F0;
     float P, m_w, dd_zw;
 
-    P = VMC->F * arm_cos_f32(VMC->b_phi0) + ((VMC->T * arm_sin_f32(VMC->b_phi0)) / VMC->L0);
+    P = (VMC->F + Gas_Spring_GetForce(VMC->L0)) * arm_cos_f32(VMC->b_phi0) + ((VMC->T * arm_sin_f32(VMC->b_phi0)) / VMC->L0);
     dd_zw = accel_b[2] - VMC->dd_L0 * arm_cos_f32(VMC->b_phi0) + (2 * VMC->d_L0 * VMC->d_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->dd_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->d_b_phi0 * VMC->d_b_phi0 *arm_cos_f32(VMC->b_phi0));
 
     F0 = P + 1.1 * dd_zw;

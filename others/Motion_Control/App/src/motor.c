@@ -26,6 +26,7 @@
 #include "Angle_about.h"
 #include "User_State.h"
 #include "PowerCtrl.h"
+#include "Gas_Spring.h"
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -295,6 +296,8 @@ void task_Motor_Init()
 
     // 功率控制模块初始化（仅初始化参数，不改变现有控制流）。
     // PowerCtralInit(&whell_power);
+
+    gas_spring_enable = 1;
 }
 
 //VMC赋值与初始化结构体
@@ -307,20 +310,20 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 1000, 0, 15000, 150, 0, 0, 0, 0);
+    PID_INIT(&L_Leg_L0_PID, 1500, 0, 15000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 1500, 0, 15000, 200, 0, 0, 0, 0);
     PID_INIT(&Leg_Phi0_PID, 300, 1.5, 5, 150, 150, 0, 50000, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
-    PID_INIT(&L_Leg_Middle_PID, 20, 0.01, 0.1, 4.0, 4.0, 0, 0, 0);
-    PID_INIT(&R_Leg_Middle_PID, 20, 0.01, 0.1, 4.0, 4.0, 0, 0, 0);
-    PID_INIT(&L_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 0, 2000, 0);
-    PID_INIT(&R_Leg_dphi0_PID, 5, 0.05, 1, 50, 50, 0, 2000, 0);
+    PID_INIT(&L_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
+    PID_INIT(&R_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
+    PID_INIT(&L_Leg_dphi0_PID, 3, 0.1, 1, 150, 150, 0, 2000, 0);
+    PID_INIT(&R_Leg_dphi0_PID, 3, 0.1, 1, 150,150, 0, 2000, 0);
 
-    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 2.0, 2.0, 0, 200, 0);
-    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 2.0, 2.0, 0, 200, 0);
-    PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
-    PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.000, 50, 100, 100, 0, 2000, 0);
+    PID_INIT(&L_Leg_L0_POS_PID, 60, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
+    PID_INIT(&R_Leg_L0_POS_PID, 60, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
+    PID_INIT(&L_Leg_L0_SPD_PID, 200, 0.03, 50, 80, 80, 0, 2000, 0);
+    PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.03, 50, 80, 80, 0, 2000, 0);
 
     //小陀螺pid
     PID_INIT(&spinning_pid, 0, 0.003f, 0, 6.0f, 6.0f, 0.008f, 20.0f, 0);
@@ -381,8 +384,8 @@ void NotStanding_NotStairRetract_for_chassis()
     first_run = 0;//第一次运行完成
 
     //收腿过程腿长控制
-    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.19f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
-    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.19f);
+    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.12f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
+    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.12f);
     PID_coculate(&L_Leg_L0_POS_PID);
     PID_coculate(&R_Leg_L0_POS_PID);
 
@@ -394,21 +397,21 @@ void NotStanding_NotStairRetract_for_chassis()
     //腿角度控制
     if(L_Leg_State >= 1)
     {
-        PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
+        PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.1); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
         PID_coculate(&L_Leg_Middle_PID);
-        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
         PID_coculate(&L_Leg_dphi0_PID);
     }
     if(R_Leg_State >= 1)
     {
-        PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2);
+        PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.1);
         PID_coculate(&R_Leg_Middle_PID);
-        PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+        PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
         PID_coculate(&R_Leg_dphi0_PID);
     }
 
     //腿长判断是否到达目标长度
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.06)
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.005)
     {
         L_Ready_Count ++;
     }
@@ -417,7 +420,7 @@ void NotStanding_NotStairRetract_for_chassis()
         L_Leg_State = 1;    //收腿完成
         L_Ready_Count = 0;  //归零
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.06)
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.005)
     {
         R_Ready_Count ++;
     }
@@ -793,12 +796,12 @@ void Upstair_NotStairRetract()
     //磕台阶过程中双环腿角度控制
     PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2 + 1.5f);
     PID_coculate(&L_Leg_Middle_PID);
-    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
     PID_coculate(&L_Leg_dphi0_PID);
 
     PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2 - 1.5f);
     PID_coculate(&R_Leg_Middle_PID);
-    PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+    PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
 
     //上台阶过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
@@ -851,12 +854,12 @@ void StairRetract()
     //收腿同时摆角到准备起立态（合并原两段为一段）
     PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2f);
     PID_coculate(&L_Leg_Middle_PID);
-    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
     PID_coculate(&L_Leg_dphi0_PID);
 
     PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2f);
     PID_coculate(&R_Leg_Middle_PID);
-    PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+    PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
 
     //收腿起立VMC，轮力矩解算
@@ -1070,13 +1073,13 @@ void Sit_On_Ground(void)
     // 左腿角度双环PID
     PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, sit_phi0_ramp_L.currentValue);
     PID_coculate(&L_Leg_Middle_PID);
-    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_b_phi0, L_Leg_Middle_PID.output);
+    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
     PID_coculate(&L_Leg_dphi0_PID);
 
     // 右腿角度双环PID
     PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, sit_phi0_ramp_R.currentValue);
     PID_coculate(&R_Leg_Middle_PID);
-    PID_Set_Error(&R_Leg_dphi0_PID, VMC_R.d_b_phi0, -R_Leg_Middle_PID.output);
+    PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
     PID_coculate(&R_Leg_dphi0_PID);
 
     // VMC映射到电机力矩

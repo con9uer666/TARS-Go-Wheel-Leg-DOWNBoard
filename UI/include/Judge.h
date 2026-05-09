@@ -113,7 +113,7 @@ typedef enum
 
 
 ////锟斤拷锟斤拷锟剿斤拷锟斤拷锟斤拷息
-//typedef __packed struct
+//typedef struct __attribute__((packed))
 //{
 //	xFrameHeader   							txFrameHeader;//帧头
 //	uint16_t								CmdID;//锟斤拷锟斤拷锟斤拷
@@ -124,7 +124,7 @@ typedef enum
 
 
 /* 锟皆讹拷锟斤拷帧头 */
-typedef __packed struct //锟斤拷锟斤拷系统帧头
+typedef struct __attribute__((packed)) //锟斤拷锟斤拷系统帧头
 {
 	uint8_t  SOF;
 	uint16_t DataLength;
@@ -132,7 +132,7 @@ typedef __packed struct //锟斤拷锟斤拷系统帧头
 	uint8_t  CRC8;
 } xFrameHeader;
 
-typedef __packed struct{
+typedef struct __attribute__((packed)){
 	uint16_t data_cmd_id;    
 	uint16_t send_ID;    
 	uint16_t receiver_ID;	
@@ -142,7 +142,7 @@ typedef __packed struct{
 
 
 /* ID: 0x0001  Byte:  11    锟斤拷锟斤拷状态锟斤拷锟斤拷 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint8_t game_type : 4;
 	uint8_t game_progress : 4;
@@ -151,13 +151,13 @@ typedef __packed struct
 } ext_game_status_t;
 
 /* ID: 0x0002  Byte:  1    锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟� */
-typedef __packed struct 
+typedef struct __attribute__((packed)) 
 { 
 	uint8_t winner;
 } ext_game_result_t; 
 
 /* ID: 0x0003  Byte:  32    锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷血锟斤拷锟斤拷锟斤拷 */   //2026.3.14 锟侥讹拷
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint16_t ally_1_robot_HP;
 	uint16_t ally_2_robot_HP;
@@ -170,7 +170,7 @@ typedef __packed struct
 } ext_game_robot_HP_t;
  
 /* ID: 0x0101  Byte:  4    锟斤拷锟斤拷锟铰硷拷锟斤拷锟斤拷 */
-typedef __packed struct 					//2026.3.14锟睫革拷
+typedef struct __attribute__((packed)) 					//2026.3.14锟睫革拷
 { 	
 	uint32_t event_data;
 	
@@ -215,7 +215,7 @@ typedef __packed struct 					//2026.3.14锟睫革拷
 
 
 /* ID: 0x104    Byte: 3    锟斤拷锟叫撅拷锟斤拷锟斤拷息 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
   uint8_t level; 
   uint8_t offending_robot_id; 
@@ -223,14 +223,14 @@ typedef __packed struct
 } ext_referee_warning_t;
 
 /* ID: 0x105    Byte: 3    锟斤拷锟节凤拷锟斤拷诘锟斤拷锟绞� */  
-typedef __packed struct 
+typedef struct __attribute__((packed)) 
 { 
   uint8_t dart_remaining_time; 
   uint16_t dart_info; 
 }ext_dart_info_t; 
 
 /* ID: 0X0201  Byte: 13    锟斤拷锟斤拷锟斤拷状态锟斤拷锟斤拷 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint8_t robot_id; 
   uint8_t robot_level; 
@@ -246,7 +246,7 @@ typedef __packed struct
 
 
 /* ID: 0X0202  Byte: 16    实时锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint16_t reserved_1;
 	uint16_t reserved_2;
@@ -258,7 +258,7 @@ typedef __packed struct
 
 
 /* ID: 0x0203  Byte: 12    锟斤拷锟斤拷锟斤拷位锟斤拷锟斤拷锟斤拷 */
-typedef __packed struct 
+typedef struct __attribute__((packed)) 
 { 
   float x; 
   float y; 
@@ -267,7 +267,7 @@ typedef __packed struct
 
 
 /* ID: 0x0204  Byte:  8    锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷 */
-typedef __packed struct 
+typedef struct __attribute__((packed)) 
 { 
   uint8_t recovery_buff;  
   uint16_t cooling_buff;  
@@ -279,7 +279,7 @@ typedef __packed struct
 
 
 /* ID: 0x0206  Byte:  2    锟剿猴拷状态锟斤拷锟斤拷 */
-typedef __packed struct 
+typedef struct __attribute__((packed)) 
 { 
 	uint8_t armor_id : 4; 
 	uint8_t hurt_type : 4; 
@@ -287,7 +287,7 @@ typedef __packed struct
 
 
 /* ID: 0x0207  Byte:  7    实时锟斤拷锟斤拷锟斤拷锟� */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint8_t bullet_type;  
   uint8_t shooter_number; 
@@ -296,7 +296,7 @@ typedef __packed struct
 } ext_shoot_data_t;
 
 /* ID: 0x0208  Byte:  8   锟接碉拷剩锟洁发锟斤拷锟斤拷 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint16_t projectile_allowance_17mm; 
   uint16_t projectile_allowance_42mm;  
@@ -305,14 +305,14 @@ typedef __packed struct
 } ext_bullet_remaining_t;
 
 /* ID: 0x0209  Byte:  5    锟斤拷锟斤拷锟斤拷RFID状态 */ //2026.3.14锟睫革拷
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint32_t rfid_status;
 	uint8_t rfid_status_2;
 } ext_rfid_status_t;
 
 /* ID: 0x020A  Byte:  6    锟斤拷锟节伙拷锟斤拷锟剿客伙拷锟斤拷指锟斤拷锟斤拷锟斤拷 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint8_t dart_launch_opening_status;  
   uint8_t reserved;  
@@ -321,7 +321,7 @@ typedef __packed struct
 } ext_dart_client_cmd_t;	
 
 /* ID: 0x020D  Byte:  6    锟节憋拷锟斤拷锟斤拷锟剿碉拷前状态锟斤拷锟斤拷 */
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	uint32_t sentry_info;
 	uint16_t sentry_info_2;
@@ -358,7 +358,7 @@ typedef __packed struct
 	0x0116锟斤拷锟斤拷锟叫诧拷锟斤拷锟街客伙拷锟斤拷(锟斤拷)锟斤拷 
 */
 /* 锟斤拷锟斤拷锟斤拷锟捷斤拷锟斤拷锟斤拷息锟斤拷0x0301  */
-typedef __packed struct 	//2026.3.14锟睫革拷
+typedef struct __attribute__((packed)) 	//2026.3.14锟睫革拷
 { 
 	uint16_t data_cmd_id;    
 	uint16_t send_ID;    
@@ -381,7 +381,7 @@ typedef __packed struct 	//2026.3.14锟睫革拷
 	6 			n 		锟斤拷锟捷讹拷 			n 锟斤拷要小锟斤拷 113 
 
 */
-typedef __packed struct 
+typedef struct __attribute__((packed)) 
 { 
 	uint8_t data[106]; //锟斤拷锟捷讹拷,n锟斤拷要小锟斤拷113
 } robot_interactive_data_t;
@@ -389,7 +389,7 @@ typedef __packed struct
 
 
 //锟斤拷锟斤拷锟剿斤拷锟斤拷锟斤拷息
-typedef __packed struct
+typedef struct __attribute__((packed))
 {
 	xFrameHeader   							txFrameHeader;//帧头
 	uint16_t								CmdID;//锟斤拷锟斤拷锟斤拷
@@ -407,7 +407,7 @@ typedef struct
 	uint16_t frameLength;
 }JudgeTxFrame;
 
-typedef __packed struct{
+typedef struct __attribute__((packed)){
 	uint8_t game_progress; // 锟斤拷前锟斤拷锟斤拷状态 0:未锟斤拷始锟斤拷锟斤拷 1:准锟斤拷锟阶讹拷 2:锟皆硷拷锥锟� 3:锟斤拷锟诫倒锟斤拷时 4:锟斤拷锟斤拷锟斤拷 5:锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
 	uint16_t remain_time;  // 锟斤拷锟斤拷剩锟斤拷时锟斤拷 锟斤拷位:s
 	uint16_t current_hp;   // 锟斤拷前血锟斤拷

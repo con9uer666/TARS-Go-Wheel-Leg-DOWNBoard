@@ -184,9 +184,9 @@ void JLUI_DeleteAll(void);
 //     私有数据结构
 // ================================================================================================
 
-#ifdef __GNUC__
+#if defined(__GNUC__) || (defined(__ARMCC_VERSION) && __ARMCC_VERSION >= 6000000)
 #define HEAD_PACK
-#define TAIL_PACK __attribute((packed))
+#define TAIL_PACK __attribute__((packed))
 #elif defined(__ARMCC_VERSION)
 #define HEAD_PACK __packed
 #define TAIL_PACK

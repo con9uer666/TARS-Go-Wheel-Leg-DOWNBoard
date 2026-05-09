@@ -25,6 +25,7 @@ typedef struct VMC
     float last_b_phi0, last_d_b_phi0;
 
     float F;//足端力
+    float last_F;
     float T; // 虚拟杆扭矩
 
     uint8_t isLeft;//是否为左腿
