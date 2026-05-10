@@ -1,4 +1,3 @@
-
 #include "motor.h"
 #include "user_pid.h"
 #include "Motor_Drv.h"
@@ -27,14 +26,13 @@
 #include "User_State.h"
 #include "PowerCtrl.h"
 #include "Gas_Spring.h"
+#include "buzzer.h"
 
 /*====================================== 附属函数变量 =========================================== */
-
 
 Foot_Chassis_t Foot_Chassis;//轮足底盘结构体 
    
 float powerPredict;
-   
    
 float L_b_phi0, R_b_phi0;  
    
@@ -131,7 +129,6 @@ float K_Fit_Coefficients[40][6] = {
      1.993,  2.1276,  -39.57,  -6.6039,  20.593,  32.449,
 };
 
-//
 // PID控制器定义
 user_pid_t L_Leg_L0_PID;     //常态
 user_pid_t R_Leg_L0_PID;     //
@@ -150,8 +147,6 @@ user_pid_t Leg_Phi0_PID;     //防劈叉pid
 
 user_pid_t gimbal_pitch_pid;//云台俯仰pid
 
-
-
 float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
 
 float target_L_Leg_L0 = LEG_MIN_LENTH;
@@ -164,7 +159,6 @@ user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
 user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
 
 uint8_t first_run = 1;//是否是第一次运行，第一次运行需要特殊处理一些变量的初始值
-
 
 uint8_t upstares_mode = 0;//0为未开始上楼收腿，1为开始上楼收腿
 int ready_count = 0;
@@ -650,36 +644,34 @@ void LQR_calculate()
 
 void off_ground_detect()
 {
-    L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
-    R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
+    L_Ground_F0 = 0.05 * VMC_Get_Ground_F0(&VMC_L) + 0.95 * L_Ground_F0;
+    R_Ground_F0 = 0.05 * VMC_Get_Ground_F0(&VMC_R) + 0.95 * R_Ground_F0;
 
-    //离地检测滤波
-    if(L_Ground_F0 <= 20.0f)
-    L_off_ground ++;
+    // 用左右合力判定整车离地：离地时 Roll_Comp 积分漂移会让 L/R 一正一负互相抵消，
+    // 但合力仍趋近 0（正常站立 ≈ 2·mg = 80N）。
+    float total_F0 = L_Ground_F0 + R_Ground_F0;
+
+    if(total_F0 <= 40.0f)
+    { L_off_ground ++; R_off_ground ++; }
     else
-    L_off_ground --;
-    if(L_off_ground >= 50)
-    L_off_ground = 50;
-    if(L_off_ground <= 0)
-    L_off_ground = 0;
-    
-    if(R_Ground_F0 <= 20.0f)
-    R_off_ground ++;
-    else
-    R_off_ground --;
-    if(R_off_ground >= 50)
-    R_off_ground = 50;
-    if(R_off_ground <= 0)
-    R_off_ground = 0;
+    { L_off_ground --; R_off_ground --; }
+
+    if(L_off_ground >= 50) L_off_ground = 50;
+    if(L_off_ground <= 0)  L_off_ground = 0;
+    if(R_off_ground >= 50) R_off_ground = 50;
+    if(R_off_ground <= 0)  R_off_ground = 0;
 
     //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
+    if(L_off_ground >= 15 || R_off_ground >= 15) Buzzer_Warn_si();
+    else                                         Stop_Buzzer();
+
     if(L_off_ground >= 15)//正常行驶过程离地
     {
         //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
         Leg_L_T = 
         - LQR_K[2][4] * VMC_L.b_phi0 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
-        Leg_L_T *= 0.7; //收腿力度参数
+        Leg_L_T *= 1.8f; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
         //正常行驶过程离地VMC解算
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output, Leg_L_T);//VMC解算
@@ -692,7 +684,7 @@ void off_ground_detect()
         Leg_R_T = 
         - LQR_K[3][6] * VMC_R.b_phi0 
         - LQR_K[3][7] * VMC_R.d_b_phi0;
-        Leg_R_T *= 0.7;
+        Leg_R_T *= 1.8f;
         R_DJ3508.Target_Torque = 0;
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output, -Leg_R_T);
         body_distance = 0;

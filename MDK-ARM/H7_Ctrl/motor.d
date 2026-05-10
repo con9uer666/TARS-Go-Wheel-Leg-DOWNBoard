@@ -87,4 +87,5 @@ h7_ctrl/motor.o: ..\others\Motion_Control\App\src\motor.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\IMU_coculate\imu_temp_ctrl.h ..\CommonLibs\inc\Angle_about.h \
   ..\Power_control\PowerCtrl.h \
-  ..\others\Motion_Control\Ctrl\inc\Gas_Spring.h
+  ..\others\Motion_Control\Ctrl\inc\Gas_Spring.h \
+  ..\others\Device\inc\buzzer.h ..\Core\Inc\tim.h
