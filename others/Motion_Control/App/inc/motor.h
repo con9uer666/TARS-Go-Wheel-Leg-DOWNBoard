@@ -4,7 +4,7 @@
 #include "main.h"
 #include "user_pid.h"
 
-#define LEG_MIN_LENTH 0.20f
+#define LEG_MIN_LENTH 0.23f
 #define LEG_MAX_LENTH 0.37f   
 #define WHEEL_RADIUS 0.061f
 

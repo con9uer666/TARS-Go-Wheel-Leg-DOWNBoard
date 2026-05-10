@@ -72,7 +72,7 @@ float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 
-float mg = 150.0f/2;
+float mg = 80.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
@@ -310,9 +310,9 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 1500, 0, 15000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 1500, 0, 15000, 200, 0, 0, 0, 0);
-    PID_INIT(&Leg_Phi0_PID, 300, 1.5, 5, 150, 150, 0, 50000, 0);
+    PID_INIT(&L_Leg_L0_PID, 5000, 0, 50000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 5000, 0, 50000, 200, 0, 0, 0, 0);
+    PID_INIT(&Leg_Phi0_PID, 300, 0, 5, 150, 150, 0, 50000, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
     PID_INIT(&L_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
@@ -363,6 +363,118 @@ void task_Motor_Enable()
 
 /*===============================================运动函数===============================================*/
 
+/* ---------- 收腿起立 State=1 转角阶段：卡住反向绕长路 ---------- */
+
+// FWD = 短路径 PID 追目标角；REV = 长路径恒速反绕一圈到同一目标角
+typedef enum {
+    STAIR_SUB_TURN_FWD = 0,  // 沿 ShortestAngleDelta 的短路径用 PID 串级控制
+    STAIR_SUB_TURN_REV       // 沿反方向 (2π − 短路径) 匀速转到原目标角
+} StairSub_t;
+
+static StairSub_t L_stair_sub = STAIR_SUB_TURN_FWD;     // 左腿子状态
+static StairSub_t R_stair_sub = STAIR_SUB_TURN_FWD;     // 右腿子状态
+static int   L_sub_dwell = 0,          R_sub_dwell = 0;     // 进入当前子状态后的 tick 数，< dwell 门禁不允许再切换（防抖）
+static float L_rev_dir = 0.0f,         R_rev_dir = 0.0f;    // REV 期间的转向 ±1，FWD→REV 时按"短路径反方向"锁定
+static float L_rev_long_remain = 0.0f, R_rev_long_remain = 0.0f;  // REV 总需要走的弧长 = 2π − |短路径剩余|，FWD→REV 时锁定
+static float L_rev_traveled = 0.0f,    R_rev_traveled = 0.0f;     // REV 期间对 d_phi0 积分得到的已走弧长，避免用 phi0 做减法在 ±π 处跳变
+
+/**
+ * @brief 收腿起立 State=1 转角阶段的控制 + 卡住反向绕长路。
+ *
+ * 子状态机（每腿各一套）：
+ *   FWD 默认：Middle_PID(角度) → dphi0_PID(角速度) 串级，走短路径。
+ *   FWD 卡住：|error|>0.1 且 |d_phi0|<0.0873rad/s 持续 100ms，且进入 FWD ≥ 200ms
+ *            → 锁 rev_dir / rev_long_remain / rev_traveled=0，切 REV。
+ *   REV 默认：leg_turn_speed_control(rev_dir * 1.2 rad/s, 15 N·m)，不受 ShortestAngle 限制。
+ *   REV 到位：积分 rev_traveled ≥ long_remain − 0.05，或过半圈后短路径误差 < 0.05（兜底防积分漂移）。
+ *   REV 又卡：切回 FWD 无限重试。
+ *
+ * is_right 用于保留右腿原有的 −d_phi0 / −output 符号约定（仅 FWD 分支需要；
+ * REV 走 leg_turn_speed_control，速度目标自带符号，不再反置）。
+ *
+ * @param VMC              左右腿 VMC 结构指针
+ * @param is_right         0=左腿, 1=右腿
+ * @param target_angle     目标 phi0，单位 rad
+ * @param pid_middle       角度 PID（外环）
+ * @param pid_dphi0        角速度 PID（内环）
+ * @param sub              子状态，持久变量地址
+ * @param dwell            dwell 计数，持久变量地址
+ * @param rev_dir          REV 转向 ±1，持久变量地址
+ * @param rev_long_remain  REV 目标弧长，持久变量地址
+ * @param rev_traveled     REV 已走弧长积分，持久变量地址
+ * @param out_T            [out] 本周期该腿的转矩命令，直接喂给 VMC_Set_F0_T
+ * @return 1 = 此周期视为到位（外层 Ready_Count 累加）, 0 = 未到位
+ */
+static int turn_ctrl_with_stuck_flip(
+    VMC_t *VMC, int is_right, float target_angle,
+    user_pid_t *pid_middle, user_pid_t *pid_dphi0,
+    StairSub_t *sub, int *dwell,
+    float *rev_dir, float *rev_long_remain, float *rev_traveled,
+    float *out_T)
+{
+    (*dwell)++;
+    int near = 0;                               // 本周期是否算到位
+
+    if (*sub == STAIR_SUB_TURN_FWD)
+    {
+        // 短路径 PID 串级：Middle_PID 出 dphi0 目标，dphi0_PID 出转矩
+        PID_Set_AngleError(pid_middle, VMC->phi0, target_angle);    // 内部走 ShortestAngleDelta
+        PID_coculate(pid_middle);
+        float dphi0_in = is_right ? -VMC->d_phi0        : VMC->d_phi0;          // 右腿符号约定
+        float dphi0_tg = is_right ? -pid_middle->output : pid_middle->output;
+        PID_Set_Error(pid_dphi0, dphi0_in, dphi0_tg);
+        PID_coculate(pid_dphi0);
+        *out_T = is_right ? -pid_dphi0->output : pid_dphi0->output;
+
+        // 角度误差进入容差带 → 认为到位
+        if (fabsf(pid_middle->error) <= 0.05f) near = 1;
+
+        // 卡住判据：dwell 门禁过了 + 误差仍大 + d_phi0 死区持续时间达到 → 切 REV
+        if (!near && *dwell > 100 &&
+            fabsf(pid_middle->error) > 0.1f &&
+            leg_turn_stuck_detect(VMC, 0.0873f, 0.1f))
+        {
+            float se = ShortestAngleDelta(target_angle, VMC->phi0);
+            *rev_dir         = (se > 0.0f) ? -1.0f : 1.0f;      // 长路径 = 短路径反方向
+            *rev_long_remain = 2.0f * PI - fabsf(se);           // 绕一圈减去短路径剩余
+            *rev_traveled    = 0.0f;
+            *sub = STAIR_SUB_TURN_REV;
+            *dwell = 0;
+            leg_turn_stuck_reset(VMC);      // 清共享计数器，避免 REV 一进来就重新触发
+            *out_T = 0.0f;                  // 本周期不再下发 FWD 的残留转矩
+        }
+    }
+    else  // STAIR_SUB_TURN_REV
+    {
+        // 纯速度控制走长路径，不受 ShortestAngle 限制
+        *out_T = leg_turn_speed_control(VMC, (*rev_dir) * 1.2f, 15.0f, 0.0f);
+        // 用 d_phi0 积分记已走弧长，避免 phi0 在 ±π 翻转导致的跳变
+        *rev_traveled += (*rev_dir) * VMC->d_phi0 * 0.002f;     // dt = 1/500 Hz = 2 ms
+
+        float se_now = fabsf(ShortestAngleDelta(target_angle, VMC->phi0));
+        // 到位判定：主判用积分弧长，兜底用过半圈后短路径误差，防积分长期漂移
+        int arrived = (*rev_traveled >= *rev_long_remain - 0.05f) ||
+                      (*rev_traveled > PI && se_now < 0.05f);
+        if (arrived)
+        {
+            near = 1;
+            *sub = STAIR_SUB_TURN_FWD;      // 复位回 FWD，等外层计满 Ready_Count 后进入 State=2
+            *dwell = 0;
+            leg_turn_stuck_reset(VMC);
+        }
+        else if (*dwell > 100 &&
+                 (*rev_traveled < *rev_long_remain - 0.1f) &&
+                 leg_turn_stuck_detect(VMC, 0.0873f, 0.1f))
+        {
+            // 反向也卡住（且确认不是快到位的低速）→ 切回 FWD，无限重试
+            *sub = STAIR_SUB_TURN_FWD;
+            *dwell = 0;
+            leg_turn_stuck_reset(VMC);
+        }
+    }
+    return near;
+}
+
 
 
 //未站起 + 未上楼收腿  函数
@@ -394,24 +506,28 @@ void NotStanding_NotStairRetract_for_chassis()
     PID_coculate(&L_Leg_L0_SPD_PID);
     PID_coculate(&R_Leg_L0_SPD_PID);
 
-    //腿角度控制
+    //腿角度控制（State>=1 启用，含卡住反向绕长路）
+    float L_T = 0.0f, R_T = 0.0f;
+    int L_near = 0, R_near = 0;
     if(L_Leg_State >= 1)
     {
-        PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.1); //这个PI/2-0.2是为了让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定，丛庆加的
-        PID_coculate(&L_Leg_Middle_PID);
-        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
-        PID_coculate(&L_Leg_dphi0_PID);
+        L_near = turn_ctrl_with_stuck_flip(
+            &VMC_L, 0, PI/2.0f - 0.1f,
+            &L_Leg_Middle_PID, &L_Leg_dphi0_PID,
+            &L_stair_sub, &L_sub_dwell,
+            &L_rev_dir, &L_rev_long_remain, &L_rev_traveled, &L_T);
     }
     if(R_Leg_State >= 1)
     {
-        PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.1);
-        PID_coculate(&R_Leg_Middle_PID);
-        PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
-        PID_coculate(&R_Leg_dphi0_PID);
+        R_near = turn_ctrl_with_stuck_flip(
+            &VMC_R, 1, PI/2.0f + 0.1f,
+            &R_Leg_Middle_PID, &R_Leg_dphi0_PID,
+            &R_stair_sub, &R_sub_dwell,
+            &R_rev_dir, &R_rev_long_remain, &R_rev_traveled, &R_T);
     }
 
     //腿长判断是否到达目标长度
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.005)
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01)
     {
         L_Ready_Count ++;
     }
@@ -419,8 +535,11 @@ void NotStanding_NotStairRetract_for_chassis()
     {
         L_Leg_State = 1;    //收腿完成
         L_Ready_Count = 0;  //归零
+        L_stair_sub = STAIR_SUB_TURN_FWD;
+        L_sub_dwell = 0;
+        leg_turn_stuck_reset(&VMC_L);
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.005)
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01)
     {
         R_Ready_Count ++;
     }
@@ -428,23 +547,22 @@ void NotStanding_NotStairRetract_for_chassis()
     {
         R_Leg_State = 1;
         R_Ready_Count = 0;
+        R_stair_sub = STAIR_SUB_TURN_FWD;
+        R_sub_dwell = 0;
+        leg_turn_stuck_reset(&VMC_R);
     }
 
-    //腿长达标之后，判断腿角度是否到达目标角度
-    if(L_Leg_State == 1 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
-    {
-        L_Ready_Count ++;
-    }
+    //腿长达标之后，判断腿角度是否到达目标角度（用 helper 返回的 near）
+    if(L_Leg_State == 1 && L_near) L_Ready_Count ++;
+    else if(L_Leg_State == 1)      L_Ready_Count = 0;
     if(L_Leg_State == 1 && L_Ready_Count >= 50)
     {
         L_Leg_State = 2;
         L_Ready_Count = 0;
     }
-    if(R_Leg_State == 1 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-    {
-        R_Ready_Count ++;
-    }
-    if(R_Leg_State == 1 &&R_Ready_Count >= 50)
+    if(R_Leg_State == 1 && R_near) R_Ready_Count ++;
+    else if(R_Leg_State == 1)      R_Ready_Count = 0;
+    if(R_Leg_State == 1 && R_Ready_Count >= 50)
     {
         R_Leg_State = 2;
         R_Ready_Count = 0;
@@ -461,8 +579,8 @@ void NotStanding_NotStairRetract_for_chassis()
     }
 
     //映射到电机力矩
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_T);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, R_T);
     L_DJ3508.Target_Torque = 0;
     R_DJ3508.Target_Torque = 0;
 
@@ -564,7 +682,7 @@ void off_ground_detect()
         Leg_L_T *= 0.7; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
         //正常行驶过程离地VMC解算
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);//VMC解算
+        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output, Leg_L_T);//VMC解算
         //离地距离相关量归零
         body_distance = 0;
         target_body_distance = 2.0;
@@ -576,7 +694,7 @@ void off_ground_detect()
         - LQR_K[3][7] * VMC_R.d_b_phi0;
         Leg_R_T *= 0.7;
         R_DJ3508.Target_Torque = 0;
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)), -Leg_R_T);
+        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output, -Leg_R_T);
         body_distance = 0;
         target_body_distance = 2.0;
     }
@@ -737,7 +855,7 @@ void Standing()
     Leg_L0_Control();
 
     //放劈叉
-    PID_Set_Error(&Leg_Phi0_PID, (VMC_L.phi0 - PI/2) + (VMC_R.phi0 - PI/2), 0);
+    PID_Set_Error(&Leg_Phi0_PID, (VMC_R.phi0 - PI/2) + (VMC_L.phi0 - PI/2), 0);
     PID_coculate(&Leg_Phi0_PID);
 
     //100hz算K值，毕竟K值的计算比较耗时
@@ -755,8 +873,8 @@ void Standing()
 
     //常态下VMC解算，加入PID前馈
     float centrifugal_comp = centrifugal_comp_gain * d_yaw * d_yaw;
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output - centrifugal_comp);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output - centrifugal_comp);
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output);
 
     off_ground_detect();
 
@@ -831,8 +949,15 @@ void Upstair_NotStairRetract()
     {
         upstares_mode = 1;
         R_Leg_State = 0;
-        L_Leg_State = 0;                              
-    }	
+        L_Leg_State = 0;
+        //初始化 StairRetract 的子状态机，避免 Self_Righting 或上一次残留计数
+        L_stair_sub = STAIR_SUB_TURN_FWD;
+        R_stair_sub = STAIR_SUB_TURN_FWD;
+        L_sub_dwell = 0;
+        R_sub_dwell = 0;
+        leg_turn_stuck_reset(&VMC_L);
+        leg_turn_stuck_reset(&VMC_R);
+    }
 }
 
 void StairRetract()
@@ -840,9 +965,9 @@ void StairRetract()
     VMC_Coculate();
     Body_Speed_Coculate();
 
-    //收腿起立的腿长双环控制
-    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.16f);
-    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.16f);
+    //收腿起立的腿长双环控制（State=0/1 都跑）
+    PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.12f);
+    PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.12f);
     PID_coculate(&L_Leg_L0_POS_PID);
     PID_coculate(&R_Leg_L0_POS_PID);
 
@@ -851,53 +976,79 @@ void StairRetract()
     PID_coculate(&L_Leg_L0_SPD_PID);
     PID_coculate(&R_Leg_L0_SPD_PID);
 
-    //收腿同时摆角到准备起立态（合并原两段为一段）
-    PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI/2-0.2f);
-    PID_coculate(&L_Leg_Middle_PID);
-    PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
-    PID_coculate(&L_Leg_dphi0_PID);
-
-    PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI/2+0.2f);
-    PID_coculate(&R_Leg_Middle_PID);
-    PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
-    PID_coculate(&R_Leg_dphi0_PID);
-
-    //收腿起立VMC，轮力矩解算
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
-
-    L_DJ3508.Target_Torque = 0.5f;
-    R_DJ3508.Target_Torque = 0.5f;
-
-    //判断腿长和腿角度是否都到位
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+    //腿角度控制（State>=1 启用，含卡住反向绕长路）
+    float L_T = 0.0f, R_T = 0.0f;
+    int L_near = 0, R_near = 0;
+    if(L_Leg_State >= 1)
     {
-        L_Ready_Count ++;
+        L_near = turn_ctrl_with_stuck_flip(
+            &VMC_L, 0, PI/2.0f - 0.1f,
+            &L_Leg_Middle_PID, &L_Leg_dphi0_PID,
+            &L_stair_sub, &L_sub_dwell,
+            &L_rev_dir, &L_rev_long_remain, &L_rev_traveled, &L_T);
     }
-    if(L_Leg_State == 0 && L_Ready_Count >= 80)
+    if(R_Leg_State >= 1)
+    {
+        R_near = turn_ctrl_with_stuck_flip(
+            &VMC_R, 1, PI/2.0f + 0.1f,
+            &R_Leg_Middle_PID, &R_Leg_dphi0_PID,
+            &R_stair_sub, &R_sub_dwell,
+            &R_rev_dir, &R_rev_long_remain, &R_rev_traveled, &R_T);
+    }
+
+    //映射到电机力矩
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_T);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, R_T);
+
+    //轮力矩：运行中 0.5，State=2 完成后 0
+    L_DJ3508.Target_Torque = 0.0f;
+    R_DJ3508.Target_Torque = 0.0f;
+
+    //State=0 → 1（腿长到位后进入转角阶段）
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01f) L_Ready_Count ++;
+    else if(L_Leg_State == 0) L_Ready_Count = 0;
+    if(L_Leg_State == 0 && L_Ready_Count >= 50)
+    {
+        L_Leg_State = 1;
+        L_Ready_Count = 0;
+        L_stair_sub = STAIR_SUB_TURN_FWD;
+        L_sub_dwell = 0;
+        leg_turn_stuck_reset(&VMC_L);
+    }
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01f) R_Ready_Count ++;
+    else if(R_Leg_State == 0) R_Ready_Count = 0;
+    if(R_Leg_State == 0 && R_Ready_Count >= 50)
+    {
+        R_Leg_State = 1;
+        R_Ready_Count = 0;
+        R_stair_sub = STAIR_SUB_TURN_FWD;
+        R_sub_dwell = 0;
+        leg_turn_stuck_reset(&VMC_R);
+    }
+
+    //State=1 → 2（角度到位，由 helper 返回 near 判定）
+    if(L_Leg_State == 1 && L_near) L_Ready_Count ++;
+    else if(L_Leg_State == 1)      L_Ready_Count = 0;
+    if(L_Leg_State == 1 && L_Ready_Count >= 50)
     {
         L_Leg_State = 2;
         L_Ready_Count = 0;
-        L_DJ3508.Target_Torque = 0;
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
-    {
-        R_Ready_Count ++;
-    }
-    if(R_Leg_State == 0 && R_Ready_Count >= 80)
+    if(R_Leg_State == 1 && R_near) R_Ready_Count ++;
+    else if(R_Leg_State == 1)      R_Ready_Count = 0;
+    if(R_Leg_State == 1 && R_Ready_Count >= 50)
     {
         R_Leg_State = 2;
         R_Ready_Count = 0;
-        R_DJ3508.Target_Torque = 0;
     }
 
-    //状态量归位
+    //状态量归位（两腿都到位）
     if(R_Leg_State == 2 && L_Leg_State == 2)
     {
         upstares_mode = 0;
         start_mode = 0;
-        R_Leg_State = 1;
-        L_Leg_State = 1;
+        R_Leg_State = 0;   //下次进入从 State=0 开始
+        L_Leg_State = 0;
         leg_state = 0;
         target_Leg_L0 = LEG_MIN_LENTH;
     }

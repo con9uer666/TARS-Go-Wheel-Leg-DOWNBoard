@@ -27,5 +27,6 @@ void PID_Set_Error(user_pid_t *PID, float now, float target);
 void PID_Set_AngleError(user_pid_t *pid, float current_angle, float target_angle);
 void PID_Error_Correct(user_pid_t *PID);
 float PID_coculate_speed(user_pid_t *PID);
+float ShortestAngleDelta(float target_angle, float current_angle);
 
 #endif
