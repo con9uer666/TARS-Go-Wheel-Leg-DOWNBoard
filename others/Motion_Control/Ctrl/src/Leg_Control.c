@@ -270,6 +270,14 @@ int leg_turn_stuck_detect(VMC_t *VMC, float d_phi0_stuck, float turn_stuck_count
     return (s_turn_stuck_counter[idx] > (int)(turn_stuck_counter_time_s * HZ));
 }
 
+/**
+ * @brief 清零该腿的转动卡住计数器（供动作切换时使用，避免上一动作残留）
+ */
+void leg_turn_stuck_reset(VMC_t *VMC)
+{
+    s_turn_stuck_counter[leg_ctrl_get_idx(VMC)] = 0;
+}
+
 // // 高级控制函数：结合腿长和转动速度控制的腿部动力学控制
 // void leg_control(VMC_t *VMC, float target_speed, float max_torque, float target_L0)
 // {

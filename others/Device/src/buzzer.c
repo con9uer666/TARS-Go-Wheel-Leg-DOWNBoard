@@ -124,3 +124,10 @@ void Buzzer_High_si()
     Set_buzzer_frq(1976);
     Run_Buzzer();
 }
+
+// 离地等警告专用：固定占空比，无视 CH10 音量旋钮
+void Buzzer_Warn_si(void)
+{
+    Set_buzzer_frq(1976);
+    __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, 125);
+}

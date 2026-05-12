@@ -65,7 +65,7 @@ static float NormalizeAngle(float angle)
 // --------------------------
 // 辅助函数2：计算从当前角度到目标角度的最小角度差（结果在 [-π, π] 内）
 // --------------------------
-static float ShortestAngleDelta(float target_angle, float current_angle)
+float ShortestAngleDelta(float target_angle, float current_angle)
 {
     target_angle = NormalizeAngle(target_angle);
     current_angle = NormalizeAngle(current_angle);

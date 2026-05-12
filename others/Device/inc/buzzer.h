@@ -24,4 +24,6 @@ void Buzzer_High_sol(void);
 void Buzzer_High_la(void);
 void Buzzer_High_si(void);
 
+void Buzzer_Warn_si(void);
+
 #endif

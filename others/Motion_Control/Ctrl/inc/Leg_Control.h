@@ -17,6 +17,7 @@ float leg_length_control(VMC_t *VMC, float target_L0, float ramp_rate, float F0_
 float leg_turn_speed_control(VMC_t *VMC, float target_speed, float max_torque, float ramp_rate);
 int leg_length_stuck_detect(VMC_t *VMC, float L0_stuck, float stuck_counter_time_s);
 int leg_turn_stuck_detect(VMC_t *VMC, float phi0_stuck, float turn_stuck_counter_time_s);
+void leg_turn_stuck_reset(VMC_t *VMC);
 
 // void leg_control(VMC_t *VMC, float target_speed, float max_torque, float target_L0);
 
