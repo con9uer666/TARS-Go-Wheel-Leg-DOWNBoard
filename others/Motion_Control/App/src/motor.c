@@ -309,8 +309,8 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
+    PID_INIT(&L_Leg_L0_PID, 2500, 0, 35000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 2500, 0, 35000, 200, 0, 0, 0, 0);
     PID_INIT(&Leg_Phi0_PID, 300, 0, 5, 150, 150, 0, 50000, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
@@ -325,7 +325,7 @@ void task_PID_Init()
     PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.03, 50, 80, 80, 0, 2000, 0);
 
     //小陀螺pid
-    PID_INIT(&spinning_pid, 0, 0.0f, 0, 6.0f, 6.0f, 0.008f, 20.0f, 0);
+    PID_INIT(&spinning_pid, 0, 0.01f, 0, 6.0f, 6.0f, 0.008f, 20.0f, 0);
 
     //云台pid
     PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 0, 10000, 0);
@@ -579,7 +579,7 @@ void NotStanding_NotStairRetract_for_chassis()
         R_Leg_State = 0;
         L_Leg_State = 0;
         body_distance = 0;
-        target_body_distance = -1.5;
+        target_body_distance = -2.5;
     }
 
     //映射到电机力矩
@@ -877,8 +877,8 @@ void Standing()
 
     //常态下VMC解算，加入PID前馈
     float centrifugal_comp = centrifugal_comp_gain * d_yaw * d_yaw;
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output + centrifugal_comp, Leg_L_T + Leg_Phi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output + centrifugal_comp, -Leg_R_T + Leg_Phi0_PID.output);
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output - centrifugal_comp);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output - centrifugal_comp);
 
     off_ground_detect();
 

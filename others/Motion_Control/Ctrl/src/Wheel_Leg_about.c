@@ -51,7 +51,7 @@ void Roll_Comp()
     else
     target_roll = alpha_target_roll * target_roll + (1 - alpha_target_roll) * target_roll;
 
-    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 2);
+    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 3);
     PID_coculate(&Roll_Comp_PID);
 }
 
