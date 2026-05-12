@@ -23,9 +23,11 @@ float gyro[3], accel[3], temp;
 float gyro_correct[3]={0,0,0};
 float RefTemp = 40;   //Destination
 float roll ,pitch,yaw=0;
-float accel_b[3];
+float accel_b[3];//机体坐标系
+float accel_n[3];//世界坐标系
 uint8_t attitude_flag=1;
 uint32_t correct_times=0;
+
 
 
 
@@ -86,6 +88,7 @@ void INS_Task(void)
 					pitch=-Get_Roll();//获得roll
 					yaw=Get_Yaw();//获得yaw
 					QEKF_GetMotionAccel_b(accel_b);
+					QEKF_GetMotionAccel_n(accel_n);
 					//==============================================================================
 				}
 				else if(attitude_flag==1)   //状态1 开始1000次的陀螺仪0飘初始化

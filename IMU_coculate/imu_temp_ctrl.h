@@ -4,5 +4,6 @@
 extern float roll_offset;
 extern float roll,pitch,yaw;
 extern float accel_b[3];
+extern float accel_n[3];
 
 #endif // IMU_TEMP_CTRL_H

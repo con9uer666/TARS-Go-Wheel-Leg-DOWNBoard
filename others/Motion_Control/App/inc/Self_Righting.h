@@ -28,7 +28,6 @@ extern uint8_t g_self_righting_enable;
 extern uint8_t g_self_righting_sync_from_stuck;
 
 /* ===== 可调参数（按用户要求全部做成全局） ===== */
-extern float g_sr_target_l0;
 extern float g_sr_l0_reached_tol;
 extern float g_sr_l0_ctrl_ramp_rate;
 extern float g_sr_l0_ctrl_f0_max;

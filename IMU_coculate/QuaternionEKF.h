@@ -71,6 +71,7 @@ typedef struct
 
     float MotionAccel_b[3];       // 机体运动加速度
     float MotionAccel_b_prev[3];  // 用于低通滤波
+    float MotionAccel_n[3];       // 导航系(世界系)运动加速度, Z 轴沿重力反向
 } QEKF_INS_t;
 
 extern QEKF_INS_t QEKF_INS;
@@ -80,7 +81,9 @@ void IMU_QuaternionEKF_Init(float process_noise1, float process_noise2, float me
 void IMU_QuaternionEKF_Update(float gx, float gy, float gz, float ax, float ay, float az);
 void IMU_QuaternionEKF_Reset(void);
 void QEKF_GetMotionAccel_b(float *accel_b);
+void QEKF_GetMotionAccel_n(float *accel_n);
 void EarthFrameToBodyFrame(const float *vecEF, float *vecBF, float *q);
+void BodyFrameToEarthFrame(const float *vecBF, float *vecEF, float *q);
 float Get_Pitch(void);//get pitch
 float Get_Roll(void);//get roll
 float Get_Yaw(void);//get yaw

@@ -4,8 +4,8 @@
 #include "main.h"
 #include "user_pid.h"
 
-#define LEG_MIN_LENTH 0.20f
-#define LEG_MAX_LENTH 0.37f   
+extern float LEG_MIN_LENTH;
+extern float LEG_MAX_LENTH;  
 #define WHEEL_RADIUS 0.061f
 
 typedef struct RampGenerator

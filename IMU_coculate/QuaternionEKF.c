@@ -108,6 +108,10 @@ void IMU_QuaternionEKF_Init(float process_noise1, float process_noise2, float me
     QEKF_INS.MotionAccel_b_prev[0] = 0;
     QEKF_INS.MotionAccel_b_prev[1] = 0;
     QEKF_INS.MotionAccel_b_prev[2] = 0;
+
+    QEKF_INS.MotionAccel_n[0] = 0;
+    QEKF_INS.MotionAccel_n[1] = 0;
+    QEKF_INS.MotionAccel_n[2] = 0;
 }
 
 void IMU_QuaternionEKF_Reset(void)
@@ -274,12 +278,15 @@ void IMU_QuaternionEKF_Update(float gx, float gy, float gz, float ax, float ay, 
 
     // 可选：低通滤波 (使用您原有的滤波系数)
     for (int i=0; i<3; i++) {
-        QEKF_INS.MotionAccel_b[i] = 
+        QEKF_INS.MotionAccel_b[i] =
             (QEKF_INS.MotionAccel_b[i] * 0.05) +
             (QEKF_INS.MotionAccel_b_prev[i] * 0.95);
-        
+
         QEKF_INS.MotionAccel_b_prev[i] = QEKF_INS.MotionAccel_b[i];
     }
+
+    // 4. 机体系运动加速度旋转到导航系(世界系), n 系 Z 轴与重力方向相反
+    BodyFrameToEarthFrame(QEKF_INS.MotionAccel_b, QEKF_INS.MotionAccel_n, QEKF_INS.q);
 }
 
 /**
@@ -587,6 +594,13 @@ void QEKF_GetMotionAccel_b(float *accel_b)
     accel_b[0] = QEKF_INS.MotionAccel_b[0];
     accel_b[1] = QEKF_INS.MotionAccel_b[1];
     accel_b[2] = QEKF_INS.MotionAccel_b[2];
+}
+
+void QEKF_GetMotionAccel_n(float *accel_n)
+{
+    accel_n[0] = QEKF_INS.MotionAccel_n[0];
+    accel_n[1] = QEKF_INS.MotionAccel_n[1];
+    accel_n[2] = QEKF_INS.MotionAccel_n[2];
 }
 /**
  * @brief 自定义1/sqrt(x),速度更快

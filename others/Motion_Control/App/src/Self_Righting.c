@@ -47,7 +47,6 @@ user_pid_t wheel_PID_r;
 user_pid_t anti_split_PID;
 
 /* 第一阶段（伸腿）目标与判定参数 */
-float g_sr_target_l0 = LEG_MAX_LENTH;          /* 目标腿长（最长腿长）。 */
 float g_sr_l0_reached_tol = 0.02f;    /* 到达目标腿长的误差阈值。 */
 float g_sr_l0_ctrl_ramp_rate = 0.1f;   /* 伸腿力斜坡速率；0表示不用斜坡。 */
 float g_sr_l0_ctrl_f0_max = 20.0f;    /* 伸腿力F0上限。 */
@@ -262,8 +261,8 @@ uint8_t Self_Righting_Step(void)
 	}
 
 	//算常用误差量vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AE%97%E5%B8%B8%E7%94%A8%E8%AF%AF%E5%B7%AE%E9%87%8F
-	l0_err_l = g_sr_target_l0 - VMC_L.L0;
-    l0_err_r = g_sr_target_l0 - VMC_R.L0;
+	l0_err_l = LEG_MAX_LENTH - VMC_L.L0;
+    l0_err_r = LEG_MAX_LENTH - VMC_R.L0;
     //达到目标腿长检测vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E8%BE%BE%E5%88%B0%E7%9B%AE%E6%A0%87%E8%85%BF%E9%95%BF%E6%A3%80%E6%B5%8B
 	l0_reached_l = (fabsf(l0_err_l) <= g_sr_l0_reached_tol) ? 1 : 0;
 	l0_reached_r = (fabsf(l0_err_r) <= g_sr_l0_reached_tol) ? 1 : 0;
@@ -283,15 +282,15 @@ uint8_t Self_Righting_Step(void)
                  * 决定。   
                  */
         //算伸腿力，是否使用斜坡由
-		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, g_sr_target_l0);
-		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, g_sr_target_l0);
+		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);
+		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MAX_LENTH);
 		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
 		PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, PID_coculate(&R_Leg_L0_POS_PID));
 
 		f_l = PID_coculate(&L_Leg_L0_SPD_PID);
 		f_r = PID_coculate(&R_Leg_L0_SPD_PID);
-		// f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		// f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		// f_l = leg_length_control(&VMC_L, LEG_MAX_LENTH, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		// f_r = leg_length_control(&VMC_R, LEG_MAX_LENTH, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
 
 		// 卡住检测vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F+%E5%8D%A1%E4%BD%8F%E6%A3%80%E6%B5%8B
 		l0_stuck_l = leg_length_stuck_detect(&VMC_L, g_sr_l0_stuck_thresh, 0.2f);
@@ -345,8 +344,8 @@ uint8_t Self_Righting_Step(void)
 
 
         //第二阶段保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
-		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, g_sr_target_l0);
-		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, g_sr_target_l0);
+		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);
+		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MAX_LENTH);
 		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
 		PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, PID_coculate(&R_Leg_L0_POS_PID));
 
@@ -384,8 +383,8 @@ uint8_t Self_Righting_Step(void)
 		PID_coculate(&anti_split_PID);
 		
 		//第三阶段继续保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%E7%BB%A7%E7%BB%AD%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
-		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, g_sr_target_l0);
-		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, g_sr_target_l0);
+		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);
+		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MAX_LENTH);
 		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
 		PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, PID_coculate(&R_Leg_L0_POS_PID));
 
@@ -494,8 +493,8 @@ uint8_t Self_Righting_Step(void)
 	else if((g_self_righting_stage == SELF_RIGHTING_STAGE_FINISHED && SR_test_state == 0) || (SR_test_state == 4))
 	{
 		// //保持姿势不动vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E4%BF%9D%E6%8C%81%E5%A7%BF%E5%8A%BF%E4%B8%8D%E5%8A%A8
-        // f_l = leg_length_control(&VMC_L, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		// f_r = leg_length_control(&VMC_R, g_sr_target_l0, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+        // f_l = leg_length_control(&VMC_L, LEG_MAX_LENTH, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
+		// f_r = leg_length_control(&VMC_R, LEG_MAX_LENTH, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
 		t_l = 0.0f;
 		t_r = 0.0f;
 		f_l = 0.0f;

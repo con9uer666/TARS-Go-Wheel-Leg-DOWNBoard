@@ -123,7 +123,7 @@ float VMC_Get_Ground_F0(VMC_t *VMC)
     float P, m_w, dd_zw;
 
     P = (VMC->F + Gas_Spring_GetForce(VMC->L0)) * arm_cos_f32(VMC->b_phi0) + ((VMC->T * arm_sin_f32(VMC->b_phi0)) / VMC->L0);
-    dd_zw = accel_b[2] - VMC->dd_L0 * arm_cos_f32(VMC->b_phi0) + (2 * VMC->d_L0 * VMC->d_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->dd_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->d_b_phi0 * VMC->d_b_phi0 *arm_cos_f32(VMC->b_phi0));
+    dd_zw = accel_n[2] - VMC->dd_L0 * arm_cos_f32(VMC->b_phi0) + (2 * VMC->d_L0 * VMC->d_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->dd_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->d_b_phi0 * VMC->d_b_phi0 *arm_cos_f32(VMC->b_phi0));
 
     F0 = P + 1.1 * dd_zw;
 

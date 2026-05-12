@@ -35,7 +35,9 @@ Foot_Chassis_t Foot_Chassis;//轮足底盘结构体
    
 float powerPredict;
    
-   
+float LEG_MIN_LENTH = 0.23f;
+float LEG_MAX_LENTH = 0.37f;  
+
 float L_b_phi0, R_b_phi0;  
    
 float PITCH_OFFSET=-0.05;  
@@ -72,7 +74,7 @@ float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 
-float mg = 150.0f/2;
+float mg = 80.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
@@ -152,10 +154,10 @@ user_pid_t gimbal_pitch_pid;//云台俯仰pid
 
 
 
-float target_Leg_L0 = LEG_MIN_LENTH;//目标腿长
+float target_Leg_L0 = 0.20f;//目标腿长, 初值与 LEG_MIN_LENTH 保持一致
 
-float target_L_Leg_L0 = LEG_MIN_LENTH;
-float target_R_Leg_L0 = LEG_MIN_LENTH;
+float target_L_Leg_L0 = 0.20f;
+float target_R_Leg_L0 = 0.20f;
 uint8_t i;
 int height_wait;
 uint8_t temp1;
@@ -333,6 +335,11 @@ void task_PID_Init()
     PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0, 0);
     
     // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
+
+    // 目标腿长初值与 LEG_MIN_LENTH 同步
+    target_Leg_L0   = LEG_MIN_LENTH;
+    target_L_Leg_L0 = LEG_MIN_LENTH;
+    target_R_Leg_L0 = LEG_MIN_LENTH;
 }
 
 //机身pitch计算，记录前一帧的pitch值，单位为弧度，-PI到PI之间
@@ -532,11 +539,11 @@ void LQR_calculate()
 
 void off_ground_detect()
 {
-    L_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_L) + 0.9 * L_Ground_F0;
-    R_Ground_F0 = 0.1 * VMC_Get_Ground_F0(&VMC_R) + 0.9 * R_Ground_F0;
+    L_Ground_F0 = VMC_Get_Ground_F0(&VMC_L);
+    R_Ground_F0 = VMC_Get_Ground_F0(&VMC_R);
 
     //离地检测滤波
-    if(L_Ground_F0 <= 20.0f)
+    if(L_Ground_F0 <= 50.0f)
     L_off_ground ++;
     else
     L_off_ground --;
@@ -545,7 +552,7 @@ void off_ground_detect()
     if(L_off_ground <= 0)
     L_off_ground = 0;
     
-    if(R_Ground_F0 <= 20.0f)
+    if(R_Ground_F0 <= 50.0f)
     R_off_ground ++;
     else
     R_off_ground --;
@@ -555,13 +562,13 @@ void off_ground_detect()
     R_off_ground = 0;
 
     //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
-    if(L_off_ground >= 15)//正常行驶过程离地
+    if(L_off_ground >= 10)//正常行驶过程离地
     {
         //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
         Leg_L_T = 
         - LQR_K[2][4] * VMC_L.b_phi0 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
-        Leg_L_T *= 0.7; //收腿力度参数
+        Leg_L_T *= 1.8; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
         //正常行驶过程离地VMC解算
         VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)), Leg_L_T);//VMC解算
@@ -569,12 +576,12 @@ void off_ground_detect()
         body_distance = 0;
         target_body_distance = 2.0;
     }
-    if(R_off_ground >= 15)
+    if(R_off_ground >= 10)
     {
         Leg_R_T = 
         - LQR_K[3][6] * VMC_R.b_phi0 
         - LQR_K[3][7] * VMC_R.d_b_phi0;
-        Leg_R_T *= 0.7;
+        Leg_R_T *= 1.8;
         R_DJ3508.Target_Torque = 0;
         VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)), -Leg_R_T);
         body_distance = 0;
@@ -809,7 +816,7 @@ void Upstair_NotStairRetract()
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
     //上台阶收腿过程中判断腿长和腿角度是否都到位了
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05 && fabsf(L_Leg_Middle_PID.error) <= 0.05)
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.1 && fabsf(L_Leg_Middle_PID.error) <= 0.1)
     {
         L_Ready_Count ++;
     }
@@ -818,7 +825,7 @@ void Upstair_NotStairRetract()
         L_Leg_State = 2;
         L_Ready_Count = 0;
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05 && fabsf(R_Leg_Middle_PID.error) <= 0.05)
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.1 && fabsf(R_Leg_Middle_PID.error) <= 0.1)
     {
         R_Ready_Count ++;
     }
@@ -1107,7 +1114,7 @@ void Sit_On_Ground(void)
  *                                                                                                   *
  *****************************************************************************************************/
 
-
+float user_gas = 0;
 
 void Motor_task(void const *argument)
 {
@@ -1126,7 +1133,7 @@ void Motor_task(void const *argument)
     {
         if(user_Gravity_Compensation_Test_Function_set == 0)
         {
-
+            user_gas = Gas_Spring_GetForce(VMC_L.L0);
 
             //刚启动收腿过程中
             if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
