@@ -28,6 +28,11 @@ typedef struct VMC
     float last_F;
     float T; // 虚拟杆扭矩
 
+    float F_actual;     // 由电机力矩反馈反解出的实际足端力
+    float T_actual;     // 由电机力矩反馈反解出的实际虚拟杆扭矩
+    float dd_L0_f;      // 滤波后的 d²L0/dt²
+    float dd_b_phi0_f;  // 滤波后的 d²b_phi0/dt²
+
     uint8_t isLeft;//是否为左腿
 }VMC_t;
 

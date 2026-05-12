@@ -15,6 +15,12 @@ VMC_t VMC_L, VMC_R;
 float alpha_d_phi0 = 1.0;
 float alpha_phi0 = 1.0;//滤波系数
 float alpha_F = 0.5f;
+float alpha_dd_L0 = 0.1f;     // dd_L0 一阶 IIR 系数
+float alpha_dd_b_phi0 = 0.1f; // dd_b_phi0 一阶 IIR 系数
+
+#define WHEEL_MASS  1.1f      // 驱动轮等效质量 (kg)
+#define GRAVITY_ACC 9.81f     // 重力加速度 (m/s^2)
+
 extern float pitch_trans[2];
 
 void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5, uint8_t isLeft)
@@ -77,6 +83,7 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
 
     VMC->d_L0 = (VMC->L0 - VMC->last_L0)/0.002f;
     VMC->dd_L0 = (VMC->d_L0 - VMC->last_d_L0) / 0.002f;
+    VMC->dd_L0_f = alpha_dd_L0 * VMC->dd_L0 + (1.0f - alpha_dd_L0) * VMC->dd_L0_f;
 
     if(VMC->isLeft)
     {
@@ -85,6 +92,7 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
         VMC_L.last_d_b_phi0 = VMC_L.d_b_phi0;
         VMC_L.d_b_phi0 = alpha_d_phi0 * ((VMC_L.b_phi0 - VMC_L.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_L.d_b_phi0 ;
         VMC_L.dd_b_phi0 = (VMC_L.d_b_phi0 - VMC_L.last_d_b_phi0) / 0.002f;
+        VMC_L.dd_b_phi0_f = alpha_dd_b_phi0 * VMC_L.dd_b_phi0 + (1.0f - alpha_dd_b_phi0) * VMC_L.dd_b_phi0_f;
     }
     else
     {
@@ -93,6 +101,7 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
         VMC_R.last_d_b_phi0 = VMC_R.d_b_phi0;
         VMC_R.d_b_phi0 = alpha_d_phi0 * ((VMC_R.b_phi0 - VMC_R.last_b_phi0) / 0.002) + (1 - alpha_d_phi0) * VMC_R.d_b_phi0 ;
         VMC_R.dd_b_phi0 = (VMC_R.d_b_phi0 - VMC_R.last_d_b_phi0)/0.002f;
+        VMC_R.dd_b_phi0_f = alpha_dd_b_phi0 * VMC_R.dd_b_phi0 + (1.0f - alpha_dd_b_phi0) * VMC_R.dd_b_phi0_f;
     }
 }
 
@@ -116,18 +125,66 @@ void VMC_Set_F0_T(VMC_t *VMC, float F, float T)
 
 }
 
+// 由电机实际反馈力矩 (tau1, tau2) 反解出实际足端力 F_actual 和虚拟杆扭矩 T_actual
+// 矩阵与 VMC_Set_F0_T 中一致：[T1;T2] = M * [F;T]，此处求逆。
+static void VMC_Solve_F_T_From_Torque(VMC_t *VMC, float tau1, float tau2)
+{
+    float m00 = (VMC->l1 * arm_sin_f32(VMC->phi0 - VMC->phi3) * arm_sin_f32(VMC->phi1 - VMC->phi2))
+                / arm_sin_f32(VMC->phi3 - VMC->phi2);
+    float m01 = (VMC->l1 * arm_cos_f32(VMC->phi0 - VMC->phi3) * arm_sin_f32(VMC->phi1 - VMC->phi2))
+                / (VMC->L0 * arm_sin_f32(VMC->phi3 - VMC->phi2));
+    float m10 = (VMC->l4 * arm_sin_f32(VMC->phi0 - VMC->phi2) * arm_sin_f32(VMC->phi3 - VMC->phi4))
+                / arm_sin_f32(VMC->phi3 - VMC->phi2);
+    float m11 = (VMC->l4 * arm_cos_f32(VMC->phi0 - VMC->phi2) * arm_sin_f32(VMC->phi3 - VMC->phi4))
+                / (VMC->L0 * arm_sin_f32(VMC->phi3 - VMC->phi2));
+
+    float det = m00 * m11 - m01 * m10;
+    // 腿伸/缩极限位姿附近矩阵奇异，回退到指令值（含弹簧）以避免发散
+    if (fabsf(det) < 1e-6f)
+    {
+        VMC->F_actual = VMC->F + Gas_Spring_GetForce(VMC->L0);
+        VMC->T_actual = VMC->T;
+        return;
+    }
+    VMC->F_actual = ( m11 * tau1 - m01 * tau2) / det;
+    VMC->T_actual = (-m10 * tau1 + m00 * tau2) / det;
+}
+
 //计算支持力
 float VMC_Get_Ground_F0(VMC_t *VMC)
 {
-    float F0;
-    float P, m_w, dd_zw;
+    // 1) 取电机实际反馈力矩，按左右腿映射成 tau1/tau2
+    //    左：L_DM8009[1]↔φ1(T1), L_DM8009[0]↔φ4(T2)
+    //    右：R_DM8009[0]↔φ1(T1), R_DM8009[1]↔φ4(T2)
+    float tau1, tau2;
+    if (VMC->isLeft)
+    {
+        tau1 = L_DM8009[1].Rx_Data.Torque;
+        tau2 = L_DM8009[0].Rx_Data.Torque;
+    }
+    else
+    {
+        tau1 = R_DM8009[0].Rx_Data.Torque;
+        tau2 = R_DM8009[1].Rx_Data.Torque;
+    }
+    VMC_Solve_F_T_From_Torque(VMC, tau1, tau2);
 
-    P = (VMC->F + Gas_Spring_GetForce(VMC->L0)) * arm_cos_f32(VMC->b_phi0) + ((VMC->T * arm_sin_f32(VMC->b_phi0)) / VMC->L0);
-    dd_zw = accel_n[2] - VMC->dd_L0 * arm_cos_f32(VMC->b_phi0) + (2 * VMC->d_L0 * VMC->d_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->dd_b_phi0 * arm_sin_f32(VMC->b_phi0)) + (VMC->L0 * VMC->d_b_phi0 * VMC->d_b_phi0 *arm_cos_f32(VMC->b_phi0));
+    // 2) 腿部机构作用于驱动轮的竖直向下分量 P
+    //    F_actual 仅是电机贡献的力，必须把氮气弹簧的被动支撑力加回，才是真正的足端总力
+    float F_total = VMC->F_actual + Gas_Spring_GetForce(VMC->L0);
+    float P = F_total * arm_cos_f32(VMC->b_phi0)
+            + (VMC->T_actual * arm_sin_f32(VMC->b_phi0)) / VMC->L0;
 
-    F0 = P + 1.1 * dd_zw;
+    // 3) 轮心竖直方向运动加速度 z̈_w（dd_L0/dd_b_phi0 已经滤波）
+    float dd_zw =
+          accel_n[2]
+        - VMC->dd_L0_f * arm_cos_f32(VMC->b_phi0)
+        + 2.0f * VMC->d_L0 * VMC->d_b_phi0 * arm_sin_f32(VMC->b_phi0)
+        + VMC->L0 * VMC->dd_b_phi0_f * arm_sin_f32(VMC->b_phi0)
+        + VMC->L0 * VMC->d_b_phi0 * VMC->d_b_phi0 * arm_cos_f32(VMC->b_phi0);
 
-    return F0;
+    // 4) F_N = P + m_w·g + m_w·z̈_w
+    return P + WHEEL_MASS * (GRAVITY_ACC + dd_zw);
 }
 
 //算左右VMC的phi1/phi4/L0/phi0

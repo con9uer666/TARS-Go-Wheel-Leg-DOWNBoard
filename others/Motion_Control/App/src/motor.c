@@ -34,7 +34,7 @@ Foot_Chassis_t Foot_Chassis;//轮足底盘结构体
    
 float powerPredict;
    
-float LEG_MIN_LENTH = 0.23f;
+float LEG_MIN_LENTH = 0.20f;
 float LEG_MAX_LENTH = 0.37f;  
 
 float L_b_phi0, R_b_phi0;  
@@ -309,8 +309,8 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 2500, 0, 35000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 2500, 0, 35000, 200, 0, 0, 0, 0);
+    PID_INIT(&L_Leg_L0_PID, 3000, 0, 30000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 3000, 0, 30000, 200, 0, 0, 0, 0);
     PID_INIT(&Leg_Phi0_PID, 300, 0, 5, 150, 150, 0, 50000, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
@@ -654,13 +654,15 @@ void LQR_calculate()
 
 void off_ground_detect()
 {
-    L_Ground_F0 = VMC_Get_Ground_F0(&VMC_L);
-    R_Ground_F0 = VMC_Get_Ground_F0(&VMC_R);
+    float alpha_G_F0 = 0.1;
+
+    L_Ground_F0 = alpha_G_F0 * VMC_Get_Ground_F0(&VMC_L) + (1 - alpha_G_F0) * L_Ground_F0;
+    R_Ground_F0 = alpha_G_F0 * VMC_Get_Ground_F0(&VMC_R) + (1 - alpha_G_F0) * R_Ground_F0;
 
     //离地检测滤波
     if(L_Ground_F0 <= 50.0f)
     L_off_ground ++;
-    else
+    else if (L_Ground_F0 >= 20.0f)
     L_off_ground --;
     if(L_off_ground >= 50)
     L_off_ground = 50;
@@ -669,7 +671,7 @@ void off_ground_detect()
     
     if(R_Ground_F0 <= 50.0f)
     R_off_ground ++;
-    else
+    else if (R_Ground_F0 >= 20.0f)
     R_off_ground --;
     if(R_off_ground >= 50)
     R_off_ground = 50;
@@ -677,30 +679,30 @@ void off_ground_detect()
     R_off_ground = 0;
 
     //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
-    if(L_off_ground >= 10)//正常行驶过程离地
+    if(L_off_ground >= 20)//正常行驶过程离地
     {
         //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
         Leg_L_T = 
-        - LQR_K[2][4] * VMC_L.b_phi0 
+        - LQR_K[2][4] * (VMC_L.b_phi0 + 0.3) 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
-        Leg_L_T *= 1.8; //收腿力度参数
+        Leg_L_T *= 0.5; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
         //正常行驶过程离地VMC解算
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output, Leg_L_T);//VMC解算
+        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output * 0.7, Leg_L_T);//VMC解算
         //离地距离相关量归零
         body_distance = 0;
-        target_body_distance = 2.0;
+        target_body_distance = 0.0;
     }
-    if(R_off_ground >= 10)
+    if(R_off_ground >= 20)
     {
         Leg_R_T = 
-        - LQR_K[3][6] * VMC_R.b_phi0 
+        - LQR_K[3][6] * (VMC_R.b_phi0 + 0.3)
         - LQR_K[3][7] * VMC_R.d_b_phi0;
-        Leg_R_T *= 1.8;
+        Leg_R_T *= 0.5;
         R_DJ3508.Target_Torque = 0;
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output, -Leg_R_T);
+        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output * 0.7, -Leg_R_T);
         body_distance = 0;
-        target_body_distance = 2.0;
+        target_body_distance = 0.0;
     }
 }
 
@@ -1009,7 +1011,7 @@ void StairRetract()
     R_DJ3508.Target_Torque = 0.0f;
 
     //State=0 → 1（腿长到位后进入转角阶段）
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.01f) L_Ready_Count ++;
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.02f) L_Ready_Count ++;
     else if(L_Leg_State == 0) L_Ready_Count = 0;
     if(L_Leg_State == 0 && L_Ready_Count >= 50)
     {
@@ -1019,7 +1021,7 @@ void StairRetract()
         L_sub_dwell = 0;
         leg_turn_stuck_reset(&VMC_L);
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.01f) R_Ready_Count ++;
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.02f) R_Ready_Count ++;
     else if(R_Leg_State == 0) R_Ready_Count = 0;
     if(R_Leg_State == 0 && R_Ready_Count >= 50)
     {
