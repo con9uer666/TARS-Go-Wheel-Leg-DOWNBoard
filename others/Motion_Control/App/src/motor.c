@@ -161,6 +161,12 @@ int height_wait;
 uint8_t temp1;
 user_pid_t L_Spin_Phi0_PID, R_Spin_Phi0_PID;
 float target_spin_phi0 = PI / 2.0f;
+float spinning_target_d_yaw_cmd = 0.0f;
+float spinning_d_yaw_feedback = 0.0f;
+float alpha_spinning_target_d_yaw = 0.02f;
+float alpha_spinning_d_yaw = 0.2f;
+float alpha_spinning_down_target_d_yaw = 0.08f;
+float alpha_spinning_stop_target_d_yaw = 0.05f;
 
 user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
 user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
@@ -329,11 +335,11 @@ void task_PID_Init()
     PID_INIT(&R_Leg_L0_SPD_PID, 200, 0.03, 50, 80, 80, 0, 2000, 0);
 
     //小陀螺pid
-    PID_INIT(&spinning_pid, 0, 0.01f, 0, 6.0f, 6.0f, 0.008f, 20.0f, 0);
+    PID_INIT(&spinning_pid, 0, 0.02f, 0.01, 6.0f, 6.0f, 0.01f, 20.0f, 0);
 
     //云台pid
     PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 0, 10000, 0);
-    PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0, 0);
+    PID_INIT(&spinning_speed_pid, -3.0f, 0, 0, 3.0f, 0, 0, 0, 0);
     
     // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
 
@@ -764,7 +770,11 @@ void spinning_up()
     float spinning_setpoint = (g_filtered_power > power_limit)
                             ? target_spinning_d_yaw * g_power_obs_lambda
                             : target_spinning_d_yaw;
-    PID_Set_Error(&spinning_pid, d_yaw, spinning_setpoint);
+    spinning_target_d_yaw_cmd = alpha_spinning_target_d_yaw * spinning_setpoint
+                              + (1.0f - alpha_spinning_target_d_yaw) * spinning_target_d_yaw_cmd;
+    spinning_d_yaw_feedback = alpha_spinning_d_yaw * d_yaw
+                            + (1.0f - alpha_spinning_d_yaw) * spinning_d_yaw_feedback;
+    PID_Set_Error(&spinning_pid, spinning_d_yaw_feedback, spinning_target_d_yaw_cmd);
     yaw_error = PID_coculate(&spinning_pid);
     Speed_Error_Set();
 }
@@ -772,7 +782,10 @@ void spinning_up()
 //小陀螺减速
 void spinning_down()
 {
-    PID_Set_Error(&spinning_pid, d_yaw, 0);
+    spinning_target_d_yaw_cmd = (1.0f - alpha_spinning_down_target_d_yaw) * spinning_target_d_yaw_cmd;
+    spinning_d_yaw_feedback = alpha_spinning_d_yaw * d_yaw
+                            + (1.0f - alpha_spinning_d_yaw) * spinning_d_yaw_feedback;
+    PID_Set_Error(&spinning_pid, spinning_d_yaw_feedback, spinning_target_d_yaw_cmd);
     yaw_error = PID_coculate(&spinning_pid);
     Speed_Error_Set();
 }
@@ -782,7 +795,13 @@ void spinning_stop()
 {
     PID_Set_Error(&spinning_speed_pid, yaw_angle_PI, 0);
     float spinning_speed_output = PID_coculate(&spinning_speed_pid);
-    PID_Set_Error(&spinning_pid, d_yaw, spinning_speed_output);
+    if(spinning_speed_output > 3.5f) spinning_speed_output = 3.5f;
+    if(spinning_speed_output < -3.5f) spinning_speed_output = -3.5f;
+    spinning_target_d_yaw_cmd = alpha_spinning_stop_target_d_yaw * spinning_speed_output
+                              + (1.0f - alpha_spinning_stop_target_d_yaw) * spinning_target_d_yaw_cmd;
+    spinning_d_yaw_feedback = alpha_spinning_d_yaw * d_yaw
+                            + (1.0f - alpha_spinning_d_yaw) * spinning_d_yaw_feedback;
+    PID_Set_Error(&spinning_pid, spinning_d_yaw_feedback, spinning_target_d_yaw_cmd);
     yaw_error = PID_coculate(&spinning_pid);
     Speed_Error_Set();
 }
@@ -821,7 +840,7 @@ void Standing()
 
                 spinning_down();
 
-                if((fabsf(d_yaw) <= 10.0f && yaw_angle_PI >= 0) || (fabsf(d_yaw) <= 3.0f))
+                if(fabsf(d_yaw) <= 2.0f)
                 {
                     spinning_flag = 2;
                 }
@@ -831,7 +850,7 @@ void Standing()
                 //小陀螺急停
                 spinning_stop();
 
-                if((fabsf(yaw_angle_PI) <= 0.1f && fabsf(d_yaw) <= 4.0f) || (fabsf(d_yaw) <= 0.05f))
+                if(fabsf(yaw_angle_PI) <= 0.08f && fabsf(d_yaw) <= 1.0f)
                 {
                     spinning_flag = 0;
                     spinning_usable = 1;
@@ -840,6 +859,8 @@ void Standing()
             else if(spinning_flag == 0)//常态
             {
                 spinning_pid.I = 0;
+                spinning_target_d_yaw_cmd = d_yaw;
+                spinning_d_yaw_feedback = d_yaw;
                 spinning_usable = 1;
                 spinning_flag = 0;
                 Yaw_Error_Coculate();
@@ -860,10 +881,12 @@ void Standing()
         spin_speed_I += kalman_body_speed * 0.01f;
         if (spin_speed_I >  0.5f) spin_speed_I =  0.5f;
         if (spin_speed_I < -0.5f) spin_speed_I = -0.5f;
-        speed_error -= spin_speed_I;
+        // speed_error -= spin_speed_I; // 漂移补偿积分已关闭
         //轮速共模P控制，快锁两轮转速相等
+        static float wheel_common_f = 0.0f;
         float wheel_common = (R_DJ3508.Rx_Data.Velocity - L_DJ3508.Rx_Data.Velocity) * 0.0305f;
-        speed_error -= wheel_common * 0.5f;
+        wheel_common_f = 0.05f * wheel_common + 0.95f * wheel_common_f;
+        speed_error -= wheel_common_f * 0.1f;
     } else {
         spin_speed_I = 0;
     }
