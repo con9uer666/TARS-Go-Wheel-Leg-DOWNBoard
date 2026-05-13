@@ -66,7 +66,7 @@ float target_yaw, yaw_error;
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值     单位为弧度
 float yaw_trans[2];
 float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
-float alpha_d_yaw = 1.0;
+float alpha_d_yaw = 0.8f;
 
 float target_roll;
 float alpha_target_roll = 0.05;
@@ -159,6 +159,8 @@ float target_R_Leg_L0 = 0.20f;
 uint8_t i;
 int height_wait;
 uint8_t temp1;
+user_pid_t L_Spin_Phi0_PID, R_Spin_Phi0_PID;
+float target_spin_phi0 = PI / 2.0f;
 
 user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
 user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
@@ -194,7 +196,7 @@ float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
 float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
-float centrifugal_comp_gain = 0.5f;  // spin离心补偿系数
+float centrifugal_comp_gain = 0.8f;  // spin离心补偿系数
 
 //?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
@@ -312,6 +314,8 @@ void task_PID_Init()
     PID_INIT(&L_Leg_L0_PID, 3000, 0, 30000, 200, 0, 0, 0, 0);
     PID_INIT(&R_Leg_L0_PID, 3000, 0, 30000, 200, 0, 0, 0, 0);
     PID_INIT(&Leg_Phi0_PID, 300, 0, 5, 150, 150, 0, 50000, 0);
+    PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
+    PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
 
     PID_INIT(&L_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
@@ -600,6 +604,14 @@ void LQR_calculate()
 	lqr_speed_error = speed_error;
 	lqr_yaw_error = yaw_error;
 	lqr_d_yaw = d_yaw;
+    float leg_yaw_error = lqr_yaw_error;
+    float leg_d_yaw = lqr_d_yaw;
+    if(spinning_flag == 1)
+    {
+        leg_yaw_error = 0.0f;
+        leg_d_yaw = 0.0f;
+    }
+    float leg_b_phi0_offset = (spinning_flag == 1) ? 0.0f : b_phi0_offset;
 
     //算轮子力矩
     L_DJ3508.Target_Torque = 
@@ -630,9 +642,9 @@ void LQR_calculate()
     Leg_L_T = 
     + LQR_K[2][0] * lqr_body_distance_error
     + LQR_K[2][1] * (lqr_speed_error)
-    + LQR_K[2][2] * (-lqr_yaw_error)
-    - LQR_K[2][3] * lqr_d_yaw
-    - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
+    + LQR_K[2][2] * (-leg_yaw_error)
+    - LQR_K[2][3] * leg_d_yaw
+    - LQR_K[2][4] * (VMC_L.b_phi0 - leg_b_phi0_offset)
     - LQR_K[2][5] * VMC_L.d_b_phi0 
     - LQR_K[2][6] * VMC_R.b_phi0 
     - LQR_K[2][7] * VMC_R.d_b_phi0
@@ -642,11 +654,11 @@ void LQR_calculate()
     Leg_R_T = 
     + LQR_K[3][0] * lqr_body_distance_error
     + LQR_K[3][1] * (lqr_speed_error)
-    + LQR_K[3][2] * (-lqr_yaw_error)
-    - LQR_K[3][3] * lqr_d_yaw
+    + LQR_K[3][2] * (-leg_yaw_error)
+    - LQR_K[3][3] * leg_d_yaw
     - LQR_K[3][4] * VMC_L.b_phi0 
     - LQR_K[3][5] * VMC_L.d_b_phi0 
-    - LQR_K[3][6] * (VMC_R.b_phi0 - b_phi0_offset)
+    - LQR_K[3][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
     - LQR_K[3][7] * VMC_R.d_b_phi0
     + LQR_K[3][8] * (pitch_trans[0] - PITCH_OFFSET)
     + LQR_K[3][9] * d_pitch;
@@ -879,8 +891,34 @@ void Standing()
 
     //常态下VMC解算，加入PID前馈
     float centrifugal_comp = centrifugal_comp_gain * d_yaw * d_yaw;
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, Leg_L_T + Leg_Phi0_PID.output - centrifugal_comp);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, -Leg_R_T + Leg_Phi0_PID.output - centrifugal_comp);
+    float L_leg_T_cmd = Leg_L_T + Leg_Phi0_PID.output - centrifugal_comp;
+    float R_leg_T_cmd = -Leg_R_T + Leg_Phi0_PID.output - centrifugal_comp;
+    static uint8_t spin_phi0_pid_started = 0;
+    if(spinning_flag == 1)
+    {
+        PID_Set_AngleError(&L_Spin_Phi0_PID, VMC_L.phi0, target_spin_phi0);
+        PID_Set_AngleError(&R_Spin_Phi0_PID, VMC_R.phi0, target_spin_phi0);
+        if(spin_phi0_pid_started == 0)
+        {
+            L_Spin_Phi0_PID.pre_error = L_Spin_Phi0_PID.error;
+            R_Spin_Phi0_PID.pre_error = R_Spin_Phi0_PID.error;
+            spin_phi0_pid_started = 1;
+        }
+        L_leg_T_cmd += PID_coculate(&L_Spin_Phi0_PID);
+        R_leg_T_cmd += PID_coculate(&R_Spin_Phi0_PID);
+    }
+    else
+    {
+        PID_Clear(&L_Spin_Phi0_PID);
+        PID_Clear(&R_Spin_Phi0_PID);
+        L_Spin_Phi0_PID.output = 0.0f;
+        R_Spin_Phi0_PID.output = 0.0f;
+        spin_phi0_pid_started = 0;
+    }
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output,
+                 L_leg_T_cmd);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output,
+                 R_leg_T_cmd);
 
     off_ground_detect();
 

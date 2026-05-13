@@ -175,6 +175,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>VMC_R.phi0</ItemText>
         </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Leg_Phi0_PID</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
