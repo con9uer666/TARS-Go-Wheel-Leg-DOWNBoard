@@ -200,7 +200,7 @@ void PowerCtrl(void)
 	}
 	else
 	{
-		base_power_limit = 75;
+		base_power_limit = 60;
 	}
 
 	power_buffer = (float)JUDGE_GetPowerBuffer();
