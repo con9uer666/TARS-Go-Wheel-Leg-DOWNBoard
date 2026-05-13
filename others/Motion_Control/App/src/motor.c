@@ -161,6 +161,12 @@ int height_wait;
 uint8_t temp1;
 user_pid_t L_Spin_Phi0_PID, R_Spin_Phi0_PID;
 float target_spin_phi0 = PI / 2.0f;
+float spinning_target_d_yaw_cmd = 0.0f;
+float spinning_d_yaw_feedback = 0.0f;
+float alpha_spinning_target_d_yaw = 0.02f;
+float alpha_spinning_d_yaw = 0.2f;
+float alpha_spinning_down_target_d_yaw = 0.08f;
+float alpha_spinning_stop_target_d_yaw = 0.05f;
 
 user_pid_t L_Leg_Middle_PID, R_Leg_Middle_PID;   //收腿角度pid
 user_pid_t L_Leg_dphi0_PID, R_Leg_dphi0_PID;     //收腿角速度pid
@@ -764,7 +770,11 @@ void spinning_up()
     float spinning_setpoint = (g_filtered_power > power_limit)
                             ? target_spinning_d_yaw * g_power_obs_lambda
                             : target_spinning_d_yaw;
-    PID_Set_Error(&spinning_pid, d_yaw, spinning_setpoint);
+    spinning_target_d_yaw_cmd = alpha_spinning_target_d_yaw * spinning_setpoint
+                              + (1.0f - alpha_spinning_target_d_yaw) * spinning_target_d_yaw_cmd;
+    spinning_d_yaw_feedback = alpha_spinning_d_yaw * d_yaw
+                            + (1.0f - alpha_spinning_d_yaw) * spinning_d_yaw_feedback;
+    PID_Set_Error(&spinning_pid, spinning_d_yaw_feedback, spinning_target_d_yaw_cmd);
     yaw_error = PID_coculate(&spinning_pid);
     Speed_Error_Set();
 }
@@ -836,6 +846,8 @@ void Standing()
             else if(spinning_flag == 0)//常态
             {
                 spinning_pid.I = 0;
+                spinning_target_d_yaw_cmd = d_yaw;
+                spinning_d_yaw_feedback = d_yaw;
                 spinning_usable = 1;
                 Yaw_Error_Coculate();
             }
@@ -855,10 +867,12 @@ void Standing()
         spin_speed_I += kalman_body_speed * 0.01f;
         if (spin_speed_I >  0.5f) spin_speed_I =  0.5f;
         if (spin_speed_I < -0.5f) spin_speed_I = -0.5f;
-        speed_error -= spin_speed_I;
+        // speed_error -= spin_speed_I; // 漂移补偿积分已关闭
         //轮速共模P控制，快锁两轮转速相等
+        static float wheel_common_f = 0.0f;
         float wheel_common = (R_DJ3508.Rx_Data.Velocity - L_DJ3508.Rx_Data.Velocity) * 0.0305f;
-        speed_error -= wheel_common * 0.5f;
+        wheel_common_f = 0.05f * wheel_common + 0.95f * wheel_common_f;
+        speed_error -= wheel_common_f * 0.1f;
     } else {
         spin_speed_I = 0;
     }
