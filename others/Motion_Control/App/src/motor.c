@@ -333,7 +333,7 @@ void task_PID_Init()
 
     //云台pid
     PID_INIT(&gimbal_pitch_pid, 10, 0.002, 100, 150, 80, 0, 10000, 0);
-    PID_INIT(&spinning_speed_pid, -6, 0, 0, 6, 0, 0, 0, 0);
+    PID_INIT(&spinning_speed_pid, -6, 0, -500, 6, 0, 0, 0, 0);
     
     // PID_INIT(&gimbal_follow_error_pid, 3, 0.002, 100, 150, 80, 10000, 0);
 
@@ -435,7 +435,7 @@ static int turn_ctrl_with_stuck_flip(
         *out_T = is_right ? -pid_dphi0->output : pid_dphi0->output;
 
         // 角度误差进入容差带 → 认为到位
-        if (fabsf(pid_middle->error) <= 0.05f) near = 1;
+        if (fabsf(pid_middle->error) <= 0.1f) near = 1;
 
         // 卡住判据：dwell 门禁过了 + 误差仍大 + d_phi0 死区持续时间达到 → 切 REV
         if (!near && *dwell > 100 &&
@@ -462,7 +462,7 @@ static int turn_ctrl_with_stuck_flip(
         float se_now = fabsf(ShortestAngleDelta(target_angle, VMC->phi0));
         // 到位判定：主判用积分弧长，兜底用过半圈后短路径误差，防积分长期漂移
         int arrived = (*rev_traveled >= *rev_long_remain - 0.05f) ||
-                      (*rev_traveled > PI && se_now < 0.05f);
+                      (*rev_traveled > PI && se_now < 0.1f);
         if (arrived)
         {
             near = 1;
@@ -674,7 +674,7 @@ void off_ground_detect()
     //离地检测滤波
     if(L_Ground_F0 <= 50.0f)
     L_off_ground ++;
-    else if (L_Ground_F0 >= 20.0f)
+    else if (L_Ground_F0 >= 10.0f)
     L_off_ground --;
     if(L_off_ground >= 50)
     L_off_ground = 50;
@@ -683,7 +683,7 @@ void off_ground_detect()
     
     if(R_Ground_F0 <= 50.0f)
     R_off_ground ++;
-    else if (R_Ground_F0 >= 20.0f)
+    else if (R_Ground_F0 >= 10.0f)
     R_off_ground --;
     if(R_off_ground >= 50)
     R_off_ground = 50;
@@ -697,10 +697,10 @@ void off_ground_detect()
         Leg_L_T = 
         - LQR_K[2][4] * (VMC_L.b_phi0 + 0.3) 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
-        Leg_L_T *= 0.5; //收腿力度参数
+        Leg_L_T *= 0.7; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
         //正常行驶过程离地VMC解算
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output * 0.7, Leg_L_T);//VMC解算
+        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output * 0.5, Leg_L_T);//VMC解算
         //离地距离相关量归零
         body_distance = 0;
         target_body_distance = 0.0;
@@ -710,9 +710,9 @@ void off_ground_detect()
         Leg_R_T = 
         - LQR_K[3][6] * (VMC_R.b_phi0 + 0.3)
         - LQR_K[3][7] * VMC_R.d_b_phi0;
-        Leg_R_T *= 0.5;
+        Leg_R_T *= 0.7;
         R_DJ3508.Target_Torque = 0;
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output * 0.7, -Leg_R_T);
+        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output * 0.5, -Leg_R_T);
         body_distance = 0;
         target_body_distance = 0.0;
     }
@@ -769,20 +769,27 @@ void spinning_up()
     Speed_Error_Set();
 }
 
-//小陀螺减速
-void spinning_down()
+//统一小陀螺退出：转速降低过程中平滑引入角度修正，同时受功率门控
+void spinning_exit()
 {
-    PID_Set_Error(&spinning_pid, d_yaw, 0);
-    yaw_error = PID_coculate(&spinning_pid);
-    Speed_Error_Set();
-}
-
-//小陀螺急停
-void spinning_stop()
-{
+    // 角度修正量：P-only，Kp=-6，即 -6 * yaw_angle_PI
     PID_Set_Error(&spinning_speed_pid, yaw_angle_PI, 0);
-    float spinning_speed_output = PID_coculate(&spinning_speed_pid);
-    PID_Set_Error(&spinning_pid, d_yaw, spinning_speed_output);
+    float angle_correction = PID_coculate(&spinning_speed_pid);
+
+    // 混合权重：转速越高 weight 越小，专注减速；转速越低 weight 越大，角度归位
+    float speed_ratio = fabsf(d_yaw) / target_spinning_d_yaw;
+    if (speed_ratio > 1.0f) speed_ratio = 1.0f;
+    float angle_weight = 1.0f - speed_ratio;
+
+    float blended_target = 1.0 * angle_correction;
+
+    // 功率门控：超功率时缩放目标，与 spinning_up 一致
+    if (g_filtered_power > power_limit)
+    {
+        blended_target *= g_power_obs_lambda;
+    }
+
+    PID_Set_Error(&spinning_pid, d_yaw, blended_target);
     yaw_error = PID_coculate(&spinning_pid);
     Speed_Error_Set();
 }
@@ -813,35 +820,23 @@ void Standing()
             spinning_up();
             spinning_flag = 1;
         }
-        else//普通运行
+        else//退出小陀螺 or 普通运行
         {
-            if(spinning_flag == 1)//小陀螺减速
+            if(spinning_flag == 1)//小陀螺退出（减速+归位统一）
             {
                 spinning_usable = 0;
 
-                spinning_down();
+                spinning_exit();
 
-                if((fabsf(d_yaw) <= 10.0f && yaw_angle_PI >= 0) || (fabsf(d_yaw) <= 3.0f))
-                {
-                    spinning_flag = 2;
-                }
-            }
-            else if(spinning_flag == 2)//双环减速，目标头方向
-            {
-                //小陀螺急停
-                spinning_stop();
-
-                if((fabsf(yaw_angle_PI) <= 0.1f && fabsf(d_yaw) <= 4.0f) || (fabsf(d_yaw) <= 0.05f))
+                if(fabsf(d_yaw) <= 4.0f && fabsf(yaw_angle_PI) <= 0.5f)
                 {
                     spinning_flag = 0;
-                    spinning_usable = 1;
                 }
             }
             else if(spinning_flag == 0)//常态
             {
                 spinning_pid.I = 0;
                 spinning_usable = 1;
-                spinning_flag = 0;
                 Yaw_Error_Coculate();
             }
         }
@@ -941,8 +936,8 @@ void Upstair_NotStairRetract()
     Body_Speed_Coculate();
 
     //上台阶过程中轮子正转，防止滑下来
-    L_DJ3508.Target_Torque = 0.1;
-    R_DJ3508.Target_Torque = 0.1;
+    // L_DJ3508.Target_Torque = 0.1;
+    // R_DJ3508.Target_Torque = 0.1;
 
     // 磕台阶过程中双环腿长控制
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);   //TODO: 写一个最大腿长的宏定义
@@ -1049,7 +1044,7 @@ void StairRetract()
     R_DJ3508.Target_Torque = 0.0f;
 
     //State=0 → 1（腿长到位后进入转角阶段）
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.02f) L_Ready_Count ++;
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05f) L_Ready_Count ++;
     else if(L_Leg_State == 0) L_Ready_Count = 0;
     if(L_Leg_State == 0 && L_Ready_Count >= 50)
     {
@@ -1059,7 +1054,7 @@ void StairRetract()
         L_sub_dwell = 0;
         leg_turn_stuck_reset(&VMC_L);
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.02f) R_Ready_Count ++;
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.05f) R_Ready_Count ++;
     else if(R_Leg_State == 0) R_Ready_Count = 0;
     if(R_Leg_State == 0 && R_Ready_Count >= 50)
     {
