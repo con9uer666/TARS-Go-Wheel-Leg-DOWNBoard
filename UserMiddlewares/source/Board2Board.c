@@ -173,10 +173,8 @@ void B2B_ParseUsart() // 先发低字节
 		txbuffer[39] = JUDGE_GetCoolingValue();
 		txbuffer[40] = JUDGE_GetCoolingValue() >> 8;
 
-		txbuffer[41] = JUDGE_GetPowerBuffer();
-		txbuffer[42] = JUDGE_GetPowerBuffer() >> 8;
-		txbuffer[43] = JUDGE_GetChassisPowerLimit();
-		txbuffer[44] = JUDGE_GetChassisPowerLimit() >> 8;
+		txbuffer[41] = JUDG() & 0xFF;
+
 
 		txbuffer[45] = JUDGE_IsValid();
 
