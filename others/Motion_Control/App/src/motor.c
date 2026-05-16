@@ -494,6 +494,9 @@ static int turn_ctrl_with_stuck_flip(
 //未站起 + 未上楼收腿  函数
 void NotStanding_NotStairRetract_for_chassis()
 {
+    //自起完成蜂鸣音 latch：刚离开自起态时响 100ms 高 si
+    static uint8_t sr_was_active = 0;
+    static int sr_finish_chime_remain = 0;
 
     VMC_Coculate();
     Body_Speed_Coculate();//车身速度解算
@@ -501,12 +504,25 @@ void NotStanding_NotStairRetract_for_chassis()
     //是否姿态稳定在误差20°内的起立态
     if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
+        gimbal_follow_flag = 1;//自起期间云台跟随底盘
         Self_Righting_Step();
+        sr_was_active = 1;
         return ;
     }
 
-    //倒地自起成功后复位Self_Righting_Step的状态机
-    g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
+    //倒地自起成功后复位Self_Righting的状态机（stage / sync_from_stuck / VMC输出 / 蜂鸣器 / tick 一次性归零）
+    if (sr_was_active)
+    {
+        Self_Righting_Reset();
+        sr_finish_chime_remain = 50;  //50 * 2ms = 100ms
+        sr_was_active = 0;
+    }
+    if (sr_finish_chime_remain > 0)
+    {
+        Buzzer_Tone_Max(1976);
+        sr_finish_chime_remain--;
+        if (sr_finish_chime_remain == 0) Stop_Buzzer();
+    }
     first_run = 0;//第一次运行完成
 
     //收腿过程腿长控制
@@ -697,6 +713,10 @@ void off_ground_detect()
     R_off_ground = 0;
 
     //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
+    if(L_off_ground >= 20 && R_off_ground >= 20)//两腿同时离地：锁定 Target_Leg_State 为短腿，直到上位机重新发短腿(0)才解锁
+    {
+        leg_state_locked_short = 1;
+    }
     if(L_off_ground >= 20)//正常行驶过程离地
     {
         //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B

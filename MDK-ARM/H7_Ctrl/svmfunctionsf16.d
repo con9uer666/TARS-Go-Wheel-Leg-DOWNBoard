@@ -1,20 +1,19 @@
 h7_ctrl/svmfunctionsf16.o: \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\SVMFunctionsF16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_linear_init_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\PrivateInclude\arm_compiler_specific.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\dsp\svm_functions_f16.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\arm_math_types_f16.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\arm_math_types.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\SVMFunctionsF16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_linear_init_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\svm_functions_f16.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types_f16.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
   ..\Drivers\CMSIS\Include\cmsis_armclang.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\arm_math_memory.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\dsp\none.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\dsp\utils.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Include\dsp\svm_defines.h \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_linear_predict_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_polynomial_init_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_polynomial_predict_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_rbf_init_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_rbf_predict_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_sigmoid_init_f16.c \
-  C:\Users\CHAMP\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.17.0\Source\SVMFunctions\arm_svm_sigmoid_predict_f16.c
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_memory.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\none.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\utils.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\svm_defines.h \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_linear_predict_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_polynomial_init_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_polynomial_predict_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_rbf_init_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_rbf_predict_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_sigmoid_init_f16.c \
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Source\SVMFunctions\arm_svm_sigmoid_predict_f16.c

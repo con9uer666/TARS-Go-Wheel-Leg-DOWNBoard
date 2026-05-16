@@ -26,4 +26,6 @@ void Buzzer_High_si(void);
 
 void Buzzer_Warn_si(void);
 
+void Buzzer_Tone_Max(int frq);
+
 #endif

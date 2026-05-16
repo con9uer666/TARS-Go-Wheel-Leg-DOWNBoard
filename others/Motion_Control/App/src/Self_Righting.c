@@ -6,6 +6,7 @@
 #include "user_pid.h"
 #include "Angle_about.h"
 #include "Motor_Drv.h"
+#include "buzzer.h"
 
 /* ========================= 状态与模式标志 ========================= */
 
@@ -47,15 +48,15 @@ user_pid_t wheel_PID_r;
 user_pid_t anti_split_PID;
 
 /* 第一阶段（伸腿）目标与判定参数 */
-float g_sr_l0_reached_tol = 0.02f;    /* 到达目标腿长的误差阈值。 */
+float g_sr_l0_reached_tol = 0.05f;    /* 到达目标腿长的误差阈值。 */
 float g_sr_l0_ctrl_ramp_rate = 0.1f;   /* 伸腿力斜坡速率；0表示不用斜坡。 */
-float g_sr_l0_ctrl_f0_max = 20.0f;    /* 伸腿力F0上限。 */
+float g_sr_l0_ctrl_f0_max = 30.0f;    /* 伸腿力F0上限。 */
 float g_sr_l0_stuck_thresh = 0.01f;   /* 伸腿阶段卡住判定阈值（腿长变化死区）。 */
 
 /* 第一阶段卡住时“换角度再伸腿”参数 */
-float g_sr_extend_unstuck_speed_l = 1.0f;      /* 左腿解卡转速指令（算绝对值） */
-float g_sr_extend_unstuck_speed_r = 1.0f;     /* 右腿解卡转速指令（算绝对值） */
-float g_sr_extend_unstuck_torque_max = 15.0f;   /* 解卡时最大转矩。 */
+float g_sr_extend_unstuck_speed_l = 4.0f;      /* 左腿解卡转速指令（算绝对值） */
+float g_sr_extend_unstuck_speed_r = 4.0f;     /* 右腿解卡转速指令（算绝对值） */
+float g_sr_extend_unstuck_torque_max = 40.0f;   /* 解卡时最大转矩。 */
 float g_sr_extend_unstuck_torque_ramp = 0.0f;  /* 解卡转矩斜坡速率。 */
 
 /* 第一阶段未卡住时“被动阻尼”参数（不主动给目标角速度，仅按速度反向阻尼） */
@@ -65,19 +66,19 @@ float g_sr_extend_unstuck_torque_ramp = 0.0f;  /* 解卡转矩斜坡速率。 */
 /* 第二阶段（反向匀速转到并齐）参数 */
 float g_sr_reverse_speed_l = 0.0f;        /* 左腿反向匀速转速度目标 */
 float g_sr_reverse_speed_r = 0.0f;        /* 右腿反向匀速转速度目标 */
-float g_sr_reverse_torque_max = 10.0f;      /* 第二阶段转矩上限 */
+float g_sr_reverse_torque_max = 15.0f;      /* 第二阶段转矩上限 */
 float g_sr_reverse_torque_ramp = 0.0f;     /* 第二阶段转矩斜坡速率 */
 float g_sr_turn_stuck_thresh = 0.0873f;     /* 第二阶段转动卡住判定阈值。 */
-float g_sr_align_tol = 0.0873f;              /* 两腿并齐角度误差阈值（|phiL-phiR| <= tol） */
+float g_sr_align_tol = 0.1745f;              /* 两腿并齐角度误差阈值（|phiL-phiR| <= tol） */
 
 /* 第三阶段（大力矩匀速转到目标角）参数 */
 float g_sr_target_angle_l = 2.0 * PI;          /* 左腿目标角度（车身坐标系 phi0）。 */ 
 float g_sr_target_angle_r = 2.0 * PI;          /* 右腿目标角度（车身坐标系 phi0）。 */ 
 float g_sr_target_angle_tol = 0.0873f;       /* 达到目标角度的误差阈值。 */
-float g_sr_sync_speed = 2.0f;              /* 并齐后同步转的基准匀速,绝对值 */	
+float g_sr_sync_speed = 4.0f;              /* 并齐后同步转的基准匀速,绝对值 */	
 float g_sr_sync_fast_speed = 0.5f;         /* 未并齐且卡住进入第三阶段时，远端腿速度。 */
 float g_sr_sync_slow_speed = 0.1f;         /* 未并齐且卡住进入第三阶段时，近端腿最慢速度。 */
-float g_sr_sync_torque_max = 30.0f;        /* 第三阶段大力矩上限。 */
+float g_sr_sync_torque_max = 40.0f;        /* 第三阶段大力矩上限。 */
 float g_sr_sync_torque_ramp = 0.0f;        /* 第三阶段转矩斜坡速率。 */
 
 /* 调试/观测输出：记录本次单步给到VMC的命令。 */
@@ -122,7 +123,7 @@ float wheel_Integraldead_zone = 0;
 float wheel_deadzone = 0.01;
 
 //防劈叉PID参数 
-float anti_split_kp = 3;
+float anti_split_kp = 10;
 float anti_split_ki = 0;
 float anti_split_kd = 0;
 float anti_split_out_limit = 3;
@@ -170,6 +171,38 @@ static float limit_function(float value, float max_mag)
 }
 
 
+/*
+ * 按当前自起阶段驱动蜂鸣器：每阶段不同音高 + 不同蜂鸣节奏，满音量。
+ * 调用频率与 Self_Righting_Step 一致（500 Hz / 2 ms 一拍）。
+ * Stage 1 EXTEND            : do  523Hz, 500ms on / 500ms off  → 1Hz
+ * Stage 2 REVERSE_TURN      : sol 784Hz, 125ms on / 125ms off  → 4Hz
+ * Stage 3 SYNC_HIGH_TORQUE  : 高mi 1318Hz, 50ms on / 50ms off  → 10Hz
+ * Stage 4 FINISHED          : 这里不响，离开自起态后由外层放100ms完成音
+ */
+static uint32_t sr_buzz_tick = 0;
+static void sr_buzzer_update(SelfRightingStage_t stage)
+{
+    int pitch = 0;
+    uint32_t on_ticks = 0;
+    uint32_t cycle_ticks = 0;
+    switch (stage)
+    {
+        case SELF_RIGHTING_STAGE_EXTEND:
+            pitch = 523;  on_ticks = 250; cycle_ticks = 500; break;
+        case SELF_RIGHTING_STAGE_REVERSE_TURN:
+            pitch = 784;  on_ticks = 63;  cycle_ticks = 125; break;
+        case SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE:
+            pitch = 1318; on_ticks = 25;  cycle_ticks = 50;  break;
+        default:
+            Stop_Buzzer();
+            sr_buzz_tick = 0;
+            return;
+    }
+    if ((sr_buzz_tick % cycle_ticks) < on_ticks) Buzzer_Tone_Max(pitch);
+    else                                         Stop_Buzzer();
+    sr_buzz_tick++;
+}
+
 //统一写入两条腿的输出，并更新调试变量，左右腿旋转方向没封装
 static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 {
@@ -216,6 +249,9 @@ void Self_Righting_Reset(void)
 	g_self_righting_sync_from_stuck = 0;
     //清零本模块输出命令
 	sr_apply_cmd(0.0f, 0.0f, 0.0f, 0.0f);
+    //蜂鸣器复位
+    sr_buzz_tick = 0;
+    Stop_Buzzer();
 }
 
 /*
@@ -257,7 +293,19 @@ uint8_t Self_Righting_Step(void)
 	if (g_self_righting_enable == 0U)
 	{
 		sr_apply_cmd(0.0f, 0.0f, 0.0f, 0.0f);
+		Stop_Buzzer();
+		sr_buzz_tick = 0;
 		return 2;
+	}
+
+	//按当前阶段驱动蜂鸣器（含调试强制阶段 SR_test_state）
+	{
+		SelfRightingStage_t effective_stage;
+		if (SR_test_state >= 1 && SR_test_state <= 4)
+			effective_stage = (SelfRightingStage_t)(SR_test_state - 1);
+		else
+			effective_stage = g_self_righting_stage;
+		sr_buzzer_update(effective_stage);
 	}
 
 	//算常用误差量vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AE%97%E5%B8%B8%E7%94%A8%E8%AF%AF%E5%B7%AE%E9%87%8F
@@ -374,15 +422,13 @@ uint8_t Self_Righting_Step(void)
 			g_self_righting_sync_from_stuck = 1;
 		}
 	}
-	/* ===================== 第三阶段：大力矩匀速转到目标角 ===================== */
+	/* ===================== 第三阶段：大力矩匀速反向转，直到外层判定姿态恢复 ===================== */
 	else if ((g_self_righting_stage == SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE && SR_test_state == 0) || (SR_test_state == 3))
 	{
 		L_DJ3508.Target_Torque = -PID_coculate(&wheel_PID_l);
 		R_DJ3508.Target_Torque = PID_coculate(&wheel_PID_r);
 
-		PID_coculate(&anti_split_PID);
-		
-		//第三阶段继续保持腿长vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%E7%BB%A7%E7%BB%AD%E4%BF%9D%E6%8C%81%E8%85%BF%E9%95%BF
+		//第三阶段继续保持腿长
 		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);
 		PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MAX_LENTH);
 		PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, PID_coculate(&L_Leg_L0_POS_PID));
@@ -391,117 +437,10 @@ uint8_t Self_Righting_Step(void)
 		f_l = PID_coculate(&L_Leg_L0_SPD_PID);
 		f_r = PID_coculate(&R_Leg_L0_SPD_PID);
 
-		//计算每条腿到目标角的剩余距离（绝对值用于比较远近）vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E8%AE%A1%E7%AE%97%E6%AF%8F%E6%9D%A1%E8%85%BF%E5%88%B0%E7%9B%AE%E6%A0%87%E8%A7%92%E7%9A%84%E5%89%A9%E4%BD%99%E8%B7%9D%E7%A6%BB%EF%BC%88%E7%BB%9D%E5%AF%B9%E5%80%BC%E7%94%A8%E4%BA%8E%E6%AF%94%E8%BE%83%E8%BF%9C%E8%BF%91%EF%BC%89
-		rem_l = fabsf(g_sr_target_angle_l - left_phi0_0_to_2PI);
-		rem_r = fabsf(g_sr_target_angle_r - right_phi0_0_to_2PI);
-
-        //判断是否到达目标角vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92
-		reached_ang_l = (rem_l <= g_sr_target_angle_tol) ? 1 : 0;
-		reached_ang_r = (rem_r <= g_sr_target_angle_tol) ? 1 : 0;
-
-		cmd_spd_l = 0.0f;
-		cmd_spd_r = 0.0f;
-
-		if (g_self_righting_sync_from_stuck == 0U)
-		{
-                  /*
-                   * 正常并齐路径：两条腿同步同幅匀速转向各自目标角。
-                   * 某条腿若先到目标角，速度置0等待另一条腿。
-                   */
-            //未到达目标角的腿继续匀速转vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E6%9C%AA%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E7%9A%84%E8%85%BF%E7%BB%A7%E7%BB%AD%E5%8C%80%E9%80%9F%E8%BD%AC
-			if (!reached_ang_l)
-			{
-				cmd_spd_l = fabsf(g_sr_sync_speed);
-			}
-			if (!reached_ang_r)
-			{
-				cmd_spd_r = fabsf(g_sr_sync_speed);
-			}
-		}
-		else//未并齐但卡住进入第三阶段，使用差速策略
-		{
-			// float max_rem;//谁是远端腿
-
-			// /*
-			//  * 未并齐且卡住路径：差速匀速策略。
-			//  * - 距离目标更远的腿转得更快；
-			//  * - 更近的腿转得更慢；
-			//  * - 理论上尽量同时到达。
-			//  */
-			// max_rem = (rem_l > rem_r) ? rem_l : rem_r;
-			// if (max_rem < 1e-6f)//防止除0错误
-			// {
-			// 	max_rem = 1e-6f;
-			// }
-            // //差速策略未到达指定角度vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%B7%AE%E9%80%9F%E7%AD%96%E7%95%A5%E6%9C%AA%E5%88%B0%E8%BE%BE%E6%8C%87%E5%AE%9A%E8%A7%92%E5%BA%A6
-			// if (!reached_ang_l)
-			// {
-            //     //差速策略计算腿的目标速度vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%B7%AE%E9%80%9F%E7%AD%96%E7%95%A5%E8%AE%A1%E7%AE%97%E8%85%BF%E7%9A%84%E7%9B%AE%E6%A0%87%E9%80%9F%E5%BA%A6
-            //     float cmd_spd_l = fabsf(g_sr_sync_fast_speed) * (rem_l / max_rem);
-			// 	if (cmd_spd_l < fabsf(g_sr_sync_slow_speed))//限幅
-			// 	{
-			// 		cmd_spd_l = fabsf(g_sr_sync_slow_speed);
-			// 	}
-			// }
-
-                        // if (!reached_ang_r)
-                        // {
-                        // 	float cmd_spd_r = fabsf(g_sr_sync_fast_speed) *
-                        // (rem_r / max_rem); 	if (cmd_spd_r <
-                        // fabsf(g_sr_sync_slow_speed))
-                        // 	{
-                        // 		cmd_spd_r = fabsf(g_sr_sync_slow_speed);
-                        // 	}
-                        // }
-                        
-					/*
-                   	 * 正常并齐路径：两条腿同步同幅匀速转向各自目标角。
-                   	 * 某条腿若先到目标角，速度置0等待另一条腿。
-                   	 */
-            //未到达目标角的腿继续匀速转vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E6%9C%AA%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E8%A7%92%E7%9A%84%E8%85%BF%E7%BB%A7%E7%BB%AD%E5%8C%80%E9%80%9F%E8%BD%AC
-			if (!reached_ang_l)
-			{
-				cmd_spd_l = fabsf(g_sr_sync_speed);
-			}
-			if (!reached_ang_r)
-			{
-				cmd_spd_r = fabsf(g_sr_sync_speed);
-			}
-		}
-
-		//恒速输出vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E6%81%92%E9%80%9F%E8%BE%93%E5%87%BA
-		t_l = leg_turn_speed_control(&VMC_L, cmd_spd_l + PID_coculate(&anti_split_PID), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
-		t_r = leg_turn_speed_control(&VMC_R, -(cmd_spd_r - PID_coculate(&anti_split_PID)), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
-
-		//到位则强制该腿转矩为0，等待另一条腿vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E5%88%B0%E4%BD%8D%E5%88%99%E5%BC%BA%E5%88%B6%E8%AF%A5%E8%85%BF%E8%BD%AC%E7%9F%A9%E4%B8%BA0%EF%BC%8C%E7%AD%89%E5%BE%85%E5%8F%A6%E4%B8%80%E6%9D%A1%E8%85%BF
-		if (reached_ang_l)
-		{
-			t_l = 0.0f;
-		}
-		if (reached_ang_r)
-		{
-			t_r = 0.0f;
-		}
-
-		//两条腿都到达指定角度后进入完成态vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E4%B8%A4%E6%9D%A1%E8%85%BF%E9%83%BD%E5%88%B0%E8%BE%BE%E6%8C%87%E5%AE%9A%E8%A7%92%E5%BA%A6%E5%90%8E%E8%BF%9B%E5%85%A5%E5%AE%8C%E6%88%90%E6%80%81
-		if ((reached_ang_l != 0) && (reached_ang_r != 0))
-		{
-			g_self_righting_stage = SELF_RIGHTING_STAGE_FINISHED;
-		}
-	}
-	/* ===================== 第四阶段：摆腿完成，若还未到目标角度，进入下一循环前的准备动作 ===================== */
-	else if((g_self_righting_stage == SELF_RIGHTING_STAGE_FINISHED && SR_test_state == 0) || (SR_test_state == 4))
-	{
-		// //保持姿势不动vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E4%BF%9D%E6%8C%81%E5%A7%BF%E5%8A%BF%E4%B8%8D%E5%8A%A8
-        // f_l = leg_length_control(&VMC_L, LEG_MAX_LENTH, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		// f_r = leg_length_control(&VMC_R, LEG_MAX_LENTH, g_sr_l0_ctrl_ramp_rate, g_sr_l0_ctrl_f0_max);
-		t_l = 0.0f;
-		t_r = 0.0f;
-		f_l = 0.0f;
-		f_r = 0.0f;
-
-		g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
-		
+		//大力矩匀速反向转 + 防劈叉，不再判断"到目标角"，持续转到外层 motor.c 检测到姿态恢复
+		float cmd_spd = fabsf(g_sr_sync_speed);
+		t_l = leg_turn_speed_control(&VMC_L,  cmd_spd + PID_coculate(&anti_split_PID), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
+		t_r = leg_turn_speed_control(&VMC_R, -(cmd_spd - PID_coculate(&anti_split_PID)), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
 	}
 
 	//VMC输出vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2FVMC%E8%BE%93%E5%87%BA

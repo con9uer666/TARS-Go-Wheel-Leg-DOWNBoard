@@ -136,6 +136,7 @@ extern uint8_t upstairs_flag;
 extern uint8_t sit_mode_enable;
 extern uint8_t sit_debug_force;
 extern uint8_t B2B_offline_flag;
+extern uint8_t leg_state_locked_short;
 
 void B2B_ParseUsart(void);
 //RC初始化

@@ -180,6 +180,31 @@
           <WinNumber>1</WinNumber>
           <ItemText>Leg_Phi0_PID</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>L_DM8009</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>R_DM8009</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Yaw_DM4310</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>L_DJ3508</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>R_DJ3508</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

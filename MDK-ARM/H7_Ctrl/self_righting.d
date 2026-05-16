@@ -40,4 +40,5 @@ h7_ctrl/self_righting.o: ..\others\Motion_Control\App\src\Self_Righting.c \
   ..\others\Motion_Control\App\inc\motor.h \
   ..\CommonLibs\inc\Angle_about.h \
   ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h
+  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\others\Device\inc\buzzer.h ..\Core\Inc\tim.h
