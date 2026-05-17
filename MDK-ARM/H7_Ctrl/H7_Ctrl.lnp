@@ -65,6 +65,8 @@
 "h7_ctrl\jlui_port_freertos.o"
 "h7_ctrl\judge.o"
 "h7_ctrl\jlui.o"
+"h7_ctrl\ui_g.o"
+"h7_ctrl\ui_interface.o"
 "h7_ctrl\controlsystem.o"
 "h7_ctrl\filter.o"
 "h7_ctrl\fricmodelsim.o"

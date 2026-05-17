@@ -9,22 +9,22 @@
 #define EN_JUDGE_TASK
 
 /*****************系统数据定义**********************/
-ext_game_status_t GameState;						   // 0x0001
-ext_game_result_t GameResult;						   // 0x0002
-ext_game_robot_HP_t GameRobotHP;					   // 0x0003
-ext_event_data_t EventData;							   // 0x0101
-ext_referee_warning_t RefereeWarning;				   // 0x0104
-ext_dart_info_t DartRemainingTime;					   // 0x0105	
-ext_game_robot_status_t GameRobotStat;				   // 0x0201
-ext_power_heat_data_t PowerHeatData;				   // 0x0202
-ext_game_robot_pos_t GameRobotPos;					   // 0x0203
-ext_buff_musk_t BuffMusk;							   // 0x0204
-ext_robot_hurt_t RobotHurt;							   // 0x0206
-ext_shoot_data_t ShootData;							   // 0x0207
-ext_bullet_remaining_t BulletRemaining;				   // 0x0208
-ext_rfid_status_t RfidStatus;						   // 0x0209
-ext_dart_client_cmd_t DartClientCmd;				   // 0x020A
-sentry_info_t    SentryDecision;			//0x20D
+ext_game_status_t GameState;						   	// 0x0001
+ext_game_result_t GameResult;						   	// 0x0002
+ext_game_robot_HP_t GameRobotHP;					   	// 0x0003
+ext_event_data_t EventData;							   	// 0x0101
+ext_referee_warning_t RefereeWarning;				   	// 0x0104
+ext_dart_info_t DartRemainingTime;					   	// 0x0105
+ext_game_robot_status_t GameRobotStat;				   	// 0x0201
+ext_power_heat_data_t PowerHeatData;				   	// 0x0202
+ext_game_robot_pos_t GameRobotPos;					   	// 0x0203
+ext_buff_musk_t BuffMusk;							   	// 0x0204
+ext_robot_hurt_t RobotHurt;							   	// 0x0206
+ext_shoot_data_t ShootData;							   	// 0x0207
+ext_bullet_remaining_t BulletRemaining;				   	// 0x0208
+ext_rfid_status_t RfidStatus;						   	// 0x0209
+ext_dart_client_cmd_t DartClientCmd;				   	// 0x020A
+sentry_info_t    SentryDecision;						// 0x020D
 
 
 xFrameHeader FrameHeader; // 发送帧头信息

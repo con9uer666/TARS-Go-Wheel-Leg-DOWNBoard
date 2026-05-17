@@ -744,6 +744,16 @@
               <FileType>8</FileType>
               <FilePath>..\UI\source\jlui.cpp</FilePath>
             </File>
+            <File>
+              <FileName>ui_g.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\UI\source\ui_g.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\UI\source\ui_interface.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
