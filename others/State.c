@@ -41,12 +41,10 @@ void State_machine_task(void const * argument)
 {
 	State_Init();
 	int i = 0;
+	bat_voltage = 24.0f;   // 已关闭电压检测：给一个安全默认值，避免下游误判低压
     for(;;)
     {
-			HAL_ADC_Start(&hadc1);
-            adc = HAL_ADC_GetValue(&hadc1);
-			HAL_ADC_Stop(&hadc1);
-			bat_voltage = ((adc/65536.0f) * 3.3f * 11.0f) - 0.4f;
-            osDelay(5);
+			// 已删除 ADC 电压采样：单板调试时电池未接，浮空读值会触发低压报警
+			osDelay(100);
     }
 }

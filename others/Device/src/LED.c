@@ -72,28 +72,24 @@ void LED_task(void const * argument)
 	
 	for(;;)
 	{
-		// Stop_Buzzer();
-		if(bat_voltage >= 15.0)
+		// 已移除电压低压报警分支（红灯+长鸣），单板调试时电池电压无效
+		if(System_State == Normal)
 		{
-			if(System_State == Normal)
-			{
-				WS2812_1_Set(0,0,50,0);
-				osDelay(500);
-				WS2812_1_Set(0,0,0,0);
-				osDelay(500);
-			}
-			else if(System_State == Fast)
-			{
-				WS2812_1_Set(0,50,50,0);
-				osDelay(500);
-				WS2812_1_Set(0,0,0,0);
-				osDelay(500);
-			}
+			WS2812_1_Set(0,0,50,0);
+			osDelay(500);
+			WS2812_1_Set(0,0,0,0);
+			osDelay(500);
+		}
+		else if(System_State == Fast)
+		{
+			WS2812_1_Set(0,50,50,0);
+			osDelay(500);
+			WS2812_1_Set(0,0,0,0);
+			osDelay(500);
 		}
 		else
 		{
-			Buzzer_High_si();
-			WS2812_1_Set(0,50,0,0);
+			osDelay(100);
 		}
 	}
 }

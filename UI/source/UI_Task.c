@@ -1,5 +1,6 @@
 #include "cmsis_os.h"
 #include <stdint.h>
+#include <string.h>
 #include "ui.h"
 #include "Judge.h"
 #include "motor.h"          // Foot_Chassis
@@ -18,13 +19,21 @@ extern volatile uint32_t rx_cnt_4310;
 
 extern int shootnum;
 
-/* ===== 颜色：UI 元素"隐藏"用 8(黑)，"显示"用初始 color (字符串=4 紫色) ===== */
-#define UI_COLOR_HIDDEN   8   /* 黑色与背景同色，相当于隐藏 */
-#define UI_COLOR_TEXT     4   /* NewText / NewText2 初始紫色 */
-
 /* ===== width：断联=1，正常=10 ===== */
 #define UI_WIDTH_LOST     1
 #define UI_WIDTH_ALIVE    10
+
+/* 字符串"隐藏/显示"辅助：通过把 str_length 置 0 让客户端不画该文字 */
+static inline void ui_text_show(ui_interface_string_t *t, const char *s, uint8_t len)
+{
+    strcpy(t->string, s);
+    t->str_length = len;
+}
+static inline void ui_text_hide(ui_interface_string_t *t)
+{
+    t->string[0]   = '\0';
+    t->str_length  = 0;
+}
 
 /* 简单的"上次计数 → 是否断联"检测：
    每帧（30Hz）读一次 rx_cnt，与上一帧对比；相等=33ms 内没收到=判断为断线。 */
@@ -87,15 +96,23 @@ static void UI_RefreshParams_30HZ(void)
 /**
  * @brief 5Hz 组动态参数刷新
  *        每次 ui_update_g_5HZ() 之前调用一次。
- *        显示/隐藏通过 color 切换：紫(4)=显示，黑(8)=隐藏。
+ *        显示/隐藏通过 str_length 切换：=0 客户端不画文字，=原值正常显示。
  */
 static void UI_RefreshParams_5HZ(void)
 {
     /* Chassis_Mode == 1 时不显示 "PLEASE SPIN" */
-    ui_g_5HZ_NewText->color  = (Foot_Chassis.Chassis_Mode == 1) ? UI_COLOR_HIDDEN : UI_COLOR_TEXT;
+    if (Foot_Chassis.Chassis_Mode == 1) {
+        ui_text_hide(ui_g_5HZ_NewText);
+    } else {
+        ui_text_show(ui_g_5HZ_NewText, "PLEASE SPIN", 11);
+    }
 
     /* Target_Leg_State == 1 时显示 "LONG LEG"，否则隐藏 */
-    ui_g_5HZ_NewText2->color = (Foot_Chassis.Target_Leg_State == 1) ? UI_COLOR_TEXT : UI_COLOR_HIDDEN;
+    if (Foot_Chassis.Target_Leg_State == 1) {
+        ui_text_show(ui_g_5HZ_NewText2, "LONG LEG", 8);
+    } else {
+        ui_text_hide(ui_g_5HZ_NewText2);
+    }
 }
 
 /**
