@@ -63,6 +63,8 @@ osStaticThreadDef_t ObserveControlBlock;
 osThreadId Board2BoardTaskHandle;
 osThreadId Gimbal_TaskHandle;
 osThreadId UIHandle;
+uint32_t UIBuffer[ 1024 ];
+osStaticThreadDef_t UIControlBlock;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -167,7 +169,7 @@ void MX_FREERTOS_Init(void) {
   Gimbal_TaskHandle = osThreadCreate(osThread(Gimbal_Task), NULL);
 
   /* definition and creation of UI */
-  osThreadDef(UI, UI_task, osPriorityIdle, 0, 512);
+  osThreadStaticDef(UI, UI_task, osPriorityIdle, 0, 1024, UIBuffer, &UIControlBlock);
   UIHandle = osThreadCreate(osThread(UI), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -364,7 +366,7 @@ __weak void Gimbal_task(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_UI_task */
-void UI_task(void const * argument)
+__weak void UI_task(void const * argument)
 {
   /* USER CODE BEGIN UI_task */
   extern int ui_self_id;
