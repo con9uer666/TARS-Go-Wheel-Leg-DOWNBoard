@@ -67,6 +67,7 @@
 "h7_ctrl\jlui.o"
 "h7_ctrl\ui_g.o"
 "h7_ctrl\ui_interface.o"
+"h7_ctrl\ui_task.o"
 "h7_ctrl\controlsystem.o"
 "h7_ctrl\filter.o"
 "h7_ctrl\fricmodelsim.o"

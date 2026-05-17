@@ -26,14 +26,15 @@ uint8_t wheel_leg_output_enable = 1;  // 1=正常输出, 0=仅关断3508和8009�
 #define HEARTBEAT_CHECK_INTERVAL_MS  10    // 每10ms检测一次
 
 // 每个电机独立的CAN数据接收计数器（每次收到消息时在中断回调中自增）
-static volatile uint32_t rx_cnt_L_DM8009_0 = 0;  // L_DM8009[0]
-static volatile uint32_t rx_cnt_L_DM8009_1 = 0;  // L_DM8009[1]
-static volatile uint32_t rx_cnt_R_DM8009_0 = 0;  // R_DM8009[0]
-static volatile uint32_t rx_cnt_R_DM8009_1 = 0;  // R_DM8009[1]
-static volatile uint32_t rx_cnt_L_DJ3508    = 0;  // L_DJ3508
-static volatile uint32_t rx_cnt_R_DJ3508    = 0;  // R_DJ3508
-static volatile uint32_t rx_cnt_4310        = 0;  // Yaw_DM4310
-static volatile uint32_t rx_cnt_2325        = 0;  // Shooter_DM2325
+// 去掉 static 以便 UI_Task.c 通过 extern 读取做断联指示
+volatile uint32_t rx_cnt_L_DM8009_0 = 0;  // L_DM8009[0]
+volatile uint32_t rx_cnt_L_DM8009_1 = 0;  // L_DM8009[1]
+volatile uint32_t rx_cnt_R_DM8009_0 = 0;  // R_DM8009[0]
+volatile uint32_t rx_cnt_R_DM8009_1 = 0;  // R_DM8009[1]
+volatile uint32_t rx_cnt_L_DJ3508    = 0;  // L_DJ3508
+volatile uint32_t rx_cnt_R_DJ3508    = 0;  // R_DJ3508
+volatile uint32_t rx_cnt_4310        = 0;  // Yaw_DM4310
+volatile uint32_t rx_cnt_2325        = 0;  // Shooter_DM2325
 
 // 上一次检测时保存的计数值（用于对比是否增长）
 static uint32_t last_rx_cnt_L_DM8009_0 = 0;

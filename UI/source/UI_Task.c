@@ -1,0 +1,157 @@
+#include "cmsis_os.h"
+#include <stdint.h>
+#include "ui.h"
+#include "Judge.h"
+#include "motor.h"          // Foot_Chassis
+#include "Board2Board.h"    // B2B_offline_flag, shootnum
+
+extern int ui_self_id;
+
+/* ===== 来自 USER_CAN.c 的电机 CAN 心跳计数器（每帧自增） ===== */
+extern volatile uint32_t rx_cnt_L_DM8009_0;
+extern volatile uint32_t rx_cnt_L_DM8009_1;
+extern volatile uint32_t rx_cnt_R_DM8009_0;
+extern volatile uint32_t rx_cnt_R_DM8009_1;
+extern volatile uint32_t rx_cnt_L_DJ3508;
+extern volatile uint32_t rx_cnt_R_DJ3508;
+extern volatile uint32_t rx_cnt_4310;
+
+extern int shootnum;
+
+/* ===== 颜色：UI 元素"隐藏"用 8(黑)，"显示"用初始 color (字符串=4 紫色) ===== */
+#define UI_COLOR_HIDDEN   8   /* 黑色与背景同色，相当于隐藏 */
+#define UI_COLOR_TEXT     4   /* NewText / NewText2 初始紫色 */
+
+/* ===== width：断联=1，正常=10 ===== */
+#define UI_WIDTH_LOST     1
+#define UI_WIDTH_ALIVE    10
+
+/* 简单的"上次计数 → 是否断联"检测：
+   每帧（30Hz）读一次 rx_cnt，与上一帧对比；相等=33ms 内没收到=判断为断线。 */
+static inline uint8_t check_lost(volatile uint32_t *cur, uint32_t *last)
+{
+    uint32_t v = *cur;
+    uint8_t  lost = (v == *last);
+    *last = v;
+    return lost;
+}
+
+/**
+ * @brief 30Hz 组动态参数刷新
+ *        每次 ui_update_g_30HZ() 之前调用一次。
+ */
+static void UI_RefreshParams_30HZ(void)
+{
+    static uint32_t last_L0 = 0, last_L1 = 0, last_R0 = 0, last_R1 = 0;
+    static uint32_t last_3508L = 0, last_3508R = 0;
+    static uint32_t last_4310 = 0;
+
+    /* ----- 关节电机断联指示（width 切换） ----- */
+    ui_g_30HZ_8009LF->width = check_lost(&rx_cnt_L_DM8009_1, &last_L1) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE; // 左前
+    ui_g_30HZ_8009LB->width = check_lost(&rx_cnt_L_DM8009_0, &last_L0) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE; // 左后
+    ui_g_30HZ_8009RF->width = check_lost(&rx_cnt_R_DM8009_1, &last_R1) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE; // 右前
+    ui_g_30HZ_8009RB->width = check_lost(&rx_cnt_R_DM8009_0, &last_R0) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE; // 右后
+
+    ui_g_30HZ_3508L->width = check_lost(&rx_cnt_L_DJ3508, &last_3508L) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
+    ui_g_30HZ_3508R->width = check_lost(&rx_cnt_R_DJ3508, &last_3508R) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
+
+    /* 4310 Yaw 电机断联 → ROLL 指示灯（PITCH 留作第二批） */
+    ui_g_30HZ_ROLL->width = check_lost(&rx_cnt_4310, &last_4310) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
+
+    /* ----- 485 板间通信心跳 ----- */
+    ui_g_30HZ_485->width = B2B_offline_flag ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
+
+    /* ----- 数字：发射弹丸数 ----- */
+    ui_g_30HZ_SHOOT_NUM->number = shootnum;
+
+    /* ========== 第二批待完善 ========== */
+    /* ui_g_30HZ_NUC          : NUC 心跳/丢失指示  TODO */
+    /* ui_g_30HZ_FRIC_SPD_L   : 左摩擦轮转速数字   TODO */
+    /* ui_g_30HZ_FRIC_SPD_R   : 右摩擦轮转速数字   TODO */
+    /* ui_g_30HZ_AUTO_AIM     : 自瞄状态数字       TODO */
+    /* ui_g_30HZ_BODY_FRONT   : 车头方位弧线       TODO */
+    /* ui_g_30HZ_SUPER_CUP    : 超电电量直线       TODO */
+    /* ui_g_30HZ_L_LEG        : 左腿长直线         TODO */
+    /* ui_g_30HZ_R_LEG        : 右腿长直线         TODO */
+    /* ui_g_30HZ_BODY_PITCH   : 车体 pitch 直线    TODO */
+    /* ui_g_30HZ_BUFFER_NUM   : 缓冲数字           TODO */
+    /* ui_g_30HZ_POWER_METER  : 功率计指示         TODO */
+    /* ui_g_30HZ_PITCH        : PITCH 电机指示     TODO */
+    /* ui_g_30HZ_FRIC_L       : 左摩擦轮电机指示   TODO */
+    /* ui_g_30HZ_FRIC_R       : 右摩擦轮电机指示   TODO */
+
+    /* ========== 备用预留（未指派含义，先不动） ========== */
+    /* ui_g_30HZ_UNNAME1 / UNNAME2 / UNNAME3 */
+}
+
+/**
+ * @brief 5Hz 组动态参数刷新
+ *        每次 ui_update_g_5HZ() 之前调用一次。
+ *        显示/隐藏通过 color 切换：紫(4)=显示，黑(8)=隐藏。
+ */
+static void UI_RefreshParams_5HZ(void)
+{
+    /* Chassis_Mode == 1 时不显示 "PLEASE SPIN" */
+    ui_g_5HZ_NewText->color  = (Foot_Chassis.Chassis_Mode == 1) ? UI_COLOR_HIDDEN : UI_COLOR_TEXT;
+
+    /* Target_Leg_State == 1 时显示 "LONG LEG"，否则隐藏 */
+    ui_g_5HZ_NewText2->color = (Foot_Chassis.Target_Leg_State == 1) ? UI_COLOR_TEXT : UI_COLOR_HIDDEN;
+}
+
+/**
+ * @brief INIT 组动态参数刷新（目前全部第二批待完善，函数留空作锚点）
+ *        ui_g_INIT_NewLine ~ NewLine5 : TODO
+ *        其它静态字符串/线条按 ui_init_g_INIT 的初值即可，不动。
+ */
+static void UI_RefreshParams_INIT(void)
+{
+    /* TODO: NewLine ~ NewLine5 第二批 */
+}
+
+/**
+ * @brief UI 主任务（覆盖 freertos.c 里的 __weak UI_task）
+ *        - 上电后最多等 5 秒读裁判系统 robot_id
+ *        - INIT/5HZ/30HZ 三组先各发一次初始化
+ *        - 主循环 30Hz：30HZ 组每轮发；5HZ 组每 6 轮发一次；INIT 组每 30 轮（1Hz）重发一次
+ */
+void UI_task(void const * argument)
+{
+    uint8_t id = 0;
+    for (int i = 0; i < 50; i++) {
+        id = JUDGE_GetSelfID();
+        if (id != 0) break;
+        osDelay(100);
+    }
+    ui_self_id = (id != 0) ? id : 3;
+
+    /* 初始化：发各分组的 1=新增帧 */
+    ui_init_g_INIT();
+    osDelay(50);
+    ui_init_g_5HZ();
+    osDelay(50);
+    ui_init_g_30HZ();
+    osDelay(50);
+
+    uint32_t cnt = 0;
+    for (;;)
+    {
+        /* ---- 30Hz：每轮 ---- */
+        UI_RefreshParams_30HZ();
+        ui_update_g_30HZ();
+
+        /* ---- 5Hz：每 6 轮 ---- */
+        if ((cnt % 6) == 0) {
+            UI_RefreshParams_5HZ();
+            ui_update_g_5HZ();
+        }
+
+        /* ---- 1Hz：每 30 轮重发 INIT 组（静态层兜底防丢） ---- */
+        if ((cnt % 30) == 0 && cnt != 0) {
+            UI_RefreshParams_INIT();
+            ui_update_g_INIT();
+        }
+
+        cnt++;
+        osDelay(33);   /* 30Hz 周期 */
+    }
+}

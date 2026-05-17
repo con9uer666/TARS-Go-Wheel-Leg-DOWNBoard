@@ -25,8 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ui.h"
-#include "Judge.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -369,31 +368,10 @@ __weak void Gimbal_task(void const * argument)
 __weak void UI_task(void const * argument)
 {
   /* USER CODE BEGIN UI_task */
-  extern int ui_self_id;
-
-  uint8_t id = 0;
-  for (int i = 0; i < 50; i++) {
-    id = JUDGE_GetSelfID();
-    if (id != 0) break;
-    osDelay(100);
-  }
-  ui_self_id = (id != 0) ? id : 3;
-
-  ui_init_g_INIT();
-  osDelay(100);
-  ui_init_g_5HZ();
-  osDelay(100);
-  ui_init_g_30HZ();
-  osDelay(100);
-
-  uint32_t cnt = 0;
+  /* Infinite loop */
   for(;;)
   {
-    ui_update_g_30HZ();
-    if (++cnt % 6 == 0) {
-      ui_update_g_5HZ();
-    }
-    osDelay(100);
+    osDelay(1);
   }
   /* USER CODE END UI_task */
 }
