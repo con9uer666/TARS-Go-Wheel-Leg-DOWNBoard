@@ -212,7 +212,8 @@ void CAN_Transmit(void const * argument)
 			DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
 			DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 			osDelay(1);
-			DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, 0, 0, 0, 0);
+			// DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, 0, 0, 0, 0);
+			DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, 0);
 			DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
 			continue;
 		}
@@ -333,7 +334,14 @@ void CAN_Transmit(void const * argument)
 			}
 			osDelay(1);
 			// 4310正常时，始终发送4310指令
-			DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, down_board_yaw_output, 0, 0, 2);
+			if(gimbal_follow_flag == 1)
+			{
+				DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, down_board_yaw_output, 0, 0, 2);
+			}
+			else
+			{
+				DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
+			}
 			// 2325
 			if (lost_2325)
 			{

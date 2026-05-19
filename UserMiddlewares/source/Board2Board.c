@@ -108,8 +108,9 @@ void B2B_ParseUsart() // 先发低字节
 		visionFindcheck = visionFind;
 		vision_mode = visionMode;
 
-		Yaw_DM4310.Target_Speed = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
-
+		// Yaw_DM4310.Target_Speed = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
+		Yaw_DM4310.Target_Torque = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
+		
 		Shooter_DM2325.Target_Torque = (float)((((int16_t)(usart2RxBuf[27] | usart2RxBuf[28] << 8))/1000.0f)*0.18f);
 
 		fricMotor_left_speed = usart2RxBuf[30] | usart2RxBuf[31] << 8;
