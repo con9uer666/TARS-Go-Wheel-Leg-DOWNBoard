@@ -231,14 +231,13 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 void Task_B2B_Callback()
 {
-	/**********特殊情况处理*********************/
-	// 已关闭急停功能：上板发来 STOPFLAG=1 时不再唤醒 Error_task
-	// if (STOPFLAG == 1)
-	// {
-	// 	FEEDBACK = 1;
-	// 	B2B_ParseUsart();
-	// 	osThreadResume(ErrorHandle); // 恢复错误任务 饿死其他任务
-	// }
+	
+	if (STOPFLAG == 1)
+	{
+		FEEDBACK = 1;
+		B2B_ParseUsart();
+		osThreadResume(ErrorHandle); // 恢复错误任务 饿死其他任务
+	}
 }
 int times;
 /************************freertos任务****************************/
@@ -260,18 +259,17 @@ void OS_Board2BoardCallback(void const *argument)
 		}
 		Task_B2B_Callback();
 
-		// 已关闭 485 板间通信心跳检测：不再判定离线、不再触发 STOPFLAG
-		// if(B2B_time_cnt >= 250)
-		// {
-		// 	if(B2B_offline_cnt == pre_B2B_offline_cnt)
-		// 	{
-		// 		B2B_offline_flag = 1;
-		// 		STOPFLAG = 1;
-		// 	}
-		// 	pre_B2B_offline_cnt = B2B_offline_cnt;
-		// 	B2B_time_cnt = 0;
-		// }
-		// B2B_time_cnt ++;
+		if(B2B_time_cnt >= 250)
+		{
+			if(B2B_offline_cnt == pre_B2B_offline_cnt)
+			{
+				B2B_offline_flag = 1;
+				STOPFLAG = 1;
+			}
+			pre_B2B_offline_cnt = B2B_offline_cnt;
+			B2B_time_cnt = 0;
+		}
+		B2B_time_cnt ++;
 
 		osDelay(2);
 	}

@@ -39,7 +39,7 @@ float LEG_MAX_LENTH = 0.37f;
 
 float L_b_phi0, R_b_phi0;  
    
-float PITCH_OFFSET=-0.05;  
+float PITCH_OFFSET = 0.03;  
    
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值  单位为弧度   
 float pitch_trans[2];                                                                                               
@@ -605,7 +605,7 @@ void NotStanding_NotStairRetract_for_chassis()
         R_Leg_State = 0;
         L_Leg_State = 0;
         body_distance = 0;
-        target_body_distance = -2.5;
+        target_body_distance = 1.0;
     }
 
     //映射到电机力矩
@@ -1115,15 +1115,23 @@ void StairRetract()
         R_Ready_Count = 0;
     }
 
-    //状态量归位（两腿都到位）
-    if(R_Leg_State == 2 && L_Leg_State == 2)
+    //两腿到位后固定延时再切Standing，跳过NotStanding冗余状态迁移
+    static int stair_dwell_cnt = 0;
+    if (R_Leg_State == 2 && L_Leg_State == 2)
     {
-        upstares_mode = 0;
-        start_mode = 0;
-        R_Leg_State = 0;   //下次进入从 State=0 开始
-        L_Leg_State = 0;
-        leg_state = 0;
-        target_Leg_L0 = LEG_MIN_LENTH;
+        stair_dwell_cnt++;
+        if (stair_dwell_cnt >= 150) // 300ms
+        {
+            stair_dwell_cnt = 0;
+            upstares_mode = 0;
+            start_mode = 1;
+            R_Leg_State = 0;
+            L_Leg_State = 0;
+            leg_state = 0;
+            target_Leg_L0 = LEG_MIN_LENTH;
+            body_distance = 0;
+            target_body_distance = 3.0;
+        }
     }
 }
 
