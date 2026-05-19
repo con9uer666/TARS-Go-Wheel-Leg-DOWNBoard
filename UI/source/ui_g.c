@@ -193,10 +193,10 @@ void _ui_init_g_30HZ_1() {
     ui_g_30HZ_BODY_PITCH->operate_type = 1;
     ui_g_30HZ_BODY_PITCH->layer = 0;
     ui_g_30HZ_BODY_PITCH->color = 2;
-    ui_g_30HZ_BODY_PITCH->start_x = 1791;
+    ui_g_30HZ_BODY_PITCH->start_x = 1791;   //1800
     ui_g_30HZ_BODY_PITCH->start_y = 711;
     ui_g_30HZ_BODY_PITCH->width = 1;
-    ui_g_30HZ_BODY_PITCH->end_x = 1476;
+    ui_g_30HZ_BODY_PITCH->end_x = 1476;     //1500
     ui_g_30HZ_BODY_PITCH->end_y = 718;
 
     ui_g_30HZ_8009RB->figure_type = 2;

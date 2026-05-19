@@ -35,6 +35,7 @@ volatile uint32_t rx_cnt_L_DJ3508    = 0;  // L_DJ3508
 volatile uint32_t rx_cnt_R_DJ3508    = 0;  // R_DJ3508
 volatile uint32_t rx_cnt_4310        = 0;  // Yaw_DM4310
 volatile uint32_t rx_cnt_2325        = 0;  // Shooter_DM2325
+volatile uint32_t rx_cnt_wattmeter   = 0;  // WattMeter (can3, 0x213)
 
 // 上一次检测时保存的计数值（用于对比是否增长）
 static uint32_t last_rx_cnt_L_DM8009_0 = 0;
@@ -159,6 +160,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			case 0x213:
 			{
 				WattMeter_CAN_Parse(rx_data);
+				rx_cnt_wattmeter++;
 				break;
 			}
 		}

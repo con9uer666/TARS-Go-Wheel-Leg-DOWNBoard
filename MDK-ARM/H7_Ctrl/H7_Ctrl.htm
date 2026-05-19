@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Tue May 19 16:51:48 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Tue May 19 20:33:43 2026
 <BR><P>
 <H3>Maximum Stack Usage =        488 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1091,18 +1091,18 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DJI_Motor_Torque_Ctrl
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Disable_DM_Motor
-<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Motor_MIT_Speed_ctrl
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Motor_MIT_Speed_ctrl
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Motor_MIT_Torque_ctrl
 <LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Enable_DM_Motor_MIT
 </UL>
 
-<P><STRONG><a name="[aa]"></a>CAN_Transmit</STRONG> (Thumb, 1998 bytes, Stack size 56 bytes, user_can.o(.text.CAN_Transmit))
+<P><STRONG><a name="[aa]"></a>CAN_Transmit</STRONG> (Thumb, 2470 bytes, Stack size 56 bytes, user_can.o(.text.CAN_Transmit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = CAN_Transmit &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DJI_Motor_Torque_Ctrl
-<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Motor_MIT_Speed_ctrl
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Motor_MIT_Speed_ctrl
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Motor_MIT_Torque_ctrl
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.rodata..L__const.MX_FREERTOS_Init.os_thread_def_CAN)
@@ -1205,7 +1205,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[f9]"></a>DM_Motor_MIT_Speed_ctrl</STRONG> (Thumb, 204 bytes, Stack size 16 bytes, motor_drv.o(.text.DM_Motor_MIT_Speed_ctrl))
+<P><STRONG><a name="[fa]"></a>DM_Motor_MIT_Speed_ctrl</STRONG> (Thumb, 204 bytes, Stack size 16 bytes, motor_drv.o(.text.DM_Motor_MIT_Speed_ctrl))
 <BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = DM_Motor_MIT_Speed_ctrl &rArr; CAN_Send_DM_Motor_Data &rArr; HAL_FDCAN_AddMessageToTxFifoQ &rArr; FDCAN_CopyMessageToRAM
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Send_DM_Motor_Data
@@ -1356,7 +1356,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Gimbal_task &rArr; osDelayUntil &rArr; vTaskDelayUntil &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
-<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
 <LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;easy_angle_normalize
 <LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
@@ -2243,7 +2243,7 @@ Global Symbols
 <LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_init
 <LI><a href="#[16e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Init
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_init
-<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.rodata..L__const.MX_FREERTOS_Init.os_thread_def_IMU)
 </UL>
@@ -2672,7 +2672,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
-<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[1b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_PID_Init
 <LI><a href="#[1b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Init
 <LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Joint_Motor_Init
@@ -2727,7 +2727,7 @@ Global Symbols
 <LI>Call Chain = Observe_Tasks &rArr; Kalman_Filter1_Update &rArr; Kalman_Filter1_SetK &rArr; arm_mat_inverse_f32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
-<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[18d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Init
 </UL>
@@ -3831,7 +3831,7 @@ Global Symbols
 <LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 </UL>
 
-<P><STRONG><a name="[fa]"></a>xTaskGetTickCount</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, tasks.o(.text.xTaskGetTickCount))
+<P><STRONG><a name="[f9]"></a>xTaskGetTickCount</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, tasks.o(.text.xTaskGetTickCount))
 <BR><BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_tasks
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CAN_Transmit
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Observe_Tasks

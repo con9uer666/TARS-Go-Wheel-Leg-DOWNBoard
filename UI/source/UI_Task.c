@@ -3,8 +3,11 @@
 #include <string.h>
 #include "ui.h"
 #include "Judge.h"
-#include "motor.h"          // Foot_Chassis
+#include "motor.h"          // Foot_Chassis, pitch_trans
 #include "Board2Board.h"    // B2B_offline_flag, shootnum
+#include "Gimbal.h"         // yaw_angle_PI
+#include "VMC.h"            // VMC_L, VMC_R
+#include <math.h>
 
 extern int ui_self_id;
 
@@ -16,6 +19,7 @@ extern volatile uint32_t rx_cnt_R_DM8009_1;
 extern volatile uint32_t rx_cnt_L_DJ3508;
 extern volatile uint32_t rx_cnt_R_DJ3508;
 extern volatile uint32_t rx_cnt_4310;
+extern volatile uint32_t rx_cnt_wattmeter;
 
 extern int shootnum;
 
@@ -54,6 +58,8 @@ static void UI_RefreshParams_30HZ(void)
     static uint32_t last_L0 = 0, last_L1 = 0, last_R0 = 0, last_R1 = 0;
     static uint32_t last_3508L = 0, last_3508R = 0;
     static uint32_t last_4310 = 0;
+    static uint32_t last_wattmeter = 0;
+    static uint32_t last_wattmeter_change_tick = 0;  // 功率计最近一次计数器变化时的tick
 
     /* ----- 关节电机断联指示（width 切换） ----- */
     ui_g_30HZ_8009LF->width = check_lost(&rx_cnt_L_DM8009_1, &last_L1) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE; // 左前
@@ -67,24 +73,87 @@ static void UI_RefreshParams_30HZ(void)
     /* 4310 Yaw 电机断联 → ROLL 指示灯（PITCH 留作第二批） */
     ui_g_30HZ_ROLL->width = check_lost(&rx_cnt_4310, &last_4310) ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
 
+    /* 功率计（can3 0x213）断联指示：500ms 内未收到帧才判定为断联 */
+    {
+        uint32_t cur_wm = rx_cnt_wattmeter;
+        uint32_t now    = osKernelSysTick();
+        if (cur_wm != last_wattmeter) {
+            last_wattmeter            = cur_wm;
+            last_wattmeter_change_tick = now;
+        }
+        ui_g_30HZ_POWER_METER->width =
+            ((now - last_wattmeter_change_tick) >= pdMS_TO_TICKS(500))
+            ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
+    }
+
     /* ----- 485 板间通信心跳 ----- */
     ui_g_30HZ_485->width = B2B_offline_flag ? UI_WIDTH_LOST : UI_WIDTH_ALIVE;
 
+    /* ----- 车头方位弧线：车身在云台头坐标系中的角度 = -yaw_angle_PI -----
+       弧宽固定 40°，中点指向车身方向，套圈用 mod 360 处理 */
+    {
+        float body_deg = -yaw_angle_PI * (180.0f / 3.14159265358979f);
+        int   mid      = (int)lroundf(body_deg);
+        mid = ((mid % 360) + 360) % 360;          // 归一化到 [0, 360)
+        ui_g_30HZ_BODY_FRONT->start_angle = (mid + 360 - 20) % 360;
+        ui_g_30HZ_BODY_FRONT->end_angle   = (mid + 20)       % 360;
+    }
+
     /* ----- 数字：发射弹丸数 ----- */
     ui_g_30HZ_SHOOT_NUM->number = shootnum;
+
+    /* ----- 车体 pitch 直线：中点 (1650,700)，全长 300，end→start 与水平夹角 = pitch_trans[0]
+       (end 高于 start 为正)。屏幕 y 向下，所以"end 高于 start" ⇒ end.y_screen < start.y_screen */
+    {
+        const int   bp_mid_x = 1650;
+        const int   bp_mid_y = 700;
+        const float bp_half  = 150.0f;
+        float c_p = cosf(pitch_trans[0]);
+        float s_p = sinf(pitch_trans[0]);
+        float dx  = bp_half * c_p;
+        float dy  = bp_half * s_p;
+        ui_g_30HZ_BODY_PITCH->start_x = (int)lroundf(bp_mid_x - dx);
+        ui_g_30HZ_BODY_PITCH->start_y = (int)lroundf(bp_mid_y + dy);
+        ui_g_30HZ_BODY_PITCH->end_x   = (int)lroundf(bp_mid_x + dx);
+        ui_g_30HZ_BODY_PITCH->end_y   = (int)lroundf(bp_mid_y - dy);
+    }
+
+    /* ----- 左/右腿直线：start 恒定，长度 = L0*10，方向相对竖直角度 = b_phi0
+       (start.x < end.x 为正)。屏幕 y 向下，腿向上延伸 ⇒ end.y_screen = start.y - L*cos(phi)。
+       L_b_phi0 与 R_b_phi0 已在 VMC.c 中归一到同一符号约定（腿尖向 +x 为正），故公式一致。 */
+    {
+        const float leg_scale = 10.0f;
+        /* 左腿 */
+        {
+            const int sx = 1600, sy = 700;
+            float L  = VMC_L.L0 * leg_scale;
+            float ex = sx + L * sinf(VMC_L.b_phi0);
+            float ey = sy - L * cosf(VMC_L.b_phi0);
+            ui_g_30HZ_L_LEG->start_x = sx;
+            ui_g_30HZ_L_LEG->start_y = sy;
+            ui_g_30HZ_L_LEG->end_x   = (int)lroundf(ex);
+            ui_g_30HZ_L_LEG->end_y   = (int)lroundf(ey);
+        }
+        /* 右腿 */
+        {
+            const int sx = 1700, sy = 700;
+            float L  = VMC_R.L0 * leg_scale;
+            float ex = sx + L * sinf(VMC_R.b_phi0);
+            float ey = sy - L * cosf(VMC_R.b_phi0);
+            ui_g_30HZ_R_LEG->start_x = sx;
+            ui_g_30HZ_R_LEG->start_y = sy;
+            ui_g_30HZ_R_LEG->end_x   = (int)lroundf(ex);
+            ui_g_30HZ_R_LEG->end_y   = (int)lroundf(ey);
+        }
+    }
 
     /* ========== 第二批待完善 ========== */
     /* ui_g_30HZ_NUC          : NUC 心跳/丢失指示  TODO */
     /* ui_g_30HZ_FRIC_SPD_L   : 左摩擦轮转速数字   TODO */
     /* ui_g_30HZ_FRIC_SPD_R   : 右摩擦轮转速数字   TODO */
     /* ui_g_30HZ_AUTO_AIM     : 自瞄状态数字       TODO */
-    /* ui_g_30HZ_BODY_FRONT   : 车头方位弧线       TODO */
     /* ui_g_30HZ_SUPER_CUP    : 超电电量直线       TODO */
-    /* ui_g_30HZ_L_LEG        : 左腿长直线         TODO */
-    /* ui_g_30HZ_R_LEG        : 右腿长直线         TODO */
-    /* ui_g_30HZ_BODY_PITCH   : 车体 pitch 直线    TODO */
     /* ui_g_30HZ_BUFFER_NUM   : 缓冲数字           TODO */
-    /* ui_g_30HZ_POWER_METER  : 功率计指示         TODO */
     /* ui_g_30HZ_PITCH        : PITCH 电机指示     TODO */
     /* ui_g_30HZ_FRIC_L       : 左摩擦轮电机指示   TODO */
     /* ui_g_30HZ_FRIC_R       : 右摩擦轮电机指示   TODO */
