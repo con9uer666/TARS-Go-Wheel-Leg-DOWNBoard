@@ -102,6 +102,19 @@ static void UI_RefreshParams_30HZ(void)
     /* ----- 数字：发射弹丸数 ----- */
     ui_g_30HZ_SHOOT_NUM->number = shootnum;
 
+    /* ----- 数字：自瞄状态 ----- */
+    ui_g_30HZ_AUTO_AIM->number = AIM_State;
+
+    /* ----- 数字：左右摩擦轮实测转速（一阶 IIR 低通，30Hz × α=0.5 → τ≈66ms） ----- */
+    {
+        static float fric_disp_l = 0.0f, fric_disp_r = 0.0f;
+        const float alpha = 0.5f;
+        fric_disp_l = (1.0f - alpha) * fric_disp_l + alpha * (float)fric_speed_l_rpm;
+        fric_disp_r = (1.0f - alpha) * fric_disp_r + alpha * (float)fric_speed_r_rpm;
+        ui_g_30HZ_FRIC_SPD_L->number = (int32_t)lroundf(fric_disp_l);
+        ui_g_30HZ_FRIC_SPD_R->number = (int32_t)lroundf(fric_disp_r);
+    }
+
     /* ----- 车体 pitch 直线：中点 (1650,700)，全长 300，end→start 与水平夹角 = pitch_trans[0]
        (end 高于 start 为正)。屏幕 y 向下，所以"end 高于 start" ⇒ end.y_screen < start.y_screen */
     {
@@ -149,9 +162,6 @@ static void UI_RefreshParams_30HZ(void)
 
     /* ========== 第二批待完善 ========== */
     /* ui_g_30HZ_NUC          : NUC 心跳/丢失指示  TODO */
-    /* ui_g_30HZ_FRIC_SPD_L   : 左摩擦轮转速数字   TODO */
-    /* ui_g_30HZ_FRIC_SPD_R   : 右摩擦轮转速数字   TODO */
-    /* ui_g_30HZ_AUTO_AIM     : 自瞄状态数字       TODO */
     /* ui_g_30HZ_SUPER_CUP    : 超电电量直线       TODO */
     /* ui_g_30HZ_BUFFER_NUM   : 缓冲数字           TODO */
     /* ui_g_30HZ_PITCH        : PITCH 电机指示     TODO */

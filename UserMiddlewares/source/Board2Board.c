@@ -29,6 +29,8 @@ uint8_t diagonal_enable = 1;
 uint8_t trigger_block;
 int	shootnum;
 uint8_t trigger_reverse;
+int16_t fric_speed_l_rpm = 0;  // 上板下发，byte47~48，int16 小端，单位 RPM
+int16_t fric_speed_r_rpm = 0;  // 上板下发，byte49~50，int16 小端，单位 RPM
 
 #define EN_B2B_TASK		  // 使能任务
 uint8_t usart2RxBuf[256]; // 串口2缓冲区
@@ -86,6 +88,7 @@ uint8_t upstairs_flag = 0;//0：常态；1：上台阶的瞬间
 uint8_t sit_mode_enable = 0;//0：正常，1：坐地模式
 uint8_t sit_debug_force = 0;   // 调试用：debugger中设为1可强制进入坐地模式
 uint8_t leg_state_locked_short = 0;//两腿离地时由 motor.c 置1，把 Target_Leg_State 锁短腿；上位机发短腿(0)即解锁
+uint8_t AIM_State = 0;//0为不自瞄，1为自瞄
 
 uint32_t user_g ;
 
@@ -110,7 +113,7 @@ void B2B_ParseUsart() // 先发低字节
 
 		// Yaw_DM4310.Target_Speed = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
 		Yaw_DM4310.Target_Torque = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
-		
+
 		Shooter_DM2325.Target_Torque = (float)((((int16_t)(usart2RxBuf[27] | usart2RxBuf[28] << 8))/1000.0f)*0.18f);
 
 		fricMotor_left_speed = usart2RxBuf[30] | usart2RxBuf[31] << 8;
@@ -139,6 +142,10 @@ void B2B_ParseUsart() // 先发低字节
 		// }
 			upstairs_flag = usart2RxBuf[44];
 			sit_mode_enable = usart2RxBuf[45] | sit_debug_force;
+
+		/* 摩擦轮目标转速：byte47~48 / byte49~50，int16 小端，原值即 RPM */
+		fric_speed_l_rpm = (int16_t)(usart2RxBuf[47] | (usart2RxBuf[48] << 8));
+		fric_speed_r_rpm = (int16_t)(usart2RxBuf[49] | (usart2RxBuf[50] << 8));
 		// for(int i = 0; i <= 127; i++)
 		// {
 		// 	usart2RxBuf[i] = 0;
