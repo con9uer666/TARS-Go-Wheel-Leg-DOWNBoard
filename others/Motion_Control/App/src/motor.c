@@ -830,6 +830,46 @@ void Standing()
 //占用率检测用的，留着吧，看不懂也不影响
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
 
+    /* 倾覆保护：站立期间 |pitch| > 60° 连续 10 帧才触发，避免 IMU 抖动误判。
+       触发后让 8009/3508 输出 0 力矩维持 0.5s，然后回退到未站起状态
+       （start_mode=0, upstares_mode=0, first_run=1）。
+       Motor_task 周期 2ms，0.5s = 250 tick，10 帧滤波 = 20ms。 */
+    static uint16_t tip_protect_cnt = 0;
+    static uint8_t  tip_detect_cnt  = 0;
+    if (tip_protect_cnt == 0)
+    {
+        if (pitch > 60.0f || pitch < -60.0f)
+        {
+            if (tip_detect_cnt < 10) tip_detect_cnt++;
+            if (tip_detect_cnt >= 10)
+            {
+                tip_protect_cnt = 250;
+                tip_detect_cnt  = 0;
+            }
+        }
+        else
+        {
+            tip_detect_cnt = 0;
+        }
+    }
+    if (tip_protect_cnt > 0)
+    {
+        VMC_Set_F0_T(&VMC_L, 0.0f, 0.0f);
+        VMC_Set_F0_T(&VMC_R, 0.0f, 0.0f);
+        L_DJ3508.Target_Torque = 0.0f;
+        R_DJ3508.Target_Torque = 0.0f;
+
+        tip_protect_cnt--;
+        if (tip_protect_cnt == 0)
+        {
+            start_mode     = 0;
+            upstares_mode  = 0;
+            first_run      = 1;
+        }
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
+        return;
+    }
+
     //惯性导航、VMC、水平方向车身速度解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E3%80%81VMC%E3%80%81%E6%B0%B4%E5%B9%B3%E6%96%B9%E5%90%91%E8%BD%A6%E8%BA%AB%E9%80%9F%E5%BA%A6%E8%A7%A3%E7%AE%97
     INS_Coculate();
     VMC_Coculate();
