@@ -830,7 +830,7 @@ void Standing()
 //占用率检测用的，留着吧，看不懂也不影响
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
 
-    /* 倾覆保护：站立期间 |pitch| > 60° 连续 10 帧才触发，避免 IMU 抖动误判。
+    /* 倾覆保护：站立期间 |pitch| > 45° 连续 10 帧才触发，避免 IMU 抖动误判。
        触发后让 8009/3508 输出 0 力矩维持 0.5s，然后回退到未站起状态
        （start_mode=0, upstares_mode=0, first_run=1）。
        Motor_task 周期 2ms，0.5s = 250 tick，10 帧滤波 = 20ms。 */
@@ -838,7 +838,7 @@ void Standing()
     static uint8_t  tip_detect_cnt  = 0;
     if (tip_protect_cnt == 0)
     {
-        if (pitch > 60.0f || pitch < -60.0f)
+        if (pitch > 45.0f || pitch < -45.0f)
         {
             if (tip_detect_cnt < 10) tip_detect_cnt++;
             if (tip_detect_cnt >= 10)
