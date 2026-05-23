@@ -1,19 +1,55 @@
 //
 // Created by bismarckkk on 2024/2/17.
 //
+// ============================================================================
+//  ui_interface.c —— UI 模块"协议层"实现
+//  ----------------------------------------------------------------------------
+//  1) 维护协议序号 seq、机器人 id
+//  2) UART1 DMA 发送 + 状态机看门狗
+//  3) CRC8/CRC16 查表算法（裁判系统官方表）
+//  4) ui_proc_{1,2,5,7,string}_frame 帧封口
+// ============================================================================
 
 #include "ui_interface.h"
 #include <string.h>
 #include "usart.h"
+#include "cmsis_os.h"
 
+// 协议序号，每发一帧就自增（自然 8 位回卷）。仅用作调试辅助，客户端不强制校验。
 uint8_t seq = 0;
+
+// 当前机器人 id（红 1~7 / 蓝 101~107），上电后会被 UI_task 从裁判系统读到值覆盖。
+// 默认 3 = 红方步兵 3，仅在裁判系统未上线时兜底。
 int ui_self_id = 3;
 
+/**
+ * @brief UART1 DMA 发送一帧 UI 数据
+ *
+ * - 只查 TX DMA 通道状态，不要看 huart1.gState（被 RX 共享，永远非 READY，
+ *   一旦轮询它会直接饿死）。
+ * - 等待时让位 osDelay(1)，避免在 idle 优先级里 busy-wait。
+ * - 100ms 仍然未空闲就强制 Abort，防止 HAL 状态机一次故障后整路停摆。
+ *
+ * @param message 待发送缓冲区指针
+ * @param length  待发送字节数
+ */
 void ui_send_message(const uint8_t *message, uint16_t length) {
-    while (huart1.gState != HAL_UART_STATE_READY) { /* busy wait */ }
+    uint32_t t0 = osKernelSysTick();
+    while (HAL_DMA_GetState(huart1.hdmatx) != HAL_DMA_STATE_READY) {
+        if ((osKernelSysTick() - t0) > pdMS_TO_TICKS(100)) {
+            // 看门狗触发：把 HAL 状态拽回可用，避免后续 Transmit 直接返回 BUSY。
+            HAL_UART_AbortTransmit(&huart1);
+            break;
+        }
+        osDelay(1);
+    }
     HAL_UART_Transmit_DMA(&huart1, (uint8_t *)message, length);
 }
 
+/**
+ * @brief 调试：以 hex 形式把一段消息 dump 到 printf 流（每帧后两个换行分组）。
+ *        生产代码里不会被调用，仅供抓帧排错用。
+ */
 void print_message(const uint8_t *message, const int length) {
     for (int i = 0; i < length; i++) {
         printf("%02x ", message[i]);
@@ -21,6 +57,8 @@ void print_message(const uint8_t *message, const int length) {
     printf("\n\n");
 }
 
+// CRC8 查表（多项式 0x31，初值 0xFF）。裁判系统官方提供，禁止改动。
+// 仅用于校验帧头前 4 字节 (SOF/length/seq) 的完整性。
 static const unsigned char CRC8_TAB[256] = {
     0x00, 0x5e, 0xbc, 0xe2, 0x61, 0x3f, 0xdd, 0x83, 0xc2, 0x9c, 0x7e, 0x20, 0xa3, 0xfd, 0x1f, 0x41,
     0x9d, 0xc3, 0x21, 0x7f, 0xfc, 0xa2, 0x40, 0x1e, 0x5f, 0x01, 0xe3, 0xbd, 0x3e, 0x60, 0x82, 0xdc, 0x23,
@@ -40,9 +78,15 @@ static const unsigned char CRC8_TAB[256] = {
     0x74, 0x2a, 0xc8, 0x96, 0x15, 0x4b, 0xa9, 0xf7, 0xb6, 0xe8, 0x0a, 0x54, 0xd7, 0x89, 0x6b, 0x35,
 };
 
+/**
+ * @brief 计算 CRC8（初值 0xFF，查 CRC8_TAB）
+ * @param pchMessage 数据指针
+ * @param dwLength   数据长度（字节）
+ * @return CRC8 结果
+ */
 unsigned char calc_crc8(unsigned char *pchMessage, unsigned int dwLength) {
-    unsigned char ucCRC8 = 0xff;
-    unsigned char ucIndex;
+    unsigned char ucCRC8 = 0xff;     // 裁判系统协议规定初值
+    unsigned char ucIndex;           // 当前迭代的查表索引
     while (dwLength--) {
         ucIndex = ucCRC8 ^ (*pchMessage++);
         ucCRC8 = CRC8_TAB[ucIndex];
@@ -50,6 +94,8 @@ unsigned char calc_crc8(unsigned char *pchMessage, unsigned int dwLength) {
     return (ucCRC8);
 }
 
+// CRC16 查表（多项式 0x8408 的反序，初值 0xFFFF）。裁判系统官方提供，禁止改动。
+// 用于校验整包：从 SOF 到数据段末尾（不含末尾 2 字节 CRC16 本身）。
 static const uint16_t wCRC_Table[256] = {
     0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
     0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
@@ -85,49 +131,90 @@ static const uint16_t wCRC_Table[256] = {
     0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 
+/**
+ * @brief 计算 CRC16（初值 0xFFFF，查 wCRC_Table）
+ * @param pchMessage 数据指针
+ * @param dwLength   数据长度（字节）
+ * @return CRC16 结果；指针非法时返回 0xFFFF
+ */
 uint16_t calc_crc16(uint8_t *pchMessage, uint32_t dwLength)
 {
-    uint16_t wCRC = 0xffff;
-    uint8_t chData;
+    uint16_t wCRC = 0xffff;    // 协议规定初值
+    uint8_t chData;            // 当前字节
     if (pchMessage == NULL)
     {
-        return 0xFFFF;
+        return 0xFFFF;         // 空指针保护：返回全 1 让上层 CRC 校验失败
     }
     while(dwLength--)
     {
         chData = *pchMessage++;
+        // 反向 CRC16：低 8 位右移 + 查表异或
         (wCRC) = ((uint16_t)(wCRC) >> 8) ^ wCRC_Table[((uint16_t)(wCRC) ^ (uint16_t)(chData)) & 0x00ff];
     }
     return wCRC;
 }
 
+// ----- 多图元帧封口宏 -------------------------------------------------------
+// num 是单帧承载的图元个数（1/2/5/7），id 是对应 sub_id (0x0101/0x0102/0x0103/0x0104)。
+// 调用前 ui_g.c 已经填好 data[]，宏负责按协议格式打头 + 算两个 CRC。
+//
+// 长度公式说明：
+//   data 段总长 = (15 字节图元 * num) + 6 字节 data_header (sub_id+send_id+recv_id)
+//   整包 = 5 字节帧头 + 2 字节 cmd_id + data 段 + 2 字节 CRC16
+//
+// header.length 字段定义为"data 段长度"，所以 = 6 + 15*num
+// CRC16 输入长度 = 整包 - 2 = 13 + 15*num
+//
+// ---- 宏展开示意（以 num=5、id=0x0103 为例，对应 ui_proc_5_frame）-----------
+//   void ui_proc_5_frame(ui_5_frame_t *msg) {
+//       msg->header.SOF     = 0xA5;            // 协议起始字节（Start Of Frame）
+//       msg->header.length  = 6 + 15 * 5;      // = 81，data 段长度
+//       msg->header.seq     = seq++;           // 全局序号，每帧 +1
+//       msg->header.crc8    = calc_crc8((uint8_t*)msg, 4); // 前 4 字节 CRC8
+//       msg->header.cmd_id  = 0x0301;          // 裁判系统"客户端绘图"指令
+//       msg->header.sub_id  = 0x0103;          // "5 图元帧"子命令
+//       msg->header.send_id = ui_self_id;      // 己方机器人 ID（红 1-7/蓝 101-107）
+//       msg->header.recv_id = ui_self_id+256;  // 对应客户端 ID = ID+256
+//       msg->crc16 = calc_crc16((uint8_t*)msg, 13 + 15 * 5); // 整包 88 字节 CRC16
+//   }
+// 与之类似地，DEFINE_FRAME_PROC(1, 0x0101) 生成 ui_proc_1_frame，
+// DEFINE_FRAME_PROC(2, 0x0102) 生成 ui_proc_2_frame，
+// DEFINE_FRAME_PROC(7, 0x0104) 生成 ui_proc_7_frame。
+// ---------------------------------------------------------------------------
 #define DEFINE_FRAME_PROC(num, id)                          \
 void ui_proc_ ## num##_frame(ui_ ## num##_frame_t *msg) {   \
     msg->header.SOF = 0xA5;                                 \
     msg->header.length = 6 + 15 * num;                      \
     msg->header.seq = seq++;                                \
-    msg->header.crc8 = calc_crc8((uint8_t*)msg, 4);        \
+    msg->header.crc8 = calc_crc8((uint8_t*)msg, 4);         \
     msg->header.cmd_id = 0x0301;                            \
     msg->header.sub_id = id;                                \
     msg->header.send_id = ui_self_id;                       \
     msg->header.recv_id = ui_self_id + 256;                 \
-    msg->crc16 = calc_crc16((uint8_t*)msg, 13 + 15 * num); \
+    msg->crc16 = calc_crc16((uint8_t*)msg, 13 + 15 * num);  \
 }
 
-DEFINE_FRAME_PROC(1, 0x0101)
-DEFINE_FRAME_PROC(2, 0x0102)
-DEFINE_FRAME_PROC(5, 0x0103)
-DEFINE_FRAME_PROC(7, 0x0104)
+// 生成 4 个图元数对应的封口函数
+DEFINE_FRAME_PROC(1, 0x0101)   // 1 图元帧
+DEFINE_FRAME_PROC(2, 0x0102)   // 2 图元帧
+DEFINE_FRAME_PROC(5, 0x0103)   // 5 图元帧
+DEFINE_FRAME_PROC(7, 0x0104)   // 7 图元帧
 
+/**
+ * @brief 字符串帧封口
+ *        字符串帧长度固定 51 字节（30 字节字符串 + 21 字节其它字段），
+ *        sub_id 固定 0x0110，与多图元帧不同。
+ *        额外做一件事：自动按 strlen 算 str_length，避免上层忘记同步。
+ */
 void ui_proc_string_frame(ui_string_frame_t *msg) {
     msg->header.SOF = 0xA5;
-    msg->header.length = 51;
+    msg->header.length = 51;                           // 字符串包数据段长度固定
     msg->header.seq = seq++;
     msg->header.crc8 = calc_crc8((uint8_t *) msg, 4);
     msg->header.cmd_id = 0x0301;
-    msg->header.sub_id = 0x0110;
+    msg->header.sub_id = 0x0110;                       // 字符串子命令
     msg->header.send_id = ui_self_id;
     msg->header.recv_id = ui_self_id + 256;
-    msg->option.str_length = strlen(msg->option.string);
-    msg->crc16 = calc_crc16((uint8_t *) msg, 58);
+    msg->option.str_length = strlen(msg->option.string); // 与实际字符串保持一致
+    msg->crc16 = calc_crc16((uint8_t *) msg, 58);      // 整包 60 - 2 = 58
 }

@@ -48,7 +48,6 @@ extern float alpha_target_roll;
 extern user_pid_t Roll_Comp_PID;
 extern int leg_state_count;
 extern float target_Leg_L0;
-extern float alpha_target_L0;
 extern user_pid_t L_Leg_L0_PID;
 extern user_pid_t R_Leg_L0_PID; 
 extern float target_L_Leg_L0;

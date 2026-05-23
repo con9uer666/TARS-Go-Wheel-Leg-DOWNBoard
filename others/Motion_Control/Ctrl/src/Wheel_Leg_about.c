@@ -51,11 +51,14 @@ void Roll_Comp()
     else
     target_roll = alpha_target_roll * target_roll + (1 - alpha_target_roll) * target_roll;
 
-    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 3);
+    PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 2);
     PID_coculate(&Roll_Comp_PID);
 }
 
-float alpha_target_L0 = 0.005f;//低通滤波系数，越小越平滑，但响应越慢
+// 目标腿长斜坡速率（每次 Leg_L0_Control 调用的最大增量，单位 m）
+// 占位值，需现场调试：由短变长慢、由长变短快
+float ramp_target_L0_up   = 0.00085f;//伸腿（短→长）速率
+float ramp_target_L0_down = 0.0010f;//缩腿（长→短）速率
 //pd单环腿长控制函数
 void Leg_L0_Control()
 {
@@ -64,8 +67,10 @@ void Leg_L0_Control()
         leg_state_count --;
     }
 
-    //低通滤波
-    target_Leg_L0 = alpha_target_L0 * (((Foot_Chassis.Target_Leg_State / 1.0f) * (LEG_MAX_LENTH - LEG_MIN_LENTH)) + LEG_MIN_LENTH) + (1 - alpha_target_L0) * target_Leg_L0;                       
+    //双速率斜坡
+    float target_L0_input = ((Foot_Chassis.Target_Leg_State / 1.0f) * (LEG_MAX_LENTH - LEG_MIN_LENTH)) + LEG_MIN_LENTH;
+    float ramp_L0 = (target_L0_input > target_Leg_L0) ? ramp_target_L0_up : ramp_target_L0_down;
+    target_Leg_L0 = RAMP_float(target_L0_input, target_Leg_L0, ramp_L0);
 
     if(target_Leg_L0 >= LEG_MAX_LENTH)          
     target_Leg_L0 = LEG_MAX_LENTH;              

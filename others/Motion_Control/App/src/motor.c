@@ -34,21 +34,27 @@ Foot_Chassis_t Foot_Chassis;//轮足底盘结构体
    
 float powerPredict;
    
-float LEG_MIN_LENTH = 0.20f;
+float LEG_MIN_LENTH = 0.23f;
 float LEG_MAX_LENTH = 0.39f;  
 
 float L_b_phi0, R_b_phi0;  
    
-float PITCH_OFFSET = -0.08;  
+float PITCH_OFFSET = -0.10;
+// 小陀螺时叠加的pitch偏置：用于抵消起转/退出时的反作用俯仰
+// 占位值，需现场调试：先试正值再试负值，找到能抵消低头方向的符号后再加大
+float PITCH_OFFSET_SPIN  = 0.05f;       //单位 rad，叠加在 PITCH_OFFSET 上
+float pitch_offset_ramp  = 0.0003f;    //偏置斜坡速率(rad/调用)，进入/退出共用
+float pitch_offset_eff   = -0.10f;     //运行时生效的pitch偏置，初值与PITCH_OFFSET一致避免首拍跳变
+
    
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值  单位为弧度   
 float pitch_trans[2];                                                                                               
 float d_pitch;//pitch速度，单位为弧度每秒 
-float alpha_d_pitch = 1.0;//滤波系数                                          
-   
+float alpha_d_pitch = 1.0;//滤波系数
+
 float Leg_L_T; //模拟腿力矩
 float Leg_R_T; 
-   
+
 float Wr, Wl;//加上杆角速度的车轮速度      
 float alpha_W = 0.9;//滤波系数   
 float body_speed_L, body_speed_R, body_speed; //当前车体速度 ,已正交，是水平方向的速度
@@ -73,7 +79,7 @@ float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 
-float mg = 80.0f/2;
+float mg = 150.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
@@ -201,7 +207,7 @@ uint16_t motor_HZ = 500; //任务频率
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
-float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+float target_spinning_d_yaw = 14.0f; // 目标小陀螺yaw速度，单位为弧度每秒
 float centrifugal_comp_gain = 0.8f;  // spin离心补偿系数
 
 //?中间参数
@@ -317,12 +323,12 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 3000, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 3000, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&Leg_Phi0_PID, 300, 0, 5, 150, 150, 0, 50000, 0);
+    PID_INIT(&L_Leg_L0_PID, 1500, 0, 70000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 1500, 0, 70000, 200, 0, 0, 0, 0);
+    PID_INIT(&Leg_Phi0_PID, 300, 0, 10, 150, 150, 0, 50000, 0);
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
-    PID_INIT(&Roll_Comp_PID, 10, 0.002, 100, 150, 80, 0, 10000, 0);
+    PID_INIT(&Roll_Comp_PID, 20, 0.002, 100, 150, 80, 0, 10000, 0);
 
     PID_INIT(&L_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
     PID_INIT(&R_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
@@ -605,7 +611,7 @@ void NotStanding_NotStairRetract_for_chassis()
         R_Leg_State = 0;
         L_Leg_State = 0;
         body_distance = 0;
-        target_body_distance = -1.0;
+        target_body_distance = -0.55;
     }
 
     //映射到电机力矩
@@ -635,6 +641,12 @@ void LQR_calculate()
     }
     float leg_b_phi0_offset = (spinning_flag == 1) ? 0.0f : b_phi0_offset;
 
+    //小陀螺pitch偏置：按spinning_flag选目标，斜坡过渡，避免setpoint阶跃
+    float pitch_offset_target = (spinning_flag == 1)
+                              ? (PITCH_OFFSET + PITCH_OFFSET_SPIN)
+                              : PITCH_OFFSET;
+    pitch_offset_eff = RAMP_float(pitch_offset_target, pitch_offset_eff, pitch_offset_ramp);
+
     //算轮子力矩
     L_DJ3508.Target_Torque = 
     + LQR_K[0][0] * lqr_body_distance_error
@@ -645,7 +657,7 @@ void LQR_calculate()
     - LQR_K[0][5] * VMC_L.d_b_phi0 
     - LQR_K[0][6] * VMC_R.b_phi0 
     - LQR_K[0][7] * VMC_R.d_b_phi0 
-    + LQR_K[0][8] * (pitch_trans[0] - PITCH_OFFSET)
+    + LQR_K[0][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[0][9] * d_pitch;
 
     R_DJ3508.Target_Torque = 
@@ -657,7 +669,7 @@ void LQR_calculate()
     - LQR_K[1][5] * VMC_L.d_b_phi0 
     - LQR_K[1][6] * VMC_R.b_phi0 
     - LQR_K[1][7] * VMC_R.d_b_phi0 
-    + LQR_K[1][8] * (pitch_trans[0] - PITCH_OFFSET)
+    + LQR_K[1][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[1][9] * d_pitch;
 
     //算模拟腿力矩
@@ -670,7 +682,7 @@ void LQR_calculate()
     - LQR_K[2][5] * VMC_L.d_b_phi0 
     - LQR_K[2][6] * VMC_R.b_phi0 
     - LQR_K[2][7] * VMC_R.d_b_phi0
-    + LQR_K[2][8] * (pitch_trans[0] - PITCH_OFFSET)
+    + LQR_K[2][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[2][9] * d_pitch;
 
     Leg_R_T = 
@@ -682,7 +694,7 @@ void LQR_calculate()
     - LQR_K[3][5] * VMC_L.d_b_phi0 
     - LQR_K[3][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
     - LQR_K[3][7] * VMC_R.d_b_phi0
-    + LQR_K[3][8] * (pitch_trans[0] - PITCH_OFFSET)
+    + LQR_K[3][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[3][9] * d_pitch;
 }
 
