@@ -20,9 +20,16 @@
 #include "ui_interface.h"
 
 // ============== 30HZ 分组 ==============
-// 这一批图元按 7+7+7+5=26 个分装成 4 个子帧（3 个 7 帧 + 1 个 5 帧），
+// 这一批图元按 7 + 3 + 4 + 7 + 5 = 26 个分装成 5 个子帧
+// （2 个 7 帧 + 3 个 5 帧；其中 30HZ_1 和 30HZ_FAST 是 5-frame 但只用部分槽位），
 // 由 UI_Task 的 10Hz 主循环按 cnt%10 轮流发送。各图元含义见 UI_Task.c
 // 中的 UI_RefreshParams_30HZ() 注释。
+//
+// 子帧实际刷新率（10Hz 总速率下的 slot 分配，详见 UI_Task.c）：
+//   30HZ_FAST = 4Hz  (姿态可视化：4 个 slot)
+//   30HZ_0    = 2Hz  (数字 + 心跳：2 个 slot)
+//   30HZ_1/2/3 = 各 1Hz (各 1 个 slot)
+//   5HZ 文字  = 共享 1 个 slot（按 on-change + 交替兜底分配）
 
 // 子帧 0：四个 8009 关节心跳 + NUC + 摩擦轮/自瞄/弹数 3 个数字
 extern ui_interface_round_t  *ui_g_30HZ_8009LF;     // 左前 DM8009 关节断联指示圆
@@ -33,14 +40,18 @@ extern ui_interface_number_t *ui_g_30HZ_AUTO_AIM;   // 自瞄状态数字
 extern ui_interface_number_t *ui_g_30HZ_SHOOT_NUM;  // 已发射弹丸数
 extern ui_interface_number_t *ui_g_30HZ_FRIC_SPD_R; // 右摩擦轮转速显示
 
-// 子帧 1：车身朝向弧 + 右前/后 8009 + 超电直线 + 双腿直线 + body_pitch 直线
-extern ui_interface_arc_t    *ui_g_30HZ_BODY_FRONT; // 车身朝向（云台头坐标系下的弧）
-extern ui_interface_round_t  *ui_g_30HZ_8009RF;     // 右前 8009
-extern ui_interface_line_t   *ui_g_30HZ_SUPER_CUP;  // 超级电容剩余电量条
-extern ui_interface_line_t   *ui_g_30HZ_L_LEG;      // 左腿可视化
-extern ui_interface_line_t   *ui_g_30HZ_R_LEG;      // 右腿可视化
-extern ui_interface_line_t   *ui_g_30HZ_BODY_PITCH; // 车身 pitch 角直线
-extern ui_interface_round_t  *ui_g_30HZ_8009RB;     // 右后 8009
+// 子帧 1：右前/后 8009 + 超电直线（低频心跳/电量，3 图元）
+// figure_name ID = 8 / 9 / 13（保留原 ID 防跨升级幽灵）
+extern ui_interface_round_t  *ui_g_30HZ_8009RF;     // 右前 8009     (id=8)
+extern ui_interface_line_t   *ui_g_30HZ_SUPER_CUP;  // 超电电量条    (id=9)
+extern ui_interface_round_t  *ui_g_30HZ_8009RB;     // 右后 8009     (id=13)
+
+// 子帧 FAST：姿态可视化（4Hz 高刷子帧，4 图元）
+// figure_name ID = 7 / 10 / 11 / 12（保留原 ID 防跨升级幽灵）
+extern ui_interface_arc_t    *ui_g_30HZ_BODY_FRONT; // 车身朝向弧     (id=7)
+extern ui_interface_line_t   *ui_g_30HZ_L_LEG;      // 左腿可视化     (id=10)
+extern ui_interface_line_t   *ui_g_30HZ_R_LEG;      // 右腿可视化     (id=11)
+extern ui_interface_line_t   *ui_g_30HZ_BODY_PITCH; // 车身 pitch 直线 (id=12)
 
 // 子帧 2：缓冲能量数 + 功率/485/UNNAMEx 心跳灯 + 左 3508
 extern ui_interface_number_t *ui_g_30HZ_BUFFER_NUM; // 缓冲能量数字（TODO）
@@ -58,8 +69,8 @@ extern ui_interface_round_t  *ui_g_30HZ_ROLL;       // 4310 Yaw 电机心跳（�
 extern ui_interface_round_t  *ui_g_30HZ_FRIC_L;     // 左摩擦轮电机心跳（TODO）
 extern ui_interface_round_t  *ui_g_30HZ_FRIC_R;     // 右摩擦轮电机心跳（TODO）
 
-void ui_init_g_30HZ();    // 发"新增"帧，把 4 个子帧注册到客户端
-void ui_update_g_30HZ();  // 发"修改"帧，把所有 4 子帧一次刷一遍（启动期使用）
+void ui_init_g_30HZ();    // 发"新增"帧，把 5 个子帧（0/1/FAST/2/3）注册到客户端
+void ui_update_g_30HZ();  // 发"修改"帧，把所有 5 子帧一次刷一遍（启动期使用）
 void ui_remove_g_30HZ();  // 发"删除"帧
 
 // ============== 5HZ 分组 ==============

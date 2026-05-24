@@ -37,9 +37,11 @@ extern volatile uint32_t rx_cnt_wattmeter;   // 功率计（CAN3 0x213）
 extern int shootnum;        // 已发射弹丸总数（Board2Board 维护）
 
 /* ===== ui_g.c 里的非 static 子帧 update 函数，10Hz 轮询时直接调用 =====
-   ui_g.c 自动生成代码默认非 static，所以这里 extern 出来即可。 */
+   ui_g.c 自动生成代码默认非 static，所以这里 extern 出来即可。
+   FAST 子帧承载姿态可视化（车身朝向/双腿/pitch），分到 4 个 slot 拿 4Hz。 */
 extern void _ui_update_g_30HZ_0(void);
 extern void _ui_update_g_30HZ_1(void);
+extern void _ui_update_g_30HZ_FAST(void);
 extern void _ui_update_g_30HZ_2(void);
 extern void _ui_update_g_30HZ_3(void);
 extern void _ui_update_g_5HZ_0(void);
@@ -295,10 +297,22 @@ static void UI_RefreshParams_INIT(void)
  *   3. 进入 10Hz 主循环，按 cnt%10 单帧轮询发送。
  *
  * 调度表（10 tick = 1s 一个周期）：
- *     0,5 -> 30HZ_0    1,6 -> 30HZ_1    2,7 -> 30HZ_2    3,8 -> 30HZ_3
- *     4   -> 5HZ_0     9   -> 5HZ_1
- *   每个 30HZ_x 子帧实际刷新率 2Hz，每个 5HZ_x 子帧 1Hz。
+ *     0,3,6,8 -> 30HZ_FAST  (姿态可视化：BODY_FRONT/L_LEG/R_LEG/BODY_PITCH，4Hz)
+ *     1,5     -> 30HZ_0     (4 数字 + 心跳，2Hz)
+ *     2       -> 30HZ_1     (右侧 8009/超电，1Hz)
+ *     4       -> 30HZ_2     (心跳/blink，1Hz)
+ *     7       -> 30HZ_3     (右 3508/摩擦轮等，1Hz)
+ *     9       -> 5HZ 文字   (on-change 优先；无变化时交替兜底重发)
  *   总包速率正好 10pps，卡在裁判系统每机器人 10Hz / 3.75KBps 上限内。
+ *
+ *   设计取舍：把 BODY_FRONT/L_LEG/R_LEG/BODY_PITCH 拆到 FAST 子帧，让姿态
+ *   动画拿到 4Hz 而不是原来的 2Hz（肉眼差异显著）。代价是其它 30HZ 子帧从
+ *   2Hz 降到 1Hz——这些主要是心跳/数字，1Hz 已够。
+ *
+ *   5HZ 文字（PLEASE SPIN / LONG LEG）从"各占 1 slot"压成"共享 1 slot"：
+ *     · 状态变化时立即在下一个 slot 9 把变化对应的那条发出（最快 1s 内可见）
+ *     · 两条都同时变化 → 交替优先，保证两条都不超过 2s 同步到客户端
+ *     · 无变化 → 交替兜底重发，每条 0.5Hz，防止丢包后客户端永久残留旧文字
  *
  * 兜底：cnt%30==0 (每 3s) 重发一次 INIT 静态层，防止丢包后图元永久消失。
  */
@@ -333,12 +347,43 @@ void UI_task(void const * argument)
 
         /* 10 tick 一个轮询周期，按调度表分发到具体子帧 */
         switch (cnt % 10) {
-        case 0: case 5:  _ui_update_g_30HZ_0(); break;  // 7 图元帧
-        case 1: case 6:  _ui_update_g_30HZ_1(); break;  // 7 图元帧
-        case 2: case 7:  _ui_update_g_30HZ_2(); break;  // 7 图元帧
-        case 3: case 8:  _ui_update_g_30HZ_3(); break;  // 5 图元帧
-        case 4:          _ui_update_g_5HZ_0();  break;  // 字符串 PLEASE SPIN
-        case 9:          _ui_update_g_5HZ_1();  break;  // 字符串 LONG LEG
+        case 0: case 3: case 6: case 8:
+            _ui_update_g_30HZ_FAST();  break;       // 5 图元帧，4Hz 高刷
+        case 1: case 5:
+            _ui_update_g_30HZ_0();     break;       // 7 图元帧，2Hz
+        case 2:
+            _ui_update_g_30HZ_1();     break;       // 5 图元帧，1Hz
+        case 4:
+            _ui_update_g_30HZ_2();     break;       // 7 图元帧，1Hz
+        case 7:
+            _ui_update_g_30HZ_3();     break;       // 5 图元帧，1Hz
+        case 9: {
+            /* 5HZ 共享 slot：状态变化优先，无变化则交替兜底 */
+            static uint8_t last_chassis = 0xFF;     // 0xFF=强制首次发送
+            static uint8_t last_leg     = 0xFF;
+            static uint8_t alt          = 0;        // 交替索引（0=NewText, 1=NewText2）
+            uint8_t cur_chassis = Foot_Chassis.Chassis_Mode;
+            uint8_t cur_leg     = Foot_Chassis.Target_Leg_State;
+            uint8_t chassis_pending = (cur_chassis != last_chassis);
+            uint8_t leg_pending     = (cur_leg     != last_leg);
+
+            if (chassis_pending && leg_pending) {
+                /* 两条都待发：按 alt 顺序送一条，另一条等下一个 slot 9（1s 后） */
+                if (alt) { _ui_update_g_5HZ_0(); last_chassis = cur_chassis; }
+                else     { _ui_update_g_5HZ_1(); last_leg     = cur_leg;     }
+                alt ^= 1;
+            } else if (chassis_pending) {
+                _ui_update_g_5HZ_0(); last_chassis = cur_chassis;
+            } else if (leg_pending) {
+                _ui_update_g_5HZ_1(); last_leg     = cur_leg;
+            } else {
+                /* 状态稳定 → 交替重发兜底丢包，每条 0.5Hz */
+                if (alt) _ui_update_g_5HZ_0();
+                else     _ui_update_g_5HZ_1();
+                alt ^= 1;
+            }
+            break;
+        }
         default: break;
         }
 

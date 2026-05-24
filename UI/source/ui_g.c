@@ -19,7 +19,8 @@
 //      客户端覆盖）。这里用 figure_name = (0, 分组号, 序号) 三字节布局。
 //
 //  分组划分（详见 ui_g.h）：
-//    30HZ_0 / 30HZ_1 / 30HZ_2 (各 7 图元)、30HZ_3 (5 图元)：动态主屏
+//    30HZ_0 / 30HZ_2 (各 7 图元)、30HZ_1 (3 活跃图元 + 2 空槽 in 5-frame)、
+//    30HZ_FAST (4 活跃图元 + 1 空槽 in 5-frame, 高刷)、30HZ_3 (5 图元)：动态主屏
 //    5HZ_0  / 5HZ_1   (各 1 字符串)：低频文字提示
 //    INIT_0 (5 图元) / INIT_1~3 (各 1 字符串)：永久静态层
 // ============================================================================
@@ -179,46 +180,42 @@ void _ui_remove_g_30HZ_0() {
 }
 
 // =====================================================================
-//  分组 30HZ 子帧 1：7 个图元
-//  figure_name = (0, 0, 7..13)，含车身朝向弧/右侧 8009/双腿/超电
+//  分组 30HZ 子帧 1：3 个图元（5-frame，2 个槽空置）
+//  ---------------------------------------------------------------------
+//  原本 7 图元，但 BODY_FRONT/L_LEG/R_LEG/BODY_PITCH 这 4 个"姿态可视化"
+//  图元被剥离到 30HZ_FAST 子帧以获得最高刷新率（详见下方 FAST 段）。
+//  本子帧保留 3 个"低频心跳/电量条"图元，让低优先级图元不抢占快子帧带宽。
+//
+//  figure_name 第三字节保留原 ID：8 / 9 / 13。
+//  这 3 个 ID 与 FAST 子帧的 7 / 10 / 11 / 12 合起来仍覆盖原 7..13 区间，
+//  跨固件升级时客户端不会出现"原 ID 残留为旧图元"的幽灵。
+//
+//  data[3] / data[4] 在 init/update/remove 时保持 operate_type=0（不操作），
+//  防止占用裁判系统的 7 图元等价带宽（5-frame 物理帧本身就更短）。
 // =====================================================================
-ui_7_frame_t ui_g_30HZ_1;
+ui_5_frame_t ui_g_30HZ_1;
 
-ui_interface_arc_t   *ui_g_30HZ_BODY_FRONT = (ui_interface_arc_t*)  &(ui_g_30HZ_1.data[0]); // 车身朝向圆弧
-ui_interface_round_t *ui_g_30HZ_8009RF     = (ui_interface_round_t*)&(ui_g_30HZ_1.data[1]); // 右前 8009 心跳
-ui_interface_line_t  *ui_g_30HZ_SUPER_CUP  = (ui_interface_line_t*) &(ui_g_30HZ_1.data[2]); // 超电电量条
-ui_interface_line_t  *ui_g_30HZ_L_LEG      = (ui_interface_line_t*) &(ui_g_30HZ_1.data[3]); // 左腿可视化
-ui_interface_line_t  *ui_g_30HZ_R_LEG      = (ui_interface_line_t*) &(ui_g_30HZ_1.data[4]); // 右腿可视化
-ui_interface_line_t  *ui_g_30HZ_BODY_PITCH = (ui_interface_line_t*) &(ui_g_30HZ_1.data[5]); // 车身 pitch 直线
-ui_interface_round_t *ui_g_30HZ_8009RB     = (ui_interface_round_t*)&(ui_g_30HZ_1.data[6]); // 右后 8009 心跳
+ui_interface_round_t *ui_g_30HZ_8009RF     = (ui_interface_round_t*)&(ui_g_30HZ_1.data[0]); // 右前 8009 心跳 (id=8)
+ui_interface_line_t  *ui_g_30HZ_SUPER_CUP  = (ui_interface_line_t*) &(ui_g_30HZ_1.data[1]); // 超电电量条     (id=9)
+ui_interface_round_t *ui_g_30HZ_8009RB     = (ui_interface_round_t*)&(ui_g_30HZ_1.data[2]); // 右后 8009 心跳 (id=13)
 
 /**
  * @brief 30HZ 子帧 1 初始化
- *        figure_name 第三字节 7..13，避免与子帧 0 (0..6) 冲突。
+ *        figure_name 第三字节用原始 ID (8/9/13)，避免跨升级 ID 漂移。
  */
 void _ui_init_g_30HZ_1() {
-    for (int i = 0; i < 7; i++) {
+    // 三个活跃图元：figure_name + operate_type=1（新增）
+    static const uint8_t ids[3] = { 8, 9, 13 };
+    for (int i = 0; i < 3; i++) {
         ui_g_30HZ_1.data[i].figure_name[0] = 0;
         ui_g_30HZ_1.data[i].figure_name[1] = 0;
-        ui_g_30HZ_1.data[i].figure_name[2] = i + 7;  // 偏移 7，让 ID 全局唯一
+        ui_g_30HZ_1.data[i].figure_name[2] = ids[i];
         ui_g_30HZ_1.data[i].operate_type = 1;
     }
-    for (int i = 7; i < 7; i++) {
+    // 两个空槽：op=0（无操作）
+    for (int i = 3; i < 5; i++) {
         ui_g_30HZ_1.data[i].operate_type = 0;
     }
-
-    // ----- BODY_FRONT：车身朝向圆弧（屏幕正中央的"罗盘指针") -----
-    ui_g_30HZ_BODY_FRONT->figure_type = 4;     // 4=圆弧
-    ui_g_30HZ_BODY_FRONT->operate_type = 1;
-    ui_g_30HZ_BODY_FRONT->layer = 0;
-    ui_g_30HZ_BODY_FRONT->color = 4;
-    ui_g_30HZ_BODY_FRONT->start_x = 960;       // 椭圆中心 = 屏幕中央 (1920/2, 1080/2)
-    ui_g_30HZ_BODY_FRONT->start_y = 540;
-    ui_g_30HZ_BODY_FRONT->width = 2;
-    ui_g_30HZ_BODY_FRONT->start_angle = 340;   // 起角(度)，运行时随车身角度更新
-    ui_g_30HZ_BODY_FRONT->end_angle = 20;      // 止角(度)
-    ui_g_30HZ_BODY_FRONT->rx = 200;            // 椭圆长轴半径
-    ui_g_30HZ_BODY_FRONT->ry = 200;            // 椭圆短轴半径（rx=ry => 正圆弧）
 
     // ----- 8009RF：右前 DM8009 心跳圆 -----
     ui_g_30HZ_8009RF->figure_type = 2;
@@ -240,6 +237,89 @@ void _ui_init_g_30HZ_1() {
     ui_g_30HZ_SUPER_CUP->width = 15;
     ui_g_30HZ_SUPER_CUP->end_x = 1307;         // 右端点（满电量长度）
     ui_g_30HZ_SUPER_CUP->end_y = 121;
+
+    // ----- 8009RB：右后 DM8009 心跳圆 -----
+    ui_g_30HZ_8009RB->figure_type = 2;
+    ui_g_30HZ_8009RB->operate_type = 1;
+    ui_g_30HZ_8009RB->layer = 0;
+    ui_g_30HZ_8009RB->color = 4;
+    ui_g_30HZ_8009RB->start_x = 1900;
+    ui_g_30HZ_8009RB->start_y = 828;
+    ui_g_30HZ_8009RB->width = 10;
+    ui_g_30HZ_8009RB->r = 5;
+
+
+    ui_proc_5_frame(&ui_g_30HZ_1);
+    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_1, sizeof(ui_g_30HZ_1));
+}
+
+/** @brief 30HZ 子帧 1 刷新（修改）。只 touch 3 个活跃槽，保持空槽 op=0。 */
+void _ui_update_g_30HZ_1() {
+    ui_g_30HZ_1.data[0].operate_type = 2;
+    ui_g_30HZ_1.data[1].operate_type = 2;
+    ui_g_30HZ_1.data[2].operate_type = 2;
+    // data[3]/[4] 保持 op=0
+
+    ui_proc_5_frame(&ui_g_30HZ_1);
+    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_1, sizeof(ui_g_30HZ_1));
+}
+
+/** @brief 30HZ 子帧 1 删除。当前不调用。 */
+void _ui_remove_g_30HZ_1() {
+    ui_g_30HZ_1.data[0].operate_type = 3;
+    ui_g_30HZ_1.data[1].operate_type = 3;
+    ui_g_30HZ_1.data[2].operate_type = 3;
+
+    ui_proc_5_frame(&ui_g_30HZ_1);
+    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_1, sizeof(ui_g_30HZ_1));
+}
+
+// =====================================================================
+//  分组 30HZ 子帧 FAST：4 个图元（5-frame，1 个槽空置）
+//  ---------------------------------------------------------------------
+//  本子帧承载"高刷新率"姿态可视化：车身朝向弧、左/右腿、车身 pitch 直线。
+//  UI_Task 的 10Hz 主循环将给本子帧分配 4 个槽（cnt%10 ∈ {0,3,6,8}），
+//  实际刷新率 4Hz，是其它 30HZ 子帧（1Hz/2Hz）的 2~4 倍。
+//
+//  figure_name 第三字节保留原 30HZ_1 的 ID：7 / 10 / 11 / 12。
+//  这样跨固件升级时客户端不会残留旧 ID 的幽灵图元。
+//  data[4] 在 init/update/remove 时保持 operate_type=0。
+// =====================================================================
+ui_5_frame_t ui_g_30HZ_FAST;
+
+ui_interface_arc_t   *ui_g_30HZ_BODY_FRONT = (ui_interface_arc_t*)  &(ui_g_30HZ_FAST.data[0]); // 车身朝向圆弧   (id=7)
+ui_interface_line_t  *ui_g_30HZ_L_LEG      = (ui_interface_line_t*) &(ui_g_30HZ_FAST.data[1]); // 左腿可视化     (id=10)
+ui_interface_line_t  *ui_g_30HZ_R_LEG      = (ui_interface_line_t*) &(ui_g_30HZ_FAST.data[2]); // 右腿可视化     (id=11)
+ui_interface_line_t  *ui_g_30HZ_BODY_PITCH = (ui_interface_line_t*) &(ui_g_30HZ_FAST.data[3]); // 车身 pitch 直线 (id=12)
+
+/**
+ * @brief 30HZ FAST 子帧初始化
+ *        figure_name 第三字节用原 30HZ_1 的 ID (7/10/11/12)。
+ */
+void _ui_init_g_30HZ_FAST() {
+    // 四个活跃图元
+    static const uint8_t ids[4] = { 7, 10, 11, 12 };
+    for (int i = 0; i < 4; i++) {
+        ui_g_30HZ_FAST.data[i].figure_name[0] = 0;
+        ui_g_30HZ_FAST.data[i].figure_name[1] = 0;
+        ui_g_30HZ_FAST.data[i].figure_name[2] = ids[i];
+        ui_g_30HZ_FAST.data[i].operate_type = 1;
+    }
+    // 第 5 个槽空置
+    ui_g_30HZ_FAST.data[4].operate_type = 0;
+
+    // ----- BODY_FRONT：车身朝向圆弧（屏幕正中央的"罗盘指针") -----
+    ui_g_30HZ_BODY_FRONT->figure_type = 4;     // 4=圆弧
+    ui_g_30HZ_BODY_FRONT->operate_type = 1;
+    ui_g_30HZ_BODY_FRONT->layer = 0;
+    ui_g_30HZ_BODY_FRONT->color = 4;
+    ui_g_30HZ_BODY_FRONT->start_x = 960;       // 椭圆中心 = 屏幕中央 (1920/2, 1080/2)
+    ui_g_30HZ_BODY_FRONT->start_y = 540;
+    ui_g_30HZ_BODY_FRONT->width = 2;
+    ui_g_30HZ_BODY_FRONT->start_angle = 340;   // 起角(度)，运行时随车身角度更新
+    ui_g_30HZ_BODY_FRONT->end_angle = 20;      // 止角(度)
+    ui_g_30HZ_BODY_FRONT->rx = 200;            // 椭圆长轴半径
+    ui_g_30HZ_BODY_FRONT->ry = 200;            // 椭圆短轴半径（rx=ry => 正圆弧）
 
     // ----- L_LEG：左腿可视化直线（起点固定，终点随 L0/b_phi0 实时摆动） -----
     ui_g_30HZ_L_LEG->figure_type = 0;
@@ -274,39 +354,32 @@ void _ui_init_g_30HZ_1() {
     ui_g_30HZ_BODY_PITCH->end_x = 1476;     // 1500 - cosf 微调
     ui_g_30HZ_BODY_PITCH->end_y = 718;
 
-    // ----- 8009RB：右后 DM8009 心跳圆 -----
-    ui_g_30HZ_8009RB->figure_type = 2;
-    ui_g_30HZ_8009RB->operate_type = 1;
-    ui_g_30HZ_8009RB->layer = 0;
-    ui_g_30HZ_8009RB->color = 4;
-    ui_g_30HZ_8009RB->start_x = 1900;
-    ui_g_30HZ_8009RB->start_y = 828;
-    ui_g_30HZ_8009RB->width = 10;
-    ui_g_30HZ_8009RB->r = 5;
 
-
-    ui_proc_7_frame(&ui_g_30HZ_1);
-    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_1, sizeof(ui_g_30HZ_1));
+    ui_proc_5_frame(&ui_g_30HZ_FAST);
+    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_FAST, sizeof(ui_g_30HZ_FAST));
 }
 
-/** @brief 30HZ 子帧 1 刷新（修改）。字段已由 UI_RefreshParams_30HZ 改好。 */
-void _ui_update_g_30HZ_1() {
-    for (int i = 0; i < 7; i++) {
-        ui_g_30HZ_1.data[i].operate_type = 2;
-    }
+/** @brief FAST 子帧刷新（修改）。每秒 4 次，是本组刷新率最高的子帧。 */
+void _ui_update_g_30HZ_FAST() {
+    ui_g_30HZ_FAST.data[0].operate_type = 2;
+    ui_g_30HZ_FAST.data[1].operate_type = 2;
+    ui_g_30HZ_FAST.data[2].operate_type = 2;
+    ui_g_30HZ_FAST.data[3].operate_type = 2;
+    // data[4] 保持 op=0
 
-    ui_proc_7_frame(&ui_g_30HZ_1);
-    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_1, sizeof(ui_g_30HZ_1));
+    ui_proc_5_frame(&ui_g_30HZ_FAST);
+    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_FAST, sizeof(ui_g_30HZ_FAST));
 }
 
-/** @brief 30HZ 子帧 1 删除。当前不调用。 */
-void _ui_remove_g_30HZ_1() {
-    for (int i = 0; i < 7; i++) {
-        ui_g_30HZ_1.data[i].operate_type = 3;
-    }
+/** @brief FAST 子帧删除。当前不调用。 */
+void _ui_remove_g_30HZ_FAST() {
+    ui_g_30HZ_FAST.data[0].operate_type = 3;
+    ui_g_30HZ_FAST.data[1].operate_type = 3;
+    ui_g_30HZ_FAST.data[2].operate_type = 3;
+    ui_g_30HZ_FAST.data[3].operate_type = 3;
 
-    ui_proc_7_frame(&ui_g_30HZ_1);
-    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_1, sizeof(ui_g_30HZ_1));
+    ui_proc_5_frame(&ui_g_30HZ_FAST);
+    SEND_MESSAGE((uint8_t *) &ui_g_30HZ_FAST, sizeof(ui_g_30HZ_FAST));
 }
 
 // =====================================================================
@@ -545,6 +618,8 @@ void ui_init_g_30HZ() {
     osDelay(UI_FRAME_GAP_MS);
     _ui_init_g_30HZ_1();
     osDelay(UI_FRAME_GAP_MS);
+    _ui_init_g_30HZ_FAST();
+    osDelay(UI_FRAME_GAP_MS);
     _ui_init_g_30HZ_2();
     osDelay(UI_FRAME_GAP_MS);
     _ui_init_g_30HZ_3();
@@ -555,6 +630,8 @@ void ui_update_g_30HZ() {
     osDelay(UI_FRAME_GAP_MS);
     _ui_update_g_30HZ_1();
     osDelay(UI_FRAME_GAP_MS);
+    _ui_update_g_30HZ_FAST();
+    osDelay(UI_FRAME_GAP_MS);
     _ui_update_g_30HZ_2();
     osDelay(UI_FRAME_GAP_MS);
     _ui_update_g_30HZ_3();
@@ -564,6 +641,8 @@ void ui_remove_g_30HZ() {
     _ui_remove_g_30HZ_0();
     osDelay(UI_FRAME_GAP_MS);
     _ui_remove_g_30HZ_1();
+    osDelay(UI_FRAME_GAP_MS);
+    _ui_remove_g_30HZ_FAST();
     osDelay(UI_FRAME_GAP_MS);
     _ui_remove_g_30HZ_2();
     osDelay(UI_FRAME_GAP_MS);
@@ -807,10 +886,18 @@ void _ui_init_g_INIT_0() {
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_0, sizeof(ui_g_INIT_0));
 }
 
-/** @brief INIT 子帧 0 刷新：UI_Task 每 3s 兜底重发用，operate_type=2(修改) */
+/** @brief INIT 子帧 0 刷新：UI_Task 每 3s 兜底重发用，operate_type=1(新增)。
+ *
+ *  为什么是 1 而不是 2？兜底重发的目的是"丢包后图元永远消失"的自愈：
+ *    · operate_type=2(修改) 对客户端上不存在的图元是 no-op —— 包丢了就再也回不来；
+ *    · operate_type=1(新增) 对已存在的图元会被客户端当作"替换"处理，幂等无副作用，
+ *      对真正丢失的图元才能起作用。
+ *  本子帧的所有字段在 _ui_init_g_INIT_0() 里填一次后再无写入（静态层定义如此），
+ *  所以发 add 用的还是原始坐标/颜色/线宽，行为等价于"重新注册"。
+ */
 void _ui_update_g_INIT_0() {
     for (int i = 0; i < 5; i++) {
-        ui_g_INIT_0.data[i].operate_type = 2;
+        ui_g_INIT_0.data[i].operate_type = 1;
     }
 
     ui_proc_5_frame(&ui_g_INIT_0);
@@ -854,9 +941,12 @@ void _ui_init_g_INIT_1() {
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_1, sizeof(ui_g_INIT_1));
 }
 
-/** @brief INIT 子帧 1 刷新 */
+/** @brief INIT 子帧 1 刷新："FRIC SPD" 标签自愈
+ *  operate_type=1(新增) 而不是 2(修改)：见 _ui_update_g_INIT_0 顶部注释。
+ *  历史问题：之前用 2，丢包后客户端再也不画 FRIC SPD —— 触发"退出急停时偶发缺字"。
+ */
 void _ui_update_g_INIT_1() {
-    ui_g_INIT_1.option.operate_type = 2;
+    ui_g_INIT_1.option.operate_type = 1;
 
     ui_proc_string_frame(&ui_g_INIT_1);
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_1, sizeof(ui_g_INIT_1));
@@ -897,9 +987,11 @@ void _ui_init_g_INIT_2() {
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_2, sizeof(ui_g_INIT_2));
 }
 
-/** @brief INIT 子帧 2 刷新 */
+/** @brief INIT 子帧 2 刷新："AUTO AIM" 标签自愈
+ *  operate_type=1(新增) 而不是 2(修改)：见 _ui_update_g_INIT_0 顶部注释。
+ */
 void _ui_update_g_INIT_2() {
-    ui_g_INIT_2.option.operate_type = 2;
+    ui_g_INIT_2.option.operate_type = 1;
 
     ui_proc_string_frame(&ui_g_INIT_2);
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_2, sizeof(ui_g_INIT_2));
@@ -940,9 +1032,12 @@ void _ui_init_g_INIT_3() {
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_3, sizeof(ui_g_INIT_3));
 }
 
-/** @brief INIT 子帧 3 刷新 */
+/** @brief INIT 子帧 3 刷新："SHOOT NUM" 标签自愈
+ *  operate_type=1(新增) 而不是 2(修改)：见 _ui_update_g_INIT_0 顶部注释。
+ *  历史问题：之前用 2，丢包后客户端再也不画 SHOOT NUM —— 触发"退出急停时偶发缺字"。
+ */
 void _ui_update_g_INIT_3() {
-    ui_g_INIT_3.option.operate_type = 2;
+    ui_g_INIT_3.option.operate_type = 1;
 
     ui_proc_string_frame(&ui_g_INIT_3);
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_3, sizeof(ui_g_INIT_3));

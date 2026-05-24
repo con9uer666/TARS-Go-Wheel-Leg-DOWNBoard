@@ -79,7 +79,7 @@ float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 
-float mg = 150.0f/2;
+float mg = 30.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 
 float b_phi0_offset = 0.2;
@@ -323,8 +323,8 @@ void task_VMC_Init()
 //PID赋值与初始化结构体
 void task_PID_Init()
 {
-    PID_INIT(&L_Leg_L0_PID, 1500, 0, 70000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 1500, 0, 70000, 200, 0, 0, 0, 0);
+    PID_INIT(&L_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
     PID_INIT(&Leg_Phi0_PID, 300, 0, 10, 150, 150, 0, 50000, 0);
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
@@ -508,7 +508,7 @@ void NotStanding_NotStairRetract_for_chassis()
     Body_Speed_Coculate();//车身速度解算
 
     //是否姿态稳定在误差20°内的起立态
-    if((roll >= 20.0f || roll <= -20.0f || pitch >= 20.0f || pitch <= -20.0f) && first_run == 1)//不稳定且是急停开始第一次运行
+    if((roll >= 40.0f || roll <= -40.0f || pitch >= 40.0f || pitch <= -40.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
         gimbal_follow_flag = 1;//自起期间云台跟随底盘
         Self_Righting_Step();
@@ -611,7 +611,7 @@ void NotStanding_NotStairRetract_for_chassis()
         R_Leg_State = 0;
         L_Leg_State = 0;
         body_distance = 0;
-        target_body_distance = -0.55;
+        target_body_distance = -1.75;
     }
 
     //映射到电机力矩
@@ -710,8 +710,8 @@ void off_ground_detect()
     L_off_ground ++;
     else if (L_Ground_F0 >= 10.0f)
     L_off_ground --;
-    if(L_off_ground >= 50)
-    L_off_ground = 50;
+    if(L_off_ground >= 20)
+    L_off_ground = 20;
     if(L_off_ground <= 0)
     L_off_ground = 0;
     
@@ -719,21 +719,21 @@ void off_ground_detect()
     R_off_ground ++;
     else if (R_Ground_F0 >= 10.0f)
     R_off_ground --;
-    if(R_off_ground >= 50)
-    R_off_ground = 50;
+    if(R_off_ground >= 20)
+    R_off_ground = 20;
     if(R_off_ground <= 0)
     R_off_ground = 0;
 
     //!这段是先算一遍不离地的情况的数，再检测是否离地，如果离地，就再算一次覆盖掉
-    if(L_off_ground >= 20 && R_off_ground >= 20)//两腿同时离地：锁定 Target_Leg_State 为短腿，直到上位机重新发短腿(0)才解锁
+    if(L_off_ground >= 10 && R_off_ground >= 10)//两腿同时离地：锁定 Target_Leg_State 为短腿，直到上位机重新发短腿(0)才解锁
     {
         leg_state_locked_short = 1;
     }
-    if(L_off_ground >= 20)//正常行驶过程离地
+    if(L_off_ground >= 10)//正常行驶过程离地
     {
         //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
         Leg_L_T = 
-        - LQR_K[2][4] * (VMC_L.b_phi0 + 0.3) 
+        - LQR_K[2][4] * (VMC_L.b_phi0) 
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
         Leg_L_T *= 0.7; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
@@ -743,10 +743,10 @@ void off_ground_detect()
         body_distance = 0;
         target_body_distance = 0.0;
     }
-    if(R_off_ground >= 20)
+    if(R_off_ground >= 10)
     {
         Leg_R_T = 
-        - LQR_K[3][6] * (VMC_R.b_phi0 + 0.3)
+        - LQR_K[3][6] * (VMC_R.b_phi0)
         - LQR_K[3][7] * VMC_R.d_b_phi0;
         Leg_R_T *= 0.7;
         R_DJ3508.Target_Torque = 0;
