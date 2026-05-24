@@ -20,6 +20,13 @@ SelfRightingStage_t g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
 //总开关：置1执行自起，置0时倒地自起不输出力矩
 uint8_t g_self_righting_enable = 1;
 
+/* 倒地自起时腿的转动方向标志位
+ *   +1: 保持当前行为（左正/右负）
+ *   -1: 整体翻向，三个阶段的左右腿目标转速符号一并反过来
+ * 默认 +1，对应"车正面（默认方向）倒地"的自起方向。
+ * 在 motor.c 检测到反面倒地时把它置 -1。 */
+int8_t g_sr_turn_dir = 1;
+
 
 //标记是否由“未并齐但卡住”触发进入第三阶段
 //
@@ -354,7 +361,7 @@ uint8_t Self_Righting_Step(void)
 		if (l0_stuck_l && l0_reached_l == 0)//卡住未到位
 		{
             //转动vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E8%BD%AC%E5%8A%A8
-            t_l = leg_turn_speed_control(&VMC_L, g_sr_extend_unstuck_speed_l, g_sr_extend_unstuck_torque_max, g_sr_extend_unstuck_torque_ramp);
+            t_l = leg_turn_speed_control(&VMC_L, g_sr_turn_dir * g_sr_extend_unstuck_speed_l, g_sr_extend_unstuck_torque_max, g_sr_extend_unstuck_torque_ramp);
 		}
 		else//不卡
 		{
@@ -366,7 +373,7 @@ uint8_t Self_Righting_Step(void)
 		/* 右腿同样策略。 */
 		if (l0_stuck_r && l0_reached_r == 0)
 		{
-			t_r = leg_turn_speed_control(&VMC_R, -g_sr_extend_unstuck_speed_r, g_sr_extend_unstuck_torque_max, g_sr_extend_unstuck_torque_ramp);
+			t_r = leg_turn_speed_control(&VMC_R, -g_sr_turn_dir * g_sr_extend_unstuck_speed_r, g_sr_extend_unstuck_torque_max, g_sr_extend_unstuck_torque_ramp);
 		}
 		else
 		{
@@ -401,8 +408,8 @@ uint8_t Self_Righting_Step(void)
 		f_r = PID_coculate(&R_Leg_L0_SPD_PID);
 
 		//第二阶段反向匀速转vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E5%8F%8D%E5%90%91%E5%8C%80%E9%80%9F%E8%BD%AC
-		t_l = leg_turn_speed_control(&VMC_L, g_sr_reverse_speed_l + PID_coculate(&anti_split_PID), g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
-		t_r = leg_turn_speed_control(&VMC_R, -(g_sr_reverse_speed_r - PID_coculate(&anti_split_PID)), g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
+		t_l = leg_turn_speed_control(&VMC_L,   g_sr_turn_dir * g_sr_reverse_speed_l + PID_coculate(&anti_split_PID), g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
+		t_r = leg_turn_speed_control(&VMC_R, -(g_sr_turn_dir * g_sr_reverse_speed_r - PID_coculate(&anti_split_PID)), g_sr_reverse_torque_max, g_sr_reverse_torque_ramp);
 
 		//第二阶段检查并齐和卡住状态，用于决定何时进入第三阶段vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%A3%80%E6%9F%A5%E5%B9%B6%E9%BD%90%E5%92%8C%E5%8D%A1%E4%BD%8F%E7%8A%B6%E6%80%81%EF%BC%8C%E7%94%A8%E4%BA%8E%E5%86%B3%E5%AE%9A%E4%BD%95%E6%97%B6%E8%BF%9B%E5%85%A5%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5
 		aligned = (fabsf(VMC_L.phi0 - VMC_R.phi0) <= g_sr_align_tol) ? 1 : 0;
@@ -439,8 +446,8 @@ uint8_t Self_Righting_Step(void)
 
 		//大力矩匀速反向转 + 防劈叉，不再判断"到目标角"，持续转到外层 motor.c 检测到姿态恢复
 		float cmd_spd = fabsf(g_sr_sync_speed);
-		t_l = leg_turn_speed_control(&VMC_L,  cmd_spd + PID_coculate(&anti_split_PID), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
-		t_r = leg_turn_speed_control(&VMC_R, -(cmd_spd - PID_coculate(&anti_split_PID)), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
+		t_l = leg_turn_speed_control(&VMC_L,   g_sr_turn_dir * cmd_spd + PID_coculate(&anti_split_PID), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
+		t_r = leg_turn_speed_control(&VMC_R, -(g_sr_turn_dir * cmd_spd - PID_coculate(&anti_split_PID)), g_sr_sync_torque_max, g_sr_sync_torque_ramp);
 	}
 
 	//VMC输出vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2FVMC%E8%BE%93%E5%87%BA

@@ -27,6 +27,12 @@ extern SelfRightingStage_t g_self_righting_stage;
 extern uint8_t g_self_righting_enable;
 extern uint8_t g_self_righting_sync_from_stuck;
 
+/* 倒地自起时腿的转动方向标志位
+ *   +1: 保持当前行为（左腿正方向 / 右腿负方向）
+ *   -1: 整体翻向（对应车以反面倒地时的自起方向）
+ * 作用范围：第一阶段解卡转、第二阶段反向匀速转、第三阶段同步转 —— 三处都乘 dir。 */
+extern int8_t g_sr_turn_dir;
+
 /* ===== 可调参数（按用户要求全部做成全局） ===== */
 extern float g_sr_l0_reached_tol;
 extern float g_sr_l0_ctrl_ramp_rate;

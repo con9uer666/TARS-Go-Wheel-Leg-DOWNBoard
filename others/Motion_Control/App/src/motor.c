@@ -511,6 +511,8 @@ void NotStanding_NotStairRetract_for_chassis()
     if((roll >= 40.0f || roll <= -40.0f || pitch >= 40.0f || pitch <= -40.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
         gimbal_follow_flag = 1;//自起期间云台跟随底盘
+        //|pitch|>90° → 反面倒地，自起整体翻向；否则保持默认 +1
+        g_sr_turn_dir = (pitch > 90.0f || pitch < -90.0f) ? -1 : 1;
         Self_Righting_Step();
         sr_was_active = 1;
         return ;
