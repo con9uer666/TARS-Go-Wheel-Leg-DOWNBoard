@@ -225,6 +225,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>huart1</ItemText>
         </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>motor_output_enable</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
