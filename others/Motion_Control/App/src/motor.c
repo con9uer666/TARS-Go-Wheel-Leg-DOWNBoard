@@ -81,6 +81,9 @@ float Leg_F0_Limit = 500;
 
 float mg = 60.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
+float prev_L_Ground_F0 = 0.0f;
+float prev_R_Ground_F0 = 0.0f;
+uint8_t step_hit_count = 0;
 
 float b_phi0_offset = 0.2;
 
@@ -782,6 +785,53 @@ void off_ground_detect()
     }
 }
 
+static void Step_Hit_Detect(void)
+{
+    static int step_hit_cooldown = 0;
+
+    const float leg_torque_threshold = 6.0f;        // 经验值，可再微调
+    const float leg_length_threshold = LEG_MAX_LENTH - 0.05f; // 高腿长门槛
+    const int step_hit_count_target = 2;
+    const int step_hit_cooldown_target = motor_HZ / 2; // 500ms 冷却
+
+    float left_leg_torque_cmd = fabsf(VMC_L.T_actual);
+    float right_leg_torque_cmd = fabsf(VMC_R.T_actual);
+
+    int left_leg_torque_high = (left_leg_torque_cmd > leg_torque_threshold);
+    int right_leg_torque_high = (right_leg_torque_cmd > leg_torque_threshold);
+
+    int left_leg_high = (VMC_L.L0 > leg_length_threshold);
+    int right_leg_high = (VMC_R.L0 > leg_length_threshold);
+
+    int left_step_hit = left_leg_torque_high && left_leg_high;
+    int right_step_hit = right_leg_torque_high && right_leg_high;
+
+    if (step_hit_cooldown > 0)
+    {
+        step_hit_cooldown--;
+    }
+
+    if (step_hit_cooldown == 0 && (left_step_hit && right_step_hit) && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
+    {
+        if (step_hit_count < step_hit_count_target * 2)
+            step_hit_count++;
+    }
+    else if (step_hit_count > 0)
+    {
+        step_hit_count--;
+    }
+
+    if (step_hit_count >= step_hit_count_target)
+    {
+        upstairs_flag = 1;
+        step_hit_count = 0;
+        step_hit_cooldown = step_hit_cooldown_target;
+    }
+
+    prev_L_Ground_F0 = L_Ground_F0;
+    prev_R_Ground_F0 = R_Ground_F0;
+}
+
 //speed_error, yaw_error | 算yaw的误差，以及根据yaw误差调整target_body_speed进而调整speed_error()
 void Yaw_Error_Coculate()
 {
@@ -1034,6 +1084,7 @@ void Standing()
                  R_leg_T_cmd);
 
     off_ground_detect();
+    Step_Hit_Detect();
 
     if(upstairs_flag == 1)
     {
@@ -1084,20 +1135,20 @@ void Upstair_NotStairRetract()
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
     //上台阶收腿过程中判断腿长和腿角度是否都到位了
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.1 && fabsf(L_Leg_Middle_PID.error) <= 0.1)
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.15 && fabsf(L_Leg_Middle_PID.error) <= 0.15)
     {
         L_Ready_Count ++;
     }
-    if(L_Leg_State == 0 && L_Ready_Count >= 120)
+    if(L_Leg_State == 0 && L_Ready_Count >= 60)
     {
         L_Leg_State = 2;
         L_Ready_Count = 0;
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.1 && fabsf(R_Leg_Middle_PID.error) <= 0.1)
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.15 && fabsf(R_Leg_Middle_PID.error) <= 0.15)
     {
         R_Ready_Count ++;
     }
-    if(R_Leg_State == 0 && R_Ready_Count >= 120)
+    if(R_Leg_State == 0 && R_Ready_Count >= 60)
     {
         R_Leg_State = 2;
         R_Ready_Count = 0;
