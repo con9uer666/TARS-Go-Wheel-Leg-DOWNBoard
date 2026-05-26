@@ -34,6 +34,9 @@ int8_t g_sr_turn_dir = 1;
 //@ 1: 未并齐但卡住，直接进入第三阶段并启用差速策略。
 uint8_t g_self_righting_sync_from_stuck = 0;
 
+//倒地自起激活标志（含完成提示音 100ms 窗口），由 motor.c 维护
+uint8_t g_tip_recovery_active = 0;
+
 //卡腿标志
 int turn_stuck_l;//左腿转动卡住标签，1：卡住；0：不卡住
 int turn_stuck_r;//右腿转动卡住标签，1：卡住；0：不卡住

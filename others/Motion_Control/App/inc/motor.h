@@ -40,6 +40,8 @@ typedef struct Foot_Chassis
 
 extern Foot_Chassis_t Foot_Chassis;
 extern uint8_t gimbal_follow_flag; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
+extern uint8_t spinning_flag;      // 1：小陀螺运行中 0：小陀螺停止
+extern float spin_speed_tol_angle; // 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)
 extern float down_board_yaw_output; // 下板yaw输出
 
 extern float speed_error; 

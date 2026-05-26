@@ -88,6 +88,22 @@ void Disable_DM_Motor(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
     CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);//!丛庆拉的，没改名字，不是适配达妙电机的，是通用的发送函数
 }
 
+void Clear_DM_Motor_Error(FDCAN_HandleTypeDef *hfdcan, uint16_t motor_id)
+{
+    uint8_t data[8];
+
+    data[0] = 0xFF;
+    data[1] = 0xFF;
+    data[2] = 0xFF;
+    data[3] = 0xFF;
+    data[4] = 0xFF;
+    data[5] = 0xFF;
+    data[6] = 0xFF;
+    data[7] = 0xFB;
+
+    CAN_Send_DM_Motor_Data(hfdcan, motor_id, data);
+}
+
 void DM_Motor_MIT_Torque_ctrl(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t Motor, float torq)
 {
 	uint8_t data[8];

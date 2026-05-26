@@ -10,6 +10,8 @@
 #include "arm_math.h"
 #include "Motor_Drv.h"
 #include "wattmeter.h"
+#include "buzzer.h"
+#include "Self_Righting.h"
 
 extern uint8_t first_run;
 extern uint8_t start_mode;
@@ -21,6 +23,110 @@ uint16_t can_send_error,can_receive_error;
 /*====================================== 电机输出总开关 ====================================== */
 uint8_t motor_output_enable = 1;      // 1=正常输出力矩, 0=强制全部电机输出零力矩
 uint8_t wheel_leg_output_enable = 1;  // 1=正常输出, 0=仅关断3508和8009（4310/2325不受影响）
+
+/*====================================== 电机使能监督 ======================================== */
+// 记录机身所有DM关节电机当前期望状态：1=应使能 0=应失能
+// 由task_Motor_Enable完成后置1
+uint8_t motor_should_enabled = 0;
+
+// 最近一次在任意DM电机反馈帧里读到的错误码（latest-wins，后来者覆盖前者）
+// 0 表示从未读到过错误；非0 = 最近一次的State错误码（见 is_dm_error_state 注释）
+// 一旦置为非0，会驱动错误码蜂鸣器一直响（除非倒地自起占用蜂鸣器）。
+// 设计上不自动清零（用户要求"一直不停"），仅在掉电时归零。
+uint8_t motor_last_error_code = 0;
+
+#define DM_SUPERVISOR_INTERVAL_MS  100  // 每个电机最多每100ms下达一次恢复指令
+
+// 每个被监督电机上次下达恢复指令的tick
+static uint32_t last_action_L_DM8009_0   = 0;
+static uint32_t last_action_L_DM8009_1   = 0;
+static uint32_t last_action_R_DM8009_0   = 0;
+static uint32_t last_action_R_DM8009_1   = 0;
+static uint32_t last_action_Yaw_4310     = 0;
+static uint32_t last_action_Shooter_2325 = 0;
+
+// 轮询计数：每轮检查一个电机，避免一次性塞满FDCAN TX FIFO
+static uint8_t supervisor_round = 0;
+
+// DM电机State字段错误码判定（兼容 DM4310/DM8009/DM2325）：
+//   0=失能, 1=使能（正常）
+//   3/4/5 = DM4310 传感器相关错误（编码器失校准/磁场干扰等）
+//   5 = DM2325 传感器错误
+//   6 = DM2325 电机参数错误
+//   8=过压, 9=欠压, A=过流, B=MOS过温, C=线圈过温, D=通信丢失, E=过载
+static uint8_t is_dm_error_state(uint8_t state)
+{
+    return (state == 3) || (state == 4) || (state == 5) || (state == 6) || (state >= 8);
+}
+
+// 监督单个DM关节电机：错误→记录错误码+清错+按期望状态再发使能/失能；状态与期望不一致→纠正
+static void DM_Motor_State_Supervisor(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t *motor, uint32_t *last_action)
+{
+    uint32_t now = xTaskGetTickCount();
+    if ((now - *last_action) < DM_SUPERVISOR_INTERVAL_MS) return;
+
+    uint8_t state = motor->Rx_Data.State;
+
+    if (is_dm_error_state(state))
+    {
+        // 先把错误码寄存进全局变量（latest-wins），再清错——用户要求的顺序
+        motor_last_error_code = state;
+        Clear_DM_Motor_Error(hfdcan, motor->motor_id);
+        if (motor_should_enabled)
+            Enable_DM_Motor_MIT(hfdcan, motor->motor_id);
+        else
+            Disable_DM_Motor(hfdcan, motor->motor_id);
+        *last_action = now;
+        return;
+    }
+
+    if (motor_should_enabled && state == 0)
+    {
+        Enable_DM_Motor_MIT(hfdcan, motor->motor_id);
+        *last_action = now;
+        return;
+    }
+
+    if (!motor_should_enabled && state == 1)
+    {
+        Disable_DM_Motor(hfdcan, motor->motor_id);
+        *last_action = now;
+        return;
+    }
+}
+
+// 每个CAN_Transmit循环调用一次，轮询监督6个DM关节电机中的1个
+static void DM_Motor_State_Supervisor_Tick(void)
+{
+    switch (supervisor_round)
+    {
+        case 0: DM_Motor_State_Supervisor(&hfdcan2, &L_DM8009[0],    &last_action_L_DM8009_0);   break;
+        case 1: DM_Motor_State_Supervisor(&hfdcan2, &L_DM8009[1],    &last_action_L_DM8009_1);   break;
+        case 2: DM_Motor_State_Supervisor(&hfdcan1, &R_DM8009[0],    &last_action_R_DM8009_0);   break;
+        case 3: DM_Motor_State_Supervisor(&hfdcan1, &R_DM8009[1],    &last_action_R_DM8009_1);   break;
+        case 4: DM_Motor_State_Supervisor(&hfdcan3, &Yaw_DM4310,     &last_action_Yaw_4310);     break;
+        case 5: DM_Motor_State_Supervisor(&hfdcan3, &Shooter_DM2325, &last_action_Shooter_2325); break;
+        default: break;
+    }
+    supervisor_round = (supervisor_round + 1) % 6;
+}
+
+/*====================================== 错误码蜂鸣器仲裁 ====================================== */
+// 错误码蜂鸣器频率：用最低的可清晰发声音高（远低于自起的 do/sol/高mi/高si 与完成提示的高si）
+#define ERROR_BUZZER_FREQ_HZ  200
+
+// 由 Motor_task 周期调用：当 motor_last_error_code != 0 时持续驱动蜂鸣器以最低音高长响。
+// 倒地自起占用蜂鸣器期间（g_tip_recovery_active==1），本函数完全不许碰蜂鸣器
+// （不调用 Buzzer_Tone_Max 也不调用 Stop_Buzzer），把音频独占权交给自起代码。
+void Error_Buzzer_Tick(void)
+{
+    if (g_tip_recovery_active) return;   // 倒地自起绝对优先：连 Stop 都不发
+
+    if (motor_last_error_code != 0)
+    {
+        Buzzer_Tone_Max(ERROR_BUZZER_FREQ_HZ);
+    }
+}
 
 /*====================================== 心跳检测 =========================================== */
 #define HEARTBEAT_CHECK_INTERVAL_MS  10    // 每10ms检测一次
@@ -202,7 +308,10 @@ void CAN_Transmit(void const * argument)
     for(;;)
     {
 		//输出开关vscode://lirentech.file-ref-tags?filePath=USER_CAN.c&snippet=%2F%2F%E8%BE%93%E5%87%BA%E5%BC%80%E5%85%B3
-		
+
+		/*========== DM电机使能/错误监督（每轮检查一个） ==========*/
+		DM_Motor_State_Supervisor_Tick();
+
 		/*========== 总开关：关闭时强制全部电机输出零力矩 ==========*/
 		if (!motor_output_enable)
 		{

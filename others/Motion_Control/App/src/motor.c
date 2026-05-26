@@ -37,7 +37,7 @@ float powerPredict;
 float LEG_MIN_LENTH = 0.23f;
 float LEG_MAX_LENTH = 0.39f;
 
-float L_b_phi0, R_b_phi0;  
+float L_b_phi0, R_b_phi0;
    
 float PITCH_OFFSET = -0.10;
 // 小陀螺时叠加的pitch偏置：用于抵消起转/退出时的反作用俯仰
@@ -138,6 +138,17 @@ float K_Fit_Coefficients[40][6] = {
      1.4529,  -0.49862,  -23.145,  -2.2251,  12.719,  17.601,
 };
 
+// 防劈叉PID随腿长(L0_avg)的1D二次拟合：行0=Kp, 行1=Kd；列=[p0, p1, p2]
+// K(L0) = p0 + p1*L0 + p2*L0^2
+// 当前初值为穿过 (LEG_MIN=0.23, base)→(LEG_MAX=0.39, top) 两点的线性拟合(p2=0)：
+//   Kp: 300 @ 0.23 → 700 @ 0.39
+//   Kd:  10 @ 0.23 → 200 @ 0.39
+float AntiSplit_K[2];                            //[0]=Kp_eff, [1]=Kd_eff
+float AntiSplit_K_Fit_Coefficients[2][3] = {
+    -275.0f,    2500.0f,   0.0f,   //Kp
+    -263.125f,  1187.5f,   0.0f,   //Kd
+};
+
 // PID控制器定义
 user_pid_t L_Leg_L0_PID;     //常态
 user_pid_t R_Leg_L0_PID;     //
@@ -152,7 +163,7 @@ user_pid_t spinning_speed_pid;//小陀螺减速PID
 
 user_pid_t Roll_Comp_PID;    //ROLL补偿pid
 
-user_pid_t Leg_Phi0_PID;     //防劈叉pid
+user_pid_t Leg_AntiSplit_PID;         //防劈叉pid - Kp/Kd每周期由腿长1D二次拟合得到
 
 user_pid_t gimbal_pitch_pid;//云台俯仰pid
 
@@ -209,6 +220,11 @@ float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 //?调参
 float target_spinning_d_yaw = 14.0f; // 目标小陀螺yaw速度，单位为弧度每秒
 float centrifugal_comp_gain = 0.8f;  // spin离心补偿系数
+// 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)：
+// |yaw_angle_PI| <= 此值时，速度倍率从0线性升至+1（正向）；
+// |yaw_angle_PI - ±PI| <= 此值时，倍率从0线性降至-1（反向）；
+// 其余角度倍率为0。建议0.2~0.5rad
+float spin_speed_tol_angle = 1.0f;
 
 //?中间参数
 float down_board_yaw_output = 0.0f; // 下板yaw输出
@@ -325,7 +341,7 @@ void task_PID_Init()
 {
     PID_INIT(&L_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
     PID_INIT(&R_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&Leg_Phi0_PID, 300, 0.1, 10, 150, 150, 0, 50000, 0);
+    PID_INIT(&Leg_AntiSplit_PID, 300, 0, 10, 150, 0, 0, 0, 0);   //Kp/Kd为占位，每周期由 AntiSplit_Get_K 覆盖
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&Roll_Comp_PID, 20, 0.002, 100, 150, 80, 0, 10000, 0);
@@ -379,6 +395,9 @@ void task_Motor_Enable()
     osDelay(5);
     Enable_DM_Motor_MIT(&hfdcan3, 0x10);
     osDelay(5);
+
+    // 标记机身所有DM关节电机期望状态为"已使能"，开启监督
+    motor_should_enabled = 1;
 }
 
 /*===============================================运动函数===============================================*/
@@ -517,6 +536,7 @@ void NotStanding_NotStairRetract_for_chassis()
         {
             g_sr_turn_dir = (pitch > 90.0f || pitch < -90.0f) ? 1 : -1;
         }
+        g_tip_recovery_active = 1;//占用蜂鸣器，错误码蜂鸣器必须让位
         Self_Righting_Step();
         sr_was_active = 1;
         return ;
@@ -531,9 +551,14 @@ void NotStanding_NotStairRetract_for_chassis()
     }
     if (sr_finish_chime_remain > 0)
     {
+        g_tip_recovery_active = 1;//完成提示音期间继续独占蜂鸣器
         Buzzer_Tone_Max(1976);
         sr_finish_chime_remain--;
-        if (sr_finish_chime_remain == 0) Stop_Buzzer();
+        if (sr_finish_chime_remain == 0)
+        {
+            Stop_Buzzer();
+            g_tip_recovery_active = 0;//完成提示音结束，把蜂鸣器交还给错误码代码
+        }
     }
     first_run = 0;//第一次运行完成
 
@@ -644,6 +669,7 @@ void LQR_calculate()
     {
         leg_yaw_error = 0.0f;
         leg_d_yaw = 0.0f;
+        lqr_body_distance_error = 0.0f;   // 小陀螺时禁止距离闭环，避免误差累积干扰平移
     }
     float leg_b_phi0_offset = (spinning_flag == 1) ? 0.0f : b_phi0_offset;
 
@@ -836,6 +862,9 @@ void spinning_exit()
     Speed_Error_Set();
 }
 
+void Sit_On_Ground_Action(void);
+static uint8_t sit_first_entry = 1;
+
 //站起
 void Standing()
 {
@@ -866,17 +895,15 @@ void Standing()
     }
     if (tip_protect_cnt > 0)
     {
-        VMC_Set_F0_T(&VMC_L, 0.0f, 0.0f);
-        VMC_Set_F0_T(&VMC_R, 0.0f, 0.0f);
-        L_DJ3508.Target_Torque = 0.0f;
-        R_DJ3508.Target_Torque = 0.0f;
+        Sit_On_Ground_Action();
 
         tip_protect_cnt--;
         if (tip_protect_cnt == 0)
         {
-            start_mode     = 0;
-            upstares_mode  = 0;
-            first_run      = 1;
+            start_mode      = 0;
+            upstares_mode   = 0;
+            first_run       = 1;
+            sit_first_entry = 1;
         }
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 0);
         return;
@@ -953,9 +980,14 @@ void Standing()
     Roll_Comp();
     Leg_L0_Control();
 
-    //放劈叉
-    PID_Set_Error(&Leg_Phi0_PID, (VMC_R.phi0 - PI/2) + (VMC_L.phi0 - PI/2), 0);
-    PID_coculate(&Leg_Phi0_PID);
+    //防劈叉：Kp/Kd按L0_avg做1D二次拟合(类似LQR风格)，单PID输出
+    float L0_avg = (VMC_L.L0 + VMC_R.L0) * 0.5f;
+    AntiSplit_Get_K(AntiSplit_K, AntiSplit_K_Fit_Coefficients, L0_avg);
+    Leg_AntiSplit_PID.Kp = AntiSplit_K[0];
+    Leg_AntiSplit_PID.Kd = AntiSplit_K[1];
+    PID_Set_Error(&Leg_AntiSplit_PID, (VMC_R.phi0 - PI/2) + (VMC_L.phi0 - PI/2), 0);
+    PID_coculate(&Leg_AntiSplit_PID);
+    float anti_split_out = Leg_AntiSplit_PID.output;
 
     //100hz算K值，毕竟K值的计算比较耗时
     i++;
@@ -972,8 +1004,8 @@ void Standing()
 
     //常态下VMC解算，加入PID前馈
     float centrifugal_comp = centrifugal_comp_gain * d_yaw * d_yaw;
-    float L_leg_T_cmd = Leg_L_T + Leg_Phi0_PID.output - centrifugal_comp;
-    float R_leg_T_cmd = -Leg_R_T + Leg_Phi0_PID.output - centrifugal_comp;
+    float L_leg_T_cmd = Leg_L_T + anti_split_out - centrifugal_comp;
+    float R_leg_T_cmd = -Leg_R_T + anti_split_out - centrifugal_comp;
     static uint8_t spin_phi0_pid_started = 0;
     if(spinning_flag == 1)
     {
@@ -1310,14 +1342,13 @@ void Gravity_Compensation_Test_Function(void)
 #define SIT_WHEEL_TORQUE     0.0f
 #define SIT_GRAVITY_RATIO    0.3f
 
-static uint8_t sit_first_entry = 1;
 static RampGenerator sit_L0_ramp_L, sit_L0_ramp_R;
 static RampGenerator sit_phi0_ramp_L, sit_phi0_ramp_R;
 
 uint16_t sit_debug_counter = 0;  // 坐地模式执行周期计数，debug用
 uint8_t sit_ramp_done = 0;       // 斜坡过渡是否完成
 
-void Sit_On_Ground(void)
+void Sit_On_Ground_Action(void)
 {
     VMC_Coculate();
 
@@ -1373,6 +1404,11 @@ void Sit_On_Ground(void)
     // 轮子小力矩锁死
     L_DJ3508.Target_Torque = SIT_WHEEL_TORQUE;
     R_DJ3508.Target_Torque = -SIT_WHEEL_TORQUE;
+}
+
+void Sit_On_Ground(void)
+{
+    Sit_On_Ground_Action();
 
     // 检测退出
     if (!sit_mode_enable)
@@ -1440,6 +1476,9 @@ void Motor_task(void const *argument)
         {
             Gravity_Compensation_Test_Function();
         }
+
+        //错误码蜂鸣器：电机错误时长响低音。倒地自起激活时本函数自动让位，不碰蜂鸣器
+        Error_Buzzer_Tick();
 
         osDelayUntil(&xLastWakeTime, 2);//精确延时2毫秒，同时更新xLastWakeTime的值为当前时间
     }

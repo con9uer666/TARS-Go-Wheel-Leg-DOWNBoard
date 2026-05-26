@@ -27,6 +27,12 @@ extern SelfRightingStage_t g_self_righting_stage;
 extern uint8_t g_self_righting_enable;
 extern uint8_t g_self_righting_sync_from_stuck;
 
+/* 倒地自起激活标志：1=正在自起或正在播放完成提示音（蜂鸣器被自起独占）
+ * Why: 自起期间用户需要听清楚自起阶段的音高节奏区分；错误码蜂鸣器若同时驱动会污染音频
+ * How to apply: 由 motor.c 的 NotStanding_NotStairRetract_for_chassis 在自起开始时置1、
+ * 完成提示音结束时清0；错误码蜂鸣器代码必须读它，为1时完全不许碰蜂鸣器 */
+extern uint8_t g_tip_recovery_active;
+
 /* 倒地自起时腿的转动方向标志位
  *   +1: 保持当前行为（左腿正方向 / 右腿负方向）
  *   -1: 整体翻向（对应车以反面倒地时的自起方向）

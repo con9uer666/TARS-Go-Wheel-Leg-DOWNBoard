@@ -65,4 +65,5 @@ h7_ctrl/wheel_leg_about.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
   ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h
+  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\others\Motion_Control\App\inc\Gimbal.h

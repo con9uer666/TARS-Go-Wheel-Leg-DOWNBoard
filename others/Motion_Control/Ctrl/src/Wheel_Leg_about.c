@@ -7,6 +7,8 @@
 #include "VMC.h"
 #include "observe_task.h"
 #include "Motor_Drv.h"
+#include "Gimbal.h"
+#include <math.h>
 
 /*============================ 轮腿相关算法 ================================*/
 
@@ -41,8 +43,25 @@ void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, fl
 
 
 /**
+ * @brief 防劈叉PID增益的1D二次拟合：K(L0) = p0 + p1*L0 + p2*L0^2
+ * @param K              输出，K[0]=Kp, K[1]=Kd
+ * @param Coef           系数表，行0=Kp, 行1=Kd，列=[p0, p1, p2]
+ * @param L0_avg         L0均值 (m)
+ */
+void AntiSplit_Get_K(float K[2], float Coef[2][3], float L0_avg)
+{
+    for(uint8_t i = 0; i < 2; i++)
+    {
+        K[i] = Coef[i][0]
+             + Coef[i][1] * L0_avg
+             + Coef[i][2] * L0_avg * L0_avg;
+    }
+}
+
+
+/**
  * @brief 横滚补偿
- * 
+ *
  */
 void Roll_Comp()
 {
@@ -97,6 +116,19 @@ void Leg_L0_Control()
     PID_coculate(&R_Leg_L0_PID);                       
 }
 
+// 小陀螺时按yaw_angle_PI窗口计算平移倍率（已按遥控器方向校正符号）：
+//   |a| <= tol            → ratio 从 0 线性降至 -1 (a=0 时 -1)
+//   |a - ±PI| <= tol      → ratio 从 0 线性升至 +1 (|a|=PI 时 +1)
+//   其余                  → ratio = 0
+static float Spin_Translation_Ratio(float a, float tol)
+{
+    if (tol <= 1e-6f) return 0.0f;
+    if (a >= -tol && a <= tol)         return -(tol - fabsf(a)) / tol;
+    if (a >=  PI - tol)                return  (tol - fabsf(a - PI)) / tol;
+    if (a <= -PI + tol)                return  (tol - fabsf(a + PI)) / tol;
+    return 0.0f;
+}
+
 //speed_error | 计算前进速度误差 (yaw_error)
 void Speed_Error_Set()
 {
@@ -107,6 +139,10 @@ void Speed_Error_Set()
     else
     {
         speed_limit = 3.0f;     //车子最大速
+    }
+    if(spinning_flag == 1)
+    {
+        speed_limit = 4.0f;     //小陀螺时限制平移最大速度
     }
     // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
     // rampIterate(&Target_Speed_Ramp);
@@ -119,11 +155,20 @@ void Speed_Error_Set()
 
     target_body_speed = PowerCtrl_LimitTargetSpeed(target_body_speed, speed_limit);
 
-    float temp = ((0.7f - fabsf(yaw_error))/0.7f);//速度和转速功率分配倍率为0.7
-    if(temp < 0.0)
-    temp = 0.0;
+    float temp;
+    if (spinning_flag == 1)
+    {
+        // 小陀螺：只在车体朝向接近正面/反面时窗口性放行平移
+        temp = Spin_Translation_Ratio(yaw_angle_PI, spin_speed_tol_angle);
+    }
+    else
+    {
+        // 常态：yaw误差越大，目标速度越小
+        temp = ((0.7f - fabsf(yaw_error))/0.7f);
+        if(temp < 0.0f) temp = 0.0f;
+    }
 
-    target_body_speed = target_body_speed * temp;//yaw误差越大，目标速度越小，最大为100%，最小为0
+    target_body_speed = target_body_speed * temp;
     //// target_body_speed = alpha_target_body_speed * (((SBUS_CH.CH2 - 992.0f)/800.0f) * speed_limit) + (1 - alpha_target_body_speed) * target_body_speed;
     speed_error = target_body_speed - kalman_body_speed;
 

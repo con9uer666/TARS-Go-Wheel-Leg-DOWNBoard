@@ -75,4 +75,5 @@ h7_ctrl/user_can.o: ..\others\Motion_Control\Drv\src\USER_CAN.c \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
   ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Device\inc\wattmeter.h
+  ..\others\Device\inc\wattmeter.h ..\others\Device\inc\buzzer.h \
+  ..\Core\Inc\tim.h ..\others\Motion_Control\App\inc\Self_Righting.h
