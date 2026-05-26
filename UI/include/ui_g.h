@@ -89,6 +89,7 @@ extern ui_interface_line_t   *ui_g_INIT_NewLine2;    // 右侧斜线
 extern ui_interface_line_t   *ui_g_INIT_NewLine3;    // 装饰横线 1
 extern ui_interface_line_t   *ui_g_INIT_NewLine4;    // 装饰横线 2
 extern ui_interface_line_t   *ui_g_INIT_NewLine5;    // 顶部横线
+extern ui_interface_line_t   *ui_g_INIT_NewLine6;    // 屏幕中线（单独 1 图元帧 INIT_4）
 extern ui_interface_string_t *ui_g_INIT_FRIC_SPD;    // "FRIC SPD" 标签
 extern ui_interface_string_t *ui_g_INIT_AUTO_AIM;    // "AUTO AIM" 标签
 extern ui_interface_string_t *ui_g_INIT_SHOOT_NUM;   // "SHOOT NUM" 标签

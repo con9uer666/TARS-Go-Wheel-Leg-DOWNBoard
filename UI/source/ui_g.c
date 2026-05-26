@@ -19,8 +19,7 @@
 //      客户端覆盖）。这里用 figure_name = (0, 分组号, 序号) 三字节布局。
 //
 //  分组划分（详见 ui_g.h）：
-//    30HZ_0 / 30HZ_2 (各 7 图元)、30HZ_1 (3 活跃图元 + 2 空槽 in 5-frame)、
-//    30HZ_FAST (4 活跃图元 + 1 空槽 in 5-frame, 高刷)、30HZ_3 (5 图元)：动态主屏
+//    30HZ_0 / 30HZ_1 / 30HZ_2 (各 7 图元)、30HZ_3 (5 图元)：动态主屏
 //    5HZ_0  / 5HZ_1   (各 1 字符串)：低频文字提示
 //    INIT_0 (5 图元) / INIT_1~3 (各 1 字符串)：永久静态层
 // ============================================================================
@@ -815,10 +814,10 @@ void _ui_init_g_INIT_0() {
     ui_g_INIT_NewLine->operate_type = 1;
     ui_g_INIT_NewLine->layer = 0;
     ui_g_INIT_NewLine->color = 8;           // 颜色 8 = 紫
-    ui_g_INIT_NewLine->start_x = 571;
+    ui_g_INIT_NewLine->start_x = 671;
     ui_g_INIT_NewLine->start_y = 101;
-    ui_g_INIT_NewLine->width = 1;
-    ui_g_INIT_NewLine->end_x = 824;
+    ui_g_INIT_NewLine->width = 2;
+    ui_g_INIT_NewLine->end_x = 924;
     ui_g_INIT_NewLine->end_y = 412;
 
     // ----- NewLine2：右侧大斜装饰线 -----
@@ -826,44 +825,44 @@ void _ui_init_g_INIT_0() {
     ui_g_INIT_NewLine2->operate_type = 1;
     ui_g_INIT_NewLine2->layer = 0;
     ui_g_INIT_NewLine2->color = 8;
-    ui_g_INIT_NewLine2->start_x = 1345;
-    ui_g_INIT_NewLine2->start_y = 92;
-    ui_g_INIT_NewLine2->width = 1;
-    ui_g_INIT_NewLine2->end_x = 1066;
-    ui_g_INIT_NewLine2->end_y = 395;
+    ui_g_INIT_NewLine2->start_x = 1249;
+    ui_g_INIT_NewLine2->start_y = 101;
+    ui_g_INIT_NewLine2->width = 2;
+    ui_g_INIT_NewLine2->end_x = 996;
+    ui_g_INIT_NewLine2->end_y = 412;
 
     // ----- NewLine3：装饰横线 1 -----
     ui_g_INIT_NewLine3->figure_type = 0;
     ui_g_INIT_NewLine3->operate_type = 1;
     ui_g_INIT_NewLine3->layer = 0;
     ui_g_INIT_NewLine3->color = 8;
-    ui_g_INIT_NewLine3->start_x = 1023;
-    ui_g_INIT_NewLine3->start_y = 688;
+    ui_g_INIT_NewLine3->start_x = 1000;
+    ui_g_INIT_NewLine3->start_y = 485;
     ui_g_INIT_NewLine3->width = 1;
-    ui_g_INIT_NewLine3->end_x = 883;
-    ui_g_INIT_NewLine3->end_y = 690;
+    ui_g_INIT_NewLine3->end_x = 920;
+    ui_g_INIT_NewLine3->end_y = 485;
 
     // ----- NewLine4：装饰横线 2 -----
     ui_g_INIT_NewLine4->figure_type = 0;
     ui_g_INIT_NewLine4->operate_type = 1;
     ui_g_INIT_NewLine4->layer = 0;
     ui_g_INIT_NewLine4->color = 8;
-    ui_g_INIT_NewLine4->start_x = 1025;
-    ui_g_INIT_NewLine4->start_y = 641;
+    ui_g_INIT_NewLine4->start_x = 1000;
+    ui_g_INIT_NewLine4->start_y = 463;
     ui_g_INIT_NewLine4->width = 1;
-    ui_g_INIT_NewLine4->end_x = 885;
-    ui_g_INIT_NewLine4->end_y = 643;
+    ui_g_INIT_NewLine4->end_x = 920;
+    ui_g_INIT_NewLine4->end_y = 463;
 
     // ----- NewLine5：顶部装饰横线 -----
     ui_g_INIT_NewLine5->figure_type = 0;
     ui_g_INIT_NewLine5->operate_type = 1;
     ui_g_INIT_NewLine5->layer = 0;
     ui_g_INIT_NewLine5->color = 8;
-    ui_g_INIT_NewLine5->start_x = 626;
-    ui_g_INIT_NewLine5->start_y = 278;
+    ui_g_INIT_NewLine5->start_x = 1000;
+    ui_g_INIT_NewLine5->start_y = 425;
     ui_g_INIT_NewLine5->width = 1;
-    ui_g_INIT_NewLine5->end_x = 1216;
-    ui_g_INIT_NewLine5->end_y = 285;
+    ui_g_INIT_NewLine5->end_x = 920;
+    ui_g_INIT_NewLine5->end_y = 425;
 
 
     // ===== 封口 & 发送 ============================================
@@ -1051,6 +1050,44 @@ void _ui_remove_g_INIT_3() {
     SEND_MESSAGE((uint8_t *) &ui_g_INIT_3, sizeof(ui_g_INIT_3));
 }
 
+// ===== INIT 子帧 4：屏幕正中竖向装饰线 NewLine6 ========================
+// INIT_0(5图元帧) 5 槽已满，单独开一个 1 图元帧装第 6 条线。
+ui_1_frame_t ui_g_INIT_4;
+ui_interface_line_t *ui_g_INIT_NewLine6 = (ui_interface_line_t*)&(ui_g_INIT_4.data[0]); // 屏幕中线
+
+void _ui_init_g_INIT_4() {
+    ui_g_INIT_4.data[0].figure_name[0] = 0;
+    ui_g_INIT_4.data[0].figure_name[1] = 2;     // INIT 分组
+    ui_g_INIT_4.data[0].figure_name[2] = 8;     // 接 INIT_3 之后(0..4 线 / 5..7 文字)
+    ui_g_INIT_4.data[0].operate_type   = 1;
+
+    ui_g_INIT_NewLine6->figure_type = 0;
+    ui_g_INIT_NewLine6->layer       = 0;
+    ui_g_INIT_NewLine6->color       = 8;
+    ui_g_INIT_NewLine6->start_x     = 960;
+    ui_g_INIT_NewLine6->start_y     = 100;
+    ui_g_INIT_NewLine6->end_x       = 960;
+    ui_g_INIT_NewLine6->end_y       = 600;
+    ui_g_INIT_NewLine6->width       = 1;
+
+    ui_proc_1_frame(&ui_g_INIT_4);
+    SEND_MESSAGE((uint8_t *) &ui_g_INIT_4, sizeof(ui_g_INIT_4));
+}
+
+/** @brief INIT 子帧 4 兜底重发：见 _ui_update_g_INIT_0 顶部注释。 */
+void _ui_update_g_INIT_4() {
+    ui_g_INIT_4.data[0].operate_type = 1;
+    ui_proc_1_frame(&ui_g_INIT_4);
+    SEND_MESSAGE((uint8_t *) &ui_g_INIT_4, sizeof(ui_g_INIT_4));
+}
+
+/** @brief INIT 子帧 4 删除（当前未调用） */
+void _ui_remove_g_INIT_4() {
+    ui_g_INIT_4.data[0].operate_type = 3;
+    ui_proc_1_frame(&ui_g_INIT_4);
+    SEND_MESSAGE((uint8_t *) &ui_g_INIT_4, sizeof(ui_g_INIT_4));
+}
+
 // =====================================================================
 //  INIT 分组聚合入口：上电时调用一次。
 //  UI_Task 的 cnt%30 兜底分支也会调用 ui_update_g_INIT() 重发。
@@ -1066,6 +1103,8 @@ void ui_init_g_INIT() {
     _ui_init_g_INIT_2();
     osDelay(UI_FRAME_GAP_MS);
     _ui_init_g_INIT_3();
+    osDelay(UI_FRAME_GAP_MS);
+    _ui_init_g_INIT_4();
 }
 
 void ui_update_g_INIT() {
@@ -1076,6 +1115,8 @@ void ui_update_g_INIT() {
     _ui_update_g_INIT_2();
     osDelay(UI_FRAME_GAP_MS);
     _ui_update_g_INIT_3();
+    osDelay(UI_FRAME_GAP_MS);
+    _ui_update_g_INIT_4();
 }
 
 void ui_remove_g_INIT() {
@@ -1086,5 +1127,7 @@ void ui_remove_g_INIT() {
     _ui_remove_g_INIT_2();
     osDelay(UI_FRAME_GAP_MS);
     _ui_remove_g_INIT_3();
+    osDelay(UI_FRAME_GAP_MS);
+    _ui_remove_g_INIT_4();
 }
 
