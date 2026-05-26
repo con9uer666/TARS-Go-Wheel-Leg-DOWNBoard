@@ -1010,20 +1010,12 @@ void Standing()
     Distance_Error_Set();
     if (spinning_flag == 1) { body_distance_error = 0; body_distance = 0; target_body_distance = 0; }
 
-    // spin车身速度积分，补偿稳态漂移
-    static float spin_speed_I = 0;
+    //小陀螺时轮速共模P反馈：抑制因左右轮共模偏置导致的车身漂移
     if (spinning_flag == 1) {
-        spin_speed_I += kalman_body_speed * 0.01f;
-        if (spin_speed_I >  0.5f) spin_speed_I =  0.5f;
-        if (spin_speed_I < -0.5f) spin_speed_I = -0.5f;
-        // speed_error -= spin_speed_I; // 漂移补偿积分已关闭
-        //轮速共模P控制，快锁两轮转速相等
         static float wheel_common_f = 0.0f;
         float wheel_common = (R_DJ3508.Rx_Data.Velocity - L_DJ3508.Rx_Data.Velocity) * 0.0305f;
         wheel_common_f = 0.05f * wheel_common + 0.95f * wheel_common_f;
         speed_error -= wheel_common_f * 0.1f;
-    } else {
-        spin_speed_I = 0;
     }
 
     //横滚补偿和PD单环腿长控制
