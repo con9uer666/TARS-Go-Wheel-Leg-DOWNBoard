@@ -22,7 +22,7 @@ uint16_t can_send_error,can_receive_error;
 
 /*====================================== 电机输出总开关 ====================================== */
 uint8_t motor_output_enable = 1;      // 1=正常输出力矩, 0=强制全部电机输出零力矩
-uint8_t wheel_leg_output_enable = 1;  // 1=正常输出, 0=仅关断3508和8009（4310/2325不受影响）
+uint8_t wheel_leg_output_enable = 0;  // 1=正常输出, 0=仅关断3508和8009（4310/2325不受影响）
 
 /*====================================== 电机使能监督 ======================================== */
 // 记录机身所有DM关节电机当前期望状态：1=应使能 0=应失能
@@ -116,11 +116,12 @@ static void DM_Motor_State_Supervisor_Tick(void)
 #define ERROR_BUZZER_FREQ_HZ  200
 
 // 由 Motor_task 周期调用：当 motor_last_error_code != 0 时持续驱动蜂鸣器以最低音高长响。
-// 倒地自起占用蜂鸣器期间（g_tip_recovery_active==1），本函数完全不许碰蜂鸣器
-// （不调用 Buzzer_Tone_Max 也不调用 Stop_Buzzer），把音频独占权交给自起代码。
+// 倒地自起占用蜂鸣器期间（g_tip_recovery_active==1）或跳跃中（g_jump_buzzer_active==1），
+// 本函数完全不许碰蜂鸣器（不调用 Buzzer_Tone_Max 也不调用 Stop_Buzzer），把音频独占权交出去。
 void Error_Buzzer_Tick(void)
 {
     if (g_tip_recovery_active) return;   // 倒地自起绝对优先：连 Stop 都不发
+    if (g_jump_buzzer_active)  return;   // 跳跃期间让位
 
     if (motor_last_error_code != 0)
     {

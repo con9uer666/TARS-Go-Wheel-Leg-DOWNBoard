@@ -146,6 +146,10 @@ void B2B_ParseUsart() // 先发低字节
 		/* 摩擦轮目标转速：byte47~48 / byte49~50，int16 小端，原值即 RPM */
 		fric_speed_l_rpm = (int16_t)(usart2RxBuf[47] | (usart2RxBuf[48] << 8));
 		fric_speed_r_rpm = (int16_t)(usart2RxBuf[49] | (usart2RxBuf[50] << 8));
+
+		/* 跳跃指令：byte51，=1 请求跳跃，=0 解除跳跃锁
+		   实际 jump_mode 由 motor.c 内部根据 jump_cmd 和 jump_locked 综合判定 */
+		jump_cmd = usart2RxBuf[51];
 		// for(int i = 0; i <= 127; i++)
 		// {
 		// 	usart2RxBuf[i] = 0;

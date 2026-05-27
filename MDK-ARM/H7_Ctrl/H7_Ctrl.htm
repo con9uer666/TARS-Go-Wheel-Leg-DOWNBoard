@@ -3,11 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<<<<<<< HEAD
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed May 27 05:41:23 2026
-=======
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed May 27 00:00:56 2026
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed May 27 11:57:24 2026
 <BR><P>
 <H3>Maximum Stack Usage =        488 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -828,23 +824,13 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_errno_addr
 </UL>
-<<<<<<< HEAD
-<BR>[Called By]<UL><LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
-<LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
+<BR>[Called By]<UL><LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 <LI><a href="#[1e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
 <LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sqrtf
 <LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-=======
-<BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
-<LI><a href="#[1e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
-<LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
-<LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
-<LI><a href="#[21b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
-<LI><a href="#[16f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sqrtf
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
+<LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
 </UL>
 
 <P><STRONG><a name="[c2]"></a>_printf_int_common</STRONG> (Thumb, 178 bytes, Stack size 32 bytes, _printf_intcommon.o(.text))
@@ -923,7 +909,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d2]"></a>B2B_ParseUsart</STRONG> (Thumb, 756 bytes, Stack size 24 bytes, board2board.o(.text.B2B_ParseUsart))
+<P><STRONG><a name="[d2]"></a>B2B_ParseUsart</STRONG> (Thumb, 772 bytes, Stack size 24 bytes, board2board.o(.text.B2B_ParseUsart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit_DMA
@@ -1058,6 +1044,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PWM_Start
 </UL>
 <BR>[Called By]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Buzzer_Tick
+<LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 <LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
 <LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NotStanding_NotStairRetract_for_chassis
 </UL>
@@ -1286,7 +1273,7 @@ Global Symbols
 <LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;task_Motor_Enable
 </UL>
 
-<P><STRONG><a name="[102]"></a>Error_Buzzer_Tick</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, user_can.o(.text.Error_Buzzer_Tick))
+<P><STRONG><a name="[102]"></a>Error_Buzzer_Tick</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, user_can.o(.text.Error_Buzzer_Tick))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Error_Buzzer_Tick &rArr; Buzzer_Tone_Max &rArr; HAL_TIM_PWM_Start
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Buzzer_Tone_Max
@@ -2529,7 +2516,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 </UL>
 
-<P><STRONG><a name="[1d5]"></a>LQR_calculate</STRONG> (Thumb, 612 bytes, Stack size 0 bytes, motor.o(.text.LQR_calculate))
+<P><STRONG><a name="[1d5]"></a>LQR_calculate</STRONG> (Thumb, 628 bytes, Stack size 0 bytes, motor.o(.text.LQR_calculate))
 <BR><BR>[Called By]<UL><LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 </UL>
 
@@ -2729,7 +2716,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[a1]"></a>Motor_task</STRONG> (Thumb, 524 bytes, Stack size 8 bytes, motor.o(.text.Motor_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Motor_task &rArr; StairRetract &rArr; turn_ctrl_with_stuck_flip &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
+<BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = Motor_task &rArr; Standing &rArr; Sit_On_Ground_Action &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
@@ -2977,7 +2964,7 @@ Global Symbols
 <LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 </UL>
 
-<P><STRONG><a name="[1d0]"></a>Speed_Error_Set</STRONG> (Thumb, 408 bytes, Stack size 16 bytes, wheel_leg_about.o(.text.Speed_Error_Set))
+<P><STRONG><a name="[1d0]"></a>Speed_Error_Set</STRONG> (Thumb, 476 bytes, Stack size 16 bytes, wheel_leg_about.o(.text.Speed_Error_Set))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Speed_Error_Set
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerCtrl_LimitTargetSpeed
@@ -2999,15 +2986,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<<<<<<< HEAD
-<P><STRONG><a name="[1bb]"></a>Standing</STRONG> (Thumb, 1732 bytes, Stack size 64 bytes, motor.o(.text.Standing))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Standing &rArr; Sit_On_Ground_Action &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
-=======
-<P><STRONG><a name="[1b8]"></a>Standing</STRONG> (Thumb, 2000 bytes, Stack size 72 bytes, motor.o(.text.Standing))
-<BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = Standing &rArr; off_ground_detect &rArr; VMC_Get_Ground_F0
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
+<P><STRONG><a name="[1bb]"></a>Standing</STRONG> (Thumb, 2492 bytes, Stack size 72 bytes, motor.o(.text.Standing))
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Standing &rArr; Sit_On_Ground_Action &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Buzzer_Tone_Max
+<LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Stop_Buzzer
 <LI><a href="#[1c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PowerCtrl
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_cos_f32
 <LI><a href="#[1d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
@@ -3052,6 +3036,7 @@ Global Symbols
 <P><STRONG><a name="[106]"></a>Stop_Buzzer</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, buzzer.o(.text.Stop_Buzzer))
 <BR><BR>[Called By]<UL><LI><a href="#[199]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Run_Remind
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
+<LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Reset
 <LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Self_Righting_Step
 <LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NotStanding_NotStairRetract_for_chassis
@@ -3178,7 +3163,6 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = UI_task &rArr; ui_init_g_INIT &rArr; _ui_init_g_INIT_0 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<<<<<<< HEAD
 <LI><a href="#[1e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelSysTick
 <LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_update_g_INIT
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
@@ -3195,24 +3179,6 @@ Global Symbols
 <LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[1e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
 <LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-=======
-<LI><a href="#[1e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelSysTick
-<LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_update_g_INIT
-<LI><a href="#[1de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
-<LI><a href="#[1df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_5HZ
-<LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_5HZ_1
-<LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_5HZ_0
-<LI><a href="#[1e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
-<LI><a href="#[1ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_3
-<LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_2
-<LI><a href="#[1e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_FAST
-<LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_1
-<LI><a href="#[1e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_0
-<LI><a href="#[1dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;JUDGE_GetSelfID
-<LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[1e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
-<LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.text.MX_FREERTOS_Init)
 </UL>
@@ -3630,8 +3596,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[1d7]"></a>off_ground_detect</STRONG> (Thumb, 496 bytes, Stack size 48 bytes, motor.o(.text.off_ground_detect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = off_ground_detect &rArr; VMC_Get_Ground_F0
+<P><STRONG><a name="[1d7]"></a>off_ground_detect</STRONG> (Thumb, 536 bytes, Stack size 56 bytes, motor.o(.text.off_ground_detect))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = off_ground_detect &rArr; VMC_Get_Ground_F0
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Get_Ground_F0
 <LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Set_F0_T
@@ -3733,7 +3699,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1b7]"></a>task_PID_Init</STRONG> (Thumb, 908 bytes, Stack size 72 bytes, motor.o(.text.task_PID_Init))
+<P><STRONG><a name="[1b7]"></a>task_PID_Init</STRONG> (Thumb, 952 bytes, Stack size 72 bytes, motor.o(.text.task_PID_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = task_PID_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
@@ -4084,15 +4050,9 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadResume
 </UL>
 
-<<<<<<< HEAD
 <P><STRONG><a name="[220]"></a>__ARM_fpclassifyf</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, fpclassifyf.o(i.__ARM_fpclassifyf))
 <BR><BR>[Called By]<UL><LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 <LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-=======
-<P><STRONG><a name="[21c]"></a>__ARM_fpclassifyf</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, fpclassifyf.o(i.__ARM_fpclassifyf))
-<BR><BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
 </UL>
 
 <P><STRONG><a name="[17b]"></a>__hardfp_asinf</STRONG> (Thumb, 258 bytes, Stack size 16 bytes, asinf.o(i.__hardfp_asinf))
@@ -4162,7 +4122,6 @@ Global Symbols
 <LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Update
 </UL>
 
-<<<<<<< HEAD
 <P><STRONG><a name="[222]"></a>__mathlib_flt_infnan</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_infnan))
 <BR><BR>[Called By]<UL><LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
@@ -4170,45 +4129,22 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[223]"></a>__mathlib_flt_invalid</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_invalid))
-<BR><BR>[Called By]<UL><LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
-<LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
+<BR><BR>[Called By]<UL><LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 <LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
+<LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
 </UL>
 
 <P><STRONG><a name="[221]"></a>__mathlib_flt_underflow</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_underflow))
 <BR><BR>[Called By]<UL><LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 <LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-=======
-<P><STRONG><a name="[21e]"></a>__mathlib_flt_infnan</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_infnan))
-<BR><BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[1e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
-<LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
-</UL>
-
-<P><STRONG><a name="[21f]"></a>__mathlib_flt_invalid</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_invalid))
-<BR><BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[1c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
-<LI><a href="#[1e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
-<LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
-</UL>
-
-<P><STRONG><a name="[21d]"></a>__mathlib_flt_underflow</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_underflow))
-<BR><BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
 </UL>
 
 <P><STRONG><a name="[224]"></a>__mathlib_rredf2</STRONG> (Thumb, 316 bytes, Stack size 20 bytes, rredf.o(i.__mathlib_rredf2))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = __mathlib_rredf2
 </UL>
-<<<<<<< HEAD
 <BR>[Called By]<UL><LI><a href="#[1e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-=======
-<BR>[Called By]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
-<LI><a href="#[1e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
->>>>>>> c69964d49dcb75c1a52d67746560af4e23c82b51
 </UL>
 
 <P><STRONG><a name="[21f]"></a>sqrtf</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, sqrtf.o(i.sqrtf))

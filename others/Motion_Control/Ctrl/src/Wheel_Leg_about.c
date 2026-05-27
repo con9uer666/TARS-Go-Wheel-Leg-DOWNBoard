@@ -117,12 +117,16 @@ void Leg_L0_Control()
 }
 
 // 小陀螺时按yaw_angle_PI窗口计算平移倍率（已按遥控器方向校正符号）：
-//   |a| <= tol            → ratio 从 0 线性降至 -1 (a=0 时 -1)
-//   |a - ±PI| <= tol      → ratio 从 0 线性升至 +1 (|a|=PI 时 +1)
-//   其余                  → ratio = 0
-static float Spin_Translation_Ratio(float a, float tol)
+//   |a - offset| <= tol            → ratio 从 0 线性降至 -1 (a-offset=0 时 -1)
+//   |a - offset - ±PI| <= tol      → ratio 从 0 线性升至 +1 (|a-offset|=PI 时 +1)
+//   其余                            → ratio = 0
+// offset 用于补偿小陀螺平移方向相对遥控器方向的偏置，单位 rad
+static float Spin_Translation_Ratio(float a, float tol, float offset)
 {
     if (tol <= 1e-6f) return 0.0f;
+    a -= offset;
+    while (a >  PI) a -= 2.0f * PI;
+    while (a < -PI) a += 2.0f * PI;
     if (a >= -tol && a <= tol)         return -(tol - fabsf(a)) / tol;
     if (a >=  PI - tol)                return  (tol - fabsf(a - PI)) / tol;
     if (a <= -PI + tol)                return  (tol - fabsf(a + PI)) / tol;
@@ -159,7 +163,7 @@ void Speed_Error_Set()
     if (spinning_flag == 1)
     {
         // 小陀螺：只在车体朝向接近正面/反面时窗口性放行平移
-        temp = Spin_Translation_Ratio(yaw_angle_PI, spin_speed_tol_angle);
+        temp = Spin_Translation_Ratio(yaw_angle_PI, spin_speed_tol_angle, spin_speed_angle_offset);
     }
     else
     {

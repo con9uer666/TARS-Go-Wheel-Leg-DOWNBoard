@@ -42,12 +42,21 @@ extern Foot_Chassis_t Foot_Chassis;
 extern uint8_t gimbal_follow_flag; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
 extern uint8_t spinning_flag;      // 1：小陀螺运行中 0：小陀螺停止
 extern float spin_speed_tol_angle; // 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)
+extern float spin_speed_angle_offset; // 小陀螺平移方向偏置(rad)
+extern uint8_t jump_mode;            // 只读：当前是否处于跳跃中，由 Standing 内部根据 jump_cmd / jump_locked 计算
+extern uint8_t jump_cmd;             // B2B byte51 原始跳跃指令：1=请求跳跃，0=解除跳跃锁
+extern uint8_t jump_enable;          // 跳跃使能：=1 允许跳跃，=0 一票否决
+extern uint8_t g_jump_buzzer_active; // 跳跃蜂鸣器独占标志，Error_Buzzer_Tick 看到=1 必须让位
+extern float jump_F0;                // 跳跃时两腿沿腿杆向外的固定虚拟力(N)，最大约250N
+extern float jump_leg_change_threshold; // 跳跃失败阈值(m)：锁存到期时任一腿变化<此值判失败
+extern uint8_t jump_fail_reason;     // 跳跃退出原因 0=进行中/未触发 1=离地成功 2=超时腿长不足 3=超时但腿长够
 extern float down_board_yaw_output; // 下板yaw输出
 
 extern float speed_error; 
 extern float target_roll;
 extern float alpha_target_roll;
 extern user_pid_t Roll_Comp_PID;
+extern user_pid_t Jump_LR_Balance_PID;
 extern int leg_state_count;
 extern float target_Leg_L0;
 extern user_pid_t L_Leg_L0_PID;
