@@ -1391,7 +1391,7 @@ void StairRetract()
             leg_state = 0;
             target_Leg_L0 = LEG_MIN_LENTH;
             body_distance = 0;
-            target_body_distance = 3.0;
+            target_body_distance = 0.0f;
         }
     }
 }
