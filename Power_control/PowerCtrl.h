@@ -25,6 +25,7 @@ extern float g_power_obs_lambda;
 
 extern float g_filtered_power; // 功率计低通滤波后的值，用于超功率判断
 extern float power_limit;      // 本周期允许的最大功率（W），用于超功率判断
+extern float base_power_limit; // 裁判基础功率上限（W），由 PowerCtrl() 每周期更新
 
 void  PowerCtralInit(ChassisPower *whell_power);
 void  PowerCtrl(void);

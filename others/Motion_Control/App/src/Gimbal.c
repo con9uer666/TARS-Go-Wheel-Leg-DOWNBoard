@@ -8,7 +8,7 @@
 user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
 
 float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
-float head_forward_angle = 0.2148f;//正视前方的yaw电机角度
+float head_forward_angle = -2.773;//正视前方的yaw电机角度
 
 uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器
 

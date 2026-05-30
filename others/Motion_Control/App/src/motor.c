@@ -232,7 +232,7 @@ float centrifugal_comp_gain = 0.8f;  // spin离心补偿系数
 float spin_speed_tol_angle = 1.0f;
 // 小陀螺平移方向偏置(rad)：补偿"拨杆向前-实际方向"的安装/解算偏差。
 // 正负与 yaw_angle_PI 同号系：调一调正负看车的实际响应方向。建议先±0.1rad尝试。
-float spin_speed_angle_offset = -0.6f;
+float spin_speed_angle_offset = -0.9f;
 
 // 跳跃模式（只读输出）：每周期由 Standing 根据 jump_cmd 和 jump_locked 计算得出
 // =1 表示当前正在跳跃动作组中；倒地自起期间 Standing 不会被调用，天然互斥
@@ -834,9 +834,28 @@ void off_ground_detect()
 static void Step_Hit_Detect(void)
 {
     const float leg_torque_threshold = 6.0f;        // 经验值，可再微调
-    const float leg_length_threshold = LEG_MAX_LENTH - 0.05f; // 高腿长门槛
+    const float leg_length_threshold = LEG_MAX_LENTH - 0.03f; // 高腿长门槛
     const int step_hit_count_target = 2;
     const int step_hit_cooldown_target = motor_HZ; // 1s 冷却
+    const int long_leg_arm_delay_target = motor_HZ / 4; // 切到长腿后 250ms 才允许检测
+
+    // 切换到长腿(Target_Leg_State==1)的上升沿后，延迟 250ms 才解禁台阶检测
+    // 防止刚抬腿瞬间因伸腿动作本身产生的高力矩+高腿长被误判成磕台阶
+    static uint8_t prev_target_leg_state = 0;
+    static int     long_leg_arm_delay = 0;
+    if (Foot_Chassis.Target_Leg_State == 1 && prev_target_leg_state != 1)
+    {
+        long_leg_arm_delay = long_leg_arm_delay_target;
+    }
+    if (Foot_Chassis.Target_Leg_State != 1)
+    {
+        long_leg_arm_delay = 0;
+    }
+    else if (long_leg_arm_delay > 0)
+    {
+        long_leg_arm_delay--;
+    }
+    prev_target_leg_state = Foot_Chassis.Target_Leg_State;
 
     float left_leg_torque_cmd = fabsf(VMC_L.T_actual);
     float right_leg_torque_cmd = fabsf(VMC_R.T_actual);
@@ -855,7 +874,7 @@ static void Step_Hit_Detect(void)
         step_hit_cooldown--;
     }
 
-    if (step_hit_cooldown == 0 && (left_step_hit && right_step_hit) && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
+    if (step_hit_cooldown == 0 && long_leg_arm_delay == 0 && (left_step_hit && right_step_hit) && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
     {
         if (step_hit_count < step_hit_count_target * 2)
             step_hit_count++;
@@ -966,7 +985,8 @@ void Standing()
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
 
     /* 倾覆保护：站立期间 |pitch| > 45° 连续 10 帧才触发，避免 IMU 抖动误判。
-       触发后让 8009/3508 输出 0 力矩维持 0.5s，然后回退到未站起状态
+       触发后用位速双环PID把腿长压到最短(LEG_MIN_LENTH)、腿角拉到PI/2.0f(竖直)，
+       不绕长路、不区分子状态，维持0.5s后回退到未站起状态
        （start_mode=0, upstares_mode=0, first_run=1）。
        Motor_task 周期 2ms，0.5s = 250 tick，10 帧滤波 = 20ms。 */
     static uint16_t tip_protect_cnt = 0;
@@ -989,7 +1009,34 @@ void Standing()
     }
     if (tip_protect_cnt > 0)
     {
-        Sit_On_Ground_Action();
+        VMC_Coculate();
+
+        // 腿长位速双环：目标=最短腿长
+        PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MIN_LENTH);
+        PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, LEG_MIN_LENTH);
+        PID_coculate(&L_Leg_L0_POS_PID);
+        PID_coculate(&R_Leg_L0_POS_PID);
+        PID_Set_Error(&L_Leg_L0_SPD_PID, VMC_L.d_L0, L_Leg_L0_POS_PID.output);
+        PID_Set_Error(&R_Leg_L0_SPD_PID, VMC_R.d_L0, R_Leg_L0_POS_PID.output);
+        PID_coculate(&L_Leg_L0_SPD_PID);
+        PID_coculate(&R_Leg_L0_SPD_PID);
+
+        // 腿角双环：目标=PI/2.0f（不绕长路，直接走短路径）
+        PID_Set_AngleError(&L_Leg_Middle_PID, VMC_L.phi0, PI / 2.0f);
+        PID_coculate(&L_Leg_Middle_PID);
+        PID_Set_Error(&L_Leg_dphi0_PID, VMC_L.d_phi0, L_Leg_Middle_PID.output);
+        PID_coculate(&L_Leg_dphi0_PID);
+
+        PID_Set_AngleError(&R_Leg_Middle_PID, VMC_R.phi0, PI / 2.0f);
+        PID_coculate(&R_Leg_Middle_PID);
+        PID_Set_Error(&R_Leg_dphi0_PID, -VMC_R.d_phi0, -R_Leg_Middle_PID.output);
+        PID_coculate(&R_Leg_dphi0_PID);
+
+        VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output,  L_Leg_dphi0_PID.output);
+        VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
+
+        L_DJ3508.Target_Torque = 0;
+        R_DJ3508.Target_Torque = 0;
 
         tip_protect_cnt--;
         if (tip_protect_cnt == 0)
@@ -1229,10 +1276,6 @@ void Upstair_NotStairRetract()
 {
     VMC_Coculate();
     Body_Speed_Coculate();
-
-    //上台阶过程中轮子正转，防止滑下来
-    // L_DJ3508.Target_Torque = 0.1;
-    // R_DJ3508.Target_Torque = 0.1;
 
     // 磕台阶过程中双环腿长控制
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);   //TODO: 写一个最大腿长的宏定义

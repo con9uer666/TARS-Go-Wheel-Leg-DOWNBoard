@@ -27,26 +27,14 @@ uint8_t wheel_leg_output_enable = 1;  // 1=正常输出, 0=仅关断3508和8009�
 /*====================================== 电机使能监督 ======================================== */
 // 记录机身所有DM关节电机当前期望状态：1=应使能 0=应失能
 // 由task_Motor_Enable完成后置1
+// 注意：新的错误/失能保护机制不再读取本变量，它的真实期望状态由 motor_output_enable 决定。
+//       但 motor.c 还在写它（task_Motor_Enable 末尾），保留定义以免链接断裂。
 uint8_t motor_should_enabled = 0;
 
-// 最近一次在任意DM电机反馈帧里读到的错误码（latest-wins，后来者覆盖前者）
-// 0 表示从未读到过错误；非0 = 最近一次的State错误码（见 is_dm_error_state 注释）
-// 一旦置为非0，会驱动错误码蜂鸣器一直响（除非倒地自起占用蜂鸣器）。
-// 设计上不自动清零（用户要求"一直不停"），仅在掉电时归零。
-uint8_t motor_last_error_code = 0;
-
-#define DM_SUPERVISOR_INTERVAL_MS  100  // 每个电机最多每100ms下达一次恢复指令
-
-// 每个被监督电机上次下达恢复指令的tick
-static uint32_t last_action_L_DM8009_0   = 0;
-static uint32_t last_action_L_DM8009_1   = 0;
-static uint32_t last_action_R_DM8009_0   = 0;
-static uint32_t last_action_R_DM8009_1   = 0;
-static uint32_t last_action_Yaw_4310     = 0;
-static uint32_t last_action_Shooter_2325 = 0;
-
-// 轮询计数：每轮检查一个电机，避免一次性塞满FDCAN TX FIFO
-static uint8_t supervisor_round = 0;
+// 错误码与待办标志改为每个电机自带（Joint_Motor_t::last_error_code / clear_pending / enable_pending）。
+// last_error_code：0=从未出错；非0=该电机最近一次进入故障态的State码（见 is_dm_error_state 注释）。
+// 任意一个电机的 last_error_code != 0 都会驱动错误码蜂鸣器长响（OR 仲裁，见 Error_Buzzer_Tick）。
+// 设计上 last_error_code 不自动清零（用户要求"一直不停"），仅在掉电时归零。
 
 // DM电机State字段错误码判定（兼容 DM4310/DM8009/DM2325）：
 //   0=失能, 1=使能（正常）
@@ -59,63 +47,69 @@ static uint8_t is_dm_error_state(uint8_t state)
     return (state == 3) || (state == 4) || (state == 5) || (state == 6) || (state >= 8);
 }
 
-// 监督单个DM关节电机：错误→记录错误码+清错+按期望状态再发使能/失能；状态与期望不一致→纠正
-static void DM_Motor_State_Supervisor(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t *motor, uint32_t *last_action)
+// 每个DM电机收到反馈帧后立刻调用：根据本帧 state 更新本电机的 pending 标志
+// 调用上下文：HAL_FDCAN_RxFifo0Callback（中断），仅写本电机自己的字段，无并发
+// 策略：
+//   错误态     → clear_pending=1, enable_pending=0（清错优先，避免清错后又被立刻使能踩到错误未消的窗口）
+//   state==0   → 仅当 motor_output_enable==1（非急停）才置 enable_pending=1；急停期间不主动使能
+//   state==1   → 稳态正常，两个pending都清0
+//   其它       → 不动（让上一帧的pending继续生效，避免过渡态把待办抹掉）
+static void DM_Motor_OnRxFrame(Joint_Motor_t *motor)
 {
-    uint32_t now = xTaskGetTickCount();
-    if ((now - *last_action) < DM_SUPERVISOR_INTERVAL_MS) return;
-
     uint8_t state = motor->Rx_Data.State;
 
     if (is_dm_error_state(state))
     {
-        // 先把错误码寄存进全局变量（latest-wins），再清错——用户要求的顺序
-        motor_last_error_code = state;
-        Clear_DM_Motor_Error(hfdcan, motor->motor_id);
-        if (motor_should_enabled)
-            Enable_DM_Motor_MIT(hfdcan, motor->motor_id);
-        else
-            Disable_DM_Motor(hfdcan, motor->motor_id);
-        *last_action = now;
+        motor->last_error_code = state;
+        motor->clear_pending   = 1;
+        motor->enable_pending  = 0;
         return;
     }
 
-    if (motor_should_enabled && state == 0)
+    if (state == 0)
     {
-        Enable_DM_Motor_MIT(hfdcan, motor->motor_id);
-        *last_action = now;
+        if (motor_output_enable)
+        {
+            motor->enable_pending = 1;
+        }
+        // 急停期间(state==0)不主动 enable_pending；急停外部循环负责保持失能
         return;
     }
 
-    if (!motor_should_enabled && state == 1)
+    if (state == 1)
     {
-        Disable_DM_Motor(hfdcan, motor->motor_id);
-        *last_action = now;
+        motor->clear_pending  = 0;
+        motor->enable_pending = 0;
         return;
     }
 }
 
-// 每个CAN_Transmit循环调用一次，轮询监督6个DM关节电机中的1个
-static void DM_Motor_State_Supervisor_Tick(void)
+// 决策本周期 DM 电机的发送帧：clear > enable > 正常控制
+// 返回值：0=本电机已发送清错/使能帧（调用方应跳过原本的控制帧），1=应继续走原本的控制帧
+// 注意：检查 pending 标志和调用 Clear/Enable 之间，中断可能再次写入 pending —— 这没问题：
+//   下一周期再发一次相同动作即可，电机对重复清错/使能是幂等的。
+static uint8_t DM_Motor_TxPreempt(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t *motor)
 {
-    switch (supervisor_round)
+    if (motor->clear_pending)
     {
-        case 0: DM_Motor_State_Supervisor(&hfdcan2, &L_DM8009[0],    &last_action_L_DM8009_0);   break;
-        case 1: DM_Motor_State_Supervisor(&hfdcan2, &L_DM8009[1],    &last_action_L_DM8009_1);   break;
-        case 2: DM_Motor_State_Supervisor(&hfdcan1, &R_DM8009[0],    &last_action_R_DM8009_0);   break;
-        case 3: DM_Motor_State_Supervisor(&hfdcan1, &R_DM8009[1],    &last_action_R_DM8009_1);   break;
-        case 4: DM_Motor_State_Supervisor(&hfdcan3, &Yaw_DM4310,     &last_action_Yaw_4310);     break;
-        case 5: DM_Motor_State_Supervisor(&hfdcan3, &Shooter_DM2325, &last_action_Shooter_2325); break;
-        default: break;
+        Clear_DM_Motor_Error(hfdcan, motor->motor_id);
+        motor->clear_pending = 0;
+        return 0;
     }
-    supervisor_round = (supervisor_round + 1) % 6;
+    if (motor->enable_pending)
+    {
+        Enable_DM_Motor_MIT(hfdcan, motor->motor_id);
+        motor->enable_pending = 0;
+        return 0;
+    }
+    return 1;
 }
 
 /*====================================== 错误码蜂鸣器仲裁 ====================================== */
 // 错误码蜂鸣器频率：用最低的可清晰发声音高（远低于自起的 do/sol/高mi/高si 与完成提示的高si）
 #define ERROR_BUZZER_FREQ_HZ  200
 
-// 由 Motor_task 周期调用：当 motor_last_error_code != 0 时持续驱动蜂鸣器以最低音高长响。
+// 由 Motor_task 周期调用：任意一个被监督的DM电机 last_error_code!=0 即持续驱动蜂鸣器以最低音高长响。
 // 倒地自起占用蜂鸣器期间（g_tip_recovery_active==1）或跳跃中（g_jump_buzzer_active==1），
 // 本函数完全不许碰蜂鸣器（不调用 Buzzer_Tone_Max 也不调用 Stop_Buzzer），把音频独占权交出去。
 void Error_Buzzer_Tick(void)
@@ -123,7 +117,10 @@ void Error_Buzzer_Tick(void)
     if (g_tip_recovery_active) return;   // 倒地自起绝对优先：连 Stop 都不发
     if (g_jump_buzzer_active)  return;   // 跳跃期间让位
 
-    if (motor_last_error_code != 0)
+    uint8_t any_err = L_DM8009[0].last_error_code | L_DM8009[1].last_error_code
+                    | R_DM8009[0].last_error_code | R_DM8009[1].last_error_code
+                    | Yaw_DM4310.last_error_code  | Shooter_DM2325.last_error_code;
+    if (any_err != 0)
     {
         Buzzer_Tone_Max(ERROR_BUZZER_FREQ_HZ);
     }
@@ -205,12 +202,14 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			case 0x11:
 			{
 				DM8009_Get_Data(rx_data, &R_DM8009[0]);
+				DM_Motor_OnRxFrame(&R_DM8009[0]);
 				rx_cnt_R_DM8009_0++;
 				break;
 			}
 			case 0x12:
 			{
 				DM8009_Get_Data(rx_data, &R_DM8009[1]);
+				DM_Motor_OnRxFrame(&R_DM8009[1]);
 				rx_cnt_R_DM8009_1++;
 				break;
 			}
@@ -230,12 +229,14 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			case 0x11:
 			{
 				DM8009_Get_Data(rx_data, &L_DM8009[0]);
+				DM_Motor_OnRxFrame(&L_DM8009[0]);
 				rx_cnt_L_DM8009_0++;
 				break;
 			}
 			case 0x12:
 			{
 				DM8009_Get_Data(rx_data, &L_DM8009[1]);
+				DM_Motor_OnRxFrame(&L_DM8009[1]);
 				rx_cnt_L_DM8009_1++;
 				break;
 			}
@@ -255,12 +256,14 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			case 0x00:
 			{
 				DM8009_Get_Data(rx_data, &Yaw_DM4310);
+				DM_Motor_OnRxFrame(&Yaw_DM4310);
 				rx_cnt_4310++;
 				break;
 			}
 			case 0x01:
 			{
 				DM8009_Get_Data(rx_data, &Shooter_DM2325);
+				DM_Motor_OnRxFrame(&Shooter_DM2325);
 				rx_cnt_2325++;
 				break;
 			}
@@ -309,9 +312,6 @@ void CAN_Transmit(void const * argument)
     for(;;)
     {
 		//输出开关vscode://lirentech.file-ref-tags?filePath=USER_CAN.c&snippet=%2F%2F%E8%BE%93%E5%87%BA%E5%BC%80%E5%85%B3
-
-		/*========== DM电机使能/错误监督（每轮检查一个） ==========*/
-		DM_Motor_State_Supervisor_Tick();
 
 		/*========== 总开关：关闭时强制全部电机输出零力矩 ==========*/
 		if (!motor_output_enable)
@@ -392,19 +392,20 @@ void CAN_Transmit(void const * argument)
 
 		/*========== 按优先级发送电机指令 ==========*/
 		// 优先级：4310掉线 > 8009/3508掉线 > 2325掉线 > 正常
+		// 每条DM控制帧发送前用 DM_Motor_TxPreempt 守卫：若该电机pending清错/使能，则替换发送
 		if (lost_4310)
 		{
 			// 4310掉线：全部电机输出零力矩
 			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
 			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 			osDelay(1);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+			if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+			if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+			if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+			if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 			osDelay(1);
-			DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, 0, 0, 0, 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
+			if (DM_Motor_TxPreempt(&hfdcan3, &Yaw_DM4310))     DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, 0, 0, 0, 0);
+			if (DM_Motor_TxPreempt(&hfdcan3, &Shooter_DM2325)) DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
 		}
 		else
 		{
@@ -415,10 +416,10 @@ void CAN_Transmit(void const * argument)
 				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
 				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 				osDelay(1);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
-				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+				if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+				if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+				if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+				if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 			}
 			else
 			{
@@ -428,40 +429,46 @@ void CAN_Transmit(void const * argument)
 					DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
 					DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
 					osDelay(1);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+					if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+					if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+					if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+					if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
 				}
 				else
 				{
 					DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, -L_DJ3508.Target_Torque);
 					DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, R_DJ3508.Target_Torque);
 					osDelay(1);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
-					DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
+					if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], VMC_L.T1);
+					if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], VMC_R.T2);
+					if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], VMC_L.T2);
+					if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], VMC_R.T1);
 				}
 			}
 			osDelay(1);
 			// 4310正常时，始终发送4310指令
-			if(gimbal_follow_flag == 1)
+			if (DM_Motor_TxPreempt(&hfdcan3, &Yaw_DM4310))
 			{
-				DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, down_board_yaw_output, 0, 0, 2);
-			}
-			else
-			{
-				DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
+				if(gimbal_follow_flag == 1)
+				{
+					DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, down_board_yaw_output, 0, 0, 2);
+				}
+				else
+				{
+					DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, Yaw_DM4310.Target_Torque);
+				}
 			}
 			// 2325
-			if (lost_2325)
+			if (DM_Motor_TxPreempt(&hfdcan3, &Shooter_DM2325))
 			{
-				DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
-			}
-			else
-			{
-				DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, Shooter_DM2325.Target_Torque);
+				if (lost_2325)
+				{
+					DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
+				}
+				else
+				{
+					DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, Shooter_DM2325.Target_Torque);
+				}
 			}
 		}
 

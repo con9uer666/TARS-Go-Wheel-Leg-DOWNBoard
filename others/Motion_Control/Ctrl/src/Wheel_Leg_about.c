@@ -142,7 +142,10 @@ void Speed_Error_Set()
     }
     else
     {
-        speed_limit = 3.0f;     //车子最大速
+        // 长腿：speed_limit 随 base_power_limit 在 [60W, 100W] 区间从 2.1 线性升到 2.5（斜率 0.01/W），两端饱和
+        if(base_power_limit <= 60.0f)         speed_limit = 2.1f;
+        else if(base_power_limit >= 100.0f)   speed_limit = 2.5f;
+        else                                  speed_limit = 2.1f + (base_power_limit - 60.0f) * 0.01f;
     }
     if(spinning_flag == 1)
     {
@@ -150,24 +153,30 @@ void Speed_Error_Set()
     }
     // rampInit(&Target_Speed_Ramp, target_body_speed, (((SBUS_CH.CH3 - 992.0f)/800.0f) * speed_limit), 0.3f, 0.002f);
     // rampIterate(&Target_Speed_Ramp);
-    target_body_speed = Foot_Chassis.Target_Vy;
-
-    if(target_body_speed >= speed_limit)
-    target_body_speed = speed_limit;
-    else if(target_body_speed <= -speed_limit)
-    target_body_speed = -speed_limit;
-
-    target_body_speed = PowerCtrl_LimitTargetSpeed(target_body_speed, speed_limit);
-
     float temp;
     if (spinning_flag == 1)
     {
-        // 小陀螺：只在车体朝向接近正面/反面时窗口性放行平移
-        temp = Spin_Translation_Ratio(yaw_angle_PI, spin_speed_tol_angle, spin_speed_angle_offset);
+        // 小陀螺：(Vx,Vy) 是云台头坐标系下的速度向量（Vy=前，Vx=右）
+        // 速度大小=模长，方向=atan2(Vx, Vy)，再叠加安装偏置补偿
+        float v_mag = sqrtf(Foot_Chassis.Target_Vx * Foot_Chassis.Target_Vx
+                          + Foot_Chassis.Target_Vy * Foot_Chassis.Target_Vy);
+        float v_dir = atan2f(Foot_Chassis.Target_Vx, Foot_Chassis.Target_Vy);
+
+        if(v_mag > speed_limit) v_mag = speed_limit;
+        target_body_speed = PowerCtrl_LimitTargetSpeed(v_mag, speed_limit);
+
+        // 开窗中心=目标方向+偏置；车体朝向接近时 ratio 给出沿车体前向的符号
+        temp = Spin_Translation_Ratio(yaw_angle_PI, spin_speed_tol_angle, v_dir + spin_speed_angle_offset);
     }
     else
     {
-        // 常态：yaw误差越大，目标速度越小
+        // 常态：车体跟随云台头，只用 Vy（前后），符号由 Vy 直接给出
+        target_body_speed = Foot_Chassis.Target_Vy;
+        if(target_body_speed >=  speed_limit) target_body_speed =  speed_limit;
+        if(target_body_speed <= -speed_limit) target_body_speed = -speed_limit;
+        target_body_speed = PowerCtrl_LimitTargetSpeed(target_body_speed, speed_limit);
+
+        // yaw误差越大，目标速度越小
         temp = ((0.7f - fabsf(yaw_error))/0.7f);
         if(temp < 0.0f) temp = 0.0f;
     }

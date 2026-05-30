@@ -32,6 +32,9 @@ typedef struct Joint_Motor{
     float KD_MAX;
     float KD_MIN;
     uint16_t motor_id;
+    uint8_t  last_error_code;     // 该电机最近一次进入故障态时的State码（latest-wins），0=从未出错；掉电归零
+    uint8_t  clear_pending;       // 收帧解析到错误态时置1；CAN_Transmit替换本电机控制帧为清错帧后清0。优先级 > enable_pending
+    uint8_t  enable_pending;      // 收帧解析到state==0(失能)且应使能时置1；CAN_Transmit替换本电机控制帧为使能帧后清0
 }Joint_Motor_t;
 
 typedef struct Wheel_Motor{
