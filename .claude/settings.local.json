@@ -4,7 +4,12 @@
       "Bash(cmake --build build/Debug)",
       "Bash(where cmake.exe)",
       "Bash(\"C:/Program Files/CMake/bin/cmake.exe\" --version)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(git -C \"c:\\\\Users\\\\CHAMP\\\\Desktop\\\\Wheel_Leg\\\\NEW_DOWN\" show c69964d49dcb75c1a52d67746560af4e23c82b51:\"others/Motion_Control/App/src/motor.c\" > \"c:\\\\Users\\\\CHAMP\\\\AppData\\\\Local\\\\Temp\\\\motor_old.c\")",
+      "Bash(git -C \"c:\\\\Users\\\\CHAMP\\\\Desktop\\\\Wheel_Leg\\\\NEW_DOWN\" log --oneline c69964d49dcb75c1a52d67746560af4e23c82b51..HEAD -- \"others/Motion_Control/App/src/motor.c\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\CHAMP\\AppData\\Local\\Temp"
     ]
   }
 }

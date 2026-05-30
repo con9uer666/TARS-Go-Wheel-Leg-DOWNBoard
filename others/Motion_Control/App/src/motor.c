@@ -39,14 +39,9 @@ float LEG_MAX_LENTH = 0.39f;
 
 float L_b_phi0, R_b_phi0;
    
-float PITCH_OFFSET = -0.10;
-// 小陀螺时叠加的pitch偏置：用于抵消起转/退出时的反作用俯仰
-// 占位值，需现场调试：先试正值再试负值，找到能抵消低头方向的符号后再加大
-float PITCH_OFFSET_SPIN  = 0.05f;       //单位 rad，叠加在 PITCH_OFFSET 上
-float pitch_offset_ramp  = 0.0003f;    //偏置斜坡速率(rad/调用)，进入/退出共用
-float pitch_offset_eff   = -0.15f;     //运行时生效的pitch偏置，初值与PITCH_OFFSET一致避免首拍跳变
+float PITCH_OFFSET = 0.00;
 
-   
+
 //!屎作俑者：25年丛庆  数组0为当前pitch值，数组1为上一次的pitch值  单位为弧度   
 float pitch_trans[2];                                                                                               
 float d_pitch;//pitch速度，单位为弧度每秒 
@@ -83,9 +78,6 @@ float mg = 60.0f/2;
 float L_Ground_F0, R_Ground_F0; //地面支持力
 float prev_L_Ground_F0 = 0.0f;
 float prev_R_Ground_F0 = 0.0f;
-uint8_t step_hit_count = 0;
-
-float b_phi0_offset = 0.2;
 
 float raw_yaw_error;
 float last_yaw_error;
@@ -223,7 +215,7 @@ uint16_t motor_HZ = 500; //任务频率
 float wheel_track_R = 0.19242f; // 轮距半径，单位为米
 
 //?调参
-float target_spinning_d_yaw = 14.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+float target_spinning_d_yaw = 12.0f; // 目标小陀螺yaw速度，单位为弧度每秒
 float centrifugal_comp_gain = 0.8f;  // spin离心补偿系数
 // 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)：
 // |yaw_angle_PI| <= 此值时，速度倍率从0线性升至+1（正向）；
@@ -678,7 +670,7 @@ void NotStanding_NotStairRetract_for_chassis()
         R_Leg_State = 0;
         L_Leg_State = 0;
         body_distance = 0;
-        target_body_distance = 0.0;
+        target_body_distance = 0.5;
     }
 
     //映射到电机力矩
@@ -711,61 +703,58 @@ void LQR_calculate()
     {
         lqr_body_distance_error = 0.0f;   // 上台阶动作组触发后禁止距离闭环
     }
-    float leg_b_phi0_offset = (spinning_flag == 1) ? 0.0f : b_phi0_offset;
 
     //算轮子力矩
-    L_DJ3508.Target_Torque = 
+    L_DJ3508.Target_Torque =
     + LQR_K[0][0] * lqr_body_distance_error
     + LQR_K[0][1] * (lqr_speed_error)
     + LQR_K[0][2] * (lqr_yaw_error)
     - LQR_K[0][3] * lqr_d_yaw
-    - LQR_K[0][4] * VMC_L.b_phi0 
-    - LQR_K[0][5] * VMC_L.d_b_phi0 
-    - LQR_K[0][6] * VMC_R.b_phi0 
-    - LQR_K[0][7] * VMC_R.d_b_phi0 
-    + LQR_K[0][8] * (pitch_trans[0] - pitch_offset_eff)
+    - LQR_K[0][4] * VMC_L.b_phi0
+    - LQR_K[0][5] * VMC_L.d_b_phi0
+    - LQR_K[0][6] * VMC_R.b_phi0
+    - LQR_K[0][7] * VMC_R.d_b_phi0
+    + LQR_K[0][8] * (pitch_trans[0] - PITCH_OFFSET)
     + LQR_K[0][9] * d_pitch;
 
-    R_DJ3508.Target_Torque = 
+    R_DJ3508.Target_Torque =
     + LQR_K[1][0] * lqr_body_distance_error
-    + LQR_K[1][1] * (lqr_speed_error) 
+    + LQR_K[1][1] * (lqr_speed_error)
     + LQR_K[1][2] * (lqr_yaw_error)
     - LQR_K[1][3] * lqr_d_yaw
-    - LQR_K[1][4] * VMC_L.b_phi0 
-    - LQR_K[1][5] * VMC_L.d_b_phi0 
-    - LQR_K[1][6] * VMC_R.b_phi0 
-    - LQR_K[1][7] * VMC_R.d_b_phi0 
-    + LQR_K[1][8] * (pitch_trans[0] - pitch_offset_eff)
+    - LQR_K[1][4] * VMC_L.b_phi0
+    - LQR_K[1][5] * VMC_L.d_b_phi0
+    - LQR_K[1][6] * VMC_R.b_phi0
+    - LQR_K[1][7] * VMC_R.d_b_phi0
+    + LQR_K[1][8] * (pitch_trans[0] - PITCH_OFFSET)
     + LQR_K[1][9] * d_pitch;
 
     //算模拟腿力矩
-    Leg_L_T = 
+    Leg_L_T =
     + LQR_K[2][0] * lqr_body_distance_error
     + LQR_K[2][1] * (lqr_speed_error)
     + LQR_K[2][2] * (-leg_yaw_error)
     - LQR_K[2][3] * leg_d_yaw
-    - LQR_K[2][4] * (VMC_L.b_phi0 - leg_b_phi0_offset)
-    - LQR_K[2][5] * VMC_L.d_b_phi0 
-    - LQR_K[2][6] * VMC_R.b_phi0 
+    - LQR_K[2][4] * VMC_L.b_phi0
+    - LQR_K[2][5] * VMC_L.d_b_phi0
+    - LQR_K[2][6] * VMC_R.b_phi0
     - LQR_K[2][7] * VMC_R.d_b_phi0
-    + LQR_K[2][8] * (pitch_trans[0] - pitch_offset_eff)
+    + LQR_K[2][8] * (pitch_trans[0] - PITCH_OFFSET)
     + LQR_K[2][9] * d_pitch;
 
-    Leg_R_T = 
+    Leg_R_T =
     + LQR_K[3][0] * lqr_body_distance_error
     + LQR_K[3][1] * (lqr_speed_error)
     + LQR_K[3][2] * (-leg_yaw_error)
     - LQR_K[3][3] * leg_d_yaw
-    - LQR_K[3][4] * VMC_L.b_phi0 
-    - LQR_K[3][5] * VMC_L.d_b_phi0 
-    - LQR_K[3][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
+    - LQR_K[3][4] * VMC_L.b_phi0
+    - LQR_K[3][5] * VMC_L.d_b_phi0
+    - LQR_K[3][6] * VMC_R.b_phi0
     - LQR_K[3][7] * VMC_R.d_b_phi0
-    + LQR_K[3][8] * (pitch_trans[0] - pitch_offset_eff)
+    + LQR_K[3][8] * (pitch_trans[0] - PITCH_OFFSET)
     + LQR_K[3][9] * d_pitch;
 }
 
-// 提到文件作用域：off_ground_detect 也会写，用作离地保护期
-static int step_hit_cooldown = 0;
 
 void off_ground_detect()
 {
@@ -823,39 +812,15 @@ void off_ground_detect()
         body_distance = 0;
         target_body_distance = 0.0;
     }
-
-    // 离地保护：任一腿离地期间持续刷新冷却，着地后 1s 内禁止上台阶检测
-    if(L_off_ground >= 10 || R_off_ground >= 10)
-    {
-        step_hit_cooldown = motor_HZ;   // 1s
-    }
 }
 
 static void Step_Hit_Detect(void)
 {
-    const float leg_torque_threshold = 6.0f;        // 经验值，可再微调
+    const float leg_torque_threshold = 3.0;   // 单腿力矩门槛
+    const float leg_torque_sum_threshold = 5.0;   // 双腿力矩合力门槛(N·m)：覆盖单边顶台阶情况
     const float leg_length_threshold = LEG_MAX_LENTH - 0.03f; // 高腿长门槛
-    const int step_hit_count_target = 2;
-    const int step_hit_cooldown_target = motor_HZ; // 1s 冷却
-    const int long_leg_arm_delay_target = motor_HZ / 4; // 切到长腿后 250ms 才允许检测
-
-    // 切换到长腿(Target_Leg_State==1)的上升沿后，延迟 250ms 才解禁台阶检测
-    // 防止刚抬腿瞬间因伸腿动作本身产生的高力矩+高腿长被误判成磕台阶
-    static uint8_t prev_target_leg_state = 0;
-    static int     long_leg_arm_delay = 0;
-    if (Foot_Chassis.Target_Leg_State == 1 && prev_target_leg_state != 1)
-    {
-        long_leg_arm_delay = long_leg_arm_delay_target;
-    }
-    if (Foot_Chassis.Target_Leg_State != 1)
-    {
-        long_leg_arm_delay = 0;
-    }
-    else if (long_leg_arm_delay > 0)
-    {
-        long_leg_arm_delay--;
-    }
-    prev_target_leg_state = Foot_Chassis.Target_Leg_State;
+    const int step_hit_cooldown_target = motor_HZ / 2; // 0.5s 冷却
+    static int step_hit_cooldown = 0;
 
     float left_leg_torque_cmd = fabsf(VMC_L.T_actual);
     float right_leg_torque_cmd = fabsf(VMC_R.T_actual);
@@ -869,25 +834,22 @@ static void Step_Hit_Detect(void)
     int left_step_hit = left_leg_torque_high && left_leg_high;
     int right_step_hit = right_leg_torque_high && right_leg_high;
 
+    // 合力支路：两腿都在高腿长，且力矩之和大于合力门槛
+    int torque_sum_hit = (left_leg_torque_cmd + right_leg_torque_cmd > leg_torque_sum_threshold)
+                         && left_leg_high && right_leg_high;
+
+    int step_hit = (left_step_hit && right_step_hit) || torque_sum_hit;
+
+    int leg_off_ground = (L_off_ground >= 10 || R_off_ground >= 10);
+
     if (step_hit_cooldown > 0)
     {
         step_hit_cooldown--;
     }
 
-    if (step_hit_cooldown == 0 && long_leg_arm_delay == 0 && (left_step_hit && right_step_hit) && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
-    {
-        if (step_hit_count < step_hit_count_target * 2)
-            step_hit_count++;
-    }
-    else if (step_hit_count > 0)
-    {
-        step_hit_count--;
-    }
-
-    if (step_hit_count >= step_hit_count_target)
+    if (step_hit_cooldown == 0 && !leg_off_ground && step_hit && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
     {
         upstairs_flag = 1;
-        step_hit_count = 0;
         step_hit_cooldown = step_hit_cooldown_target;
     }
 

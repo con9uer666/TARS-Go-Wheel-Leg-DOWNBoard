@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sat May 30 11:20:35 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sat May 30 21:36:41 2026
 <BR><P>
 <H3>Maximum Stack Usage =        488 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2517,7 +2517,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 </UL>
 
-<P><STRONG><a name="[1d5]"></a>LQR_calculate</STRONG> (Thumb, 628 bytes, Stack size 0 bytes, motor.o(.text.LQR_calculate))
+<P><STRONG><a name="[1d5]"></a>LQR_calculate</STRONG> (Thumb, 600 bytes, Stack size 0 bytes, motor.o(.text.LQR_calculate))
 <BR><BR>[Called By]<UL><LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 </UL>
 
@@ -2744,7 +2744,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
-<P><STRONG><a name="[1b9]"></a>NotStanding_NotStairRetract_for_chassis</STRONG> (Thumb, 1100 bytes, Stack size 80 bytes, motor.o(.text.NotStanding_NotStairRetract_for_chassis))
+<P><STRONG><a name="[1b9]"></a>NotStanding_NotStairRetract_for_chassis</STRONG> (Thumb, 1112 bytes, Stack size 80 bytes, motor.o(.text.NotStanding_NotStairRetract_for_chassis))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = NotStanding_NotStairRetract_for_chassis &rArr; turn_ctrl_with_stuck_flip &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;turn_ctrl_with_stuck_flip
@@ -2988,8 +2988,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1ba]"></a>Standing</STRONG> (Thumb, 2860 bytes, Stack size 72 bytes, motor.o(.text.Standing))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Standing &rArr; off_ground_detect &rArr; VMC_Get_Ground_F0
+<P><STRONG><a name="[1ba]"></a>Standing</STRONG> (Thumb, 2856 bytes, Stack size 72 bytes, motor.o(.text.Standing))
+<BR><BR>[Stack]<UL><LI>Max Depth = 200<LI>Call Chain = Standing &rArr; off_ground_detect &rArr; VMC_Get_Ground_F0
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Buzzer_Tone_Max
@@ -3597,8 +3597,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[1d7]"></a>off_ground_detect</STRONG> (Thumb, 536 bytes, Stack size 56 bytes, motor.o(.text.off_ground_detect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = off_ground_detect &rArr; VMC_Get_Ground_F0
+<P><STRONG><a name="[1d7]"></a>off_ground_detect</STRONG> (Thumb, 496 bytes, Stack size 48 bytes, motor.o(.text.off_ground_detect))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = off_ground_detect &rArr; VMC_Get_Ground_F0
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Get_Ground_F0
 <LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Set_F0_T
