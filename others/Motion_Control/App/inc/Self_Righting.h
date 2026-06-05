@@ -1,3 +1,14 @@
+/**
+ * @file Self_Righting.h
+ * @brief 倒地自起（Self-Righting）状态机控制接口。
+ *
+ * 提供四阶段自起状态机变量与函数声明：
+ *   1) EXTEND: 伸腿到目标腿长；
+ *   2) REVERSE_TURN: 反向匀速转，将两腿并齐；
+ *   3) SYNC_HIGH_TORQUE: 大力矩匀速转到目标角度；
+ *   4) FINISHED: 完成，等待后续指令。
+ */
+
 #ifndef SELF_RIGHTING_H
 #define SELF_RIGHTING_H
 
@@ -7,12 +18,11 @@
 #define PI 3.14159265358979323846f
 #endif
 
-/*
- * 倒地自起流程状态机：
- * 1) EXTEND: 先伸腿到目标腿长；
- * 2) REVERSE_TURN: 到腿长后先反向匀速转，尝试两腿并齐；
- * 3) SYNC_HIGH_TORQUE: 大力矩匀速转到目标角度；
- * 4) FINISHED: 两腿都到目标角度，预留给用户补逻辑。
+/**
+ * @brief 倒地自起流程状态机枚举。
+ *
+ * 状态流转：
+ *   - EXTEND → REVERSE_TURN → SYNC_HIGH_TORQUE → FINISHED
  */
 typedef enum
 {

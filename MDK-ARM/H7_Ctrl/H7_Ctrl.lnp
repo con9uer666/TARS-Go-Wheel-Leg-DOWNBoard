@@ -99,6 +99,7 @@
 "h7_ctrl\user_pid.o"
 "h7_ctrl\wheel_leg_about.o"
 "h7_ctrl\gas_spring.o"
+"h7_ctrl\wheel_end_velocity.o"
 "h7_ctrl\motor_drv.o"
 "h7_ctrl\user_can.o"
 "h7_ctrl\basicmathfunctions.o"

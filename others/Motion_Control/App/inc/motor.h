@@ -1,40 +1,78 @@
+/**
+ * @file motor.h
+ * @brief 运动控制主模块：底盘控制、腿长控制、姿态补偿、跳跃模式等的类型定义与接口声明。
+ *
+ * 核心结构体：
+ *   - RampGenerator      一阶斜坡发生器（平滑目标值过渡）
+ *   - Leg_Info_t         单腿信息（当前腿长 L0）
+ *   - Foot_Chassis_Info_t 底盘状态（yaw 角度、速度、左右腿信息）
+ *   - Foot_Chassis_t     底盘目标与控制模式
+ *
+ * 关键外部变量：
+ *   - Wr, Wl             左右轮端含杆角速度的合成转速
+ *   - body_speed_L/R/body_speed  卡尔曼滤波后的车体水平速度
+ *   - LQR_K[4][10]       LQR 反馈增益矩阵（距离/速度/yaw/腿角/腿角速度/pitch）
+ *   - pitch_trans[2]     pitch 当前值与上一拍值（用于 d_pitch 计算）
+ *   - 各种 PID 结构体    腿长/收腿/防劈叉/小陀螺/ROLL补偿/云台pitch 等
+ */
+
 #ifndef MOTOR_H
 #define MOTOR_H
 
 #include "main.h"
 #include "user_pid.h"
 
+/** @brief 最小腿长 (m) */
 extern float LEG_MIN_LENTH;
-extern float LEG_MAX_LENTH;  
+/** @brief 最大腿长 (m) */
+extern float LEG_MAX_LENTH;
+/** @brief 轮子半径 (m) */
 #define WHEEL_RADIUS 0.061f
 
+/**
+ * @brief 一阶斜坡发生器。
+ *
+ * 用于平滑过渡目标值（如速度/腿长），避免阶跃。
+ * 每周期调用 rampIterate() 更新当前值。
+ */
 typedef struct RampGenerator
 {
-    float currentValue; // 当前值
-    float targetValue;  // 目标值
-    float step;         // 每个控制周期应当改变的数值大小
-    uint8_t isBusy;        // 指示斜坡发生器是否正在调整中
-}RampGenerator;
+    float currentValue; /**< 当前值 */
+    float targetValue;  /**< 目标值 */
+    float step;         /**< 每个控制周期应当改变的数值大小 */
+    uint8_t isBusy;     /**< 指示斜坡发生器是否正在调整中 */
+} RampGenerator;
 
+/**
+ * @brief 单腿信息。
+ */
 typedef struct Leg_Info
 {
-	float Current_L0;//腿当前长度 单位m
-}Leg_Info_t;
+    float Current_L0;   /**< 腿当前长度 (m) */
+} Leg_Info_t;
 
+/**
+ * @brief 底盘状态信息（下板侧）。
+ */
 typedef struct Foot_Chassis_Info
 {
-	float Yaw_Motor_Angle;//Yaw电机角度
-	float Current_Speed;//底盘当前的速度 m/s
-	Leg_Info_t L_Leg, R_Leg;//腿信息
-}Foot_Chassis_Info_t;
+    float Yaw_Motor_Angle;  /**< Yaw 电机角度 (rad) */
+    float Current_Speed;    /**< 底盘当前的速度 (m/s)，水平方向 */
+    Leg_Info_t L_Leg;       /**< 左腿信息 */
+    Leg_Info_t R_Leg;       /**< 右腿信息 */
+} Foot_Chassis_Info_t;
 
+/**
+ * @brief 底盘目标与控制模式（上板→下板指令或内部控制）。
+ */
 typedef struct Foot_Chassis
 {
-	float Target_Vx, Target_Vy;//云台坐标系下的目标速度 单位m/s
-	uint8_t Target_Leg_State;//目标腿长，0短腿 1长腿
-	uint8_t Chassis_Mode;//0跟随 1小陀螺 2静止趴下
-	Foot_Chassis_Info_t	Info;//底盘信息
-}Foot_Chassis_t;
+    float Target_Vx;           /**< 云台坐标系下的目标 X 速度 (m/s) */
+    float Target_Vy;           /**< 云台坐标系下的目标 Y 速度 (m/s) */
+    uint8_t Target_Leg_State;  /**< 目标腿长：0=短腿，1=长腿 */
+    uint8_t Chassis_Mode;      /**< 底盘模式：0=跟随，1=小陀螺，2=静止趴下 */
+    Foot_Chassis_Info_t Info;  /**< 底盘实时信息 */
+} Foot_Chassis_t;
 
 
 

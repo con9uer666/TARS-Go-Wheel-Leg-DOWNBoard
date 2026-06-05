@@ -27,6 +27,7 @@
 #include "PowerCtrl.h"
 #include "Gas_Spring.h"
 #include "buzzer.h"
+#include "Wheel_End_Velocity.h"
 
 /*====================================== 附属函数变量 =========================================== */
 
@@ -719,9 +720,9 @@ void LQR_calculate()
     + LQR_K[0][1] * (lqr_speed_error)
     + LQR_K[0][2] * (lqr_yaw_error)
     - LQR_K[0][3] * lqr_d_yaw
-    - LQR_K[0][4] * VMC_L.b_phi0 
+    - LQR_K[0][4] * (VMC_L.b_phi0 - leg_b_phi0_offset)
     - LQR_K[0][5] * VMC_L.d_b_phi0 
-    - LQR_K[0][6] * VMC_R.b_phi0 
+    - LQR_K[0][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
     - LQR_K[0][7] * VMC_R.d_b_phi0 
     + LQR_K[0][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[0][9] * d_pitch;
@@ -731,9 +732,9 @@ void LQR_calculate()
     + LQR_K[1][1] * (lqr_speed_error) 
     + LQR_K[1][2] * (lqr_yaw_error)
     - LQR_K[1][3] * lqr_d_yaw
-    - LQR_K[1][4] * VMC_L.b_phi0 
+    - LQR_K[1][4] * (VMC_L.b_phi0 - leg_b_phi0_offset)
     - LQR_K[1][5] * VMC_L.d_b_phi0 
-    - LQR_K[1][6] * VMC_R.b_phi0 
+    - LQR_K[1][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
     - LQR_K[1][7] * VMC_R.d_b_phi0 
     + LQR_K[1][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[1][9] * d_pitch;
@@ -746,7 +747,7 @@ void LQR_calculate()
     - LQR_K[2][3] * leg_d_yaw
     - LQR_K[2][4] * (VMC_L.b_phi0 - leg_b_phi0_offset)
     - LQR_K[2][5] * VMC_L.d_b_phi0 
-    - LQR_K[2][6] * VMC_R.b_phi0 
+    - LQR_K[2][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
     - LQR_K[2][7] * VMC_R.d_b_phi0
     + LQR_K[2][8] * (pitch_trans[0] - pitch_offset_eff)
     + LQR_K[2][9] * d_pitch;
@@ -756,7 +757,7 @@ void LQR_calculate()
     + LQR_K[3][1] * (lqr_speed_error)
     + LQR_K[3][2] * (-leg_yaw_error)
     - LQR_K[3][3] * leg_d_yaw
-    - LQR_K[3][4] * VMC_L.b_phi0 
+    - LQR_K[3][4] * (VMC_L.b_phi0 - leg_b_phi0_offset)
     - LQR_K[3][5] * VMC_L.d_b_phi0 
     - LQR_K[3][6] * (VMC_R.b_phi0 - leg_b_phi0_offset)
     - LQR_K[3][7] * VMC_R.d_b_phi0
@@ -802,7 +803,7 @@ void off_ground_detect()
     {
         //离地后腿归中，轮子脱力vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E7%A6%BB%E5%9C%B0%E5%90%8E%E8%85%BF%E5%BD%92%E4%B8%AD%EF%BC%8C%E8%BD%AE%E5%AD%90%E8%84%B1%E5%8A%9B
         Leg_L_T = 
-        - LQR_K[2][4] * (VMC_L.b_phi0) 
+        - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
         Leg_L_T *= 0.7; //收腿力度参数
         L_DJ3508.Target_Torque = 0;//离地轮子脱力
@@ -815,7 +816,7 @@ void off_ground_detect()
     if(R_off_ground >= 10)
     {
         Leg_R_T =
-        - LQR_K[3][6] * (VMC_R.b_phi0)
+        - LQR_K[3][6] * (VMC_R.b_phi0 - b_phi0_offset)
         - LQR_K[3][7] * VMC_R.d_b_phi0;
         Leg_R_T *= 0.7;
         R_DJ3508.Target_Torque = 0;
@@ -1649,6 +1650,11 @@ void Sit_On_Ground(void)
 
 float user_gas = 0;
 
+float left_wheel_velocity = 0;
+float right_wheel_velocity = 0;
+float left_wheel_acceleration = 0;
+float right_wheel_acceleration = 0;
+
 void Motor_task(void const *argument)
 {
     task_Motor_Init();
@@ -1664,6 +1670,8 @@ void Motor_task(void const *argument)
 
     for(;;)
     {
+        Wheel_End_Velocity_Both(&left_wheel_velocity, &left_wheel_acceleration, &right_wheel_velocity, &right_wheel_acceleration);
+
         if(user_Gravity_Compensation_Test_Function_set == 0)
         {
             user_gas = Gas_Spring_GetForce(VMC_L.L0);

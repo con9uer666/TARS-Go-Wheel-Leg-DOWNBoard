@@ -1,3 +1,14 @@
+/**
+ * @file Self_Righting.c
+ * @brief 倒地自起（Self-Righting）四阶段状态机实现。
+ *
+ * 状态机流程：
+ *   1) EXTEND: 伸腿到最大腿长，卡住时换角度再伸；
+ *   2) REVERSE_TURN: 反向匀速转，尝试两腿并齐；
+ *   3) SYNC_HIGH_TORQUE: 大力矩匀速转到目标角度（含差速策略）；
+ *   4) FINISHED: 完成，由 motor.c 检测姿态恢复后退出。
+ */
+
 #include "Self_Righting.h"
 #include <math.h>
 #include "Leg_Control.h"

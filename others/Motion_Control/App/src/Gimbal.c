@@ -1,3 +1,10 @@
+/**
+ * @file Gimbal.c
+ * @brief 云台偏航控制任务：执行云台归位 + 底盘跟随/小陀螺模式切换。
+ *
+ * 在 gimbal_follow_flag==1 时驱动云台回中，到位后切回底盘跟随云台模式。
+ */
+
 #include "Gimbal.h"
 #include "cmsis_os.h"
 #include "User_State.h"
@@ -5,16 +12,38 @@
 #include "Motor_Drv.h"
 #include "motor.h"
 
-user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
+/** @brief 云台偏航角度环 PID 控制器。 */
+user_pid_t gimbal_yaw_angle_pid;
 
-float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
-float head_forward_angle = -2.773;//正视前方的yaw电机角度
+/**
+ * @brief 标零处理后的 yaw 角度 (rad)，范围 [-PI, PI]。
+ *
+ * 以 head_forward_angle 为基准，调用 easy_angle_normalize() 归一化。
+ */
+float yaw_angle_PI = 0.0f;
 
-uint16_t gimbal_follow_flag_cnt = 0; // 刚站起来云台跟随底盘的计数器
+/** @brief 正视前方的 yaw 电机角度 (rad)，见 motor.c 定义。 */
+float head_forward_angle = -2.773;
 
-uint16_t user_e = 0; // 用户调试变量e
-uint16_t user_f = 0; // 用户调试变量f
+/** @brief 云台跟随底盘归位完成计数器，计数满 100 次（约 200ms）即完成。 */
+uint16_t gimbal_follow_flag_cnt = 0;
 
+/** @brief 用户调试变量 e：记录归位成功次数。 */
+uint16_t user_e = 0;
+
+/** @brief 用户调试变量 f：记录归位控制帧数。 */
+uint16_t user_f = 0;
+
+/**
+ * @brief 云台控制任务（FreeRTOS 任务）。
+ *
+ * 以 500 Hz 频率执行：
+ *   - 更新 yaw_angle_PI（基于编码器位置标零归一化）
+ *   - 若 gimbal_follow_flag==1：PID 驱动云台回中，成功 100 帧后置 gimbal_follow_flag=0
+ *   - 若 gimbal_follow_flag==0：直接传递 Yaw_DM4310.Target_Speed 给底盘
+ *
+ * @param argument 未使用（FreeRTOS 标准接口要求）。
+ */
 void Gimbal_task(void const * argument)
 {
     PID_INIT(&gimbal_yaw_angle_pid, 20, 0.01,1, 10, 0.5, 0, 0.3, 0);

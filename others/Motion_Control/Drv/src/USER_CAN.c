@@ -1,3 +1,8 @@
+/**
+ * @file USER_CAN.c
+ * @brief CAN 通信任务实现：电机数据收发、心跳检测、掉线/恢复处理、错误码蜂鸣器仲裁。
+ */
+
 #include "USER_CAN.h"
 #include "fdcan.h"
 #include "main.h"

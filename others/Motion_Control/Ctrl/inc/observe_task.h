@@ -4,6 +4,7 @@
 #include "kalman_filter1.h"
 
 extern float kalman_body_speed;
+extern float vel_acc[2];
 
 extern void Observe_task(void);
 extern void xvEstimateKF_Init(KalmanFilter_t *EstimateKF);

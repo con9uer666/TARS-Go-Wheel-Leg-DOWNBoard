@@ -1,3 +1,8 @@
+/**
+ * @file Motor_Drv.c
+ * @brief 电机驱动层实现：DJI/达妙电机数据解析与CAN控制。
+ */
+
 #include "Motor_Drv.h"
 
 Wheel_Motor_t L_DJ3508, R_DJ3508;

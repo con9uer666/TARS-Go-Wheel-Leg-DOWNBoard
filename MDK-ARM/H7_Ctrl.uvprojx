@@ -964,6 +964,11 @@
               <FileType>1</FileType>
               <FilePath>..\others\Motion_Control\Ctrl\src\Gas_Spring.c</FilePath>
             </File>
+            <File>
+              <FileName>Wheel_End_Velocity.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\Wheel_End_Velocity.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
