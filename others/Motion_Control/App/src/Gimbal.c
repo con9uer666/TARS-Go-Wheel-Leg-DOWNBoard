@@ -10,7 +10,7 @@
 #include "User_State.h"
 #include "Angle_about.h"
 #include "Motor_Drv.h"
-#include "motor.h"
+#include "chassis_behavior_tree.h"
 
 /** @brief 云台偏航角度环 PID 控制器。 */
 user_pid_t gimbal_yaw_angle_pid;

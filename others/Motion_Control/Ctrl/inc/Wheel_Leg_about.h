@@ -34,6 +34,5 @@ void Speed_Error_Set();
 void Distance_Error_Set();
 void Body_Speed_Coculate();
 void INS_Coculate();
-void Yaw_Error_Coculate();
 
 #endif // WHEEL_LEG_ABOUT_H

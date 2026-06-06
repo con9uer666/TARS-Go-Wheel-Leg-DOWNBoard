@@ -9,8 +9,9 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                       App 层 (应用层)                        │
-│  motor.c/h    Gimbal.c/h    Self_Righting.c/h   User_State.c/h │
-│  状态机 / 腿长PID / LQR / 跳跃 / 离地检测 / 云台跟随 / 自复位  │
+│  chassis_behavior_tree(主循环) + 各动作/计算细粒度文件        │
+│  Gimbal.c/h   Self_Righting.c/h   User_State.c/h             │
+│  行为树调度 / LQR / 跳跃 / 小陀螺 / 上台阶 / 坐地 / 离地检测  │
 ├─────────────────────────────────────────────────────────────┤
 │                       Ctrl 层 (算法层)                        │
 │  VMC.c/h  Wheel_Leg_about.c/h  Wheel_End_Velocity.c/h        │
@@ -221,15 +222,26 @@ flowchart TD
 
 | 函数 | 文件 | 功能 |
 |---|---|---|
-| `Motor_task()` | motor.c | 主控制任务，500Hz |
-| `task_Motor_Init()` | motor.c | 电机参数初始化 |
-| `task_VMC_Init()` | motor.c | VMC结构体初始化 |
-| `task_PID_Init()` | motor.c | PID控制器初始化 |
-| `task_Pitch_Coculate()` | motor.c | pitch前后帧计算 |
-| `task_Motor_Enable()` | motor.c | DM电机使能 |
+| `Motor_task()` | chassis_behavior_tree.c | 主控制任务/行为树，500Hz |
+| `task_Motor_Init()` | chassis_init.c | 电机参数初始化 |
+| `task_VMC_Init()` | chassis_init.c | VMC结构体初始化 |
+| `task_PID_Init()` | chassis_init.c | PID控制器初始化 |
+| `task_Pitch_Coculate()` | chassis_init.c | pitch前后帧计算 |
+| `task_Motor_Enable()` | motor_enable.c | DM电机使能 |
+| `Standing()` | balance_standing.c | 站起/正常运行动作组 |
+| `LQR_calculate()` | lqr_calculate.c | LQR力矩计算 |
+| `LQR_Update_K()` | lqr_calculate.c | 100Hz节流刷新K矩阵 |
+| `spinning_up()` / `spinning_exit()` | spinning_motion.c | 小陀螺加速 / 退出 |
+| `Jump_Motion_Update()` | jump_motion.c | 跳跃动作组 + 跳跃/常态VMC下发 |
+| `off_ground_detect()` | off_ground_detect.c | 离地检测 |
+| `Step_Hit_Detect()` | step_hit_detect.c | 磕台阶检测→上台阶触发 |
+| `Yaw_Error_Coculate()` | yaw_error.c | Yaw误差+速度误差 |
+| `turn_ctrl_with_stuck_flip()` | leg_retract_common.c | 收腿转角(卡住反向绕长路) |
+| `NotStanding_NotStairRetract_for_chassis()` | self_righting_retract.c | 自起 + 起立前收腿 |
+| `Upstair_NotStairRetract()` / `StairRetract()` | stair_climb.c | 上台阶伸腿 / 收腿起立 |
+| `Sit_On_Ground()` | sit_motion.c | 坐地模式 |
+| `Gravity_Compensation_Test_Function()` | gravity_comp_test.c | 重力补偿标定测试 |
 | `Body_Speed_Coculate()` | Wheel_Leg_about.c | 车身速度解算 |
-| `LQR_calculate()` | motor.c | LQR力矩计算 |
-| `Yaw_Error_Coculate()` | motor.c | Yaw误差+速度误差 |
 | `Distance_Error_Set()` | Wheel_Leg_about.c | 距离误差计算 |
 | `Speed_Error_Set()` | Wheel_Leg_about.c | 速度误差计算 |
 | `Leg_L0_Control()` | Leg_Control.c | 腿长PID控制 |
@@ -238,6 +250,7 @@ flowchart TD
 | `Self_Righting_Step()` | Self_Righting.c | 倒地自复位 |
 | `Self_Righting_Reset()` | Self_Righting.c | 自复位复位 |
 | `Wheel_End_Velocity()` | Wheel_End_Velocity.c | 轮端世界速度+加速度 |
+| `rampInit()` / `rampIterate()` | ramp_generator.c | 通用斜坡发生器 |
 
 ### 4.2 Ctrl 层对外函数
 
@@ -310,13 +323,28 @@ flowchart TD
 others/Motion_Control/
 ├── App/                                  应用层
 │   ├── inc/
+│   │   ├── chassis_behavior_tree.h      ★ 底盘聚合公共头（取代 motor.h，所有extern/类型/原型）
 │   │   ├── Gimbal.h                     云台控制
-│   │   ├── motor.h                      主控制（所有extern声明）
 │   │   ├── Self_Righting.h              倒地自复位
 │   │   └── User_State.h                 用户状态
 │   └── src/
+│       ├── chassis_behavior_tree.c      ★ 行为树主循环 Motor_task（仅状态调度）
+│       ├── chassis_state.c              跨动作共享反馈量/常数/标志/共享PID
+│       ├── chassis_init.c               电机/VMC/PID 初始化 + pitch计算
+│       ├── motor_enable.c               全部电机使能动作
+│       ├── balance_standing.c           站起/正常运行动作组 Standing
+│       ├── lqr_calculate.c              LQR力矩计算 + K矩阵节流刷新
+│       ├── spinning_motion.c            小陀螺动作组（加速/退出）
+│       ├── jump_motion.c                跳跃动作组 + 跳跃/常态VMC下发
+│       ├── off_ground_detect.c          离地检测
+│       ├── step_hit_detect.c            磕台阶检测→上台阶触发
+│       ├── yaw_error.c                  常态Yaw误差计算
+│       ├── leg_retract_common.c         收腿转角公共逻辑(卡住反向绕长路)
+│       ├── self_righting_retract.c      自起 + 起立前收腿
+│       ├── stair_climb.c                上台阶伸腿 + 收腿起立
+│       ├── sit_motion.c                 坐地模式动作组
+│       ├── gravity_comp_test.c          重力补偿标定测试
 │       ├── Gimbal.c
-│       ├── motor.c                      ★ 核心：状态机 + LQR + 跳跃 + PID
 │       ├── Self_Righting.c
 │       └── User_State.c
 ├── Ctrl/                                 算法层
@@ -325,6 +353,7 @@ others/Motion_Control/
 │   │   ├── kalman_filter1.h             通用卡尔曼滤波
 │   │   ├── Leg_Control.h                腿长/防劈叉/收腿控制
 │   │   ├── observe_task.h               速度估计任务
+│   │   ├── ramp_generator.h             通用斜坡发生器
 │   │   ├── user_pid.h                   用户PID库
 │   │   ├── VMC.h                        VMC虚拟模型控制
 │   │   ├── Wheel_End_Velocity.h         轮端世界速度
@@ -334,6 +363,7 @@ others/Motion_Control/
 │       ├── kalman_filter1.c
 │       ├── Leg_Control.c
 │       ├── observe_task.c
+│       ├── ramp_generator.c             通用斜坡发生器
 │       ├── user_pid.c
 │       ├── VMC.c
 │       ├── Wheel_End_Velocity.c         ★ 轮端速度加速度
@@ -356,3 +386,4 @@ others/Motion_Control/
 | 2025 | 丛庆：初始代码，pitch_trans/yaw_trans 数组 |
 | 2026.05 | 补充跳跃动作组、防劈叉、坐地模式、收腿反向绕长路 |
 | 2026.05 | 补充 Wheel_End_Velocity 轮端世界速度计算 |
+| 2026.06 | 将 motor.c 按"底盘行为树 + 细粒度动作/计算文件"拆分；motor.h→chassis_behavior_tree.h 聚合头；新增 ramp_generator |

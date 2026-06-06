@@ -51,7 +51,9 @@ h7_ctrl/error.o: ..\others\Error.c ..\Core\Inc\main.h \
   ..\others\Device\inc\LED.h ..\Core\Inc\tim.h \
   ..\others\Device\inc\buzzer.h \
   ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Motion_Control\App\inc\motor.h \
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
   ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\others\Motion_Control\Ctrl\inc\VMC.h \
   ..\UserMiddlewares\include\Board2Board.h \
   ..\others\Motion_Control\Drv\inc\Motor_Drv.h

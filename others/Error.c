@@ -8,7 +8,7 @@
 #include "buzzer.h"
 #include "USER_CAN.h"
 #include "fdcan.h"
-#include "motor.h"
+#include "chassis_behavior_tree.h"
 #include "Board2Board.h"
 #include "Motor_Drv.h"
 

@@ -17,7 +17,7 @@
 #include "Wheel_Leg_about.h"
 #include "imu_temp_ctrl.h"
 #include "user_pid.h"
-#include "motor.h"
+#include "chassis_behavior_tree.h"
 #include "remoter.h"
 #include "PowerCtrl.h"
 #include "VMC.h"

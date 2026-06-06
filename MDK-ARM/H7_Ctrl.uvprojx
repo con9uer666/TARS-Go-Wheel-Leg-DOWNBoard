@@ -905,9 +905,84 @@
           <GroupName>others\Motion_Control\App\src</GroupName>
           <Files>
             <File>
-              <FileName>motor.c</FileName>
+              <FileName>chassis_behavior_tree.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\others\Motion_Control\App\src\motor.c</FilePath>
+              <FilePath>..\others\Motion_Control\App\src\chassis_behavior_tree.c</FilePath>
+            </File>
+            <File>
+              <FileName>chassis_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\chassis_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>chassis_state.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\chassis_state.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor_enable.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\motor_enable.c</FilePath>
+            </File>
+            <File>
+              <FileName>balance_standing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\balance_standing.c</FilePath>
+            </File>
+            <File>
+              <FileName>lqr_calculate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\lqr_calculate.c</FilePath>
+            </File>
+            <File>
+              <FileName>spinning_motion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\spinning_motion.c</FilePath>
+            </File>
+            <File>
+              <FileName>jump_motion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\jump_motion.c</FilePath>
+            </File>
+            <File>
+              <FileName>off_ground_detect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\off_ground_detect.c</FilePath>
+            </File>
+            <File>
+              <FileName>step_hit_detect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\step_hit_detect.c</FilePath>
+            </File>
+            <File>
+              <FileName>yaw_error.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\yaw_error.c</FilePath>
+            </File>
+            <File>
+              <FileName>leg_retract_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\leg_retract_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>self_righting_retract.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\self_righting_retract.c</FilePath>
+            </File>
+            <File>
+              <FileName>stair_climb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\stair_climb.c</FilePath>
+            </File>
+            <File>
+              <FileName>sit_motion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\sit_motion.c</FilePath>
+            </File>
+            <File>
+              <FileName>gravity_comp_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\gravity_comp_test.c</FilePath>
             </File>
             <File>
               <FileName>Self_Righting.c</FileName>
@@ -968,6 +1043,11 @@
               <FileName>Wheel_End_Velocity.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\others\Motion_Control\Ctrl\src\Wheel_End_Velocity.c</FilePath>
+            </File>
+            <File>
+              <FileName>ramp_generator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\Ctrl\src\ramp_generator.c</FilePath>
             </File>
           </Files>
         </Group>

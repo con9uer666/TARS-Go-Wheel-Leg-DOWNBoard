@@ -49,8 +49,9 @@ h7_ctrl/ui_task.o: ..\UI\source\UI_Task.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\App\inc\motor.h \
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
   ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\others\Motion_Control\Ctrl\inc\VMC.h \
   ..\UserMiddlewares\include\Board2Board.h ..\Core\Inc\usart.h \
-  ..\others\Motion_Control\App\inc\Gimbal.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h
+  ..\others\Motion_Control\App\inc\Gimbal.h

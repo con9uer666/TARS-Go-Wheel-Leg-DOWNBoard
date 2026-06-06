@@ -13,7 +13,7 @@
 #include <math.h>
 #include "Leg_Control.h"
 #include "VMC.h"
-#include "motor.h"
+#include "chassis_behavior_tree.h"
 #include "user_pid.h"
 #include "Angle_about.h"
 #include "Motor_Drv.h"

@@ -60,5 +60,6 @@ h7_ctrl/wheel_end_velocity.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\others\Motion_Control\App\inc\motor.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
+  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h

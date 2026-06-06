@@ -52,8 +52,10 @@ h7_ctrl/board2board.o: ..\UserMiddlewares\source\Board2Board.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\Core\Inc\spi.h ..\UI\include\Judge.h \
   ..\UserMiddlewares\include\Com.h \
-  ..\others\Motion_Control\App\inc\motor.h \
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
   ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\others\Motion_Control\Ctrl\inc\VMC.h \
   ..\others\Motion_Control\App\inc\User_State.h \
   ..\others\Motion_Control\App\inc\Gimbal.h \
   ..\others\Motion_Control\Drv\inc\Motor_Drv.h \

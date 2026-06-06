@@ -14,7 +14,7 @@
 #include <string.h>
 #include "ui.h"
 #include "Judge.h"
-#include "motor.h"          // Foot_Chassis, pitch_trans, fric_speed_l_rpm/fric_speed_r_rpm, AIM_State
+#include "chassis_behavior_tree.h"          // Foot_Chassis, pitch_trans, fric_speed_l_rpm/fric_speed_r_rpm, AIM_State
 #include "Board2Board.h"    // B2B_offline_flag, shootnum
 #include "Gimbal.h"         // yaw_angle_PI（云台 yaw 角，弧度）
 #include "VMC.h"            // VMC_L, VMC_R（虚拟模型控制器，提供 L0 腿长 / b_phi0 腿角）

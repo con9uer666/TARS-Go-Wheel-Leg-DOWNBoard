@@ -49,5 +49,7 @@ h7_ctrl/state.o: ..\others\State.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\others\Device\inc\remoter.h ..\others\state.h \
   ..\others\Device\inc\buzzer.h ..\Core\Inc\tim.h \
-  ..\others\Motion_Control\App\inc\motor.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h ..\Core\Inc\adc.h
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
+  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\others\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\adc.h

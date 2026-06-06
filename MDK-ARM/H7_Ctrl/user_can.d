@@ -49,8 +49,9 @@ h7_ctrl/user_can.o: ..\others\Motion_Control\Drv\src\USER_CAN.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\others\Device\inc\remoter.h \
-  ..\others\Motion_Control\App\inc\motor.h \
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
   ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
   ..\others\Motion_Control\Ctrl\inc\VMC.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
