@@ -73,7 +73,7 @@ float right_square_error;
 float left_mean_square_error;
 float right_mean_square_error;
 
-uint8_t count;
+uint8_t count = 1;
 
 float final_left_F0;
 float final_left_tao;
