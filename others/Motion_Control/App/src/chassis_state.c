@@ -49,7 +49,7 @@ float Leg_F0_Limit = 500;
 
 float mg = 60.0f/2;
 
-float b_phi0_offset = 0.2;
+float b_phi0_offset = 0.0f; //腿部前倾角偏置，单位为弧度，正值使腿部前倾，负值使腿部后倾。用于抵消重心前移引起的前倾，或小陀螺时抵消反作用引起的前倾
 
 float AntiSplit_K[2];                            //[0]=Kp_eff, [1]=Kd_eff
 float AntiSplit_K_Fit_Coefficients[2][3] = {

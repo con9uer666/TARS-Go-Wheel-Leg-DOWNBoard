@@ -52,6 +52,8 @@ float right_wheel_velocity = 0;
 float left_wheel_acceleration = 0;
 float right_wheel_acceleration = 0;
 
+uint16_t cnt = 0;
+
 void Motor_task(void const *argument)
 {
     task_Motor_Init();
@@ -99,7 +101,15 @@ void Motor_task(void const *argument)
         }
         if(user_Gravity_Compensation_Test_Function_set == 1)
         {
-            Gravity_Compensation_Test_Function();
+            if(cnt < 1000)
+            {
+                cnt++;
+            }
+            else 
+            {
+                Gravity_Compensation_Test_Function();
+            }
+
         }
 
         //错误码蜂鸣器：电机错误时长响低音。倒地自起激活时本函数自动让位，不碰蜂鸣器

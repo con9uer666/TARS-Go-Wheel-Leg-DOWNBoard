@@ -13,12 +13,12 @@
 
 /**
  * @brief 二维多项式拟合 LQR 反馈增益矩阵。
- * @param[out] LQR                 4×10 反馈增益矩阵。
- * @param[in]  K_Fit_Coefficients  40×6 拟合系数表。
+ * @param[out] LQR                 4×11 反馈增益矩阵。
+ * @param[in]  K_Fit_Coefficients  44×6 拟合系数表。
  * @param[in]  L0_l               左腿腿长，单位 m。
  * @param[in]  L0_r               右腿腿长，单位 m。
  */
-void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, float L0_r);
+void LQR_Get_K(float LQR[4][11], float K_Fit_Coefficients[44][6], float L0_l, float L0_r);
 
 /**
  * @brief 防劈叉 PID 增益的 1D 二次拟合。

@@ -59,7 +59,7 @@ void Yaw_Error_Coculate()
 
 
     float yaw_error_max = 0;
-    yaw_error_max = ((2.0f - fabsf(kalman_body_speed))/2.0f) * 1.5f;//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
+    yaw_error_max = 2.5f - fabsf(kalman_body_speed);//速度越快，允许的yaw误差越小，最大为5度，最小为0.05度
     if(yaw_error_max <= 0.05f)
     {
         yaw_error_max = 0.05f;

@@ -50,7 +50,7 @@ float alpha_spinning_stop_target_d_yaw = 0.05f;
 uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
 uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
 
-float target_spinning_d_yaw = 14.0f; // 目标小陀螺yaw速度，单位为弧度每秒
+float target_spinning_d_yaw = 8.0f; // 目标小陀螺yaw速度，单位为弧度每秒
 float centrifugal_comp_gain = 0.8f;  // spin离心补偿系数
 // 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)：
 // |yaw_angle_PI| <= 此值时，速度倍率从0线性升至+1（正向）；

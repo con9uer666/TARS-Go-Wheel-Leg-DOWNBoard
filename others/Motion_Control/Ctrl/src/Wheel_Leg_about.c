@@ -31,21 +31,21 @@
 /**
  * @brief 二维多项式拟合 LQR 反馈增益矩阵 K(L0_l, L0_r)。
  *
- * 对于 LQR 的 4×10 增益矩阵 K，每个元素 K[i][j] 通过二次多项式插值获得：
+ * 对于 LQR 的 4×11 增益矩阵 K，每个元素 K[i][j] 通过二次多项式插值获得：
  *   K[i][j] = p00 + p10·L0_l + p01·L0_r + p20·L0_l² + p11·L0_l·L0_r + p02·L0_r²
- * 其中系数 p00~p02 由预拟合表 K_Fit_Coefficients[40][6] 提供
- * （40 = 4行 × 10列）。
+ * 其中系数 p00~p02 由预拟合表 K_Fit_Coefficients[44][6] 提供
+ * （44 = 4行 × 11列）。
  *
- * @param[out] LQR                 4×10 反馈增益矩阵，填充结果。
- * @param[in]  K_Fit_Coefficients  40×6 拟合系数表（行优先）。
+ * @param[out] LQR                 4×11 反馈增益矩阵，填充结果。
+ * @param[in]  K_Fit_Coefficients  44×6 拟合系数表（行优先）。
  * @param[in]  L0_l               左腿当前腿长，单位 m。
  * @param[in]  L0_r               右腿当前腿长，单位 m。
  */
-void LQR_Get_K(float LQR[4][10], float K_Fit_Coefficients[40][6], float L0_l, float L0_r)
+void LQR_Get_K(float LQR[4][11], float K_Fit_Coefficients[44][6], float L0_l, float L0_r)
 {
     for (uint8_t i = 0; i < 4; i++) {
-        for (uint8_t j = 0; j < 10; j++) {
-            uint8_t pos = i * 10 + j;
+        for (uint8_t j = 0; j < 11; j++) {
+            uint8_t pos = i * 11 + j;
 
             float p00 = K_Fit_Coefficients[pos][0];
             float p10 = K_Fit_Coefficients[pos][1];
@@ -231,7 +231,7 @@ void Speed_Error_Set()
         target_body_speed = PowerCtrl_LimitTargetSpeed(target_body_speed, speed_limit);
 
         // yaw 误差越大，目标速度越小
-        temp = ((0.7f - fabsf(yaw_error)) / 0.7f);
+        temp = 1.0f - fabsf(yaw_error) / 0.7f;
         if (temp < 0.0f) temp = 0.0f;
     }
 
