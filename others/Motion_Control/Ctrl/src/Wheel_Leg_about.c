@@ -31,21 +31,21 @@
 /**
  * @brief 二维多项式拟合 LQR 反馈增益矩阵 K(L0_l, L0_r)。
  *
- * 对于 LQR 的 4×11 增益矩阵 K，每个元素 K[i][j] 通过二次多项式插值获得：
+ * 对于 LQR 的 4×12 增益矩阵 K，每个元素 K[i][j] 通过二次多项式插值获得：
  *   K[i][j] = p00 + p10·L0_l + p01·L0_r + p20·L0_l² + p11·L0_l·L0_r + p02·L0_r²
- * 其中系数 p00~p02 由预拟合表 K_Fit_Coefficients[44][6] 提供
- * （44 = 4行 × 11列）。
+ * 其中系数 p00~p02 由预拟合表 K_Fit_Coefficients[48][6] 提供
+ * （48 = 4行 × 12列）。
  *
- * @param[out] LQR                 4×11 反馈增益矩阵，填充结果。
- * @param[in]  K_Fit_Coefficients  44×6 拟合系数表（行优先）。
+ * @param[out] LQR                 4×12 反馈增益矩阵，填充结果。
+ * @param[in]  K_Fit_Coefficients  48×6 拟合系数表（行优先）。
  * @param[in]  L0_l               左腿当前腿长，单位 m。
  * @param[in]  L0_r               右腿当前腿长，单位 m。
  */
-void LQR_Get_K(float LQR[4][11], float K_Fit_Coefficients[44][6], float L0_l, float L0_r)
+void LQR_Get_K(float LQR[4][12], float K_Fit_Coefficients[48][6], float L0_l, float L0_r)
 {
     for (uint8_t i = 0; i < 4; i++) {
-        for (uint8_t j = 0; j < 11; j++) {
-            uint8_t pos = i * 11 + j;
+        for (uint8_t j = 0; j < 12; j++) {
+            uint8_t pos = i * 12 + j;
 
             float p00 = K_Fit_Coefficients[pos][0];
             float p10 = K_Fit_Coefficients[pos][1];

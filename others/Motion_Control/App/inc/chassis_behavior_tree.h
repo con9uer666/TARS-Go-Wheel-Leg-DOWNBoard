@@ -124,7 +124,7 @@ extern float AntiSplit_K[2];
 extern float AntiSplit_K_Fit_Coefficients[2][3];
 
 /* ---- lqr_calculate.c ---- */
-extern float LQR_K[4][11];
+extern float LQR_K[4][12];
 extern float Leg_L_T, Leg_R_T;
 
 /* ---- off_ground_detect.c ---- */

@@ -29,7 +29,7 @@ syms dtheta_wl  dtheta_wr
 syms ddtheta_wl ddtheta_wr ddtheta_ll ddtheta_lr ddtheta_b
 
 % 定义状态向量
-syms s ds phi dphi theta_ll dtheta_ll theta_lr dtheta_lr theta_b dtheta_b int_theta_b
+syms s ds phi dphi theta_ll dtheta_ll theta_lr dtheta_lr theta_b dtheta_b int_theta_b int_s
 
 % 定义控制向量
 syms T_wl T_wr T_bl T_br
@@ -55,8 +55,8 @@ J_A = jacobian([ddtheta_wl,ddtheta_wr,ddtheta_ll,ddtheta_lr,ddtheta_b],[theta_ll
 J_B = jacobian([ddtheta_wl,ddtheta_wr,ddtheta_ll,ddtheta_lr,ddtheta_b],[T_wl,T_wr,T_bl,T_br]);
 
 % 定义矩阵A，B，将指定位置的数值根据上述偏导数计算出来并填入
-A = sym('A',[11 11]);
-B = sym('B',[11 4]);
+A = sym('A',[12 12]);
+B = sym('B',[12 4]);
 
 % 填入A数据：a25,a27,a29,a45,a47,a49,a65,a67,a69,a85,a87,a89,a105,a107,a109
 for p = 5:2:9
@@ -69,16 +69,17 @@ for p = 5:2:9
 end
 
 % A的以下数值为1：a12,a34,a56,a78,a910，其余数值为0
-for r = 1:11
-    if rem(r,2) == 0
-        A(r,1) = 0; A(r,2) = 0; A(r,3) = 0; A(r,4) = 0; A(r,6) = 0; A(r,8) = 0; A(r,10) = 0; A(r,11) = 0;
+% 第11维int_theta_b为theta_b(第9维)的积分，第12维int_s为s(第1维)的积分
+for r = 1:12
+    if r == 11
+        A(r,:) = zeros(1,12); A(r,9) = 1;
+    elseif r == 12
+        A(r,:) = zeros(1,12); A(r,1) = 1;
+    elseif rem(r,2) == 0
+        A(r,1) = 0; A(r,2) = 0; A(r,3) = 0; A(r,4) = 0; A(r,6) = 0; A(r,8) = 0; A(r,10) = 0; A(r,11) = 0; A(r,12) = 0;
     else
-        A(r,:) = zeros(1,11);
-        if r == 11
-            A(r,9) = 1;
-        else
-            A(r,r+1) = 1;
-        end
+        A(r,:) = zeros(1,12);
+        A(r,r+1) = 1;
     end
 end
 
@@ -91,10 +92,11 @@ for h = 1:4
     end
 end
 
-% B的其余数值为0
+% B的其余数值为0（奇数行为运动学行，第11、12维为积分行，均无直接控制输入）
 for e = 1:2:11
     B(e,:) = zeros(1,4);
 end
+B(12,:) = zeros(1,4);
 
 
 
@@ -178,29 +180,32 @@ Leg_data_r = Leg_data_l;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 矩阵Q中，以下列分别对应：
-%        s     ds     phi     dphi     theta_ll dtheta_ll theta_lr dtheta_lr theta_b dtheta_b int_theta_b
-lqr_Q = [500,    0,     0,      0,       0,       0,        0,       0,        0,      0,     0;
-         0,    300,     0,      0,       0,       0,        0,       0,        0,      0,     0;
-         0,    0,     20000,      0,       0,       0,        0,       0,        0,      0,     0;
-         0,    0,     0,      2000,       0,       0,        0,       0,        0,      0,     0;
-         0,    0,     0,      0,       5000,       0,        0,       0,        0,      0,     0;
-         0,    0,     0,      0,       0,       1,        0,       0,        0,      0,     0;
-         0,    0,     0,      0,       0,       0,        5000,       0,        0,      0,     0;
-         0,    0,     0,      0,       0,       0,        0,       1,        0,      0,     0;
-         0,    0,     0,      0,       0,       0,        0,       0,        25000,   0,     0;
-         0,    0,     0,      0,       0,       0,        0,       0,        0,      100,     0;
-         0,    0,     0,      0,       0,       0,        0,       0,        0,      0,     100    ];
+%        s     ds     phi     dphi     theta_ll dtheta_ll theta_lr dtheta_lr theta_b dtheta_b int_theta_b int_s
+lqr_Q = [500,    0,     0,      0,       0,       0,        0,       0,        0,      0,     0,      0;
+         0,    300,     0,      0,       0,       0,        0,       0,        0,      0,     0,      0;
+         0,    0,     20000,      0,       0,       0,        0,       0,        0,      0,     0,      0;
+         0,    0,     0,      2000,       0,       0,        0,       0,        0,      0,     0,      0;
+         0,    0,     0,      0,       10000,       0,        0,       0,        0,      0,     0,      0;
+         0,    0,     0,      0,       0,       1,        0,       0,        0,      0,     0,      0;
+         0,    0,     0,      0,       0,       0,        10000,       0,        0,      0,     0,      0;
+         0,    0,     0,      0,       0,       0,        0,       1,        0,      0,     0,      0;
+         0,    0,     0,      0,       0,       0,        0,       0,        25000,   0,     0,      0;
+         0,    0,     0,      0,       0,       0,        0,       0,        0,      100,     0,      0;
+         0,    0,     0,      0,       0,       0,        0,       0,        0,      0,     100,      0;
+         0,    0,     0,      0,       0,       0,        0,       0,        0,      0,     0,      100    ];
 % 其中：
 % s       : 自然坐标系下机器人水平方向移动距离，单位：m，ds为其导数
 % phi     ：机器人水平方向移动时yaw偏航角度，dphi为其导数
 % theta_ll：左腿摆杆与竖直方向（自然坐标系z轴）夹角，dtheta_ll为其导数
 % theta_lr：右腿摆杆与竖直方向（自然坐标系z轴）夹角，dtheta_lr为其导数
 % theta_b ：机体与自然坐标系水平夹角，dtheta_b为其导数
+% int_theta_b：机体角度theta_b的积分项，用于消除机体角度稳态误差
+% int_s   ：位移s的积分项，用于消除位移稳态误差（本次新增维度）
 
 % 矩阵中，以下列分别对应：
 %        T_wl    T_wr     T_bl     T_br
-lqr_R = [40,      0,       0,       0;
-         0,      40,       0,       0;
+lqr_R = [20,      0,       0,       0;
+         0,      20,       0,       0;
          0,      0,       5,       0;
          0,      0,       0,       5];
 % 其中：
@@ -232,7 +237,7 @@ length = size(Leg_data_l,1); % 测量腿部数据集的行数
 
 % 定义所有K_ij依据l_l,l_r变化的表格，每一个表格有3列，第一列是l_l，第二列
 % 是l_r，第三列是对应的K_ij的数值
-K_sample = zeros(sample_size,3,44); % 44是因为增益矩阵K应该是4行11列。
+K_sample = zeros(sample_size,3,48); % 48是因为增益矩阵K应该是4行12列。
 
 for i = 1:length
     for j = 1:length
@@ -245,7 +250,7 @@ for i = 1:length
         l_wr_ac = Leg_data_r(j,2);
         l_br_ac = Leg_data_r(j,3);
         I_lr_ac = Leg_data_r(j,4);
-        for k = 1:44
+        for k = 1:48
             K_sample(index,1,k) = l_l_ac;
             K_sample(index,2,k) = l_r_ac;
         end
@@ -255,27 +260,27 @@ for i = 1:length
             A,B,lqr_Q,lqr_R);
         % 根据指定的l_l,l_r输入对应的K_ij的数值
         for l = 1:4
-            for m = 1:11
-                K_sample(index,3,(l - 1)*11 + m) = K(l,m);
+            for m = 1:12
+                K_sample(index,3,(l - 1)*12 + m) = K(l,m);
             end
         end
     end
 end
 
 % 创建收集全部K_ij的多项式拟合的全部系数的集合
-K_Fit_Coefficients = zeros(44,6);
-for n = 1:44
+K_Fit_Coefficients = zeros(48,6);
+for n = 1:48
     K_Surface_Fit = fit([K_sample(:,1,n),K_sample(:,2,n)],K_sample(:,3,n),'poly22');
     K_Fit_Coefficients(n,:) = coeffvalues(K_Surface_Fit); % 拟合并提取出拟合的系数结果
 end
 Polynomial_expression = formula(K_Surface_Fit)
 
-% 最终返回的结果K_Fit_Coefficients是一个44行6列矩阵，每一行分别对应一个K_ij的多项式拟合的全部系数
-% 每一行和K_ij的对应关系如下：
+% 最终返回的结果K_Fit_Coefficients是一个48行6列矩阵，每一行分别对应一个K_ij的多项式拟合的全部系数
+% 每一行和K_ij的对应关系如下（行号 = (i-1)*12 + j，i为K的行、j为K的列）：
 % - 第1行对应K_1,1
-% - 第14行对应K_2,4
-% - 第22行对应K_3,2
-% - 第37行对应K_4,7
+% - 第16行对应K_2,4
+% - 第26行对应K_3,2
+% - 第43行对应K_4,7
 % ... 其他行对应关系类似
 % 拟合出的函数表达式为 p(x,y) = p00 + p10*x + p01*y + p20*x^2 + p11*x*y + p02*y^2
 % 其中x对应左腿腿长l_l，y对应右腿腿长l_r
