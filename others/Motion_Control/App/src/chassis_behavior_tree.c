@@ -75,6 +75,27 @@ void Motor_task(void const *argument)
         {
             user_gas = Gas_Spring_GetForce(VMC_L.L0);
 
+            // if(fabsf(Foot_Chassis.Remote_control_y) < 0.9f)
+            // {
+            //     Foot_Chassis.Target_Vy = get_sign_float(Foot_Chassis.Remote_control_y) * 2.0f; // 0~2.0 m/s
+            // }
+            // else 
+            // {
+            //     Foot_Chassis.Target_Vy = 0;
+            // }
+
+            // if(fabsf(Foot_Chassis.Remote_control_x) < 0.9f)
+            // {
+            //     Foot_Chassis.Target_Vx = get_sign_float(Foot_Chassis.Remote_control_x) * 2.0f; // 0~2.0 m/s
+            // }
+            // else 
+            // {
+            //     Foot_Chassis.Target_Vx = 0;
+            // }
+
+            Foot_Chassis.Target_Vx = Foot_Chassis.Remote_control_x * 2.3f; // 0~2.3 m/s
+		    Foot_Chassis.Target_Vy = Foot_Chassis.Remote_control_y * 2.3f; // 0~2.3 m/s
+
             //刚启动收腿过程中
             if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
             {

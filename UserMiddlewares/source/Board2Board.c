@@ -96,8 +96,9 @@ void B2B_ParseUsart() // 先发低字节
 {
 	if (usart2RxBuf[0] == 0xAA && usart2RxBuf[63] == 0xFE)
 	{
-		Foot_Chassis.Target_Vx = (float)((int16_t)(usart2RxBuf[1] | usart2RxBuf[2] << 8))/1000.0f;
-		Foot_Chassis.Target_Vy = (float)((int16_t)(usart2RxBuf[3] | usart2RxBuf[4] << 8))/1000.0f;
+		Foot_Chassis.Remote_control_x = (float)((int16_t)(usart2RxBuf[1] | usart2RxBuf[2] << 8))/1000.0f;
+		Foot_Chassis.Remote_control_y = (float)((int16_t)(usart2RxBuf[3] | usart2RxBuf[4] << 8))/1000.0f;
+		
 		uint8_t stopFlag = (usart2RxBuf[29] >> 7) & 0x01;	 // 最高位
 		uint8_t chassisMode = (usart2RxBuf[29] >> 5) & 0x03; // 第6-7位
 		uint8_t visionFind = (usart2RxBuf[29] >> 4) & 0x01;	 // 第5位+

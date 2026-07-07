@@ -50,6 +50,8 @@ typedef struct Foot_Chassis_Info
  */
 typedef struct Foot_Chassis
 {
+    float Remote_control_x;     /**< 遥控器前后通道，归一化 [-1, 1] */
+    float Remote_control_y;     /**< 遥控器左右通道，归一化 [-1, 1] */
     float Target_Vx;           /**< 云台坐标系下的目标 X 速度 (m/s) */
     float Target_Vy;           /**< 云台坐标系下的目标 Y 速度 (m/s) */
     uint8_t Target_Leg_State;  /**< 目标腿长：0=短腿，1=长腿 */
