@@ -854,6 +854,11 @@
               <FileType>1</FileType>
               <FilePath>..\CommonLibs\src\Trigger_about.c</FilePath>
             </File>
+            <File>
+              <FileName>Maths_about.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CommonLibs\src\Maths_about.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -998,6 +1003,11 @@
               <FileName>User_State.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\others\Motion_Control\App\src\User_State.c</FilePath>
+            </File>
+            <File>
+              <FileName>body_speed_state.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\body_speed_state.c</FilePath>
             </File>
           </Files>
         </Group>

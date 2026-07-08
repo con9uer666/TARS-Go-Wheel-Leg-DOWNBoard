@@ -1,7 +1,8 @@
-h7_ctrl/wheel_leg_about.o: \
-  ..\others\Motion_Control\Ctrl\src\Wheel_Leg_about.c \
-  ..\others\Motion_Control\Ctrl\inc\Wheel_Leg_about.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+h7_ctrl/body_speed_state.o: \
+  ..\others\Motion_Control\App\src\body_speed_state.c \
+  ..\others\Motion_Control\App\inc\body_speed_state.h \
+  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -35,12 +36,9 @@ h7_ctrl/wheel_leg_about.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\IMU_coculate\imu_temp_ctrl.h \
   ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
   ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h ..\others\Device\inc\remoter.h \
-  ..\Power_control\PowerCtrl.h \
+  ..\others\Motion_Control\Ctrl\inc\VMC.h \
   ..\others\Motion_Control\Ctrl\inc\observe_task.h \
   ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
@@ -64,9 +62,4 @@ h7_ctrl/wheel_leg_about.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Motion_Control\App\inc\Gimbal.h \
-  ..\CommonLibs\inc\Maths_about.h \
-  ..\others\Motion_Control\App\inc\body_speed_state.h
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h

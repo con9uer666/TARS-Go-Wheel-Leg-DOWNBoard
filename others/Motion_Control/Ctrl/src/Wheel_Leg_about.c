@@ -24,9 +24,16 @@
 #include "observe_task.h"
 #include "Motor_Drv.h"
 #include "Gimbal.h"
+#include "Maths_about.h"
+#include "body_speed_state.h"
 #include <math.h>
 
 /*============================ 轮腿相关算法 ================================*/
+
+/* 速度斜坡句柄（非小陀螺路径） */
+static RampStep_Handle target_speed_ramp;
+static uint8_t target_speed_ramp_inited = 0;
+
 
 /**
  * @brief 二维多项式拟合 LQR 反馈增益矩阵 K(L0_l, L0_r)。
@@ -225,10 +232,25 @@ void Speed_Error_Set()
                                       v_dir + spin_speed_angle_offset);
     } else {
         // 常态：车体跟随云台头，只用 Vy（前后）
-        target_body_speed = Foot_Chassis.Target_Vy;
-        if (target_body_speed >=  speed_limit) target_body_speed =  speed_limit;
-        if (target_body_speed <= -speed_limit) target_body_speed = -speed_limit;
-        target_body_speed = PowerCtrl_LimitTargetSpeed(target_body_speed, speed_limit);
+        {
+            float raw_target = Foot_Chassis.Target_Vy;
+            raw_target = PowerCtrl_LimitTargetSpeed(raw_target, speed_limit);
+
+            /* 根据腿长插值斜坡参数：短腿(0.23m) → 阶跃1.2 速率0.5，长腿(0.39m) → 阶跃0.3 速率0.2 */
+            float leg_ratio = (target_Leg_L0 - LEG_MIN_LENTH) / (LEG_MAX_LENTH - LEG_MIN_LENTH);
+            if (leg_ratio < 0.0f) leg_ratio = 0.0f;
+            if (leg_ratio > 1.0f) leg_ratio = 1.0f;
+            float step_accel = 1.2f + leg_ratio * (0.3f - 1.2f);
+            float step_decel = 0.8f + leg_ratio * (0.3f - 0.8f);
+            float ramp_rate  = 1.0f + leg_ratio * (0.2f - 1.0f);
+
+            if (!target_speed_ramp_inited) {
+                RampStep_Init(&target_speed_ramp, target_body_speed);
+                target_speed_ramp_inited = 1;
+            }
+            target_body_speed = RampStep_Update(&target_speed_ramp, raw_target,
+                                                 step_accel, step_decel, ramp_rate, 0.002f);
+        }
 
         // yaw 误差越大，目标速度越小
         temp = 1.0f - fabsf(yaw_error) / 0.7f;
@@ -252,13 +274,30 @@ void Speed_Error_Set()
  * 对 (kalman_body_speed + speed_error) 积分得到目标位移 target_body_distance，
  * 两者之差即为 body_distance_error。
  *
+ * 调用 BodySpeedState_Get() 判断当前车身速度状态：
+ * - ACCEL / STATIONARY：正常积分累加位移
+ * - DECEL（减速滑行）：将 body_distance 和 target_body_distance 清零，
+ *   避免减速期间位移积分干扰下一段加速。
+ *
  * @warning speed_error 是经限幅后的值，而 target_body_speed 未经限幅，
  *          因此 kalman_body_speed + speed_error ≠ target_body_speed。
  */
 void Distance_Error_Set()
 {
+    /* 同步更新车身速度状态，后续逻辑据此决定是否积分位移 */
+    BodySpeedState_t speed_state = BodySpeedState_Get();
+
+    /* 减速滑行期间不积分位移，防止位移误差累积影响下一段加速 */
+    if (speed_state == BODY_SPEED_DECEL) {
+        body_distance = 0.0f;
+        target_body_distance = 0.0f;
+        body_distance_error = 0.0f;
+        return;
+    }
+
+    /* ACCEL 或 STATIONARY 状态：正常积分累加 */
     body_distance += kalman_body_speed * 0.002f;
-    target_body_distance += (kalman_body_speed + speed_error) * 0.002f;
+    target_body_distance += target_body_speed * 0.002f;
     body_distance_error = target_body_distance - body_distance;
 }
 
