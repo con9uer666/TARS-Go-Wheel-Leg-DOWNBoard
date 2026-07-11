@@ -52,6 +52,12 @@ uint32_t rs485_cnt = 0;
 
 uint8_t UP_Leg;
 
+// ==== 新增：上板 RS485 新协议透传字段 ====
+int16_t sbus_ch[4];
+int16_t sbus_sw[8];
+int16_t sbus_knob[4];
+uint8_t vision_mode_active = 0;
+
 // 板间通信初始化
 void B2B_Init()
 {
@@ -99,6 +105,19 @@ void B2B_ParseUsart() // 先发低字节
 		Foot_Chassis.Remote_control_x = (float)((int16_t)(usart2RxBuf[1] | usart2RxBuf[2] << 8))/1000.0f;
 		Foot_Chassis.Remote_control_y = (float)((int16_t)(usart2RxBuf[3] | usart2RxBuf[4] << 8))/1000.0f;
 		
+		// ==== 新增：SBUS 摇杆 ch0~ch3（byte5~12）====
+		sbus_ch[0] = (int16_t)(usart2RxBuf[5]  | (usart2RxBuf[6]  << 8));
+		sbus_ch[1] = (int16_t)(usart2RxBuf[7]  | (usart2RxBuf[8]  << 8));
+		sbus_ch[2] = (int16_t)(usart2RxBuf[9]  | (usart2RxBuf[10] << 8));
+		sbus_ch[3] = (int16_t)(usart2RxBuf[11] | (usart2RxBuf[12] << 8));
+		// ==== 新增：SBUS 开关 sw0~sw5（byte13~24）====
+		sbus_sw[0] = (int16_t)(usart2RxBuf[13] | (usart2RxBuf[14] << 8));
+		sbus_sw[1] = (int16_t)(usart2RxBuf[15] | (usart2RxBuf[16] << 8));
+		sbus_sw[2] = (int16_t)(usart2RxBuf[17] | (usart2RxBuf[18] << 8));
+		sbus_sw[3] = (int16_t)(usart2RxBuf[19] | (usart2RxBuf[20] << 8));
+		sbus_sw[4] = (int16_t)(usart2RxBuf[21] | (usart2RxBuf[22] << 8));
+		sbus_sw[5] = (int16_t)(usart2RxBuf[23] | (usart2RxBuf[24] << 8));
+
 		uint8_t stopFlag = (usart2RxBuf[29] >> 7) & 0x01;	 // 最高位
 		uint8_t chassisMode = (usart2RxBuf[29] >> 5) & 0x03; // 第6-7位
 		uint8_t visionFind = (usart2RxBuf[29] >> 4) & 0x01;	 // 第5位+
@@ -120,11 +139,18 @@ void B2B_ParseUsart() // 先发低字节
 		fricMotor_left_speed = usart2RxBuf[30] | usart2RxBuf[31] << 8;
 		chassis_rotate_angle = usart2RxBuf[32] | usart2RxBuf[33] << 8;
 
+		// ==== 新增：SBUS 开关 sw6~sw7（byte30~33）+ 旋钮 knob0（byte34~35）====
+		sbus_sw[6]   = (int16_t)(usart2RxBuf[30] | (usart2RxBuf[31] << 8));
+		sbus_sw[7]   = (int16_t)(usart2RxBuf[32] | (usart2RxBuf[33] << 8));
+		sbus_knob[0] = (int16_t)(usart2RxBuf[34] | (usart2RxBuf[35] << 8));
+
 		v_dis = usart2RxBuf[34];
 		speed_limit1 = usart2RxBuf[35] & 0x0F;
 
 		shootnum = usart2RxBuf[38] << 16 | usart2RxBuf[37] << 8 | usart2RxBuf[36]; 
 		trigger_reverse = usart2RxBuf[39];
+		// ==== 新增：SBUS 旋钮 knob1（byte39~40）====
+		sbus_knob[1] = (int16_t)(usart2RxBuf[39] | (usart2RxBuf[40] << 8));
 		diagonal_enable = (usart2RxBuf[41] >> 7) & 0x01;
 		vision_exposure = (usart2RxBuf[41] >> 2) & 0x1F;
 		vision_rune_dirt = (usart2RxBuf[41] >> 1) & 0x01;
@@ -143,6 +169,8 @@ void B2B_ParseUsart() // 先发低字节
 		// }
 			upstairs_flag = usart2RxBuf[44];
 			sit_mode_enable = usart2RxBuf[45] | sit_debug_force;
+		// ==== 新增：自瞄模式激活标志（byte46）====
+		vision_mode_active = usart2RxBuf[46];
 
 		/* 摩擦轮目标转速：byte47~48 / byte49~50，int16 小端，原值即 RPM */
 		fric_speed_l_rpm = (int16_t)(usart2RxBuf[47] | (usart2RxBuf[48] << 8));
@@ -150,7 +178,18 @@ void B2B_ParseUsart() // 先发低字节
 
 		/* 跳跃指令：byte51，=1 请求跳跃，=0 解除跳跃锁
 		   实际 jump_mode 由 motor.c 内部根据 jump_cmd 和 jump_locked 综合判定 */
-		jump_cmd = usart2RxBuf[51];
+		if(sbus_sw[2] == 678)
+		{
+			jump_cmd = 1;
+		}
+		else 
+		{
+			jump_cmd = 0;
+		}
+		
+		// ==== 新增：SBUS 旋钮 knob2~knob3（byte52~55）====
+		sbus_knob[2] = (int16_t)(usart2RxBuf[52] | (usart2RxBuf[53] << 8));
+		sbus_knob[3] = (int16_t)(usart2RxBuf[54] | (usart2RxBuf[55] << 8));
 		// for(int i = 0; i <= 127; i++)
 		// {
 		// 	usart2RxBuf[i] = 0;

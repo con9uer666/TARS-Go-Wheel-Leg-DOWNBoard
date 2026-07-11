@@ -141,6 +141,12 @@ extern uint8_t AIM_State;
 extern int16_t fric_speed_l_rpm;
 extern int16_t fric_speed_r_rpm;
 
+// ==== 新增：上板 RS485 新协议透传字段 ====
+extern int16_t sbus_ch[4];
+extern int16_t sbus_sw[8];
+extern int16_t sbus_knob[4];
+extern uint8_t vision_mode_active;
+
 void B2B_ParseUsart(void);
 //RC初始化
 void B2B_Init(void);

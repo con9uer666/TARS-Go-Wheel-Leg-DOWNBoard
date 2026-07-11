@@ -67,9 +67,6 @@ void task_PID_Init()
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&Roll_Comp_PID, 20, 0.002, 100, 150, 80, 0, 10000, 0);
-    // 跳跃LR平衡：输入VMC_L.L0-VMC_R.L0(m)，target=0；out_limit占jump_F0约1/3，避免单侧饱和
-    PID_INIT(&Jump_LR_Balance_PID, 1500, 0, 2000, 40, 0, 0, 0, 0);
-
     PID_INIT(&L_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
     PID_INIT(&R_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
     PID_INIT(&L_Leg_dphi0_PID, 3, 0.1, 1, 150, 150, 0, 2000, 0);

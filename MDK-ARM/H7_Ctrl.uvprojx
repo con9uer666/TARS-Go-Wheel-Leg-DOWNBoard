@@ -1009,6 +1009,11 @@
               <FileType>1</FileType>
               <FilePath>..\others\Motion_Control\App\src\body_speed_state.c</FilePath>
             </File>
+            <File>
+              <FileName>chassis_height_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Motion_Control\App\src\chassis_height_control.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -22,6 +22,7 @@
 #include "Board2Board.h"
 #include "Slope.h"
 #include "Wheel_Leg_about.h"
+#include "chassis_height_control.h"
 #include "controller.h"
 #include "remoter.h"
 #include "FreeRTOS.h"
@@ -192,9 +193,8 @@ void Standing()
     LQR_calculate();
 
     //常态下VMC解算，加入PID前馈
-    float centrifugal_comp = centrifugal_comp_gain * d_yaw * d_yaw;
-    float L_leg_T_cmd = Leg_L_T + anti_split_out - centrifugal_comp;
-    float R_leg_T_cmd = -Leg_R_T + anti_split_out - centrifugal_comp;
+    float L_leg_T_cmd = Leg_L_T + anti_split_out;
+    float R_leg_T_cmd = -Leg_R_T + anti_split_out;
     static uint8_t spin_phi0_pid_started = 0;
     if(spinning_flag == 1)
     {

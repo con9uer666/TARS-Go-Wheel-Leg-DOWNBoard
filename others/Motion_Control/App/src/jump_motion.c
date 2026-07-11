@@ -1,11 +1,11 @@
 /**
  * @file jump_motion.c
- * @brief 跳跃动作组：跳跃指令锁存/解锁、左右平衡、跳跃失败判定、跳跃蜂鸣器，
- *        以及跳跃/常态两条路径的最终 VMC 力矩下发。
+ * @brief 跳跃动作组：跳跃指令锁存/解锁、L0 目标阶跃、跳跃失败判定、跳跃蜂鸣器，
+ *        以及统一的 VMC 力矩下发。
  *
  * Jump_Motion_Update() 由 Standing() 在算完左右腿力矩命令(L/R_leg_T_cmd)后调用：
- *   - 跳跃中：绕过腿长 PID 与重力补偿，两腿沿腿杆方向直接喂 jump_F0（含 LR 平衡）。
- *   - 非跳跃：常态重力补偿 VMC 解算。
+ *   - 跳跃中：对 L0 setpoint 施加 jump_L0_step_delta 阶跃，重跑 L0 PID 后统一 VMC 下发。
+ *   - 非跳跃：保持 Leg_L0_Control() 的原 PID 输出，统一 VMC 下发。
  * 返回 jump_active（1=本周期处于跳跃）。
  */
 
@@ -39,7 +39,6 @@
 #include "buzzer.h"
 #include "Wheel_End_Velocity.h"
 
-user_pid_t Jump_LR_Balance_PID;       //跳跃左右平衡pid：输入两腿L0差值，输出±加到jump_F0上，保持两腿同步伸长
 
 // 跳跃模式（只读输出）：每周期由 Jump_Motion_Update 根据 jump_cmd 和 jump_locked 计算得出
 // =1 表示当前正在跳跃动作组中；倒地自起期间不会被调用，天然互斥
@@ -53,11 +52,9 @@ uint8_t g_jump_buzzer_active = 0;
 // 跳跃锁：起跳后检测到离地时上锁，期间 jump_mode 强制为 0；jump_cmd 回 0 时解锁
 // 作用：防止一次 byte51=1 期间因落地→再次满足条件而连续触发多次跳跃
 static uint8_t jump_locked = 0;
-// 跳跃时两腿沿腿杆向外的固定虚拟力 F0 (单位 N)，跳过腿长 PID 直接喂给 VMC
-// 重力支撑约 30N/腿；跳跃需远大于此值
-// !! 当前允许的最大值约 250N (受 DM8009 峰值扭矩与短腿姿态几何约束，超过会被电机饱和)
-// 建议从 120N 起步，逐步上调到合适跳跃高度
-float jump_F0 = 50.0f;
+// 跳跃时 L0 目标阶跃量 (单位 m)，叠加到 target_Leg_L0 上让 L0 PID 闭环产生跳跃力
+// 建议从 0.08m 起步，根据实际跳跃高度调参
+float jump_L0_step_delta = 0.2f;
 // 跳跃失败阈值(m)：0.5s 锁存到期时，若任意一腿 L0 变化量小于该值，判定为跳跃失败
 float jump_leg_change_threshold = 0.15f;
 // 跳跃退出原因（调试用，只读输出）：
@@ -69,6 +66,8 @@ uint8_t jump_fail_reason = 0;
 
 uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
 {
+
+//! 判断是否跳跃
     // 跳跃指令解锁：jump_cmd 回 0 即清锁，允许下一次跳跃
     if (jump_cmd == 0)
     {
@@ -87,6 +86,7 @@ uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
                                && L_off_ground < 10
                                && R_off_ground < 10);
 
+//! 判断是否跳跃成功
     // 跳跃锁存：raw 首次满足 → 启动 0.5s 锁存窗口
     // 锁存期间无视 raw 条件强制 jump_active=1，原表达式无权清零
     // 退出条件（统一在此处上锁，确保"一次跳跃只触发一次"）：
@@ -131,26 +131,18 @@ uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
     uint8_t jump_active = jump_active_latched ? 1 : jump_active_raw;
     if (jump_active)
     {
-        // 左右平衡：err = 0 - (L0_L - L0_R) = L0_R - L0_L
-        // 左腿较长时 err<0 → output<0 → 左 F 减小、右 F 增大，使两腿伸长速度同步
-        PID_Set_Error(&Jump_LR_Balance_PID, VMC_L.L0 - VMC_R.L0, 0);
-        PID_coculate(&Jump_LR_Balance_PID);
-        float lr_bal = Jump_LR_Balance_PID.output;
-        VMC_Set_F0_T(&VMC_L, jump_F0 + lr_bal, L_leg_T_cmd);
-        VMC_Set_F0_T(&VMC_R, jump_F0 - lr_bal, R_leg_T_cmd);
+        // 跳跃时对 L0 setpoint 施加阶跃偏置，让 L0 PID 闭环产生所需的跳跃力
+        float jump_target = target_Leg_L0 + jump_L0_step_delta;
+        PID_Set_Error(&L_Leg_L0_PID, VMC_L.L0, jump_target);
+        PID_Set_Error(&R_Leg_L0_PID, VMC_R.L0, jump_target);
+        PID_coculate(&L_Leg_L0_PID);
+        PID_coculate(&R_Leg_L0_PID);
     }
-    else
-    {
-        // 退出跳跃时清零所有状态：PID_Clear只清 I；额外清 error/pre_error/output 避免下次进入瞬间 D 项暴冲
-        PID_Clear(&Jump_LR_Balance_PID);
-        Jump_LR_Balance_PID.error     = 0.0f;
-        Jump_LR_Balance_PID.pre_error = 0.0f;
-        Jump_LR_Balance_PID.output    = 0.0f;
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output,
-                     L_leg_T_cmd);
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output,
-                     R_leg_T_cmd);
-    }
+    // 统一 VMC 力矩下发：F0:腿长 PID 前馈 + 重力补偿 + 横滚补偿        T:T 力矩
+    VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output,
+                 L_leg_T_cmd);
+    VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output,
+                 R_leg_T_cmd);
 
     // 跳跃蜂鸣器：跳跃中长鸣中音 sol，结束立刻停。边沿触发避免 PWM 频繁重配
     // 注意必须用 Buzzer_Tone_Max(784) 而不是 Buzzer_sol()：后者音量受 SBUS_CH.CH10 旋钮调制，

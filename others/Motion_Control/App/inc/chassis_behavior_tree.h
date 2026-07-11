@@ -152,10 +152,9 @@ extern uint8_t jump_mode;            // 只读：当前是否处于跳跃中，�
 extern uint8_t jump_cmd;             // B2B byte51 原始跳跃指令：1=请求跳跃，0=解除跳跃锁
 extern uint8_t jump_enable;          // 跳跃使能：=1 允许跳跃，=0 一票否决
 extern uint8_t g_jump_buzzer_active; // 跳跃蜂鸣器独占标志，Error_Buzzer_Tick 看到=1 必须让位
-extern float jump_F0;                // 跳跃时两腿沿腿杆向外的固定虚拟力(N)，最大约250N
+extern float jump_L0_step_delta;     // 跳跃时 L0 目标阶跃量 (m)，叠加到 target_Leg_L0 让 L0 PID 闭环产生跳跃力
 extern float jump_leg_change_threshold; // 跳跃失败阈值(m)：锁存到期时任一腿变化<此值判失败
 extern uint8_t jump_fail_reason;     // 跳跃退出原因 0=进行中/未触发 1=离地成功 2=超时腿长不足 3=超时但腿长够
-extern user_pid_t Jump_LR_Balance_PID;
 
 /* ---- leg_retract_common.c：自起收腿与上台阶收腿共用的转角子状态机持久量 ---- */
 extern uint8_t L_Leg_State, R_Leg_State;

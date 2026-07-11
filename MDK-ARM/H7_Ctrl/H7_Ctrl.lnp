@@ -109,6 +109,7 @@
 "h7_ctrl\gimbal.o"
 "h7_ctrl\user_state.o"
 "h7_ctrl\body_speed_state.o"
+"h7_ctrl\chassis_height_control.o"
 "h7_ctrl\kalman_filter1.o"
 "h7_ctrl\leg_control.o"
 "h7_ctrl\observe_task.o"

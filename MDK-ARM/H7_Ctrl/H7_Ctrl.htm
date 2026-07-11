@@ -3,7 +3,7 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Thu Jul  9 02:24:36 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sun Jul 12 00:53:42 2026
 <BR><P>
 <H3>Maximum Stack Usage =        488 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -911,8 +911,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d2]"></a>B2B_ParseUsart</STRONG> (Thumb, 772 bytes, Stack size 24 bytes, board2board.o(.text.B2B_ParseUsart))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<P><STRONG><a name="[d2]"></a>B2B_ParseUsart</STRONG> (Thumb, 896 bytes, Stack size 32 bytes, board2board.o(.text.B2B_ParseUsart))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit_DMA
 <LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;JUDGE_GetCoolingValue
@@ -2124,7 +2124,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[16a]"></a>HAL_UARTEx_RxEventCallback</STRONG> (Thumb, 902 bytes, Stack size 8 bytes, board2board.o(.text.HAL_UARTEx_RxEventCallback))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_ReceiveToIdle_DMA
 <LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TFmini_Parse
@@ -2191,7 +2191,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[171]"></a>HAL_UART_IRQHandler</STRONG> (Thumb, 942 bytes, Stack size 16 bytes, stm32h7xx_hal_uart.o(.text.HAL_UART_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
 <LI>Call Chain = HAL_UART_IRQHandler &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_Abort
@@ -2280,8 +2280,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mat_init_f32
 <LI><a href="#[17a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Init
-<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 <LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_tasks
 </UL>
@@ -2292,9 +2292,9 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_atan2_f32
 <LI><a href="#[17e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Update
-<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 <LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sqrtf
 <LI><a href="#[180]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[188]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INS_Task
 </UL>
@@ -2381,13 +2381,12 @@ Global Symbols
 <LI><a href="#[16b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;JUDGE_Read_Data
 </UL>
 
-<P><STRONG><a name="[193]"></a>Jump_Motion_Update</STRONG> (Thumb, 740 bytes, Stack size 56 bytes, jump_motion.o(.text.Jump_Motion_Update))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = Jump_Motion_Update &rArr; VMC_Set_F0_T
+<P><STRONG><a name="[193]"></a>Jump_Motion_Update</STRONG> (Thumb, 680 bytes, Stack size 64 bytes, jump_motion.o(.text.Jump_Motion_Update))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Jump_Motion_Update &rArr; VMC_Set_F0_T
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Buzzer_Tone_Max
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Stop_Buzzer
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_cos_f32
-<LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
 <LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Set_F0_T
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
@@ -2411,8 +2410,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 32 + Unknown Stack Size
 <LI>Call Chain = Kalman_Filter1_Measure &rArr; __aeabi_memcpy4
 </UL>
-<BR>[Calls]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<BR>[Calls]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[198]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Update
 </UL>
@@ -2481,8 +2480,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 32 + Unknown Stack Size
 <LI>Call Chain = Kalman_Filter_Measure &rArr; __aeabi_memcpy4
 </UL>
-<BR>[Calls]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<BR>[Calls]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[17e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Update
 </UL>
@@ -2564,7 +2563,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 </UL>
 
-<P><STRONG><a name="[1a2]"></a>Leg_L0_Control</STRONG> (Thumb, 330 bytes, Stack size 16 bytes, wheel_leg_about.o(.text.Leg_L0_Control))
+<P><STRONG><a name="[1a2]"></a>Leg_L0_Control</STRONG> (Thumb, 330 bytes, Stack size 16 bytes, chassis_height_control.o(.text.Leg_L0_Control))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Leg_L0_Control
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RAMP_float
@@ -2833,7 +2832,6 @@ Global Symbols
 <P><STRONG><a name="[116]"></a>PID_Clear</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Clear))
 <BR><BR>[Called By]<UL><LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Standing
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gravity_Compensation_Test_Function
-<LI><a href="#[193]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Jump_Motion_Update
 </UL>
 
 <P><STRONG><a name="[10b]"></a>PID_INIT</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, user_pid.o(.text.PID_INIT))
@@ -2951,7 +2949,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
 
-<P><STRONG><a name="[1d3]"></a>Roll_Comp</STRONG> (Thumb, 184 bytes, Stack size 8 bytes, wheel_leg_about.o(.text.Roll_Comp))
+<P><STRONG><a name="[1d3]"></a>Roll_Comp</STRONG> (Thumb, 184 bytes, Stack size 8 bytes, chassis_height_control.o(.text.Roll_Comp))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Roll_Comp
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
@@ -3036,8 +3034,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sit_On_Ground
 </UL>
 
-<P><STRONG><a name="[1d9]"></a>Speed_Error_Set</STRONG> (Thumb, 764 bytes, Stack size 56 bytes, wheel_leg_about.o(.text.Speed_Error_Set))
-<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
+<P><STRONG><a name="[1d9]"></a>Speed_Error_Set</STRONG> (Thumb, 776 bytes, Stack size 64 bytes, wheel_leg_about.o(.text.Speed_Error_Set))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RampStep_Update
 <LI><a href="#[1dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RampStep_Init
@@ -3065,7 +3063,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1c5]"></a>Standing</STRONG> (Thumb, 1384 bytes, Stack size 56 bytes, balance_standing.o(.text.Standing))
+<P><STRONG><a name="[1c5]"></a>Standing</STRONG> (Thumb, 1360 bytes, Stack size 56 bytes, balance_standing.o(.text.Standing))
 <BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = Standing &rArr; off_ground_detect &rArr; VMC_Get_Ground_F0
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -3186,7 +3184,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> stm32h7xx_hal_tim.o(.text.HAL_TIM_PWM_Start_DMA)
 </UL>
 <P><STRONG><a name="[3e]"></a>UART5_IRQHandler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32h7xx_it.o(.text.UART5_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
 <LI>Call Chain = UART5_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
@@ -3194,7 +3192,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[56]"></a>UART7_IRQHandler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32h7xx_it.o(.text.UART7_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
 <LI>Call Chain = UART7_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
@@ -3270,7 +3268,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.text.MX_FREERTOS_Init)
 </UL>
 <P><STRONG><a name="[8c]"></a>USART10_IRQHandler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32h7xx_it.o(.text.USART10_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
 <LI>Call Chain = USART10_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
@@ -3278,7 +3276,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[2f]"></a>USART1_IRQHandler</STRONG> (Thumb, 272 bytes, Stack size 8 bytes, stm32h7xx_it.o(.text.USART1_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 96 + Unknown Stack Size
 <LI>Call Chain = USART1_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_ReceiveToIdle_DMA
@@ -3287,7 +3285,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[30]"></a>USART2_IRQHandler</STRONG> (Thumb, 272 bytes, Stack size 8 bytes, stm32h7xx_it.o(.text.USART2_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 96 + Unknown Stack Size
 <LI>Call Chain = USART2_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_ReceiveToIdle_DMA
@@ -3406,7 +3404,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1e0]"></a>Yaw_Error_Coculate</STRONG> (Thumb, 176 bytes, Stack size 16 bytes, yaw_error.o(.text.Yaw_Error_Coculate))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Yaw_Error_Coculate &rArr; Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Yaw_Error_Coculate &rArr; Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Speed_Error_Set
 </UL>
@@ -3812,7 +3810,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1df]"></a>spinning_exit</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, spinning_motion.o(.text.spinning_exit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = spinning_exit &rArr; Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = spinning_exit &rArr; Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Speed_Error_Set
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
@@ -3822,7 +3820,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1de]"></a>spinning_up</STRONG> (Thumb, 202 bytes, Stack size 8 bytes, spinning_motion.o(.text.spinning_up))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = spinning_up &rArr; Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = spinning_up &rArr; Speed_Error_Set &rArr; __hardfp_atan2f &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Speed_Error_Set
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
@@ -3848,7 +3846,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[1bf]"></a>task_PID_Init</STRONG> (Thumb, 952 bytes, Stack size 72 bytes, chassis_init.o(.text.task_PID_Init))
+<P><STRONG><a name="[1bf]"></a>task_PID_Init</STRONG> (Thumb, 908 bytes, Stack size 72 bytes, chassis_init.o(.text.task_PID_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = task_PID_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
@@ -4450,7 +4448,7 @@ Local Symbols
 <LI> stm32h7xx_hal_uart.o(.text.UART_Start_Receive_DMA)
 </UL>
 <P><STRONG><a name="[a6]"></a>UART_DMAReceiveCplt</STRONG> (Thumb, 130 bytes, Stack size 0 bytes, stm32h7xx_hal_uart.o(.text.UART_DMAReceiveCplt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = UART_DMAReceiveCplt &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = UART_DMAReceiveCplt &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 <LI><a href="#[16a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_RxEventCallback
@@ -4458,7 +4456,7 @@ Local Symbols
 <BR>[Address Reference Count : 1]<UL><LI> stm32h7xx_hal_uart.o(.text.UART_Start_Receive_DMA)
 </UL>
 <P><STRONG><a name="[a7]"></a>UART_DMARxHalfCplt</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32h7xx_hal_uart.o(.text.UART_DMARxHalfCplt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = UART_DMARxHalfCplt &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = UART_DMARxHalfCplt &rArr; HAL_UARTEx_RxEventCallback &rArr; B2B_ParseUsart &rArr; HAL_UART_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxHalfCpltCallback
 <LI><a href="#[16a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_RxEventCallback
