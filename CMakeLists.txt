@@ -30,7 +30,7 @@ project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # Enable CMake support for ASM and C languages
-enable_language(C ASM)
+enable_language(C CXX ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -49,16 +49,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 file(GLOB_RECURSE THREAD CONFIGURE_DEPENDS
         "IMU_coculate/*.c"
-        "others/*.c"
-            "others/Device/src/*.c"
-            "others/Motion_Control/App/src/*.c"
-            "others/Motion_Control/Ctrl/src/*.c"
-            "others/Motion_Control/Drv/src/*.c"
-        "UI/*.c"
-        "UserMiddlewares/*.c"
-        "math/*.c"
-        "Power_control/*.c"
-        "CommonLibs/*.c"
+        "User_code/*.c"
+        "User_code/Device_drives/src/*.c"
+        "User_code/Motion_Control/App/*.c"
+        "User_code/Motion_Control/App/src/*.c"
+        "User_code/Motion_Control/Ctrl/src/*.c"
+        "User_code/Motion_Control/Power_control/*.c"
+        "User_code/CommonLibs/src/*.c"
+        "User_code/UI/source/*.c"
+        "User_code/UI/source/*.cpp"
 )
 
 # Add sources to executable
@@ -69,17 +68,15 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add include paths
 include_directories(
-    ${CMAKE_CURRENT_LIST_DIR}/others
-    ${CMAKE_CURRENT_LIST_DIR}/others/Device/inc
-    ${CMAKE_CURRENT_LIST_DIR}/others/Motion_Control/App/inc
-    ${CMAKE_CURRENT_LIST_DIR}/others/Motion_Control/Ctrl/inc
-    ${CMAKE_CURRENT_LIST_DIR}/others/Motion_Control/Drv/inc
     ${CMAKE_CURRENT_LIST_DIR}/IMU_coculate
-    ${CMAKE_CURRENT_LIST_DIR}/UI/include
-    ${CMAKE_CURRENT_LIST_DIR}/UserMiddlewares/include
-    ${CMAKE_CURRENT_LIST_DIR}/math/include
-    ${CMAKE_CURRENT_LIST_DIR}/Power_control
-    ${CMAKE_CURRENT_LIST_DIR}/CommonLibs/inc
+    ${CMAKE_CURRENT_LIST_DIR}/User_code
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/Device_drives/inc
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/Motion_Control/App
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/Motion_Control/App/inc
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/Motion_Control/Ctrl/inc
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/Motion_Control/Power_control
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/CommonLibs/inc
+    ${CMAKE_CURRENT_LIST_DIR}/User_code/UI/include
 )
 
 # Add project symbols (macros)

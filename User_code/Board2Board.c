@@ -1,0 +1,327 @@
+#include "Board2Board.h"
+#include "USER_CAN.h"
+#include "Detect.h"
+#include "Judge.h"
+#include "usart.h"
+#include "cmsis_os.h"
+#include "chassis_behavior_tree.h"
+#include <stdint.h>
+#include "User_State.h"
+#include "Gimbal.h"
+#include "Motor_Drv.h"
+#include "tfmini.h"
+
+extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
+uint8_t usart7RxBuf[128];
+uint8_t usart10RxBuf[128];
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart2_rx;
+extern DMA_HandleTypeDef hdma_uart7_rx;
+extern DMA_HandleTypeDef hdma_usart10_rx;
+extern osThreadId ErrorHandle;
+
+uint8_t rs485_isvalid = 0;
+float total_turnPower = 0;
+uint8_t cap_fastMode=0;
+uint8_t diagonal_enable = 1;
+uint8_t trigger_block;
+int	shootnum;
+uint8_t trigger_reverse;
+int16_t fric_speed_l_rpm = 0;  // 上板下发，byte47~48，int16 小端，单位 RPM
+int16_t fric_speed_r_rpm = 0;  // 上板下发，byte49~50，int16 小端，单位 RPM
+
+#define EN_B2B_TASK		  // 使能任务
+uint8_t usart2RxBuf[256]; // 串口2缓冲区
+uint8_t STOPFLAG = 0;	// 停止标志，1为停止，0为正常
+uint8_t FEEDBACK = 0;
+int16_t fricMotor_left_speed;
+uint8_t chassis_rotate_mode;	//画UI用的
+int16_t chassis_rotate_angle;
+uint8_t vision_mode; // 0为自瞄，1为小符，2为大符
+uint8_t visionFindcheck;
+int16_t visionX = 0;
+int16_t visionY = 0;
+uint8_t vision_exposure;
+uint8_t vision_rune_dirt; ////0-anti-clockwise 1-clockwise
+uint16_t speed_limit1 = 0;
+float v_dis = 0;
+
+uint32_t rs485_cnt = 0;
+
+uint8_t UP_Leg;
+
+// ==== 新增：上板 RS485 新协议透传字段 ====
+int16_t sbus_ch[4];
+int16_t sbus_sw[8];
+int16_t sbus_knob[4];
+uint8_t vision_mode_active = 0;
+
+// 板间通信初始化
+void B2B_Init()
+{
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart2, usart2RxBuf, sizeof(usart2RxBuf));
+	__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart7, usart7RxBuf, sizeof(usart7RxBuf));
+	__HAL_DMA_DISABLE_IT(&hdma_uart7_rx, DMA_IT_HT);
+
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart10, usart10RxBuf, sizeof(usart10RxBuf));
+	__HAL_DMA_DISABLE_IT(&hdma_usart10_rx, DMA_IT_HT);
+}
+
+void B2B_LostCallback()
+{
+		rs485_cnt++;
+		B2B_Init();
+		if (rs485_cnt <= 2)
+			return; // 双板485初次进入等上板发送对齐时间
+
+		if (rs485_cnt > 10)
+		{
+//			osThreadResume(ErrorTaskHandle);
+		}
+		
+}
+// 解析串口数据并转发数据回传利用代码执行时间进行短时间延时
+uint8_t txbuffer[64] = {0};
+int receive_times;
+
+extern float target_body_speed;
+float Foot_Target_Relative_Angle;//!目前没用。以后可能会用
+uint8_t upstairs_flag = 0;//0：常态；1：上台阶的瞬间
+uint8_t sit_mode_enable = 0;//0：正常，1：坐地模式
+uint8_t sit_debug_force = 0;   // 调试用：debugger中设为1可强制进入坐地模式
+uint8_t leg_state_locked_short = 0;//两腿离地时由 motor.c 置1，把 Target_Leg_State 锁短腿；上位机发短腿(0)即解锁
+uint8_t AIM_State = 0;//0为不自瞄，1为自瞄
+
+uint32_t user_g ;
+
+void B2B_ParseUsart() // 先发低字节
+{
+	if (usart2RxBuf[0] == 0xAA && usart2RxBuf[63] == 0xFE)
+	{
+		Foot_Chassis.Remote_control_x = (float)((int16_t)(usart2RxBuf[1] | usart2RxBuf[2] << 8))/1000.0f;
+		Foot_Chassis.Remote_control_y = (float)((int16_t)(usart2RxBuf[3] | usart2RxBuf[4] << 8))/1000.0f;
+		
+		// ==== 新增：SBUS 摇杆 ch0~ch3（byte5~12）====
+		sbus_ch[0] = (int16_t)(usart2RxBuf[5]  | (usart2RxBuf[6]  << 8));
+		sbus_ch[1] = (int16_t)(usart2RxBuf[7]  | (usart2RxBuf[8]  << 8));
+		sbus_ch[2] = (int16_t)(usart2RxBuf[9]  | (usart2RxBuf[10] << 8));
+		sbus_ch[3] = (int16_t)(usart2RxBuf[11] | (usart2RxBuf[12] << 8));
+		// ==== 新增：SBUS 开关 sw0~sw5（byte13~24）====
+		sbus_sw[0] = (int16_t)(usart2RxBuf[13] | (usart2RxBuf[14] << 8));
+		sbus_sw[1] = (int16_t)(usart2RxBuf[15] | (usart2RxBuf[16] << 8));
+		sbus_sw[2] = (int16_t)(usart2RxBuf[17] | (usart2RxBuf[18] << 8));
+		sbus_sw[3] = (int16_t)(usart2RxBuf[19] | (usart2RxBuf[20] << 8));
+		sbus_sw[4] = (int16_t)(usart2RxBuf[21] | (usart2RxBuf[22] << 8));
+		sbus_sw[5] = (int16_t)(usart2RxBuf[23] | (usart2RxBuf[24] << 8));
+
+		uint8_t stopFlag = (usart2RxBuf[29] >> 7) & 0x01;	 // 最高位
+		uint8_t chassisMode = (usart2RxBuf[29] >> 5) & 0x03; // 第6-7位
+		uint8_t visionFind = (usart2RxBuf[29] >> 4) & 0x01;	 // 第5位+
+		uint8_t visionMode = (usart2RxBuf[29] >> 2) & 0x03;	 // 第3-4位
+		cap_fastMode=(usart2RxBuf[29] >> 1) & 0x01;
+		// RemoteControl.keyboard_value.bit.C = usart2RxBuf[29] & 0x01;
+		
+		// 更新相应的变量
+		STOPFLAG = stopFlag;
+		chassis_rotate_mode = chassisMode;
+		visionFindcheck = visionFind;
+		vision_mode = visionMode;
+
+		// Yaw_DM4310.Target_Speed = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
+		Yaw_DM4310.Target_Torque = (float)((int16_t)(usart2RxBuf[25] | usart2RxBuf[26] << 8)) / 1000.0f;
+
+		Shooter_DM2325.Target_Torque = (float)((((int16_t)(usart2RxBuf[27] | usart2RxBuf[28] << 8))/1000.0f)*0.18f);
+
+		fricMotor_left_speed = usart2RxBuf[30] | usart2RxBuf[31] << 8;
+		chassis_rotate_angle = usart2RxBuf[32] | usart2RxBuf[33] << 8;
+
+		// ==== 新增：SBUS 开关 sw6~sw7（byte30~33）+ 旋钮 knob0（byte34~35）====
+		sbus_sw[6]   = (int16_t)(usart2RxBuf[30] | (usart2RxBuf[31] << 8));
+		sbus_sw[7]   = (int16_t)(usart2RxBuf[32] | (usart2RxBuf[33] << 8));
+		sbus_knob[0] = (int16_t)(usart2RxBuf[34] | (usart2RxBuf[35] << 8));
+
+		v_dis = usart2RxBuf[34];
+		speed_limit1 = usart2RxBuf[35] & 0x0F;
+
+		shootnum = usart2RxBuf[38] << 16 | usart2RxBuf[37] << 8 | usart2RxBuf[36]; 
+		trigger_reverse = usart2RxBuf[39];
+		// ==== 新增：SBUS 旋钮 knob1（byte39~40）====
+		sbus_knob[1] = (int16_t)(usart2RxBuf[39] | (usart2RxBuf[40] << 8));
+		diagonal_enable = (usart2RxBuf[41] >> 7) & 0x01;
+		vision_exposure = (usart2RxBuf[41] >> 2) & 0x1F;
+		vision_rune_dirt = (usart2RxBuf[41] >> 1) & 0x01;
+		trigger_block = usart2RxBuf[41] & 0x01;
+
+		//两腿离地锁短腿：先用本次上位机值判断解锁，再决定写入值
+		{
+			uint8_t rx_leg = usart2RxBuf[42];
+			if (rx_leg == 0) leg_state_locked_short = 0;
+			Foot_Chassis.Target_Leg_State = leg_state_locked_short ? 0 : rx_leg;
+		}
+		Foot_Chassis.Chassis_Mode = usart2RxBuf[43];
+		// if(usart2RxBuf[44] == 1)
+		// {
+		// 	upstairs_flag = 1;
+		// }
+			upstairs_flag = usart2RxBuf[44];
+			sit_mode_enable = usart2RxBuf[45] | sit_debug_force;
+		// ==== 新增：自瞄模式激活标志（byte46）====
+		vision_mode_active = usart2RxBuf[46];
+
+		/* 摩擦轮目标转速：byte47~48 / byte49~50，int16 小端，原值即 RPM */
+		fric_speed_l_rpm = (int16_t)(usart2RxBuf[47] | (usart2RxBuf[48] << 8));
+		fric_speed_r_rpm = (int16_t)(usart2RxBuf[49] | (usart2RxBuf[50] << 8));
+
+		/* 跳跃指令：byte51，=1 请求跳跃，=0 解除跳跃锁
+		   实际 jump_mode 由 motor.c 内部根据 jump_cmd 和 jump_locked 综合判定 */
+		if(sbus_sw[2] == 678)
+		{
+			jump_cmd = 1;
+		}
+		else 
+		{
+			jump_cmd = 0;
+		}
+		
+		// ==== 新增：SBUS 旋钮 knob2~knob3（byte52~55）====
+		sbus_knob[2] = (int16_t)(usart2RxBuf[52] | (usart2RxBuf[53] << 8));
+		sbus_knob[3] = (int16_t)(usart2RxBuf[54] | (usart2RxBuf[55] << 8));
+		// for(int i = 0; i <= 127; i++)
+		// {
+		// 	usart2RxBuf[i] = 0;
+		// }
+		
+		/* 发送    */
+		txbuffer[0] = 0xAB;
+		txbuffer[63] = 0xFD;
+
+		txbuffer[25] = (int16_t)(Yaw_DM4310.Rx_Data.Position * 1000);
+		txbuffer[26] = ((int16_t)(Yaw_DM4310.Rx_Data.Position * 1000)) >> 8;
+
+		txbuffer[27] = (int16_t)(Yaw_DM4310.Rx_Data.Velocity * 1000);
+		txbuffer[28] = (int16_t)(Yaw_DM4310.Rx_Data.Velocity * 1000) >> 8;
+
+		txbuffer[29] = (int16_t)(Shooter_DM2325.Rx_Data.Position * 1000);
+		txbuffer[30] = ((int16_t)(Shooter_DM2325.Rx_Data.Position * 1000)) >> 8;
+
+		txbuffer[31] = (int16_t)(Shooter_DM2325.Rx_Data.Velocity * 100);
+		txbuffer[32] = ((int16_t)(Shooter_DM2325.Rx_Data.Velocity * 100)) >> 8;
+
+		GameRobotStat.power_management_gimbal_output = 1;
+		GameRobotStat.power_management_chassis_output = 1;
+		GameRobotStat.power_management_shooter_output = 1;
+		detectList[DeviceID_YawMotor].isLost = 0;
+
+		txbuffer[33] = FEEDBACK << 7 | detectList[DeviceID_YawMotor].isLost << 6 | GameRobotStat.power_management_gimbal_output << 5 | GameRobotStat.power_management_chassis_output << 4 | GameRobotStat.power_management_shooter_output << 3 | GameRobotStat.robot_level;
+		//!FEEDBACK：因为上板开启急停之后就不发消息了，所以下板这个feedback意思就是告诉上板“我听见你的急停了，你可以死了”上板听到这句话，然后就死了，485就静默了……这个骂不了丛庆，因为是他的老登写的，史作俑者：王传祺
+
+		txbuffer[35] = JUDGE_GetRemainHeat();
+		txbuffer[36] = JUDGE_GetRemainHeat() >> 8;
+
+		txbuffer[39] = JUDGE_GetCoolingValue();
+		txbuffer[40] = JUDGE_GetCoolingValue() >> 8;
+
+
+		txbuffer[45] = JUDGE_IsValid();
+
+		txbuffer[46] = gimbal_follow_flag;
+
+		user_g++;
+
+		rs485_isvalid = 1;
+
+		HAL_UART_Transmit_DMA(&huart2, txbuffer, 64);
+	}
+}
+
+uint16_t B2B_offline_cnt = 0;
+uint16_t pre_B2B_offline_cnt = 0;
+uint8_t B2B_time_cnt = 0;
+uint8_t B2B_offline_flag = 0;
+
+int aaaa;
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+	if (huart == &huart1)
+	{
+		JUDGE_Read_Data(usart1RxBuf);
+		Detect_Update(DeviceID_Judge);
+	}
+
+	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
+	{
+		//启动下一次UART1接收
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
+
+
+		receive_times ++;
+		B2B_ParseUsart();
+		Detect_Update(DeviceID_B2B);
+		detectList[DeviceID_B2B].isLost = 0;
+
+		B2B_offline_cnt ++;
+	}
+	//功率计模块
+	if (huart == &huart7)
+	{
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart7, usart7RxBuf, sizeof(usart7RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_uart7_rx, DMA_IT_HT);
+	}
+	if (huart == &huart10)
+	{
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart10, usart10RxBuf, sizeof(usart10RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_usart10_rx, DMA_IT_HT);
+		TFmini_Parse();
+	}
+}
+
+void Task_B2B_Callback()
+{
+	
+	if (STOPFLAG == 1)
+	{
+		FEEDBACK = 1;
+		B2B_ParseUsart();
+		osThreadResume(ErrorHandle); // 恢复错误任务 饿死其他任务
+	}
+}
+int times;
+/************************freertos任务****************************/
+#ifdef EN_B2B_TASK // 使能任务
+void OS_Board2BoardCallback(void const *argument)
+{
+	for (;;)
+	{
+		times ++;
+		if(times >= 100)
+		{
+			times = 0;
+			if(receive_times <= 5)
+			{
+				HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));
+				__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
+			}
+			receive_times = 0;
+		}
+		Task_B2B_Callback();
+
+		if(B2B_time_cnt >= 250)
+		{
+			if(B2B_offline_cnt == pre_B2B_offline_cnt)
+			{
+				B2B_offline_flag = 1;
+				STOPFLAG = 1;
+			}
+			pre_B2B_offline_cnt = B2B_offline_cnt;
+			B2B_time_cnt = 0;
+		}
+		B2B_time_cnt ++;
+
+		osDelay(2);
+	}
+}
+#endif
