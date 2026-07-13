@@ -49,4 +49,4 @@ h7_ctrl/imu_tasks.o: ..\IMU_coculate\IMU_tasks.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\Core\Inc\dma.h ..\Core\Inc\memorymap.h ..\Core\Inc\spi.h \
   ..\Core\Inc\usart.h ..\Core\Inc\gpio.h ..\IMU_coculate\BMI088driver.h \
-  ..\others\Device\inc\remoter.h
+  ..\User_code\Device_drives\inc\remoter.h

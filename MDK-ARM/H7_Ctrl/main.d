@@ -49,5 +49,5 @@ h7_ctrl/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\Core\Inc\adc.h ..\Core\Inc\dma.h ..\Core\Inc\fdcan.h \
   ..\Core\Inc\spi.h ..\Core\Inc\tim.h ..\Core\Inc\usart.h \
-  ..\Core\Inc\gpio.h ..\others\Motion_Control\Drv\inc\USER_CAN.h \
-  ..\UserMiddlewares\include\Board2Board.h ..\UI\include\Judge.h
+  ..\Core\Inc\gpio.h ..\User_code\Device_drives\inc\USER_CAN.h \
+  ..\User_code\Board2Board.h ..\User_code\UI\include\Judge.h

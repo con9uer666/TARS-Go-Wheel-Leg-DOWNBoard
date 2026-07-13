@@ -1,5 +1,5 @@
-h7_ctrl/vmc.o: ..\others\Motion_Control\Ctrl\src\VMC.c ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+h7_ctrl/vmc.o: ..\User_code\Motion_Control\Ctrl\src\VMC.c \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -69,8 +69,8 @@ h7_ctrl/vmc.o: ..\others\Motion_Control\Ctrl\src\VMC.c ..\Core\Inc\main.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
   ..\IMU_coculate\imu_temp_ctrl.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Motion_Control\Ctrl\inc\Gas_Spring.h
+  ..\User_code\Device_drives\inc\Motor_Drv.h \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h

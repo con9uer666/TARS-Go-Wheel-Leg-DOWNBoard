@@ -1,5 +1,6 @@
-h7_ctrl/led.o: ..\others\Device\src\LED.c ..\others\Device\inc\LED.h \
-  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+h7_ctrl/led.o: ..\User_code\Device_drives\src\LED.c \
+  ..\User_code\Device_drives\inc\LED.h ..\Core\Inc\main.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -48,5 +49,5 @@ h7_ctrl/led.o: ..\others\Device\src\LED.c ..\others\Device\inc\LED.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\others\Device\inc\remoter.h ..\others\Device\inc\buzzer.h \
-  ..\others\State.h
+  ..\User_code\Device_drives\inc\remoter.h \
+  ..\User_code\Device_drives\inc\buzzer.h ..\User_code\State.h

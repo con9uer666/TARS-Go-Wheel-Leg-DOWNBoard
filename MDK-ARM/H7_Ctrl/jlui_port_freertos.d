@@ -1,5 +1,5 @@
-h7_ctrl/jlui_port_freertos.o: ..\UI\source\jlui_port_freertos.c \
-  ..\UI\include\jlui.h ..\Core\Inc\usart.h ..\Core\Inc\main.h \
+h7_ctrl/jlui_port_freertos.o: ..\User_code\UI\source\jlui_port_freertos.c \
+  ..\User_code\UI\include\jlui.h ..\Core\Inc\usart.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -45,9 +45,8 @@ h7_ctrl/jlui_port_freertos.o: ..\UI\source\jlui_port_freertos.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
-  ..\UserMiddlewares\include\userfreertos.h \
+  ..\User_code\Board2Board.h ..\User_code\UI\include\judge.h \
+  ..\User_code\UI\include\Graphics.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\Core\Inc\spi.h ..\UserMiddlewares\include\Board2Board.h \
-  ..\UI\include\judge.h ..\UI\include\Graphics.h
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h

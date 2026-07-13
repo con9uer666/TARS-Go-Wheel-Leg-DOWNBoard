@@ -1,5 +1,5 @@
-h7_ctrl/gimbal.o: ..\others\Motion_Control\App\src\Gimbal.c \
-  ..\others\Motion_Control\App\inc\Gimbal.h ..\Core\Inc\main.h \
+h7_ctrl/gimbal.o: ..\User_code\Motion_Control\App\src\Gimbal.c \
+  ..\User_code\Motion_Control\App\inc\Gimbal.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -48,11 +48,11 @@ h7_ctrl/gimbal.o: ..\others\Motion_Control\App\src\Gimbal.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\others\Motion_Control\App\inc\User_State.h \
-  ..\CommonLibs\inc\Angle_about.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h
+  ..\User_code\Motion_Control\App\inc\User_State.h \
+  ..\User_code\CommonLibs\inc\Angle_about.h \
+  ..\User_code\Device_drives\inc\Motor_Drv.h \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h

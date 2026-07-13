@@ -33,5 +33,5 @@ h7_ctrl/stm32h7xx_it.o: ..\Core\Src\stm32h7xx_it.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Core\Inc\stm32h7xx_it.h ..\UserMiddlewares\include\Board2Board.h \
-  ..\Core\Inc\usart.h ..\UI\include\judge.h
+  ..\Core\Inc\stm32h7xx_it.h ..\User_code\Board2Board.h \
+  ..\Core\Inc\usart.h ..\User_code\UI\include\judge.h

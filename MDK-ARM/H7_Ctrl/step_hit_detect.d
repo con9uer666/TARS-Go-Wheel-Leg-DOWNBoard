@@ -1,6 +1,6 @@
 h7_ctrl/step_hit_detect.o: \
-  ..\others\Motion_Control\App\src\step_hit_detect.c \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\App\src\step_hit_detect.c \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -35,14 +35,14 @@ h7_ctrl/step_hit_detect.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Motion_Control\App\inc\Gimbal.h \
-  ..\others\Motion_Control\App\inc\User_State.h ..\others\State.h \
-  ..\others\Device\inc\remoter.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Device_drives\inc\Motor_Drv.h \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\Motion_Control\App\inc\Gimbal.h \
+  ..\User_code\Motion_Control\App\inc\User_State.h ..\User_code\State.h \
+  ..\User_code\Device_drives\inc\remoter.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -65,13 +65,13 @@ h7_ctrl/step_hit_detect.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\others\Motion_Control\Ctrl\inc\observe_task.h \
-  ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h \
-  ..\others\Motion_Control\Ctrl\inc\Leg_Control.h \
-  ..\others\Motion_Control\App\inc\Self_Righting.h \
-  ..\UserMiddlewares\include\Board2Board.h ..\Core\Inc\usart.h \
-  ..\math\include\Slope.h \
-  ..\others\Motion_Control\Ctrl\inc\Wheel_Leg_about.h \
+  ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
+  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h \
+  ..\User_code\Motion_Control\App\inc\Self_Righting.h \
+  ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
+  ..\User_code\CommonLibs\inc\Slope.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h \
   ..\IMU_coculate\controller.h ..\IMU_coculate\user_lib.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
@@ -87,8 +87,9 @@ h7_ctrl/step_hit_detect.o: \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\IMU_coculate\imu_temp_ctrl.h ..\CommonLibs\inc\Angle_about.h \
-  ..\Power_control\PowerCtrl.h \
-  ..\others\Motion_Control\Ctrl\inc\Gas_Spring.h \
-  ..\others\Device\inc\buzzer.h ..\Core\Inc\tim.h \
-  ..\others\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h
+  ..\IMU_coculate\imu_temp_ctrl.h \
+  ..\User_code\CommonLibs\inc\Angle_about.h \
+  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h \
+  ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\tim.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h

@@ -1,5 +1,5 @@
-h7_ctrl/buzzer.o: ..\others\Device\src\buzzer.c \
-  ..\others\Device\inc\buzzer.h ..\Core\Inc\main.h \
+h7_ctrl/buzzer.o: ..\User_code\Device_drives\src\buzzer.c \
+  ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -34,4 +34,4 @@ h7_ctrl/buzzer.o: ..\others\Device\src\buzzer.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Core\Inc\tim.h ..\others\Device\inc\remoter.h
+  ..\Core\Inc\tim.h ..\User_code\Device_drives\inc\remoter.h

@@ -1,5 +1,5 @@
-h7_ctrl/user_pid.o: ..\others\Motion_Control\Ctrl\src\user_pid.c \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
+h7_ctrl/user_pid.o: ..\User_code\Motion_Control\Ctrl\src\user_pid.c \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \

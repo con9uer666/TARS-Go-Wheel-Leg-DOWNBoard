@@ -1,5 +1,5 @@
-h7_ctrl/angle_about.o: ..\CommonLibs\src\Angle_about.c \
-  ..\CommonLibs\inc\Angle_about.h ..\Core\Inc\main.h \
+h7_ctrl/angle_about.o: ..\User_code\CommonLibs\src\Angle_about.c \
+  ..\User_code\CommonLibs\inc\Angle_about.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \

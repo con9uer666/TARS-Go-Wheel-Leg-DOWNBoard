@@ -1,6 +1,6 @@
 h7_ctrl/kalman_filter1.o: \
-  ..\others\Motion_Control\Ctrl\src\kalman_filter1.c \
-  ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h \
+  ..\User_code\Motion_Control\Ctrl\src\kalman_filter1.c \
+  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \

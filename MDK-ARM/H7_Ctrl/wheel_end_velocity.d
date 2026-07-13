@@ -1,6 +1,6 @@
 h7_ctrl/wheel_end_velocity.o: \
-  ..\others\Motion_Control\Ctrl\src\Wheel_End_Velocity.c \
-  ..\others\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h \
+  ..\User_code\Motion_Control\Ctrl\src\Wheel_End_Velocity.c \
+  ..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -35,9 +35,9 @@ h7_ctrl/wheel_end_velocity.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
-  ..\others\Motion_Control\Ctrl\inc\observe_task.h \
-  ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
+  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -60,6 +60,6 @@ h7_ctrl/wheel_end_velocity.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h

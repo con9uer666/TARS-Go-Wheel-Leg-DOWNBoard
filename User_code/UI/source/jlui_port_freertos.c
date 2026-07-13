@@ -4,8 +4,9 @@
 #include <freertos.h>
 #include <semphr.h>
 #include "Board2Board.h"
-#include "Judge.h"
+#include "judge.h"
 #include "Graphics.h"
+#include "cmsis_os.h"
 
 extern int16_t fricMotor_left_speed;
 extern uint8_t chassis_rotate_mode;

@@ -1,1 +1,1 @@
-h7_ctrl/fricmodelsim.o: ..\math\source\FricModelSIM.c
+h7_ctrl/fricmodelsim.o: ..\User_code\CommonLibs\src\FricModelSIM.c

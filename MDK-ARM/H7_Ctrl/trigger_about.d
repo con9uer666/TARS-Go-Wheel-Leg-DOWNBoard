@@ -1,5 +1,5 @@
-h7_ctrl/trigger_about.o: ..\CommonLibs\src\Trigger_about.c \
-  ..\CommonLibs\inc\Trigger_about.h ..\Core\Inc\main.h \
+h7_ctrl/trigger_about.o: ..\User_code\CommonLibs\src\Trigger_about.c \
+  ..\User_code\CommonLibs\inc\Trigger_about.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \

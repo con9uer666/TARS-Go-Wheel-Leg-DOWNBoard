@@ -144,7 +144,7 @@ static void JLUI_Internal_TransmitStringObject(uint32_t index, UiOperation op)
     memset(stringBuffer, 0, 30);
     strncpy(stringBuffer,
             strObj.detailDword3.strVal,
-            std::min(uint32_t(strObj.detailDword1.detailB), 30u));
+            std::min(uint32_t(strObj.detailDword1.detailB), uint32_t(30u)));
     Append_CRC16_Check_Sum(jluiTxBuffer, 60); // (5+2+6)+15+30+2
 
     JLUI_SendData(jluiTxBuffer, 60);
@@ -684,7 +684,7 @@ extern "C" void JLUI_SetStringChanged(Uiid id)
 
     auto &obj = jluiObjectList[id];
     // 重新计算字符串长度
-    obj.detailDword1.detailB = std::min(uint32_t(strlen(obj.detailDword3.strVal)), 30u);
+    obj.detailDword1.detailB = std::min(uint32_t(strlen(obj.detailDword3.strVal)), uint32_t(30u));
     obj.metadata.dirty = true;
 
     JLUI_MutexUnlock(jluiObjectListMutex);
@@ -891,7 +891,7 @@ extern "C" void JLUI_SetString(Uiid id, const char *str)
     JLUI_TRY_LOCK();
 
     obj.detailDword3.strVal = str;
-    obj.detailDword1.detailB = std::min(uint32_t(strlen(str)), 30u);
+    obj.detailDword1.detailB = std::min(uint32_t(strlen(str)), uint32_t(30u));
     obj.metadata.dirty = true;
 
     JLUI_MutexUnlock(jluiObjectListMutex);
@@ -912,7 +912,7 @@ extern "C" void JLUI_SetStringWithLength(Uiid id, const char *str, int length)
     JLUI_TRY_LOCK();
 
     obj.detailDword3.strVal = str;
-    obj.detailDword1.detailB = std::min(uint32_t(length), 30u);
+    obj.detailDword1.detailB = std::min(uint32_t(length), uint32_t(30u));
     obj.metadata.dirty = true;
 
     JLUI_MutexUnlock(jluiObjectListMutex);

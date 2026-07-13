@@ -1,5 +1,6 @@
-h7_ctrl/ui_g.o: ..\UI\source\ui_g.c ..\UI\include\ui_interface.h \
-  ..\UI\include\ui_types.h \
+h7_ctrl/ui_g.o: ..\User_code\UI\source\ui_g.c \
+  ..\User_code\UI\include\ui_interface.h \
+  ..\User_code\UI\include\ui_types.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \

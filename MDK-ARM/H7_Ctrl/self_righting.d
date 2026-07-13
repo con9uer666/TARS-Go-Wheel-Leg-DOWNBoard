@@ -1,5 +1,6 @@
-h7_ctrl/self_righting.o: ..\others\Motion_Control\App\src\Self_Righting.c \
-  ..\others\Motion_Control\App\inc\Self_Righting.h ..\Core\Inc\main.h \
+h7_ctrl/self_righting.o: \
+  ..\User_code\Motion_Control\App\src\Self_Righting.c \
+  ..\User_code\Motion_Control\App\inc\Self_Righting.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -34,12 +35,12 @@ h7_ctrl/self_righting.o: ..\others\Motion_Control\App\src\Self_Righting.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\Ctrl\inc\Leg_Control.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\CommonLibs\inc\Angle_about.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Device\inc\buzzer.h ..\Core\Inc\tim.h
+  ..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\CommonLibs\inc\Angle_about.h \
+  ..\User_code\Device_drives\inc\Motor_Drv.h \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\tim.h

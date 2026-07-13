@@ -1,7 +1,7 @@
-h7_ctrl/ui_interface.o: ..\UI\source\ui_interface.c \
-  ..\UI\include\ui_interface.h ..\UI\include\ui_types.h \
-  ..\Core\Inc\usart.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+h7_ctrl/ui_interface.o: ..\User_code\UI\source\ui_interface.c \
+  ..\User_code\UI\include\ui_interface.h \
+  ..\User_code\UI\include\ui_types.h ..\Core\Inc\usart.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \

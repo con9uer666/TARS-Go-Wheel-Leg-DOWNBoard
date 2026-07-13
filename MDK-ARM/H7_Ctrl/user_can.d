@@ -1,5 +1,5 @@
-h7_ctrl/user_can.o: ..\others\Motion_Control\Drv\src\USER_CAN.c \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+h7_ctrl/user_can.o: ..\User_code\Device_drives\src\USER_CAN.c \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -48,11 +48,11 @@ h7_ctrl/user_can.o: ..\others\Motion_Control\Drv\src\USER_CAN.c \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\others\Device\inc\remoter.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Device_drives\inc\remoter.h \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -75,6 +75,7 @@ h7_ctrl/user_can.o: ..\others\Motion_Control\Drv\src\USER_CAN.c \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h \
-  ..\others\Device\inc\wattmeter.h ..\others\Device\inc\buzzer.h \
-  ..\Core\Inc\tim.h ..\others\Motion_Control\App\inc\Self_Righting.h
+  ..\User_code\Device_drives\inc\Motor_Drv.h \
+  ..\User_code\Device_drives\inc\wattmeter.h \
+  ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\tim.h \
+  ..\User_code\Motion_Control\App\inc\Self_Righting.h

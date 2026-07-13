@@ -1,10 +1,11 @@
 #include "Judge.h"
 #include "string.h"
-#include "Crc.h"
+#include "cRc.h"
 #include "usart.h"
 #include "usart.h"
 #include "Board2Board.h"
 #include "myQueue.h"
+#include "cmsis_os.h"
 #define EN_JUDGE_TASK
 
 /*****************系统数据定义**********************/

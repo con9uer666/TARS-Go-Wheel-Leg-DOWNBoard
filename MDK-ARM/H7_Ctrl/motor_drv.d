@@ -1,5 +1,5 @@
-h7_ctrl/motor_drv.o: ..\others\Motion_Control\Drv\src\Motor_Drv.c \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h ..\Core\Inc\main.h \
+h7_ctrl/motor_drv.o: ..\User_code\Device_drives\src\Motor_Drv.c \
+  ..\User_code\Device_drives\inc\Motor_Drv.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -34,4 +34,4 @@ h7_ctrl/motor_drv.o: ..\others\Motion_Control\Drv\src\Motor_Drv.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h

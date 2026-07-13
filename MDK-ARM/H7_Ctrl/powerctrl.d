@@ -1,6 +1,7 @@
-h7_ctrl/powerctrl.o: ..\Power_control\PowerCtrl.c \
-  ..\Power_control\PowerCtrl.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+h7_ctrl/powerctrl.o: \
+  ..\User_code\Motion_Control\Power_control\PowerCtrl.c \
+  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -34,12 +35,12 @@ h7_ctrl/powerctrl.o: ..\Power_control\PowerCtrl.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
-  ..\others\Motion_Control\Ctrl\inc\observe_task.h \
-  ..\others\Motion_Control\Ctrl\inc\kalman_filter1.h \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
+  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -62,4 +63,5 @@ h7_ctrl/powerctrl.o: ..\Power_control\PowerCtrl.c \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\UI\include\Judge.h ..\others\Device\inc\wattmeter.h
+  ..\User_code\UI\include\Judge.h \
+  ..\User_code\Device_drives\inc\wattmeter.h

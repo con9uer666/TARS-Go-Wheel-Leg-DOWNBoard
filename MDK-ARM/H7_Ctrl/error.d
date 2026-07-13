@@ -1,4 +1,4 @@
-h7_ctrl/error.o: ..\others\Error.c ..\Core\Inc\main.h \
+h7_ctrl/error.o: ..\User_code\Error.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -47,13 +47,12 @@ h7_ctrl/error.o: ..\others\Error.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\Core\Inc\usart.h ..\others\Device\inc\remoter.h \
-  ..\others\Device\inc\LED.h ..\Core\Inc\tim.h \
-  ..\others\Device\inc\buzzer.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h \
-  ..\UserMiddlewares\include\Board2Board.h \
-  ..\others\Motion_Control\Drv\inc\Motor_Drv.h
+  ..\Core\Inc\usart.h ..\User_code\Device_drives\inc\remoter.h \
+  ..\User_code\Device_drives\inc\LED.h ..\Core\Inc\tim.h \
+  ..\User_code\Device_drives\inc\buzzer.h \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\User_code\Board2Board.h \
+  ..\User_code\Device_drives\inc\Motor_Drv.h

@@ -1,7 +1,7 @@
-h7_ctrl/leg_control.o: ..\others\Motion_Control\Ctrl\src\Leg_Control.c \
-  ..\others\Motion_Control\Ctrl\inc\Leg_Control.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
+h7_ctrl/leg_control.o: ..\User_code\Motion_Control\Ctrl\src\Leg_Control.c \
+  ..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -36,4 +36,4 @@ h7_ctrl/leg_control.o: ..\others\Motion_Control\Ctrl\src\Leg_Control.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\CommonLibs\inc\Angle_about.h
+  ..\User_code\CommonLibs\inc\Angle_about.h

@@ -1,8 +1,8 @@
 #include "Detect.h"
 #include "USER_CAN.h"
-#include "UserFreertos.h"
 #include "judge.h"
 #include "Board2Board.h"
+#include "cmsis_os.h"
 
 /****内部函数声明****/
 // 默认掉线处理函数

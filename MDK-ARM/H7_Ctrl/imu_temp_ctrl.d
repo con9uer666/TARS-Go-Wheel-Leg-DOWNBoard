@@ -73,4 +73,4 @@ h7_ctrl/imu_temp_ctrl.o: ..\IMU_coculate\imu_temp_ctrl.c \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
   ..\IMU_coculate\QuaternionEKF.h ..\IMU_coculate\imu_temp_ctrl.h \
   ..\IMU_coculate\MahonyAHRS.h ..\IMU_coculate\pid.h \
-  ..\others\Device\inc\remoter.h ..\Core\Inc\usart.h
+  ..\User_code\Device_drives\inc\remoter.h ..\Core\Inc\usart.h

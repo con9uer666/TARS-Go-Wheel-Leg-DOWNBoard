@@ -1,4 +1,4 @@
-h7_ctrl/state.o: ..\others\State.c ..\Core\Inc\main.h \
+h7_ctrl/state.o: ..\User_code\State.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -47,9 +47,9 @@ h7_ctrl/state.o: ..\others\State.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\others\Device\inc\remoter.h ..\others\state.h \
-  ..\others\Device\inc\buzzer.h ..\Core\Inc\tim.h \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\adc.h
+  ..\User_code\Device_drives\inc\remoter.h ..\User_code\state.h \
+  ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\tim.h \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\adc.h

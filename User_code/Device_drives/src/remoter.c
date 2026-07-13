@@ -1,9 +1,9 @@
 #include "remoter.h"
-#include "main.h"
+#include <main.h>
 #include "usart.h"
 #include "string.h"
 #include "cmsis_os.h"
-#include "State.h"
+#include "state.h"
 
 
 extern uint8_t Rx_Data[BUFF_SIZE];
@@ -107,13 +107,13 @@ void Remoter_Init()
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
 }
 
-//ä¸‹æ¿å•ç‹¬è°ƒè¯•é¥æ§å™¨æ¥æ”¶
+//ÏÂ°åµ¥¶Àµ÷ÊÔÒ£¿ØÆ÷½ÓÊÕ
 // void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 // {
 
 // 	if(huart->Instance == UART5)
 // 	{
-// 			// æ¥æ”¶å®Œæ¯•åé‡å¯
+// 			// ½ÓÊÕÍê±ÏºóÖØÆô
 // 			Sbus_Data_Count(Rx_Data);
 // 			Error_Judge();
 // 			HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
@@ -127,8 +127,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef * huart)
 	if(huart->Instance == UART5)
 	{
 		__HAL_UNLOCK(huart);
-		memset(Rx_Data, 0, BUFF_SIZE);							   // æ¸…é™¤æ¥æ”¶ç¼“å­˜		
-		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);// æ¥æ”¶å‘ç”Ÿé”™è¯¯åé‡å¯
+		memset(Rx_Data, 0, BUFF_SIZE);							   // Çå³ı½ÓÊÕ»º´æ		
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);// ½ÓÊÕ·¢Éú´íÎóºóÖØÆô
 	}
 	if (huart == &huart2)
     {

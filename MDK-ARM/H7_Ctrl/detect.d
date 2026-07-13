@@ -1,5 +1,6 @@
-h7_ctrl/detect.o: ..\UI\source\Detect.c ..\UI\include\Detect.h \
-  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+h7_ctrl/detect.o: ..\User_code\UI\source\Detect.c \
+  ..\User_code\UI\include\Detect.h ..\Core\Inc\main.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -33,8 +34,9 @@ h7_ctrl/detect.o: ..\UI\source\Detect.c ..\UI\include\Detect.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\Drv\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\UserMiddlewares\include\UserFreertos.h \
+  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\UI\include\judge.h ..\User_code\Board2Board.h \
+  ..\Core\Inc\usart.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \
@@ -48,6 +50,4 @@ h7_ctrl/detect.o: ..\UI\source\Detect.c ..\UI\include\Detect.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\Core\Inc\spi.h ..\UI\include\judge.h \
-  ..\UserMiddlewares\include\Board2Board.h ..\Core\Inc\usart.h
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h

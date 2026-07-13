@@ -1,5 +1,6 @@
-h7_ctrl/chassis_state.o: ..\others\Motion_Control\App\src\chassis_state.c \
-  ..\others\Motion_Control\App\inc\chassis_behavior_tree.h \
+h7_ctrl/chassis_state.o: \
+  ..\User_code\Motion_Control\App\src\chassis_state.c \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -34,6 +35,6 @@ h7_ctrl/chassis_state.o: ..\others\Motion_Control\App\src\chassis_state.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\others\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\others\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\others\Motion_Control\Ctrl\inc\VMC.h
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h

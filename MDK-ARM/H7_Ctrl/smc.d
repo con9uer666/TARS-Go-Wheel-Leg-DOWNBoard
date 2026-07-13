@@ -1,1 +1,2 @@
-h7_ctrl/smc.o: ..\math\source\SMC.c ..\math\include\SMC.h
+h7_ctrl/smc.o: ..\User_code\CommonLibs\src\SMC.c \
+  ..\User_code\CommonLibs\inc\SMC.h
