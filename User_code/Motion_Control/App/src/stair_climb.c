@@ -37,8 +37,6 @@
 
 void Upstair_NotStairRetract()
 {
-    VMC_Coculate();
-    Body_Speed_Coculate();
 
     // 磕台阶过程中双环腿长控制
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);   //TODO: 写一个最大腿长的宏定义
@@ -63,8 +61,10 @@ void Upstair_NotStairRetract()
     PID_coculate(&R_Leg_dphi0_PID);
 
     //上台阶过程中VMC解算vscode://lirentech.file-ref-tags?filePath=motor.c&snippet=%2F%2F%E4%B8%8A%E5%8F%B0%E9%98%B6%E8%BF%87%E7%A8%8B%E4%B8%ADVMC%E8%A7%A3%E7%AE%97
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_Leg_dphi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
+    VMC_Chassis_Target.L_F0 = L_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.L_T = L_Leg_dphi0_PID.output;
+    VMC_Chassis_Target.R_F0 = R_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.R_T = -R_Leg_dphi0_PID.output;
 
     //上台阶收腿过程中判断腿长和腿角度是否都到位了
     if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.15 && fabsf(L_Leg_Middle_PID.error) <= 0.15)
@@ -102,8 +102,6 @@ void Upstair_NotStairRetract()
 
 void StairRetract()
 {
-    VMC_Coculate();
-    Body_Speed_Coculate();
 
     //收腿起立的腿长双环控制（State=0/1 都跑）
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.12f);
@@ -137,12 +135,14 @@ void StairRetract()
     }
 
     //映射到电机力矩
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_T);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, R_T);
+    VMC_Chassis_Target.L_F0 = L_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.L_T = L_T;
+    VMC_Chassis_Target.R_F0 = R_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.R_T = R_T;
 
     //轮力矩：运行中 0.5，State=2 完成后 0
-    L_DJ3508.Target_Torque = 0.0f;
-    R_DJ3508.Target_Torque = 0.0f;
+    VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
+    VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
 
     //State=0 → 1（腿长到位后进入转角阶段）
     if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.05f) L_Ready_Count ++;

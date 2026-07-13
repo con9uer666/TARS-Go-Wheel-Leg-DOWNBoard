@@ -1,9 +1,12 @@
 #include "remoter.h"
 #include <main.h>
+#include "Board2Board.h"
 #include "usart.h"
 #include "string.h"
 #include "cmsis_os.h"
 #include "state.h"
+#include "chassis_behavior_tree.h"
+#include "Leg_Control.h"
 
 
 extern uint8_t Rx_Data[BUFF_SIZE];
@@ -107,13 +110,13 @@ void Remoter_Init()
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
 }
 
-//ÏÂ°åµ¥¶Àµ÷ÊÔÒ£¿ØÆ÷½ÓÊÕ
+//ï¿½Â°åµ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 // void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 // {
 
 // 	if(huart->Instance == UART5)
 // 	{
-// 			// ½ÓÊÕÍê±ÏºóÖØÆô
+// 			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½ï¿½ï¿½
 // 			Sbus_Data_Count(Rx_Data);
 // 			Error_Judge();
 // 			HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
@@ -122,13 +125,34 @@ void Remoter_Init()
 
 int a;
 
+void Keyboard_Simulate(void)
+{
+	if(fabsf(Foot_Chassis.Remote_control_y) > 0.9f)
+	{
+		Foot_Chassis.Target_Vy = get_sign_float(Foot_Chassis.Remote_control_y) * 2.3f; // 0~2.3 m/s
+	}
+	else 
+	{
+		Foot_Chassis.Target_Vy = 0;
+	}
+
+	if(fabsf(Foot_Chassis.Remote_control_x) > 0.9f)
+	{
+		Foot_Chassis.Target_Vx = get_sign_float(Foot_Chassis.Remote_control_x) * 2.3f; // 0~2.3 m/s
+	}
+	else 
+	{
+		Foot_Chassis.Target_Vx = 0;
+	}
+}
+
 void HAL_UART_ErrorCallback(UART_HandleTypeDef * huart)
 {
 	if(huart->Instance == UART5)
 	{
 		__HAL_UNLOCK(huart);
-		memset(Rx_Data, 0, BUFF_SIZE);							   // Çå³ý½ÓÊÕ»º´æ		
-		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);// ½ÓÊÕ·¢Éú´íÎóºóÖØÆô
+		memset(Rx_Data, 0, BUFF_SIZE);							   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½		
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);// ï¿½ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	if (huart == &huart2)
     {

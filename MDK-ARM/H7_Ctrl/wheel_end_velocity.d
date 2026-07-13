@@ -35,6 +35,9 @@ h7_ctrl/wheel_end_velocity.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
   ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
   ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
@@ -62,4 +65,5 @@ h7_ctrl/wheel_end_velocity.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
   ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h

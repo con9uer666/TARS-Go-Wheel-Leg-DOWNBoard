@@ -31,55 +31,20 @@
 #include "Angle_about.h"
 #include "PowerCtrl.h"
 #include "Gas_Spring.h"
-#include "buzzer.h"
 #include "Wheel_End_Velocity.h"
 
 //未站起 + 未上楼收腿  函数
 void NotStanding_NotStairRetract_for_chassis()
 {
-    //自起完成蜂鸣音 latch：刚离开自起态时响 100ms 高 si
-    static uint8_t sr_was_active = 0;
-    static int sr_finish_chime_remain = 0;
-
-    VMC_Coculate();
-    Body_Speed_Coculate();//车身速度解算
-
-    //是否姿态稳定在误差20°内的起立态
-    if((roll >= 40.0f || roll <= -40.0f || pitch >= 40.0f || pitch <= -40.0f) && first_run == 1)//不稳定且是急停开始第一次运行
+    if (Self_Righting_Mode_Detect())
     {
-        gimbal_follow_flag = 1;//自起期间云台跟随底盘
-        //只在进入自起的第一拍锁定方向：|pitch|>90° → 反面倒地 dir=+1；正面倒地 → dir=-1
-        //后续 tick 沿用第一拍的 dir，防止自起过程中 pitch 穿越 90° 边界导致方向抖动
-        if (sr_was_active == 0)
-        {
-            g_sr_turn_dir = (pitch > 90.0f || pitch < -90.0f) ? 1 : -1;
-        }
-        g_tip_recovery_active = 1;//占用蜂鸣器，错误码蜂鸣器必须让位
-        Self_Righting_Step();
-        sr_was_active = 1;
-        return ;
+        Self_Righting_Action();
+        return;
     }
 
-    //倒地自起成功后复位Self_Righting的状态机（stage / sync_from_stuck / VMC输出 / 蜂鸣器 / tick 一次性归零）
-    if (sr_was_active)
-    {
-        Self_Righting_Reset();
-        sr_finish_chime_remain = 50;  //50 * 2ms = 100ms
-        sr_was_active = 0;
-    }
-    if (sr_finish_chime_remain > 0)
-    {
-        g_tip_recovery_active = 1;//完成提示音期间继续独占蜂鸣器
-        Buzzer_Tone_Max(1976);
-        sr_finish_chime_remain--;
-        if (sr_finish_chime_remain == 0)
-        {
-            Stop_Buzzer();
-            g_tip_recovery_active = 0;//完成提示音结束，把蜂鸣器交还给错误码代码
-        }
-    }
     first_run = 0;//第一次运行完成
 
+// region [rgb(0, 0, 50)] 控制
     //收腿过程腿长控制
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.12f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
     PID_Set_Error(&R_Leg_L0_POS_PID, VMC_R.L0, 0.12f);
@@ -110,7 +75,9 @@ void NotStanding_NotStairRetract_for_chassis()
             &R_stair_sub, &R_sub_dwell,
             &R_rev_dir, &R_rev_long_remain, &R_rev_traveled, &R_T);
     }
+// endregion
 
+// region [rgb(0, 50, 0)] 检测
     //腿长判断是否到达目标长度
     if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.04)
     {
@@ -162,11 +129,14 @@ void NotStanding_NotStairRetract_for_chassis()
         body_distance = 0;
         target_body_distance = 0.0;
     }
+// endregion
 
     //映射到电机力矩
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output, L_T);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, R_T);
-    L_DJ3508.Target_Torque = 0;
-    R_DJ3508.Target_Torque = 0;
+    VMC_Chassis_Target.L_F0 = L_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.L_T = L_T;
+    VMC_Chassis_Target.R_F0 = R_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.R_T = R_T;
+    VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
+    VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
 
 }

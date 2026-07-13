@@ -27,8 +27,6 @@ void LQR_Get_K(float LQR[4][12], float K_Fit_Coefficients[48][6], float L0_l, fl
  */
 void AntiSplit_Get_K(float *Kp, float *Kd, float L0_avg);
 
-void Speed_Error_Set();
-void Distance_Error_Set();
 void Body_Speed_Coculate();
 void INS_Coculate();
 

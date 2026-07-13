@@ -64,6 +64,7 @@ osThreadId Gimbal_TaskHandle;
 osThreadId UIHandle;
 uint32_t UIBuffer[ 1024 ];
 osStaticThreadDef_t UIControlBlock;
+osThreadId Buzzer_TaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -81,7 +82,9 @@ void Observe_Tasks(void const * argument);
 void OS_Board2BoardCallback(void const * argument);
 void Gimbal_task(void const * argument);
 void UI_task(void const * argument);
+void Buzzer_task(void const * argument);
 
+extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* GetIdleTaskMemory prototype (linked to static allocation support) */
@@ -171,6 +174,10 @@ void MX_FREERTOS_Init(void) {
   osThreadStaticDef(UI, UI_task, osPriorityIdle, 0, 1024, UIBuffer, &UIControlBlock);
   UIHandle = osThreadCreate(osThread(UI), NULL);
 
+  /* definition and creation of Buzzer_Task */
+  osThreadDef(Buzzer_Task, Buzzer_task, osPriorityLow, 0, 128);
+  Buzzer_TaskHandle = osThreadCreate(osThread(Buzzer_Task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -187,6 +194,8 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
@@ -374,6 +383,24 @@ __weak void UI_task(void const * argument)
     osDelay(1);
   }
   /* USER CODE END UI_task */
+}
+
+/* USER CODE BEGIN Header_Buzzer_task */
+/**
+* @brief Function implementing the Buzzer_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Buzzer_task */
+__weak void Buzzer_task(void const * argument)
+{
+  /* USER CODE BEGIN Buzzer_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Buzzer_task */
 }
 
 /* Private application code --------------------------------------------------*/

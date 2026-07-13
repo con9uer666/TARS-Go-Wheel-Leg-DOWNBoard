@@ -35,9 +35,13 @@ h7_ctrl/gravity_comp_test.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
   ..\User_code\Device_drives\inc\Motor_Drv.h \
   ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
   ..\User_code\Motion_Control\App\inc\Gimbal.h \

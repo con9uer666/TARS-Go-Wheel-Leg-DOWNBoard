@@ -347,12 +347,14 @@ void Gravity_Compensation_Test_Function(void)
         grav_probe_cycle++;
 
         // 直接命令恒定足端力(沿腿轴)，方向由 grav_probe_force 符号决定；不输出 T 转矩
-        VMC_Set_F0_T(&VMC_L, grav_probe_force, 0.0f);
-        VMC_Set_F0_T(&VMC_R, grav_probe_force, 0.0f);
+        VMC_Chassis_Target.L_F0 = grav_probe_force;
+        VMC_Chassis_Target.L_T = 0.0f;
+        VMC_Chassis_Target.R_F0 = grav_probe_force;
+        VMC_Chassis_Target.R_T = 0.0f;
 
         // 轮子不主动驱动
-        L_DJ3508.Target_Torque = 0.0f;
-        R_DJ3508.Target_Torque = 0.0f;
+        VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
+        VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
 
         Gravity_Probe_Update(); // 卡住检测 + 阶段推进（两腿都卡住后转下一步 / 进入测数据）
         return;
@@ -387,12 +389,14 @@ void Gravity_Compensation_Test_Function(void)
     PID_coculate(&grav_R_Leg_dphi0_PID);
 
     // VMC 映射到电机力矩：不加前馈，让 PID 撑出全部保持力（这正是要标定记录的量）
-    VMC_Set_F0_T(&VMC_L, grav_L_Leg_L0_SPD_PID.output,  grav_L_Leg_dphi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, grav_R_Leg_L0_SPD_PID.output, -grav_R_Leg_dphi0_PID.output);
+    VMC_Chassis_Target.L_F0 = grav_L_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.L_T = grav_L_Leg_dphi0_PID.output;
+    VMC_Chassis_Target.R_F0 = grav_R_Leg_L0_SPD_PID.output;
+    VMC_Chassis_Target.R_T = -grav_R_Leg_dphi0_PID.output;
 
     // 轮子不主动驱动（静态测试，置 0 防沿用上一个模式的旧力矩）
-    L_DJ3508.Target_Torque = 0.0f;
-    R_DJ3508.Target_Torque = 0.0f;
+    VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
+    VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
 
     if (grav_phase == GRAV_DONE)
     {
@@ -449,7 +453,7 @@ void Gravity_Compensation_Test_Function(void)
                 grav_traverse_phase = 2; // 遍历完成，停在此处（PID 继续锁位姿）
             }
         }
-        // 遍历期间 PID 继续跑（上方 VMC_Set_F0_T 照常执行），轮子输出已在上方置 0
+        // 遍历期间 PID 继续跑（上方目标量照常更新），轮子输出已在上方置 0
     }
 
     grav_comp_pose_cycle++;

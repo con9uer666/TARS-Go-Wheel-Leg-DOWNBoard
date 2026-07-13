@@ -138,21 +138,19 @@ uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
         PID_coculate(&L_Leg_L0_PID);
         PID_coculate(&R_Leg_L0_PID);
 
-        // 统一 VMC 力矩下发：F0:腿长 PID 前馈 + 重力补偿 + 横滚补偿        T:T 力矩
-        // VMC_Set_F0_T(&VMC_L, 20 + L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output,
-        //              L_leg_T_cmd);
-        // VMC_Set_F0_T(&VMC_R, 20 + R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output,
-        //              R_leg_T_cmd);
-        VMC_Set_F0_T(&VMC_L, 200 + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output, L_leg_T_cmd);
-        VMC_Set_F0_T(&VMC_R, 200 + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output, R_leg_T_cmd);
+        // 写入跳跃状态下的左右腿目标 F0/T，统一映射在 Motor_task 末尾执行
+        VMC_Chassis_Target.L_F0 = 200 + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output;
+        VMC_Chassis_Target.L_T = L_leg_T_cmd;
+        VMC_Chassis_Target.R_F0 = 200 + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output;
+        VMC_Chassis_Target.R_T = R_leg_T_cmd;
     }
     else
     {
         // 非跳跃：使用 Leg_L0_Control() 的原 L0 PID 输出 + 重力补偿 + 横滚补偿
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output,
-                     L_leg_T_cmd);
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output,
-                     R_leg_T_cmd);
+        VMC_Chassis_Target.L_F0 = L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output;
+        VMC_Chassis_Target.L_T = L_leg_T_cmd;
+        VMC_Chassis_Target.R_F0 = R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output;
+        VMC_Chassis_Target.R_T = R_leg_T_cmd;
     }
 
 

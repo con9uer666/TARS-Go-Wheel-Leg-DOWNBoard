@@ -11,6 +11,10 @@
 // #include <stdint.h>
 
 VMC_t VMC_L, VMC_R;
+VMC_Chassis_Target_t VMC_Chassis_Target;
+
+volatile uint8_t chassis_hard_stop_flag = 0;
+volatile uint8_t chassis_soft_stop_flag = 0;
 
 float alpha_d_phi0 = 1.0;
 float alpha_phi0 = 1.0;//滤波系数
@@ -123,6 +127,32 @@ void VMC_Set_F0_T(VMC_t *VMC, float F, float T)
     VMC->T1 = (matrix[0] * VMC->F) + (matrix[1] * VMC->T);
     VMC->T2 = (matrix[2] * VMC->F) + (matrix[3] * VMC->T);
 
+}
+
+// 髋关节轮电机映射函数，含软急停处理
+void VMC_Apply_Chassis_Target(void)
+{
+    float L_F0 = VMC_Chassis_Target.L_F0;
+    float L_T = VMC_Chassis_Target.L_T;
+    float R_F0 = VMC_Chassis_Target.R_F0;
+    float R_T = VMC_Chassis_Target.R_T;
+    float L_Wheel_Torque = VMC_Chassis_Target.L_Wheel_Torque;
+    float R_Wheel_Torque = VMC_Chassis_Target.R_Wheel_Torque;
+
+    if (chassis_soft_stop_flag)
+    {
+        L_F0 = 0.0f;
+        L_T = 0.0f;
+        R_F0 = 0.0f;
+        R_T = 0.0f;
+        L_Wheel_Torque = 0.0f;
+        R_Wheel_Torque = 0.0f;
+    }
+
+    VMC_Set_F0_T(&VMC_L, L_F0, L_T);
+    VMC_Set_F0_T(&VMC_R, R_F0, R_T);
+    L_DJ3508.Target_Torque = L_Wheel_Torque;
+    R_DJ3508.Target_Torque = R_Wheel_Torque;
 }
 
 // 由电机实际反馈力矩 (tau1, tau2) 反解出实际足端力 F_actual 和虚拟杆扭矩 T_actual

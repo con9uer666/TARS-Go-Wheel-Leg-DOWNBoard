@@ -321,9 +321,8 @@ void leg_turn_stuck_reset(VMC_t *VMC)
 //         t_cmd = 0.0f;
 //     }
 
-//     // 更新全局变量，并在VMC结构中设置命令的力和力矩。
+//     // 更新全局变量。
 //     torque_limit = s_torque_limit[idx];
 //     torque = t_cmd;
-//     VMC_Set_F0_T(VMC, f_cmd, t_cmd);
 // }
 

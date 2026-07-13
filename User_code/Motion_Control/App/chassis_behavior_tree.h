@@ -207,8 +207,8 @@ void off_ground_detect(void);
 /* ---- step_hit_detect.c ---- */
 void Step_Hit_Detect(void);
 
-/* ---- yaw_error.c ---- */
-void Yaw_Error_Coculate(void);
+/* ---- Lqr_Error_Calculate.h（Ctrl/src/Lqr_Error_Calculate.c） ---- */
+#include "Lqr_Error_Calculate.h"
 
 /* ---- leg_retract_common.c ---- */
 int turn_ctrl_with_stuck_flip(

@@ -71,7 +71,7 @@ float L_rev_traveled = 0.0f,    R_rev_traveled = 0.0f;     // REV 期间对 d_ph
  * @param rev_dir          REV 转向 ±1，持久变量地址
  * @param rev_long_remain  REV 目标弧长，持久变量地址
  * @param rev_traveled     REV 已走弧长积分，持久变量地址
- * @param out_T            [out] 本周期该腿的转矩命令，直接喂给 VMC_Set_F0_T
+ * @param out_T            [out] 本周期该腿的目标转矩命令
  * @return 1 = 此周期视为到位（外层 Ready_Count 累加）, 0 = 未到位
  */
 int turn_ctrl_with_stuck_flip(

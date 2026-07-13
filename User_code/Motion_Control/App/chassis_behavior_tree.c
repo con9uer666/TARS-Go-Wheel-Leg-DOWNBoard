@@ -74,23 +74,12 @@ void Motor_task(void const *argument)
         if(user_Gravity_Compensation_Test_Function_set == 0)
         {
             //遥控器模拟键盘阶跃
-            if(fabsf(Foot_Chassis.Remote_control_y) > 0.9f)
-            {
-                Foot_Chassis.Target_Vy = get_sign_float(Foot_Chassis.Remote_control_y) * 2.3f; // 0~2.3 m/s
-            }
-            else 
-            {
-                Foot_Chassis.Target_Vy = 0;
-            }
+            Keyboard_Simulate();
 
-            if(fabsf(Foot_Chassis.Remote_control_x) > 0.9f)
-            {
-                Foot_Chassis.Target_Vx = get_sign_float(Foot_Chassis.Remote_control_x) * 2.3f; // 0~2.3 m/s
-            }
-            else 
-            {
-                Foot_Chassis.Target_Vx = 0;
-            }
+            VMC_Coculate();
+            Body_Speed_Coculate();
+            //惯性导航、VMC、水平方向车身速度解算
+            INS_Coculate();
 
             //刚启动收腿过程中
             if(start_mode == 0 && upstares_mode == 0)//未站起 + 未上楼收腿
@@ -130,6 +119,11 @@ void Motor_task(void const *argument)
         }
 
         //错误码蜂鸣器：电机错误时长响低音。倒地自起激活时本函数自动让位，不碰蜂鸣器
+        if (!chassis_hard_stop_flag)
+        {
+            VMC_Apply_Chassis_Target();
+        }
+
         Error_Buzzer_Tick();
 
         osDelayUntil(&xLastWakeTime, 2);//精确延时2毫秒，同时更新xLastWakeTime的值为当前时间
@@ -137,6 +131,8 @@ void Motor_task(void const *argument)
 
 
 }
+
+
 
 
 /**

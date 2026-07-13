@@ -1,12 +1,12 @@
 /**
  * @file Self_Righting.c
- * @brief 倒地自起（Self-Righting）四阶段状态机实现。
+ * @brief 倒地自起模式判断与动作状态机实现。
  *
  * 状态机流程：
  *   1) EXTEND: 伸腿到最大腿长，卡住时换角度再伸；
  *   2) REVERSE_TURN: 反向匀速转，尝试两腿并齐；
  *   3) SYNC_HIGH_TORQUE: 大力矩匀速转到目标角度（含差速策略）；
- *   4) FINISHED: 完成，由 motor.c 检测姿态恢复后退出。
+ *   模式退出由姿态恢复消抖判断负责。
  */
 
 #include "Self_Righting.h"
@@ -17,7 +17,12 @@
 #include "user_pid.h"
 #include "Angle_about.h"
 #include "Motor_Drv.h"
-#include "buzzer.h"
+#include "imu_temp_ctrl.h"
+
+#define SELF_RIGHTING_ENTER_ANGLE_DEG 90.0f
+#define SELF_RIGHTING_EXIT_ANGLE_DEG  40.0f
+#define SELF_RIGHTING_ENTER_TICKS     10U
+#define SELF_RIGHTING_EXIT_TICKS      50U
 
 /* ========================= 状态与模式标志 ========================= */
 
@@ -45,8 +50,10 @@ int8_t g_sr_turn_dir = 1;
 //@ 1: 未并齐但卡住，直接进入第三阶段并启用差速策略。
 uint8_t g_self_righting_sync_from_stuck = 0;
 
-//倒地自起激活标志（含完成提示音 100ms 窗口），由 motor.c 维护
-uint8_t g_tip_recovery_active = 0;
+static uint8_t sr_mode_active = 0;
+static uint8_t sr_enter_count = 0;
+static uint8_t sr_exit_count = 0;
+static int8_t sr_pending_turn_dir = 1;
 
 //卡腿标志
 int turn_stuck_l;//左腿转动卡住标签，1：卡住；0：不卡住
@@ -192,38 +199,6 @@ static float limit_function(float value, float max_mag)
 }
 
 
-/*
- * 按当前自起阶段驱动蜂鸣器：每阶段不同音高 + 不同蜂鸣节奏，满音量。
- * 调用频率与 Self_Righting_Step 一致（500 Hz / 2 ms 一拍）。
- * Stage 1 EXTEND            : do  523Hz, 500ms on / 500ms off  → 1Hz
- * Stage 2 REVERSE_TURN      : sol 784Hz, 125ms on / 125ms off  → 4Hz
- * Stage 3 SYNC_HIGH_TORQUE  : 高mi 1318Hz, 50ms on / 50ms off  → 10Hz
- * Stage 4 FINISHED          : 这里不响，离开自起态后由外层放100ms完成音
- */
-static uint32_t sr_buzz_tick = 0;
-static void sr_buzzer_update(SelfRightingStage_t stage)
-{
-    int pitch = 0;
-    uint32_t on_ticks = 0;
-    uint32_t cycle_ticks = 0;
-    switch (stage)
-    {
-        case SELF_RIGHTING_STAGE_EXTEND:
-            pitch = 523;  on_ticks = 250; cycle_ticks = 500; break;
-        case SELF_RIGHTING_STAGE_REVERSE_TURN:
-            pitch = 784;  on_ticks = 63;  cycle_ticks = 125; break;
-        case SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE:
-            pitch = 1318; on_ticks = 25;  cycle_ticks = 50;  break;
-        default:
-            Stop_Buzzer();
-            sr_buzz_tick = 0;
-            return;
-    }
-    if ((sr_buzz_tick % cycle_ticks) < on_ticks) Buzzer_Tone_Max(pitch);
-    else                                         Stop_Buzzer();
-    sr_buzz_tick++;
-}
-
 //统一写入两条腿的输出，并更新调试变量，左右腿旋转方向没封装
 static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 {
@@ -232,8 +207,10 @@ static void sr_apply_cmd(float f_l, float t_l, float f_r, float t_r)
 	g_sr_cmd_f_r = f_r;
 	g_sr_cmd_t_r = t_r;
 
-	VMC_Set_F0_T(&VMC_L, f_l, t_l);
-	VMC_Set_F0_T(&VMC_R, f_r, t_r);
+	VMC_Chassis_Target.L_F0 = f_l;
+	VMC_Chassis_Target.L_T = t_l;
+	VMC_Chassis_Target.R_F0 = f_r;
+	VMC_Chassis_Target.R_T = t_r;
 }
 
 //封装角度到0-2PI，方便后续判断转动卡住和是否到达目标角度
@@ -263,16 +240,19 @@ float update_differ_phi0_0_to_2PI()
  * - 清零模式标志
  * - 清零本模块输出命令
  */
-void Self_Righting_Reset(void)
+static void Self_Righting_Reset(void)
 {
     //归零
     g_self_righting_stage = SELF_RIGHTING_STAGE_EXTEND;
 	g_self_righting_sync_from_stuck = 0;
+    f_l = 0.0f;
+    f_r = 0.0f;
+    t_l = 0.0f;
+    t_r = 0.0f;
     //清零本模块输出命令
 	sr_apply_cmd(0.0f, 0.0f, 0.0f, 0.0f);
-    //蜂鸣器复位
-    sr_buzz_tick = 0;
-    Stop_Buzzer();
+    VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
+    VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
 }
 
 /*
@@ -292,9 +272,9 @@ void Self_Righting_Reset(void)
  * 4) 两腿都到位后保留占位分支，用户后续填入逻辑。
  * 		
  *
- * 返回值：0：正在执行自起；1：自起完成（两腿都到目标角度了）；2：自起未启用（总开关关了）。
+ * 返回值：0：正在执行自起；2：自起未启用（总开关关了）。
  */
-uint8_t Self_Righting_Step(void)
+static uint8_t Self_Righting_Step(void)
 {
 	//锁死轮子vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E9%94%81%E6%AD%BB%E8%BD%AE%E5%AD%90
 	PID_INIT(&wheel_PID_l, wheel_kp, wheel_ki, wheel_kd, wheel_out_limit, wheel_i_limit, wheel_I_step, wheel_Integraldead_zone, wheel_deadzone);
@@ -314,19 +294,7 @@ uint8_t Self_Righting_Step(void)
 	if (g_self_righting_enable == 0U)
 	{
 		sr_apply_cmd(0.0f, 0.0f, 0.0f, 0.0f);
-		Stop_Buzzer();
-		sr_buzz_tick = 0;
 		return 2;
-	}
-
-	//按当前阶段驱动蜂鸣器（含调试强制阶段 SR_test_state）
-	{
-		SelfRightingStage_t effective_stage;
-		if (SR_test_state >= 1 && SR_test_state <= 4)
-			effective_stage = (SelfRightingStage_t)(SR_test_state - 1);
-		else
-			effective_stage = g_self_righting_stage;
-		sr_buzzer_update(effective_stage);
 	}
 
 	//算常用误差量vscode://lirentech.file-ref-tags?filePath=Self_Righting.c&snippet=%2F%2F%E7%AE%97%E5%B8%B8%E7%94%A8%E8%AF%AF%E5%B7%AE%E9%87%8F
@@ -446,8 +414,8 @@ uint8_t Self_Righting_Step(void)
 	/* ===================== 第三阶段：大力矩匀速反向转，直到外层判定姿态恢复 ===================== */
 	else if ((g_self_righting_stage == SELF_RIGHTING_STAGE_SYNC_HIGH_TORQUE && SR_test_state == 0) || (SR_test_state == 3))
 	{
-		L_DJ3508.Target_Torque = -PID_coculate(&wheel_PID_l);
-		R_DJ3508.Target_Torque = PID_coculate(&wheel_PID_r);
+		VMC_Chassis_Target.L_Wheel_Torque = -PID_coculate(&wheel_PID_l);
+		VMC_Chassis_Target.R_Wheel_Torque = PID_coculate(&wheel_PID_r);
 
 		//第三阶段继续保持腿长
 		PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, LEG_MAX_LENTH);
@@ -476,4 +444,71 @@ uint8_t Self_Righting_Step(void)
 	reached_ang_l = 0;
 
     return 0;
+}
+
+uint8_t Self_Righting_Mode_Detect(void)
+{
+    if (sr_mode_active == 0U)
+    {
+        sr_exit_count = 0;
+
+        if (fabsf(roll) >= SELF_RIGHTING_ENTER_ANGLE_DEG ||
+            fabsf(pitch) >= SELF_RIGHTING_ENTER_ANGLE_DEG)
+        {
+            if (sr_enter_count == 0U)
+            {
+                sr_pending_turn_dir = (pitch > SELF_RIGHTING_ENTER_ANGLE_DEG ||
+                                       pitch < -SELF_RIGHTING_ENTER_ANGLE_DEG) ? 1 : -1;
+            }
+
+            if (sr_enter_count < SELF_RIGHTING_ENTER_TICKS)
+            {
+                sr_enter_count++;
+            }
+
+            if (sr_enter_count >= SELF_RIGHTING_ENTER_TICKS)
+            {
+                Self_Righting_Reset();
+                g_sr_turn_dir = sr_pending_turn_dir;
+                sr_mode_active = 1;
+                sr_enter_count = 0;
+            }
+        }
+        else
+        {
+            sr_enter_count = 0;
+        }
+
+        return sr_mode_active;
+    }
+
+    sr_enter_count = 0;
+
+    if (fabsf(roll) < SELF_RIGHTING_EXIT_ANGLE_DEG &&
+        fabsf(pitch) < SELF_RIGHTING_EXIT_ANGLE_DEG)
+    {
+        if (sr_exit_count < SELF_RIGHTING_EXIT_TICKS)
+        {
+            sr_exit_count++;
+        }
+
+        if (sr_exit_count >= SELF_RIGHTING_EXIT_TICKS)
+        {
+            sr_mode_active = 0;
+            sr_exit_count = 0;
+            Self_Righting_Reset();
+        }
+    }
+    else
+    {
+        sr_exit_count = 0;
+    }
+
+    return sr_mode_active;
+}
+
+void Self_Righting_Action(void)
+{
+    gimbal_follow_flag = 1;
+    (void)Self_Righting_Step();
 }

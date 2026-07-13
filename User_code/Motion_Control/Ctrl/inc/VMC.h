@@ -36,12 +36,28 @@ typedef struct VMC
     uint8_t isLeft;//是否为左腿
 }VMC_t;
 
+// 底盘目标力矩结构体
+typedef struct
+{
+    float L_F0;
+    float L_T;
+    float R_F0;
+    float R_T;
+    float L_Wheel_Torque;
+    float R_Wheel_Torque;
+} VMC_Chassis_Target_t;
+
 extern VMC_t VMC_L, VMC_R;
+extern VMC_Chassis_Target_t VMC_Chassis_Target;
+
+extern volatile uint8_t chassis_hard_stop_flag;
+extern volatile uint8_t chassis_soft_stop_flag;
 
 void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5, uint8_t isLeft);
 void VMC_Set_phi1_phi4(VMC_t *VMC, float phi1, float phi4);
 void VMC_Get_L0_phi0(VMC_t *VMC);
 void VMC_Set_F0_T(VMC_t *VMC, float F, float T);
+void VMC_Apply_Chassis_Target(void);
 float VMC_Get_Ground_F0(VMC_t *VMC);
 void VMC_Coculate();
 

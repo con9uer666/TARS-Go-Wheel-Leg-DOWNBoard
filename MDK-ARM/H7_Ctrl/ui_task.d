@@ -50,8 +50,13 @@ h7_ctrl/ui_task.o: ..\User_code\UI\source\UI_Task.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
   ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\User_code\Board2Board.h \
-  ..\Core\Inc\usart.h ..\User_code\Motion_Control\App\inc\Gimbal.h
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
+  ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
+  ..\User_code\Motion_Control\App\inc\Gimbal.h

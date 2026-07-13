@@ -16,7 +16,6 @@
 #include "Motor_Drv.h"
 #include "wattmeter.h"
 #include "buzzer.h"
-#include "Self_Righting.h"
 
 extern uint8_t first_run;
 extern uint8_t start_mode;
@@ -25,15 +24,14 @@ extern float down_board_yaw_output;
 
 uint16_t can_send_error,can_receive_error;
 
-/*====================================== 电机输出总开关 ====================================== */
-uint8_t motor_output_enable = 1;      // 1=正常输出力矩, 0=强制全部电机输出零力矩
+/*====================================== 电机输出调试开关 ==================================== */
+volatile uint8_t debug_force_all_motor_zero_output = 0; // 1=调试时强制全部电机零力矩, 0=不干预
 uint8_t wheel_leg_output_enable = 1;  // 1=正常输出, 0=仅关断3508和8009（4310/2325不受影响）
 
 /*====================================== 电机使能监督 ======================================== */
 // 记录机身所有DM关节电机当前期望状态：1=应使能 0=应失能
 // 由task_Motor_Enable完成后置1
-// 注意：新的错误/失能保护机制不再读取本变量，它的真实期望状态由 motor_output_enable 决定。
-//       但 motor.c 还在写它（task_Motor_Enable 末尾），保留定义以免链接断裂。
+// 但 motor.c 还在写它（task_Motor_Enable 末尾），保留定义以免链接断裂。
 uint8_t motor_should_enabled = 0;
 
 // 错误码与待办标志改为每个电机自带（Joint_Motor_t::last_error_code / clear_pending / enable_pending）。
@@ -56,7 +54,7 @@ static uint8_t is_dm_error_state(uint8_t state)
 // 调用上下文：HAL_FDCAN_RxFifo0Callback（中断），仅写本电机自己的字段，无并发
 // 策略：
 //   错误态     → clear_pending=1, enable_pending=0（清错优先，避免清错后又被立刻使能踩到错误未消的窗口）
-//   state==0   → 仅当 motor_output_enable==1（非急停）才置 enable_pending=1；急停期间不主动使能
+//   state==0   → 置 enable_pending=1，等待发送任务恢复使能
 //   state==1   → 稳态正常，两个pending都清0
 //   其它       → 不动（让上一帧的pending继续生效，避免过渡态把待办抹掉）
 static void DM_Motor_OnRxFrame(Joint_Motor_t *motor)
@@ -73,11 +71,7 @@ static void DM_Motor_OnRxFrame(Joint_Motor_t *motor)
 
     if (state == 0)
     {
-        if (motor_output_enable)
-        {
-            motor->enable_pending = 1;
-        }
-        // 急停期间(state==0)不主动 enable_pending；急停外部循环负责保持失能
+        motor->enable_pending = 1;
         return;
     }
 
@@ -111,15 +105,13 @@ static uint8_t DM_Motor_TxPreempt(FDCAN_HandleTypeDef *hfdcan, Joint_Motor_t *mo
 }
 
 /*====================================== 错误码蜂鸣器仲裁 ====================================== */
-// 错误码蜂鸣器频率：用最低的可清晰发声音高（远低于自起的 do/sol/高mi/高si 与完成提示的高si）
+// 错误码蜂鸣器频率：使用最低的可清晰发声音高。
 #define ERROR_BUZZER_FREQ_HZ  200
 
 // 由 Motor_task 周期调用：任意一个被监督的DM电机 last_error_code!=0 即持续驱动蜂鸣器以最低音高长响。
-// 倒地自起占用蜂鸣器期间（g_tip_recovery_active==1）或跳跃中（g_jump_buzzer_active==1），
-// 本函数完全不许碰蜂鸣器（不调用 Buzzer_Tone_Max 也不调用 Stop_Buzzer），把音频独占权交出去。
+// 跳跃中由跳跃动作独占蜂鸣器，本函数不操作蜂鸣器。
 void Error_Buzzer_Tick(void)
 {
-    if (g_tip_recovery_active) return;   // 倒地自起绝对优先：连 Stop 都不发
     if (g_jump_buzzer_active)  return;   // 跳跃期间让位
 
     uint8_t any_err = L_DM8009[0].last_error_code | L_DM8009[1].last_error_code
@@ -312,6 +304,18 @@ float touqer;
 
 uint8_t user_j = 0;
 
+static void Chassis_Hard_Stop_Tx(void)
+{
+	DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+	DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+	osDelay(1);
+	Disable_DM_Motor(&hfdcan2, 0x01);
+	Disable_DM_Motor(&hfdcan1, 0x01);
+	osDelay(1);
+	Disable_DM_Motor(&hfdcan2, 0x02);
+	Disable_DM_Motor(&hfdcan1, 0x02);
+}
+
 void CAN_Transmit(void const * argument)
 {
 	osDelay(2500);
@@ -319,16 +323,23 @@ void CAN_Transmit(void const * argument)
     {
 		//输出开关vscode://lirentech.file-ref-tags?filePath=USER_CAN.c&snippet=%2F%2F%E8%BE%93%E5%87%BA%E5%BC%80%E5%85%B3
 
-		/*========== 总开关：关闭时强制全部电机输出零力矩 ==========*/
-		if (!motor_output_enable)
+		/*========== 调试开关：强制全部电机输出零力矩 ==========*/
+		if (debug_force_all_motor_zero_output)
 		{
-			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
-			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
-			osDelay(1);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
-			DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+			if (chassis_hard_stop_flag)
+			{
+				Chassis_Hard_Stop_Tx();
+			}
+			else
+			{
+				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+				osDelay(1);
+				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+				DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+				DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+			}
 			osDelay(1);
 			// DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, 0, 0, 0, 0);
 			DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, 0);
@@ -402,13 +413,20 @@ void CAN_Transmit(void const * argument)
 		if (lost_4310)
 		{
 			// 4310掉线：全部电机输出零力矩
-			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
-			DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
-			osDelay(1);
-			if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
-			if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
-			if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
-			if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+			if (chassis_hard_stop_flag)
+			{
+				Chassis_Hard_Stop_Tx();
+			}
+			else
+			{
+				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
+				DJI_Motor_Torque_Ctrl(&hfdcan1, 0x1FF, 0);
+				osDelay(1);
+				if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[1], 0);
+				if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[1])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[1], 0);
+				if (DM_Motor_TxPreempt(&hfdcan2, &L_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan2, L_DM8009[0], 0);
+				if (DM_Motor_TxPreempt(&hfdcan1, &R_DM8009[0])) DM_Motor_MIT_Torque_ctrl(&hfdcan1, R_DM8009[0], 0);
+			}
 			osDelay(1);
 			if (DM_Motor_TxPreempt(&hfdcan3, &Yaw_DM4310))     DM_Motor_MIT_Speed_ctrl(&hfdcan3, Yaw_DM4310, 0, 0, 0, 0, 0);
 			if (DM_Motor_TxPreempt(&hfdcan3, &Shooter_DM2325)) DM_Motor_MIT_Torque_ctrl(&hfdcan3, Shooter_DM2325, 0);
@@ -416,7 +434,11 @@ void CAN_Transmit(void const * argument)
 		else
 		{
 			// 4310正常，检查8009/3508
-			if (lost_8009_3508)
+			if (chassis_hard_stop_flag)
+			{
+				Chassis_Hard_Stop_Tx();
+			}
+			else if (lost_8009_3508)
 			{
 				// 8009/3508掉线：仅8009和3508输出零力矩
 				DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);

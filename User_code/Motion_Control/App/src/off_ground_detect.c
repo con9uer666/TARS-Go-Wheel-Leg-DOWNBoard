@@ -79,9 +79,10 @@ void off_ground_detect()
         - LQR_K[2][4] * (VMC_L.b_phi0 - b_phi0_offset)
         - LQR_K[2][5] * VMC_L.d_b_phi0 ;
         Leg_L_T *= 0.7; //收腿力度参数
-        L_DJ3508.Target_Torque = 0;//离地轮子脱力
+        VMC_Chassis_Target.L_Wheel_Torque = 0.0f;//离地轮子脱力
         //正常行驶过程离地VMC解算
-        VMC_Set_F0_T(&VMC_L, L_Leg_L0_PID.output * 0.5, Leg_L_T);//VMC解算
+        VMC_Chassis_Target.L_F0 = L_Leg_L0_PID.output * 0.5f;
+        VMC_Chassis_Target.L_T = Leg_L_T;
         //离地距离相关量归零
         body_distance = 0;
         target_body_distance = 0.0;
@@ -92,8 +93,9 @@ void off_ground_detect()
         - LQR_K[3][6] * (VMC_R.b_phi0 - b_phi0_offset)
         - LQR_K[3][7] * VMC_R.d_b_phi0;
         Leg_R_T *= 0.7;
-        R_DJ3508.Target_Torque = 0;
-        VMC_Set_F0_T(&VMC_R, R_Leg_L0_PID.output * 0.5, -Leg_R_T);
+        VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
+        VMC_Chassis_Target.R_F0 = R_Leg_L0_PID.output * 0.5f;
+        VMC_Chassis_Target.R_T = -Leg_R_T;
         body_distance = 0;
         target_body_distance = 0.0;
     }

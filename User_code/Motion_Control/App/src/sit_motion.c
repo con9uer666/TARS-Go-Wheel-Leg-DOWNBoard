@@ -52,7 +52,6 @@ uint8_t sit_ramp_done = 0;       // 斜坡过渡是否完成
 
 void Sit_On_Ground_Action(void)
 {
-    VMC_Coculate();
 
     if (sit_first_entry)
     {
@@ -100,12 +99,14 @@ void Sit_On_Ground_Action(void)
     PID_coculate(&R_Leg_dphi0_PID);
 
     // VMC映射到电机力矩
-    VMC_Set_F0_T(&VMC_L, L_Leg_L0_SPD_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) * SIT_GRAVITY_RATIO, L_Leg_dphi0_PID.output);
-    VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) * SIT_GRAVITY_RATIO, -R_Leg_dphi0_PID.output);
+    VMC_Chassis_Target.L_F0 = L_Leg_L0_SPD_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) * SIT_GRAVITY_RATIO;
+    VMC_Chassis_Target.L_T = L_Leg_dphi0_PID.output;
+    VMC_Chassis_Target.R_F0 = R_Leg_L0_SPD_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) * SIT_GRAVITY_RATIO;
+    VMC_Chassis_Target.R_T = -R_Leg_dphi0_PID.output;
 
     // 轮子小力矩锁死
-    L_DJ3508.Target_Torque = SIT_WHEEL_TORQUE;
-    R_DJ3508.Target_Torque = -SIT_WHEEL_TORQUE;
+    VMC_Chassis_Target.L_Wheel_Torque = SIT_WHEEL_TORQUE;
+    VMC_Chassis_Target.R_Wheel_Torque = -SIT_WHEEL_TORQUE;
 }
 
 void Sit_On_Ground(void)

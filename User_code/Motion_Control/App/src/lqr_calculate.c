@@ -130,8 +130,6 @@ void LQR_calculate()
 	lqr_yaw_error = yaw_error;
 	lqr_d_yaw = d_yaw;
 
-
-
     float leg_b_phi0_offset ;
     if(speed_error >= 0)
     {
@@ -164,7 +162,7 @@ void LQR_calculate()
     }
 
     //算轮子力矩
-    L_DJ3508.Target_Torque =
+    VMC_Chassis_Target.L_Wheel_Torque =
     + LQR_K[0][0] * lqr_body_distance_error
     + LQR_K[0][1] * (lqr_speed_error)
     + LQR_K[0][2] * (lqr_yaw_error)
@@ -178,7 +176,7 @@ void LQR_calculate()
     + LQR_K[0][10] * int_pitch
     + LQR_K[0][11] * int_s;
 
-    R_DJ3508.Target_Torque =
+    VMC_Chassis_Target.R_Wheel_Torque =
     + LQR_K[1][0] * lqr_body_distance_error
     + LQR_K[1][1] * (lqr_speed_error)
     + LQR_K[1][2] * (lqr_yaw_error)
