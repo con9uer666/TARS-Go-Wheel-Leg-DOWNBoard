@@ -131,6 +131,16 @@ extern float L_Ground_F0, R_Ground_F0;
 extern int L_off_ground, R_off_ground;
 extern int step_hit_cooldown;
 
+/* ---- step_hit_detect.c ---- */
+/**
+ * @brief 磕台阶检测结果是否允许自动触发上台阶。
+ *
+ * 0：仅继续计算碰撞条件、命中计数和冷却时间，不产生 upstairs_flag；
+ * 1：检测连续命中后产生 upstairs_flag，由平衡模式切换到 start_mode=2。
+ * 该开关不影响调试器或其他模块直接写入 start_mode=2。
+ */
+extern uint8_t automatic_stair_climb_enable;
+
 /* ---- spinning_motion.c ---- */
 extern uint8_t spinning_flag;
 extern uint8_t spinning_usable;
@@ -217,13 +227,6 @@ int turn_ctrl_with_stuck_flip(
     StairSub_t *sub, int *dwell,
     float *rev_dir, float *rev_long_remain, float *rev_traveled,
     float *out_T);
-
-/* ---- self_righting_retract.c ---- */
-void NotStanding_NotStairRetract_for_chassis(void);
-
-/* ---- stair_climb.c ---- */
-void Upstair_NotStairRetract(void);
-void StairRetract(void);
 
 /* ---- gravity_comp_test.c ---- */
 void Gravity_Compensation_Test_Function(void);

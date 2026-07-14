@@ -1675,12 +1675,12 @@
     <File>
       <GroupNumber>7</GroupNumber>
       <FileNumber>100</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User_code\Motion_Control\App\src\self_righting_retract.c</PathWithFileName>
-      <FilenameWithoutPath>self_righting_retract.c</FilenameWithoutPath>
+      <PathWithFileName>..\User_code\Motion_Control\App\src\startup_retract_controller.cpp</PathWithFileName>
+      <FilenameWithoutPath>startup_retract_controller.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1711,12 +1711,12 @@
     <File>
       <GroupNumber>7</GroupNumber>
       <FileNumber>103</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User_code\Motion_Control\App\src\stair_climb.c</PathWithFileName>
-      <FilenameWithoutPath>stair_climb.c</FilenameWithoutPath>
+      <PathWithFileName>..\User_code\Motion_Control\App\src\stair_controller.cpp</PathWithFileName>
+      <FilenameWithoutPath>stair_controller.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

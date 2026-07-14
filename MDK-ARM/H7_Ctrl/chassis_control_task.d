@@ -42,8 +42,10 @@ h7_ctrl/chassis_control_task.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
-  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\App\inc\stair_controller.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\App\inc\startup_retract_controller.hpp \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
   ..\User_code\Motion_Control\App\inc\User_State.h \
   ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
@@ -89,4 +91,5 @@ h7_ctrl/chassis_control_task.o: \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\User_code\Motion_Control\Power_control\PowerCtrl.h
+  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
+  ..\User_code\Motion_Control\App\inc\Self_Righting.h

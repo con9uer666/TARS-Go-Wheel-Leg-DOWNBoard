@@ -3,7 +3,7 @@
  * @brief Motor_task 的第一阶段 C++ 灰度重构。
  *
  * 每周期固定执行：轮端状态更新 → 状态解算 → 顶层模式选择 → 模式控制计算
- * → VMC 最终映射 → 错误蜂鸣器。动作组内部控制律暂时保持原 C 实现。
+ * → VMC 最终映射 → 错误蜂鸣器。起立恢复、坐地和上台阶已由 C++ 控制器执行。
  */
 
 #include "chassis_control_task.hpp"
@@ -20,6 +20,7 @@ extern "C"
 #include "observe_task.h"
 #include "controller.h"
 #include "PowerCtrl.h"
+#include "Self_Righting.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
@@ -29,10 +30,10 @@ namespace chassis
 {
 
 /**
- * @brief 构造底盘任务，并把现有全局 PID 实例注入 SitController。
+ * @brief 构造底盘任务，并把现有全局对象注入各 C++ 动作控制器。
  *
- * 此处是坐地控制器与旧工程全局对象之间唯一的装配位置。SitController 本身
- * 不知道这些 PID 是否来自全局变量，因此后续可替换成其他实例或测试桩。
+ * 此处是新控制器与旧工程全局对象之间唯一的装配位置。控制器本身
+ * 只保存依赖引用，不在算法内部查找全局 PID 或 VMC 对象。
  */
 ChassisControlTask::ChassisControlTask()
     : sit_controller_(SitControllerDependencies{
@@ -44,7 +45,34 @@ ChassisControlTask::ChassisControlTask()
           L_Leg_dphi0_PID,
           R_Leg_Middle_PID,
           R_Leg_dphi0_PID,
-          mg})
+          mg}),
+      stair_controller_(StairControllerDependencies{
+          L_Leg_L0_POS_PID,
+          L_Leg_L0_SPD_PID,
+          R_Leg_L0_POS_PID,
+          R_Leg_L0_SPD_PID,
+          L_Leg_Middle_PID,
+          L_Leg_dphi0_PID,
+          R_Leg_Middle_PID,
+          R_Leg_dphi0_PID,
+          VMC_L,
+          VMC_R,
+          LEG_MIN_LENTH,
+          LEG_MAX_LENTH}),
+      startup_retract_controller_(StartupRetractControllerDependencies{
+          L_Leg_L0_POS_PID,
+          L_Leg_L0_SPD_PID,
+          R_Leg_L0_POS_PID,
+          R_Leg_L0_SPD_PID,
+          L_Leg_Middle_PID,
+          L_Leg_dphi0_PID,
+          R_Leg_Middle_PID,
+          R_Leg_dphi0_PID,
+          VMC_L,
+          VMC_R,
+          VMC_Chassis_Target,
+          Self_Righting_Mode_Detect,
+          Self_Righting_Action})
 {
 }
 
@@ -135,11 +163,11 @@ RunMode ChassisControlTask::ResolveMode(const LegacyModeSignals& signals) const
     if (signals.start_mode == 1)
         return RunMode::Balance;
     if (signals.start_mode == 2 && signals.stair_retract_mode == 0)
-        return RunMode::StairExtend;
+        return RunMode::Stair;
     if (signals.start_mode == 3)
         return RunMode::Sit;
     if (signals.stair_retract_mode == 1)
-        return RunMode::StairRetract;
+        return RunMode::Stair;
 
     return RunMode::Hold;
 }
@@ -148,8 +176,8 @@ RunMode ChassisControlTask::ResolveMode(const LegacyModeSignals& signals) const
  * @brief 执行一个顶层模式的控制计算。
  * @param[in] mode 本周期解析出的唯一运行模式。
  *
- * 除 Sit 外，其余模式仍调用旧 C 动作组并产生 LegacyGlobal 命令。Sit 已迁移
- * 为原生 C++ 控制器，直接写入 context_.command。
+ * 起立恢复、坐地和上台阶模式由 C++ 控制器返回 ChassisCommand；尚未迁移的模式
+ * 仍调用旧 C 动作组，并在周期末从 VMC_Chassis_Target 捕获命令。
  */
 void ChassisControlTask::ExecuteMode(RunMode mode)
 {
@@ -158,17 +186,57 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
     switch (mode)
     {
     case RunMode::StartupRetract:
-        NotStanding_NotStairRetract_for_chassis();
+    {
+        /** 起立恢复控制器返回的命令、当前分支与完成事件。 */
+        const StartupRetractUpdateResult startup_result =
+            startup_retract_controller_.Update(context_.state);
+        context_.command = startup_result.command;
+        context_.command_source = CommandSource::NativeCpp;
+
+        if (startup_result.retract_control_active)
+            first_run = 0U;
+
+        if (startup_result.completed)
+        {
+            start_mode = 1U;
+            L_Leg_State = 0U;
+            R_Leg_State = 0U;
+            body_distance = 0.0f;
+            target_body_distance = 0.0f;
+        }
         gimbal_follow_flag = 1;
         break;
+    }
 
     case RunMode::Balance:
         Standing();
         break;
 
-    case RunMode::StairExtend:
-        Upstair_NotStairRetract();
+    case RunMode::Stair:
+    {
+        stair_controller_.SynchronizeLegacyPhase(context_.mode_signals);
+        /** 上台阶控制器返回的本周期命令和阶段转换事件。 */
+        const StairUpdateResult stair_result =
+            stair_controller_.Update(context_.state, context_.command);
+        context_.command = stair_result.command;
+        context_.command_source = CommandSource::NativeCpp;
+
+        if (stair_result.entered_retract_phase)
+            upstares_mode = 1U;
+
+        if (stair_result.completed)
+        {
+            upstares_mode = 0U;
+            start_mode = 1U;
+            L_Leg_State = 0U;
+            R_Leg_State = 0U;
+            leg_state = 0U;
+            target_Leg_L0 = LEG_MIN_LENTH;
+            body_distance = 0.0f;
+            target_body_distance = 0.0f;
+        }
         break;
+    }
 
     case RunMode::Sit:
     {
@@ -185,10 +253,6 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
         }
         break;
     }
-
-    case RunMode::StairRetract:
-        StairRetract();
-        break;
 
     case RunMode::GravityTest:
     case RunMode::Hold:

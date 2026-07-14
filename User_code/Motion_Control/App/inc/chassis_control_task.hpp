@@ -9,6 +9,8 @@
 #include <cstdint>
 #include "chassis_control_types.hpp"
 #include "sit_controller.hpp"
+#include "stair_controller.hpp"
+#include "startup_retract_controller.hpp"
 
 namespace chassis
 {
@@ -32,8 +34,8 @@ struct TaskContext
 /**
  * @brief 500 Hz 底盘控制任务调度器。
  *
- * 当前灰度阶段只负责固定执行顺序、模式归一化和私有状态封装；各动作控制律
- * 仍调用原 C 函数，保证控制效果与迁移前一致。
+ * 当前灰度阶段负责固定执行顺序、模式归一化、私有状态封装和命令统一提交。
+ * 起立恢复、坐地和上台阶已迁移为 C++ 控制器，其余分支继续通过旧 C 兼容桥运行。
  */
 class ChassisControlTask
 {
@@ -82,6 +84,8 @@ private:
 
     TaskContext context_{};        /**< 仅由 Motor_task 对象拥有的任务持久状态。 */
     SitController sit_controller_; /**< 首个原生 C++ 动作控制器：坐地控制器。 */
+    StairController stair_controller_; /**< 管理伸腿和收腿内部阶段的 C++ 上台阶控制器。 */
+    StartupRetractController startup_retract_controller_; /**< 管理倒地自起接管与起立前收腿恢复的 C++ 控制器。 */
 };
 
 } // namespace chassis

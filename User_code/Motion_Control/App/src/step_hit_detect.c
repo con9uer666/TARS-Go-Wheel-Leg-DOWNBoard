@@ -1,7 +1,9 @@
 /**
  * @file step_hit_detect.c
- * @brief 磕台阶检测：长腿姿态下两腿同时出现高腿力矩 + 高腿长，连续命中即触发上台阶
- *        (upstairs_flag=1)。含切到长腿后的解禁延时与离地冷却联动。
+ * @brief 磕台阶检测：长腿姿态下两腿同时出现高腿力矩 + 高腿长时累计命中。
+ *
+ * 检测、长腿解禁延时和离地冷却始终运行；只有
+ * automatic_stair_climb_enable 为 1 时，达到命中条件才会产生 upstairs_flag。
  */
 
 #include "chassis_behavior_tree.h"
@@ -37,6 +39,14 @@
 static uint8_t step_hit_count = 0;
 static float prev_L_Ground_F0 = 0.0f;
 static float prev_R_Ground_F0 = 0.0f;
+
+/**
+ * @brief 自动上台阶触发使能，默认为 0 以关闭磕台阶后的自动模式切换。
+ *
+ * 关闭时 Step_Hit_Detect() 仍完整更新命中计数、长腿延时和
+ * step_hit_cooldown，仅不把成功检测转换为 upstairs_flag。
+ */
+uint8_t automatic_stair_climb_enable = 0U;
 
 void Step_Hit_Detect(void)
 {
@@ -93,7 +103,10 @@ void Step_Hit_Detect(void)
 
     if (step_hit_count >= step_hit_count_target)
     {
-        upstairs_flag = 1;
+        if (automatic_stair_climb_enable != 0U)
+        {
+            upstairs_flag = 1U;
+        }
         step_hit_count = 0;
         step_hit_cooldown = step_hit_cooldown_target;
     }

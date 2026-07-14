@@ -17,17 +17,16 @@ namespace chassis
 /**
  * @brief Motor_task 每周期选择的唯一顶层运行模式。
  *
- * 当前枚举是兼容旧 start_mode/upstares_mode 的灰度过渡层。后续会继续把
- * StairExtend/StairRetract 合并为一个带内部阶段的 StairController。
+ * 当前枚举是兼容旧 start_mode/upstares_mode 的灰度过渡层。上台阶的
+ * 伸腿和收腿已统一为 Stair 模式，由 StairController 管理真实内部阶段。
  */
 enum class RunMode : std::uint8_t
 {
     GravityTest,   /**< 重力补偿标定模式，跳过正常状态解算和动作调度。 */
     StartupRetract,/**< 未站起阶段：包含倒地自起、收腿和转腿到竖直。 */
     Balance,       /**< 正常平衡运行：包含普通移动、小陀螺和跳跃修饰动作。 */
-    StairExtend,   /**< 上台阶前半段：伸腿并外摆腿角。 */
+    Stair,         /**< 完整上台阶行为；伸腿和收腿由 StairController 内部阶段管理。 */
     Sit,           /**< 坐地动作：腿长和腿角沿斜坡移动到坐地目标。 */
-    StairRetract,  /**< 上台阶后半段：收腿并恢复到正常平衡姿态。 */
     Hold           /**< 无有效旧模式组合时，不重新计算动作，保持已有目标。 */
 };
 

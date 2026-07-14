@@ -1114,9 +1114,9 @@
               <FilePath>..\User_code\Motion_Control\App\src\Self_Righting.c</FilePath>
             </File>
             <File>
-              <FileName>self_righting_retract.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\self_righting_retract.c</FilePath>
+              <FileName>startup_retract_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\startup_retract_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>sit_controller.cpp</FileName>
@@ -1129,9 +1129,9 @@
               <FilePath>..\User_code\Motion_Control\App\src\spinning_motion.c</FilePath>
             </File>
             <File>
-              <FileName>stair_climb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\stair_climb.c</FilePath>
+              <FileName>stair_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\stair_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>step_hit_detect.c</FileName>
