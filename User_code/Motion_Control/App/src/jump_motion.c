@@ -3,7 +3,7 @@
  * @brief 跳跃动作组：跳跃指令锁存/解锁、L0 目标阶跃、跳跃失败判定和跳跃蜂鸣器。
  *
  * Jump_Motion_Update() 只维护跳跃状态，并在跳跃期间重新计算腿长 PID；
- * VMC 目标值由 Standing() 根据返回的 jump_active 统一赋值。
+ * VMC 目标值由 BalanceController 根据返的 jump_active 统一赋值。
  */
 
 #include "chassis_behavior_tree.h"

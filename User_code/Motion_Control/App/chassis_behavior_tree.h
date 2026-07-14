@@ -131,7 +131,7 @@ extern float L_Ground_F0, R_Ground_F0;
 extern int L_off_ground, R_off_ground;
 extern int step_hit_cooldown;
 
-/* ---- step_hit_detect.c ---- */
+/* ---- balance_controller.cpp 内部 StepHitDetector ---- */
 /**
  * @brief 磕台阶检测结果是否允许自动触发上台阶。
  *
@@ -197,9 +197,6 @@ void task_Motor_Enable(void);
 /* ---- chassis_control_task.cpp（C++ 主循环调度器） ---- */
 void Motor_task(void const *argument);
 
-/* ---- balance_standing.c ---- */
-void Standing(void);
-
 /* ---- lqr_calculate.c ---- */
 void LQR_calculate(void);
 void LQR_Update_K(void);
@@ -213,9 +210,6 @@ uint8_t Jump_Motion_Update(void);
 
 /* ---- off_ground_detect.c ---- */
 void off_ground_detect(void);
-
-/* ---- step_hit_detect.c ---- */
-void Step_Hit_Detect(void);
 
 /* ---- Lqr_Error_Calculate.h（Ctrl/src/Lqr_Error_Calculate.c） ---- */
 #include "Lqr_Error_Calculate.h"

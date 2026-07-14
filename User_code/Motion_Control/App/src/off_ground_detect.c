@@ -38,7 +38,7 @@ float L_Ground_F0, R_Ground_F0; //地面支持力
 int L_off_ground = 0;   //必须是int类型，因为要减去计数器，不能无符号
 int R_off_ground = 0;   //必须是int类型，因为要减去计数器，不能无符号
 
-// 提到文件作用域：off_ground_detect 也会写，用作离地保护期；step_hit_detect 共用
+// 离地检测与 BalanceController 内部 StepHitDetector 共享的冷却计数。
 int step_hit_cooldown = 0;
 
 void off_ground_detect()

@@ -3,7 +3,7 @@
  * @brief Motor_task 的第一阶段 C++ 灰度重构。
  *
  * 每周期固定执行：轮端状态更新 → 状态解算 → 顶层模式选择 → 模式控制计算
- * → VMC 最终映射 → 错误蜂鸣器。起立恢复、坐地和上台阶已由 C++ 控制器执行。
+ * → VMC 最终映射 → 错误蜂鸣器。起立恢复、正常平衡、坐地和上台阶已由 C++ 控制器执行。
  */
 
 #include "chassis_control_task.hpp"
@@ -21,6 +21,7 @@ extern "C"
 #include "controller.h"
 #include "PowerCtrl.h"
 #include "Self_Righting.h"
+#include "Board2Board.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
@@ -36,7 +37,20 @@ namespace chassis
  * 只保存依赖引用，不在算法内部查找全局 PID 或 VMC 对象。
  */
 ChassisControlTask::ChassisControlTask()
-    : sit_controller_(SitControllerDependencies{
+    : balance_controller_(BalanceControllerDependencies{
+          VMC_Chassis_Target,
+          L_Leg_L0_PID,
+          R_Leg_L0_PID,
+          Roll_Comp_PID,
+          mg,
+          upstairs_flag,
+          StepHitDetectorDependencies{
+              LEG_MAX_LENTH,
+              motor_HZ,
+              step_hit_cooldown,
+              L_Ground_F0,
+              R_Ground_F0}}),
+      sit_controller_(SitControllerDependencies{
           L_Leg_L0_POS_PID,
           L_Leg_L0_SPD_PID,
           R_Leg_L0_POS_PID,
@@ -127,6 +141,7 @@ void ChassisControlTask::CaptureStateSnapshot()
     context_.state.left_leg.leg_angular_rate_radps = VMC_L.d_phi0;
     context_.state.left_leg.body_angle_rad = VMC_L.b_phi0;
     context_.state.left_leg.body_angular_rate_radps = VMC_L.d_b_phi0;
+    context_.state.left_leg.actual_leg_torque_nm = VMC_L.T_actual;
 
     context_.state.right_leg.length_m = VMC_R.L0;
     context_.state.right_leg.length_rate_mps = VMC_R.d_L0;
@@ -134,6 +149,7 @@ void ChassisControlTask::CaptureStateSnapshot()
     context_.state.right_leg.leg_angular_rate_radps = VMC_R.d_phi0;
     context_.state.right_leg.body_angle_rad = VMC_R.b_phi0;
     context_.state.right_leg.body_angular_rate_radps = VMC_R.d_b_phi0;
+    context_.state.right_leg.actual_leg_torque_nm = VMC_R.T_actual;
 
     context_.state.body_speed_mps = kalman_body_speed;
     context_.state.pitch_rad = pitch_trans[0];
@@ -176,7 +192,7 @@ RunMode ChassisControlTask::ResolveMode(const LegacyModeSignals& signals) const
  * @brief 执行一个顶层模式的控制计算。
  * @param[in] mode 本周期解析出的唯一运行模式。
  *
- * 起立恢复、坐地和上台阶模式由 C++ 控制器返回 ChassisCommand；尚未迁移的模式
+ * 起立恢复、正常平衡、坐地和上台阶模式由 C++ 控制器返回 ChassisCommand；尚未迁移的模式
  * 仍调用旧 C 动作组，并在周期末从 VMC_Chassis_Target 捕获命令。
  */
 void ChassisControlTask::ExecuteMode(RunMode mode)
@@ -209,8 +225,30 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
     }
 
     case RunMode::Balance:
-        Standing();
+    {
+        /** 平衡控制器使用的腿长档位、坐地请求、自动 Stair 开关和模式快照。 */
+        BalanceControlInput balance_input{};
+        balance_input.target_leg_state = Foot_Chassis.Target_Leg_State;
+        balance_input.sit_requested = sit_mode_enable == 1U;
+        balance_input.automatic_stair_climb_enabled =
+            automatic_stair_climb_enable != 0U;
+        balance_input.mode_signals = context_.mode_signals;
+
+        /** 正常平衡算法链返回的最终命令和模式转换请求。 */
+        const BalanceUpdateResult balance_result =
+            balance_controller_.Update(context_.state, balance_input);
+        context_.command = balance_result.command;
+        context_.command_source = CommandSource::NativeCpp;
+
+        if (balance_result.request_stair)
+        {
+            start_mode = 2U;
+            upstairs_flag = 0U;
+        }
+        if (balance_result.request_sit)
+            start_mode = 3U;
         break;
+    }
 
     case RunMode::Stair:
     {

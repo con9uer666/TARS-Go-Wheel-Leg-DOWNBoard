@@ -1044,9 +1044,9 @@
               <FilePath>..\User_code\Motion_Control\App\src\chassis_control_task.cpp</FilePath>
             </File>
             <File>
-              <FileName>balance_standing.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\balance_standing.c</FilePath>
+              <FileName>balance_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\balance_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>anti_split_control.c</FileName>
@@ -1132,11 +1132,6 @@
               <FileName>stair_controller.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\User_code\Motion_Control\App\src\stair_controller.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>step_hit_detect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\step_hit_detect.c</FilePath>
             </File>
             <File>
               <FileName>User_State.c</FileName>

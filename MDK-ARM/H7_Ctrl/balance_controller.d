@@ -1,8 +1,7 @@
-h7_ctrl/chassis_control_task.o: \
-  ..\User_code\Motion_Control\App\src\chassis_control_task.cpp \
-  ..\User_code\Motion_Control\App\inc\chassis_control_task.hpp \
-  ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
+h7_ctrl/balance_controller.o: \
+  ..\User_code\Motion_Control\App\src\balance_controller.cpp \
   ..\User_code\Motion_Control\App\inc\balance_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
@@ -42,19 +41,14 @@ h7_ctrl/chassis_control_task.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
-  ..\User_code\Motion_Control\App\inc\sit_controller.hpp \
-  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\User_code\Motion_Control\App\inc\stair_controller.hpp \
-  ..\User_code\Motion_Control\App\inc\startup_retract_controller.hpp \
   ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
   ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
-  ..\User_code\Motion_Control\App\inc\User_State.h \
-  ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
-  ..\User_code\Device_drives\inc\remoter.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h \
-  ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
-  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
+  ..\User_code\Motion_Control\App\inc\anti_split_control.h \
+  ..\User_code\Motion_Control\App\inc\chassis_height_control.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h \
+  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
+  ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -76,22 +70,4 @@ h7_ctrl/chassis_control_task.o: \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\IMU_coculate\controller.h ..\IMU_coculate\user_lib.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
-  ..\Core\Inc\FreeRTOSConfig.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\projdefs.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\portable.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\deprecated_definitions.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\portmacro.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\mpu_wrappers.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
-  ..\User_code\Motion_Control\App\inc\Self_Righting.h \
-  ..\User_code\Board2Board.h ..\Core\Inc\usart.h
+  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h

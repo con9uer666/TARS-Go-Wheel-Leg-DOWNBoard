@@ -73,6 +73,7 @@ struct LegStateSnapshot
     float leg_angular_rate_radps = 0.0f;  /**< 虚拟腿角速度 d_phi0，单位 rad/s。 */
     float body_angle_rad = 0.0f;          /**< 相对车身的虚拟腿角 b_phi0，单位 rad。 */
     float body_angular_rate_radps = 0.0f; /**< b_phi0 的角速度，单位 rad/s。 */
+    float actual_leg_torque_nm = 0.0f;    /**< 由关节电机反馈反解的实际虚拟腿力矩 T_actual，单位 N·m。 */
 };
 
 /**

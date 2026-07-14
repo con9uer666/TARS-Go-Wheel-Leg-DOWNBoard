@@ -138,7 +138,7 @@ flowchart TD
     B --> C["输入更新 + VMC/车速/INS 解算"]
     C --> D{"扁平 RunMode"}
     D -->|StartupRetract| E["StartupRetractController::Update\n倒地自起 → 收腿恢复"]
-    D -->|Balance| F["Standing\nLQR + 腿长PID + 跳跃"]
+    D -->|Balance| F["BalanceController::Update\nLQR + 腿长PID + 跳跃 + 模式事件"]
     D -->|Stair| G["StairController::Update\n伸腿 → 收腿内部阶段"]
     D -->|Sit| I["SitController::Update\nC++ 坐地控制器"]
     D -->|GravityTest| J["Gravity_Compensation_Test"]
@@ -181,7 +181,7 @@ flowchart LR
 - 测量向量 2 维：`[轮速解算速度(v), IMU加速度(a)]`
 - 周期：`0.002s` (500Hz 积分，但 task 是 2ms delay = 隐式 500/2=250Hz)
 
-### 3.5 LQR 控制器 (Standing 模式下)
+### 3.5 LQR 控制器 (Balance 模式下)
 
 ```mermaid
 flowchart LR
@@ -229,13 +229,13 @@ flowchart TD
 | `task_PID_Init()` | chassis_init.c | PID控制器初始化 |
 | `task_Pitch_Coculate()` | chassis_init.c | pitch前后帧计算 |
 | `task_Motor_Enable()` | motor_enable.c | DM电机使能 |
-| `Standing()` | balance_standing.c | 站起/正常运行动作组 |
+| `BalanceController::Update()` | balance_controller.cpp | 固定平衡算法顺序，合成最终命令并返回 Stair/Sit 请求 |
 | `LQR_calculate()` | lqr_calculate.c | LQR力矩计算 |
 | `LQR_Update_K()` | lqr_calculate.c | 100Hz节流刷新K矩阵 |
 | `spinning_up()` / `spinning_exit()` | spinning_motion.c | 小陀螺加速 / 退出 |
 | `Jump_Motion_Update()` | jump_motion.c | 跳跃状态、腿长 PID 与蜂鸣器更新 |
 | `off_ground_detect()` | off_ground_detect.c | 离地检测 |
-| `Step_Hit_Detect()` | step_hit_detect.c | 持续更新磕台阶检测与冷却；仅在 `automatic_stair_climb_enable=1` 时自动触发 |
+| `StepHitDetector::Update()` | balance_controller.cpp | 持续更新磕台阶命中、长腿延时与离地冷却；自动触发默认关闭 |
 | `Yaw_Error_Coculate()` | yaw_error.c | Yaw误差+速度误差 |
 | `turn_ctrl_with_stuck_flip()` | leg_retract_common.c | 收腿转角(卡住反向绕长路) |
 | `StartupRetractController::Update()` | startup_retract_controller.cpp | 保留旧倒地自起算法，姿态恢复后返回收腿 ChassisCommand |
@@ -327,6 +327,7 @@ others/Motion_Control/
 │   │   ├── chassis_behavior_tree.h      ★ 底盘聚合公共头（取代 motor.h，所有extern/类型/原型）
 │   │   ├── chassis_control_task.hpp      C++ 任务调度器、扁平模式与任务上下文
 │   │   ├── chassis_control_types.hpp     C++ 控制器共享的状态快照、模式与命令类型
+│   │   ├── balance_controller.hpp       正常平衡流程与磕台阶检测器接口
 │   │   ├── sit_controller.hpp           坐地控制器接口、依赖与参数
 │   │   ├── stair_controller.hpp         上台阶控制器接口、内部阶段与参数
 │   │   ├── startup_retract_controller.hpp 倒地自起接管与起立前收腿控制器
@@ -338,12 +339,11 @@ others/Motion_Control/
 │       ├── chassis_state.c              跨动作共享反馈量/常数/标志/共享PID
 │       ├── chassis_init.c               电机/VMC/PID 初始化 + pitch计算
 │       ├── motor_enable.c               全部电机使能动作
-│       ├── balance_standing.c           站起/正常运行动作组 Standing
+│       ├── balance_controller.cpp       C++ 正常平衡流程 + 磕台阶检测器
 │       ├── lqr_calculate.c              LQR力矩计算 + K矩阵节流刷新
 │       ├── spinning_motion.c            小陀螺动作组（加速/退出）
 │       ├── jump_motion.c                跳跃状态、腿长 PID 与蜂鸣器更新
 │       ├── off_ground_detect.c          离地检测
-│       ├── step_hit_detect.c            磕台阶检测→上台阶触发
 │       ├── yaw_error.c                  常态Yaw误差计算
 │       ├── leg_retract_common.c         收腿转角公共逻辑(卡住反向绕长路)
 │       ├── startup_retract_controller.cpp C++ 起立恢复控制器（旧自起接管→收腿）

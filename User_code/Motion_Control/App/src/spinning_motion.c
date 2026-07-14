@@ -2,7 +2,7 @@
  * @file spinning_motion.c
  * @brief 小陀螺动作组：加速(spinning_up) 与 统一退出(spinning_exit)。
  *        加速段闭环 d_yaw 到目标转速；退出段随转速降低平滑引入角度归位，均受功率门控。
- *        小陀螺时叠加在 Standing 上的 phi0 归中 PID 也在此定义（L/R_Spin_Phi0_PID）。
+ *        小陀螺时叠加在 BalanceController 腿力矩命令上的 phi0 归中 PID 也在此定义。
  */
 
 #include "chassis_behavior_tree.h"
