@@ -195,11 +195,11 @@ void LQR_calculate(void);
 void LQR_Update_K(void);
 
 /* ---- spinning_motion.c ---- */
-void spinning_up(void);
-void spinning_exit(void);
+float spinning_up(void);
+float spinning_exit(void);
 
 /* ---- jump_motion.c ---- */
-uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd);
+uint8_t Jump_Motion_Update(void);
 
 /* ---- off_ground_detect.c ---- */
 void off_ground_detect(void);

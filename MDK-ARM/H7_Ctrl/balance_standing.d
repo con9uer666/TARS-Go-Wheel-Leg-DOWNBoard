@@ -98,4 +98,5 @@ h7_ctrl/balance_standing.o: \
   ..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h \
   ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\tim.h \
   ..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h
+  ..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h \
+  ..\User_code\Motion_Control\App\inc\anti_split_control.h

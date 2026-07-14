@@ -25,7 +25,6 @@
 #include "Self_Righting.h"
 #include "Board2Board.h"
 #include "Slope.h"
-#include "Wheel_Leg_about.h"
 #include "controller.h"
 #include "remoter.h"
 #include "FreeRTOS.h"
@@ -113,6 +112,44 @@ float K_Fit_Coefficients[48][6] = {
      -1.3641,  1.9831,  -6.0528,  -2.0865,  0.63031,  6.7233,
      4.918,  -11.819,  -3.1143,  5.5791,  13.228,  -3.209,
 };
+
+/**
+ * @brief 二维多项式拟合 LQR 反馈增益矩阵 K(L0_l, L0_r)。
+ *
+ * 对于 LQR 的 4×12 增益矩阵 K，每个元素 K[i][j] 通过二次多项式插值获得：
+ *   K[i][j] = p00 + p10·L0_l + p01·L0_r + p20·L0_l² + p11·L0_l·L0_r + p02·L0_r²
+ * 其中系数由预拟合表 K_Fit_Coefficients[48][6] 提供。
+ *
+ * @param[out] LQR                 4×12 反馈增益矩阵。
+ * @param[in]  K_Fit_Coefficients  48×6 拟合系数表。
+ * @param[in]  L0_l               左腿当前腿长，单位 m。
+ * @param[in]  L0_r               右腿当前腿长，单位 m。
+ */
+static void LQR_Get_K(float LQR[4][12], float K_Fit_Coefficients[48][6],
+                      float L0_l, float L0_r)
+{
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        for (uint8_t j = 0; j < 12; j++)
+        {
+            uint8_t pos = i * 12 + j;
+
+            float p00 = K_Fit_Coefficients[pos][0];
+            float p10 = K_Fit_Coefficients[pos][1];
+            float p01 = K_Fit_Coefficients[pos][2];
+            float p20 = K_Fit_Coefficients[pos][3];
+            float p11 = K_Fit_Coefficients[pos][4];
+            float p02 = K_Fit_Coefficients[pos][5];
+
+            LQR[i][j] = p00
+                      + p10 * L0_l
+                      + p01 * L0_r
+                      + p20 * L0_l * L0_l
+                      + p11 * L0_l * L0_r
+                      + p02 * L0_r * L0_r;
+        }
+    }
+}
 
 float lqr_body_distance_error ;         //lqr内部变量，会被限幅
 float lqr_speed_error;                  //lqr内部变量，会被限幅

@@ -74,9 +74,8 @@ h7_ctrl/lqr_calculate.o: \
   ..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h \
   ..\User_code\Motion_Control\App\inc\Self_Righting.h \
   ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
-  ..\User_code\CommonLibs\inc\Slope.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h \
-  ..\IMU_coculate\controller.h ..\IMU_coculate\user_lib.h \
+  ..\User_code\CommonLibs\inc\Slope.h ..\IMU_coculate\controller.h \
+  ..\IMU_coculate\user_lib.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \

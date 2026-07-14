@@ -46,6 +46,8 @@ h7_ctrl/jump_motion.o: ..\User_code\Motion_Control\App\src\jump_motion.c \
   ..\User_code\Motion_Control\App\inc\Gimbal.h \
   ..\User_code\Motion_Control\App\inc\User_State.h ..\User_code\State.h \
   ..\User_code\Device_drives\inc\remoter.h \
+  ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
+  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -68,8 +70,6 @@ h7_ctrl/jump_motion.o: ..\User_code\Motion_Control\App\src\jump_motion.c \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h \
-  ..\User_code\Motion_Control\Ctrl\inc\observe_task.h \
-  ..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h \
   ..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h \
   ..\User_code\Motion_Control\App\inc\Self_Righting.h \
   ..\User_code\Board2Board.h ..\Core\Inc\usart.h \

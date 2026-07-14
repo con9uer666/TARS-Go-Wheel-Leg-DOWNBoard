@@ -1049,6 +1049,11 @@
               <FilePath>..\User_code\Motion_Control\App\src\balance_standing.c</FilePath>
             </File>
             <File>
+              <FileName>anti_split_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\anti_split_control.c</FilePath>
+            </File>
+            <File>
               <FileName>body_speed_state.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User_code\Motion_Control\App\src\body_speed_state.c</FilePath>

@@ -1,12 +1,9 @@
 /**
  * @file jump_motion.c
- * @brief 跳跃动作组：跳跃指令锁存/解锁、L0 目标阶跃、跳跃失败判定、跳跃蜂鸣器，
- *        以及统一的 VMC 力矩下发。
+ * @brief 跳跃动作组：跳跃指令锁存/解锁、L0 目标阶跃、跳跃失败判定和跳跃蜂鸣器。
  *
- * Jump_Motion_Update() 由 Standing() 在算完左右腿力矩命令(L/R_leg_T_cmd)后调用：
- *   - 跳跃中：对 L0 setpoint 施加 jump_L0_step_delta 阶跃，重跑 L0 PID 后统一 VMC 下发。
- *   - 非跳跃：保持 Leg_L0_Control() 的原 PID 输出，统一 VMC 下发。
- * 返回 jump_active（1=本周期处于跳跃）。
+ * Jump_Motion_Update() 只维护跳跃状态，并在跳跃期间重新计算腿长 PID；
+ * VMC 目标值由 Standing() 根据返回的 jump_active 统一赋值。
  */
 
 #include "chassis_behavior_tree.h"
@@ -15,7 +12,6 @@
 #include "Gimbal.h"
 #include "User_State.h"
 #include "State.h"
-#include "arm_math.h"
 #include "USER_CAN.h"
 #include "VMC.h"
 #include "observe_task.h"
@@ -64,7 +60,7 @@ float jump_leg_change_threshold = 0.15f;
 //   3 = 0.5s 到期但腿长已变化够 → 超时（疑似传感器漏检离地）
 uint8_t jump_fail_reason = 0;
 
-uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
+uint8_t Jump_Motion_Update(void)
 {
 
 //! 判断是否跳跃
@@ -76,9 +72,7 @@ uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
     // jump_mode 由原始指令和锁共同决定，外部不再直接写
     jump_mode = (jump_cmd && !jump_locked) ? 1 : 0;
 
-    // 跳跃动作组：绕过腿长 PID 和重力补偿，两腿沿腿杆方向直接喂 jump_F0
     // 实际触发：jump_mode && jump_enable && 短腿 && !小陀螺 && 双腿未离地
-    // T 维持原 LQR/anti-split 输出以保持平衡姿态
     uint8_t jump_active_raw = (jump_mode == 1
                                && jump_enable == 1
                                && spinning_flag == 0
@@ -138,21 +132,7 @@ uint8_t Jump_Motion_Update(float L_leg_T_cmd, float R_leg_T_cmd)
         PID_coculate(&L_Leg_L0_PID);
         PID_coculate(&R_Leg_L0_PID);
 
-        // 写入跳跃状态下的左右腿目标 F0/T，统一映射在 Motor_task 末尾执行
-        VMC_Chassis_Target.L_F0 = 200 + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output;
-        VMC_Chassis_Target.L_T = L_leg_T_cmd;
-        VMC_Chassis_Target.R_F0 = 200 + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output;
-        VMC_Chassis_Target.R_T = R_leg_T_cmd;
     }
-    else
-    {
-        // 非跳跃：使用 Leg_L0_Control() 的原 L0 PID 输出 + 重力补偿 + 横滚补偿
-        VMC_Chassis_Target.L_F0 = L_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_L.b_phi0)) + Roll_Comp_PID.output;
-        VMC_Chassis_Target.L_T = L_leg_T_cmd;
-        VMC_Chassis_Target.R_F0 = R_Leg_L0_PID.output + (mg / arm_cos_f32(VMC_R.b_phi0)) - Roll_Comp_PID.output;
-        VMC_Chassis_Target.R_T = R_leg_T_cmd;
-    }
-
 
     // 跳跃蜂鸣器：跳跃中长鸣中音 sol，结束立刻停。边沿触发避免 PWM 频繁重配
     // 注意必须用 Buzzer_Tone_Max(784) 而不是 Buzzer_sol()：后者音量受 SBUS_CH.CH10 旋钮调制，
