@@ -162,7 +162,7 @@ extern float L_rev_dir, R_rev_dir;
 extern float L_rev_long_remain, R_rev_long_remain;
 extern float L_rev_traveled, R_rev_traveled;
 
-/* ---- sit_motion.c ---- */
+/* ---- sit_controller.cpp 兼容调试符号 ---- */
 extern uint8_t sit_first_entry;
 extern uint16_t sit_debug_counter;
 extern uint8_t sit_ramp_done;
@@ -184,7 +184,7 @@ void task_Pitch_Coculate(void);
 /* ---- motor_enable.c ---- */
 void task_Motor_Enable(void);
 
-/* ---- chassis_behavior_tree.c（主循环 / 行为树） ---- */
+/* ---- chassis_control_task.cpp（C++ 主循环调度器） ---- */
 void Motor_task(void const *argument);
 
 /* ---- balance_standing.c ---- */
@@ -224,10 +224,6 @@ void NotStanding_NotStairRetract_for_chassis(void);
 /* ---- stair_climb.c ---- */
 void Upstair_NotStairRetract(void);
 void StairRetract(void);
-
-/* ---- sit_motion.c ---- */
-void Sit_On_Ground(void);
-void Sit_On_Ground_Action(void);
 
 /* ---- gravity_comp_test.c ---- */
 void Gravity_Compensation_Test_Function(void);

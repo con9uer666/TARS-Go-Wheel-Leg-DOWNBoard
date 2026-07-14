@@ -134,18 +134,21 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A["Motor_task 500Hz"] --> B{VMC_Coculate\n+ Body_Speed_Coculate}
-    B --> C{start_mode?}
-    C -->|0| D["NotStanding_NotStairRetract\n收腿 → 起立"]
-    C -->|1| E["Standing\nLQR + 腿长PID + 跳跃"]
-    C -->|2| F["Upstair_NotStairRetract\n上台阶伸腿"]
-    C -->|3| G["Sit_On_Ground\n坐地模式"]
+    A["Motor_task 500Hz"] --> B["轮端状态更新"]
+    B --> C["输入更新 + VMC/车速/INS 解算"]
+    C --> D{"扁平 RunMode"}
+    D -->|StartupRetract| E["NotStanding_NotStairRetract\n收腿 → 起立"]
+    D -->|Balance| F["Standing\nLQR + 腿长PID + 跳跃"]
+    D -->|StairExtend| G["Upstair_NotStairRetract\n上台阶伸腿"]
+    D -->|StairRetract| H["StairRetract\n收腿起立"]
+    D -->|Sit| I["SitController::Update\nC++ 坐地控制器"]
+    D -->|GravityTest| J["Gravity_Compensation_Test"]
+    D -->|Hold| K["保持上一周期目标"]
     
-    D -->|两腿到位| C
-    F -->|upstares_mode=1| H["StairRetract\n收腿起立"]
-    H -->|完成| C
-    E -->|磕台阶检测| C
-    E -->|坐地指令| C
+    E -->|两腿到位| D
+    G -->|伸腿完成| D
+    H -->|收腿完成| D
+    F -->|磕台阶/坐地请求| D
 ```
 
 ### 3.2 VMC 逆向运动学 (VMC_Coculate)
@@ -222,7 +225,7 @@ flowchart TD
 
 | 函数 | 文件 | 功能 |
 |---|---|---|
-| `Motor_task()` | chassis_behavior_tree.c | 主控制任务/行为树，500Hz |
+| `Motor_task()` | chassis_control_task.cpp | C++ 主控制任务调度器，500Hz |
 | `task_Motor_Init()` | chassis_init.c | 电机参数初始化 |
 | `task_VMC_Init()` | chassis_init.c | VMC结构体初始化 |
 | `task_PID_Init()` | chassis_init.c | PID控制器初始化 |
@@ -232,14 +235,14 @@ flowchart TD
 | `LQR_calculate()` | lqr_calculate.c | LQR力矩计算 |
 | `LQR_Update_K()` | lqr_calculate.c | 100Hz节流刷新K矩阵 |
 | `spinning_up()` / `spinning_exit()` | spinning_motion.c | 小陀螺加速 / 退出 |
-| `Jump_Motion_Update()` | jump_motion.c | 跳跃动作组 + 跳跃/常态VMC下发 |
+| `Jump_Motion_Update()` | jump_motion.c | 跳跃状态、腿长 PID 与蜂鸣器更新 |
 | `off_ground_detect()` | off_ground_detect.c | 离地检测 |
 | `Step_Hit_Detect()` | step_hit_detect.c | 磕台阶检测→上台阶触发 |
 | `Yaw_Error_Coculate()` | yaw_error.c | Yaw误差+速度误差 |
 | `turn_ctrl_with_stuck_flip()` | leg_retract_common.c | 收腿转角(卡住反向绕长路) |
 | `NotStanding_NotStairRetract_for_chassis()` | self_righting_retract.c | 自起 + 起立前收腿 |
 | `Upstair_NotStairRetract()` / `StairRetract()` | stair_climb.c | 上台阶伸腿 / 收腿起立 |
-| `Sit_On_Ground()` | sit_motion.c | 坐地模式 |
+| `SitController::Update()` | sit_controller.cpp | 读取状态快照并返回坐地 ChassisCommand |
 | `Gravity_Compensation_Test_Function()` | gravity_comp_test.c | 重力补偿标定测试 |
 | `Body_Speed_Coculate()` | Wheel_Leg_about.c | 车身速度解算 |
 | `Distance_Error_Set()` | Wheel_Leg_about.c | 距离误差计算 |
@@ -324,25 +327,26 @@ others/Motion_Control/
 ├── App/                                  应用层
 │   ├── inc/
 │   │   ├── chassis_behavior_tree.h      ★ 底盘聚合公共头（取代 motor.h，所有extern/类型/原型）
+│   │   ├── chassis_control_task.hpp      C++ 任务调度器、扁平模式与任务上下文
 │   │   ├── Gimbal.h                     云台控制
 │   │   ├── Self_Righting.h              倒地自复位
 │   │   └── User_State.h                 用户状态
 │   └── src/
-│       ├── chassis_behavior_tree.c      ★ 行为树主循环 Motor_task（仅状态调度）
+│       ├── chassis_control_task.cpp     ★ C++ 主循环：状态更新→模式调度→最终映射
 │       ├── chassis_state.c              跨动作共享反馈量/常数/标志/共享PID
 │       ├── chassis_init.c               电机/VMC/PID 初始化 + pitch计算
 │       ├── motor_enable.c               全部电机使能动作
 │       ├── balance_standing.c           站起/正常运行动作组 Standing
 │       ├── lqr_calculate.c              LQR力矩计算 + K矩阵节流刷新
 │       ├── spinning_motion.c            小陀螺动作组（加速/退出）
-│       ├── jump_motion.c                跳跃动作组 + 跳跃/常态VMC下发
+│       ├── jump_motion.c                跳跃状态、腿长 PID 与蜂鸣器更新
 │       ├── off_ground_detect.c          离地检测
 │       ├── step_hit_detect.c            磕台阶检测→上台阶触发
 │       ├── yaw_error.c                  常态Yaw误差计算
 │       ├── leg_retract_common.c         收腿转角公共逻辑(卡住反向绕长路)
 │       ├── self_righting_retract.c      自起 + 起立前收腿
 │       ├── stair_climb.c                上台阶伸腿 + 收腿起立
-│       ├── sit_motion.c                 坐地模式动作组
+│       ├── sit_controller.cpp           C++ 坐地控制器（状态输入→命令输出）
 │       ├── gravity_comp_test.c          重力补偿标定测试
 │       ├── Gimbal.c
 │       ├── Self_Righting.c

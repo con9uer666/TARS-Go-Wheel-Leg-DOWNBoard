@@ -1248,7 +1248,7 @@
 
   <Group>
     <GroupName>user_code</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1495,12 +1495,12 @@
     <File>
       <GroupNumber>7</GroupNumber>
       <FileNumber>85</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User_code\Motion_Control\App\chassis_behavior_tree.c</PathWithFileName>
-      <FilenameWithoutPath>chassis_behavior_tree.c</FilenameWithoutPath>
+      <PathWithFileName>..\User_code\Motion_Control\App\src\chassis_control_task.cpp</PathWithFileName>
+      <FilenameWithoutPath>chassis_control_task.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1687,12 +1687,12 @@
     <File>
       <GroupNumber>7</GroupNumber>
       <FileNumber>101</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User_code\Motion_Control\App\src\sit_motion.c</PathWithFileName>
-      <FilenameWithoutPath>sit_motion.c</FilenameWithoutPath>
+      <PathWithFileName>..\User_code\Motion_Control\App\src\sit_controller.cpp</PathWithFileName>
+      <FilenameWithoutPath>sit_controller.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

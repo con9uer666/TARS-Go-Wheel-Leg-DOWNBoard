@@ -2338,7 +2338,7 @@ I (..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h)(0x6A096D3B)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -2407,7 +2407,7 @@ I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\User_code\Device_drives\inc\USER_CAN.h)(0x6A54D097)
 I (..\Core\Inc\fdcan.h)(0x69F722DB)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -2471,7 +2471,7 @@ I (..\User_code\Device_drives\inc\remoter.h)(0x6A54F6EE)
 I (..\User_code\state.h)(0x6A54AFB5)
 I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -2790,7 +2790,7 @@ I (..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h)(0x6A096D3B)
 I (..\User_code\state.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -2903,7 +2903,7 @@ I (..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h)(0x6A096D3B)
 I (..\User_code\Device_drives\inc\remoter.h)(0x6A54F6EE)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -2936,8 +2936,12 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 F (..\User_code\Device_drives\src\wattmeter.c)(0x6A54AFB5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/wattmeter.o -MMD)
 I (..\User_code\Device_drives\inc\wattmeter.h)(0x6A54AFB5)
-F (..\User_code\Motion_Control\App\chassis_behavior_tree.c)(0x6A54F9BD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/chassis_behavior_tree.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+F (..\User_code\Motion_Control\App\src\chassis_control_task.cpp)(0x6A56B85F)(-xc++ -std=c++11 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar -fno-exceptions-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/chassis_control_task.o -MMD)
+I (..\User_code\Motion_Control\App\inc\chassis_control_task.hpp)(0x6A56B8D0)
+I (..\User_code\Motion_Control\App\inc\chassis_control_types.hpp)(0x6A56B7E3)
+I (..\User_code\Motion_Control\App\inc\sit_controller.hpp)(0x6A56B83C)
+I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
+I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -2976,17 +2980,17 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
-I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
-I (..\User_code\Device_drives\inc\Motor_Drv.h)(0x6A54AFB5)
+I (..\User_code\Motion_Control\App\inc\User_State.h)(0x6A54AFB5)
 I (..\User_code\Device_drives\inc\USER_CAN.h)(0x6A54D097)
 I (..\Core\Inc\fdcan.h)(0x69F722DB)
-I (..\User_code\Motion_Control\App\inc\Gimbal.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\inc\User_State.h)(0x6A54AFB5)
-I (..\User_code\State.h)(0x6A54AFB5)
 I (..\User_code\Device_drives\inc\remoter.h)(0x6A54F6EE)
+I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
+I (..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h)(0x6A569B17)
+I (..\User_code\Motion_Control\Ctrl\inc\observe_task.h)(0x6A54AFB5)
+I (..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h)(0x6A54AFB5)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h)(0x69F71DAD)
 I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x6A096D3F)
@@ -3009,14 +3013,6 @@ I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h)(0x69F71D
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x69F71DAD)
-I (..\User_code\Motion_Control\Ctrl\inc\observe_task.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\inc\Self_Righting.h)(0x6A55049A)
-I (..\User_code\Board2Board.h)(0x6A54AFB5)
-I (..\Core\Inc\usart.h)(0x69F722DB)
-I (..\User_code\CommonLibs\inc\Slope.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h)(0x6A569B17)
 I (..\IMU_coculate\controller.h)(0x69FF3EDB)
 I (..\IMU_coculate\user_lib.h)(0x69FF3EDB)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h)(0x6A096D3B)
@@ -3033,15 +3029,9 @@ I (..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h)(0x6A096D3B)
-I (..\IMU_coculate\imu_temp_ctrl.h)(0x6A02C42B)
-I (..\User_code\CommonLibs\inc\Angle_about.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Power_control\PowerCtrl.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h)(0x6A54AFB5)
-I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
-I (..\Core\Inc\tim.h)(0x69F722DB)
-I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\balance_standing.c)(0x6A569FCA)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/balance_standing.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3149,7 +3139,7 @@ I (..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h)(0x6A54E0B7)
 I (..\User_code\Motion_Control\App\inc\anti_split_control.h)(0x6A569B17)
 F (..\User_code\Motion_Control\App\src\anti_split_control.c)(0x6A569B17)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/anti_split_control.o -MMD)
 I (..\User_code\Motion_Control\App\inc\anti_split_control.h)(0x6A569B17)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3194,7 +3184,7 @@ I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
 F (..\User_code\Motion_Control\App\src\body_speed_state.c)(0x6A54AFB5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/body_speed_state.o -MMD)
 I (..\User_code\Motion_Control\App\inc\body_speed_state.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3303,7 +3293,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
 I (..\IMU_coculate\imu_temp_ctrl.h)(0x6A02C42B)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
@@ -3338,7 +3328,7 @@ I (..\Core\Inc\fdcan.h)(0x69F722DB)
 I (..\User_code\CommonLibs\inc\Maths_about.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\App\inc\body_speed_state.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\chassis_init.c)(0x6A54AFB5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/chassis_init.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3442,7 +3432,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\chassis_state.c)(0x6A54AFB5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/chassis_state.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3544,13 +3534,13 @@ I (..\User_code\CommonLibs\inc\Angle_about.h)(0x6A54AFB5)
 I (..\User_code\Device_drives\inc\Motor_Drv.h)(0x6A54AFB5)
 I (..\User_code\Device_drives\inc\USER_CAN.h)(0x6A54D097)
 I (..\Core\Inc\fdcan.h)(0x69F722DB)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
 F (..\User_code\Motion_Control\App\src\gravity_comp_test.c)(0x6A54D0C5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/gravity_comp_test.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3654,7 +3644,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\jump_motion.c)(0x6A569D73)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/jump_motion.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3758,7 +3748,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\leg_retract_common.c)(0x6A54D0C5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/leg_retract_common.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3862,7 +3852,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\lqr_calculate.c)(0x6A569B53)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/lqr_calculate.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -3965,7 +3955,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\motor_enable.c)(0x6A54AFB5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/motor_enable.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4069,7 +4059,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\off_ground_detect.c)(0x6A54CF4D)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/off_ground_detect.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4215,7 +4205,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
 I (..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
 I (..\User_code\CommonLibs\inc\Angle_about.h)(0x6A54AFB5)
@@ -4224,7 +4214,7 @@ I (..\User_code\Device_drives\inc\USER_CAN.h)(0x6A54D097)
 I (..\Core\Inc\fdcan.h)(0x69F722DB)
 I (..\IMU_coculate\imu_temp_ctrl.h)(0x6A02C42B)
 F (..\User_code\Motion_Control\App\src\self_righting_retract.c)(0x6A5508C5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/self_righting_retract.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4325,8 +4315,11 @@ I (..\User_code\CommonLibs\inc\Angle_about.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Power_control\PowerCtrl.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
-F (..\User_code\Motion_Control\App\src\sit_motion.c)(0x6A54F8F4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/sit_motion.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+F (..\User_code\Motion_Control\App\src\sit_controller.cpp)(0x6A56B8D0)(-xc++ -std=c++11 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar -fno-exceptions-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/sit_controller.o -MMD)
+I (..\User_code\Motion_Control\App\inc\sit_controller.hpp)(0x6A56B83C)
+I (..\User_code\Motion_Control\App\inc\chassis_control_types.hpp)(0x6A56B7E3)
+I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
+I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4365,17 +4358,6 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
-I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
-I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
-I (..\User_code\Device_drives\inc\Motor_Drv.h)(0x6A54AFB5)
-I (..\User_code\Device_drives\inc\USER_CAN.h)(0x6A54D097)
-I (..\Core\Inc\fdcan.h)(0x69F722DB)
-I (..\User_code\Motion_Control\App\inc\Gimbal.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\inc\User_State.h)(0x6A54AFB5)
-I (..\User_code\State.h)(0x6A54AFB5)
-I (..\User_code\Device_drives\inc\remoter.h)(0x6A54F6EE)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h)(0x69F71DAD)
 I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x6A096D3F)
@@ -4398,39 +4380,8 @@ I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h)(0x69F71D
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x69F71DAD)
-I (..\User_code\Motion_Control\Ctrl\inc\observe_task.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\kalman_filter1.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\Leg_Control.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\inc\Self_Righting.h)(0x6A55049A)
-I (..\User_code\Board2Board.h)(0x6A54AFB5)
-I (..\Core\Inc\usart.h)(0x69F722DB)
-I (..\User_code\CommonLibs\inc\Slope.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h)(0x6A569B17)
-I (..\IMU_coculate\controller.h)(0x69FF3EDB)
-I (..\IMU_coculate\user_lib.h)(0x69FF3EDB)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h)(0x6A096D3B)
-I (..\Core\Inc\FreeRTOSConfig.h)(0x69F722DB)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\projdefs.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\portable.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\deprecated_definitions.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\portmacro.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\mpu_wrappers.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h)(0x6A096D3B)
-I (..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h)(0x6A096D3B)
-I (..\IMU_coculate\imu_temp_ctrl.h)(0x6A02C42B)
-I (..\User_code\CommonLibs\inc\Angle_about.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Power_control\PowerCtrl.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h)(0x6A54AFB5)
-I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
-I (..\Core\Inc\tim.h)(0x69F722DB)
-I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\spinning_motion.c)(0x6A56987E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/spinning_motion.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4534,7 +4485,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\stair_climb.c)(0x6A54F98A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/stair_climb.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4638,7 +4589,7 @@ I (..\User_code\Device_drives\inc\buzzer.h)(0x6A54AFB5)
 I (..\Core\Inc\tim.h)(0x69F722DB)
 I (..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\App\src\step_hit_detect.c)(0x6A54AFB5)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/step_hit_detect.o -MMD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4785,7 +4736,7 @@ F (..\User_code\Motion_Control\Ctrl\src\Gas_Spring.c)(0x6A54AFB5)(-xc -std=c99 -
 I (..\User_code\Motion_Control\Ctrl\inc\Gas_Spring.h)(0x6A54AFB5)
 F (..\User_code\Motion_Control\Ctrl\src\Tip_Protect.c)(0x6A54F901)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/tip_protect.o -MMD)
 I (..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h)(0x6A54E0B7)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -4947,7 +4898,7 @@ I (..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h)(0x6A096D3B)
 I (..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h)(0x6A096D3B)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
@@ -5201,7 +5152,7 @@ I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h)(0x69F71D
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h)(0x69F71DAD)
 I (D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h)(0x69F71DAD)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
@@ -5247,7 +5198,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
 I (..\IMU_coculate\imu_temp_ctrl.h)(0x6A02C42B)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
@@ -5323,7 +5274,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -5666,7 +5617,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h)(0x6A096D62)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h)(0x6A096D62)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\User_code\Motion_Control\Ctrl\inc\user_pid.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h)(0x6A54AFB5)
 I (..\User_code\Motion_Control\Ctrl\inc\VMC.h)(0x6A54D556)
@@ -5677,7 +5628,7 @@ I (..\User_code\Motion_Control\App\inc\Gimbal.h)(0x6A54AFB5)
 F (..\User_code\UI\UI_Architecture.md)(0x6A54AFB5)()
 F (..\User_code\Motion_Control\Ctrl\src\Lqr_Error_Calculate.c)(0x6A568E7C)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O1 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../IMU_coculate -I ../User_code -I ../User_code/CommonLibs -I ../User_code/CommonLibs/inc -I ../User_code/Device_drives -I ../User_code/Device_drives/inc -I ../User_code/Motion_Control -I ../User_code/Motion_Control/App/inc -I ../User_code/Motion_Control/Ctrl/inc -I ../User_code/Motion_Control/Power_control -I ../User_code/UI/include -I ../User_code/Motion_Control/App -I ../USB_DEVICE/App -I ../USB_DEVICE/Target -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc-I./RTE/_H7_Ctrl-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/Include-ID:/Keil/Pack/ARM/CMSIS-DSP/1.16.2/PrivateInclude-ID:/Keil/Pack/ARM/CMSIS/6.3.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o h7_ctrl/lqr_error_calculate.o -MMD)
 I (..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h)(0x6A568D2C)
-I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A569D4F)
+I (..\User_code\Motion_Control\App\chassis_behavior_tree.h)(0x6A56B83C)
 I (..\Core\Inc\main.h)(0x69F722DB)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x6A096D62)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x6A55230A)
