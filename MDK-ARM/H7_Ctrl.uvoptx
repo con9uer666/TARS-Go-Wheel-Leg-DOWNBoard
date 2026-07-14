@@ -1627,12 +1627,12 @@
     <File>
       <GroupNumber>7</GroupNumber>
       <FileNumber>96</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\User_code\Motion_Control\App\src\lqr_calculate.c</PathWithFileName>
-      <FilenameWithoutPath>lqr_calculate.c</FilenameWithoutPath>
+      <PathWithFileName>..\User_code\Motion_Control\App\src\lqr_controller.cpp</PathWithFileName>
+      <FilenameWithoutPath>lqr_controller.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

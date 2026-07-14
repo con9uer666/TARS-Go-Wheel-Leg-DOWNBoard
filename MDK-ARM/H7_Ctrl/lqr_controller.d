@@ -1,11 +1,9 @@
-h7_ctrl/balance_controller.o: \
-  ..\User_code\Motion_Control\App\src\balance_controller.cpp \
-  ..\User_code\Motion_Control\App\inc\balance_controller.hpp \
-  ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
+h7_ctrl/lqr_controller.o: \
+  ..\User_code\Motion_Control\App\src\lqr_controller.cpp \
   ..\User_code\Motion_Control\App\inc\lqr_controller.hpp \
-  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
-  ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+  ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
+  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -42,33 +40,7 @@ h7_ctrl/balance_controller.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
-  ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
+  ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
-  ..\User_code\Motion_Control\App\inc\anti_split_control.h \
-  ..\User_code\Motion_Control\App\inc\chassis_height_control.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h \
-  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
-  ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \
-  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_memory.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\none.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\utils.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\basic_math_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\interpolation_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\bayes_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\statistics_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\fast_math_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\matrix_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\complex_math_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\controller_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\support_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\distance_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\svm_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\svm_defines.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\transform_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\filtering_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\quaternion_math_functions.h \
-  D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\dsp\window_functions.h
+  ..\User_code\Motion_Control\Ctrl\inc\VMC.h \
+  ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h

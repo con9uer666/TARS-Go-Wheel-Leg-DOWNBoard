@@ -47,7 +47,7 @@ flowchart TD
         STATE["状态机\n(start_mode=0/1/2/3)"]
         YAW["Yaw误差计算\nYaw_Error_Coculate()"]
         LEG["腿长双环PID\nLeg_L0_Control()"]
-        LQR_C["LQR_calculate()\n轮力矩 + 腿力矩"]
+        LQR_C["LqrController::Calculate()\n返回轮力矩 + 基础腿力矩"]
         JUMP["跳跃动作组"]
     end
 
@@ -185,7 +185,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    A["K矩阵\nLQR_K[4][10]\n(腿长1D二次拟合)"] --> B["LQR_calculate()"]
+    A["K矩阵\nLQR_K[4][12]\n(左右腿长2D二次拟合)"] --> B["LqrController::Calculate()"]
     B --> C1["L_DJ3508.Target_Torque\n(左轮力矩 N·m)"]
     B --> C2["R_DJ3508.Target_Torque\n(右轮力矩 N·m)"]
     B --> C3["Leg_L_T\n(左腿摆力矩 N·m)"]
@@ -230,8 +230,8 @@ flowchart TD
 | `task_Pitch_Coculate()` | chassis_init.c | pitch前后帧计算 |
 | `task_Motor_Enable()` | motor_enable.c | DM电机使能 |
 | `BalanceController::Update()` | balance_controller.cpp | 固定平衡算法顺序，合成最终命令并返回 Stair/Sit 请求 |
-| `LQR_calculate()` | lqr_calculate.c | LQR力矩计算 |
-| `LQR_Update_K()` | lqr_calculate.c | 100Hz节流刷新K矩阵 |
+| `LqrController::Calculate()` | lqr_controller.cpp | 更新积分状态并返回左右轮/腿 LQR 力矩 |
+| `LqrController::UpdateGainMatrix()` | lqr_controller.cpp | 拥有节流计数，以 100 Hz 二维拟合 K(L0_l,L0_r) |
 | `spinning_up()` / `spinning_exit()` | spinning_motion.c | 小陀螺加速 / 退出 |
 | `Jump_Motion_Update()` | jump_motion.c | 跳跃状态、腿长 PID 与蜂鸣器更新 |
 | `off_ground_detect()` | off_ground_detect.c | 离地检测 |
@@ -328,6 +328,7 @@ others/Motion_Control/
 │   │   ├── chassis_control_task.hpp      C++ 任务调度器、扁平模式与任务上下文
 │   │   ├── chassis_control_types.hpp     C++ 控制器共享的状态快照、模式与命令类型
 │   │   ├── balance_controller.hpp       正常平衡流程与磕台阶检测器接口
+│   │   ├── lqr_controller.hpp           12 维 LQR 输入/输出、配置与控制器接口
 │   │   ├── sit_controller.hpp           坐地控制器接口、依赖与参数
 │   │   ├── stair_controller.hpp         上台阶控制器接口、内部阶段与参数
 │   │   ├── startup_retract_controller.hpp 倒地自起接管与起立前收腿控制器
@@ -340,7 +341,7 @@ others/Motion_Control/
 │       ├── chassis_init.c               电机/VMC/PID 初始化 + pitch计算
 │       ├── motor_enable.c               全部电机使能动作
 │       ├── balance_controller.cpp       C++ 正常平衡流程 + 磕台阶检测器
-│       ├── lqr_calculate.c              LQR力矩计算 + K矩阵节流刷新
+│       ├── lqr_controller.cpp           C++ LQR 力矩输出 + K 矩阵节流拟合
 │       ├── spinning_motion.c            小陀螺动作组（加速/退出）
 │       ├── jump_motion.c                跳跃状态、腿长 PID 与蜂鸣器更新
 │       ├── off_ground_detect.c          离地检测

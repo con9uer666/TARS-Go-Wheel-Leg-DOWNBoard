@@ -122,7 +122,7 @@ extern user_pid_t Roll_Comp_PID;
 extern user_pid_t Leg_AntiSplit_PID;
 extern user_pid_t gimbal_pitch_pid;
 
-/* ---- lqr_calculate.c ---- */
+/* ---- lqr_controller.cpp：供旧 C 离地保护和调试器读取的兼容输出 ---- */
 extern float LQR_K[4][12];
 extern float Leg_L_T, Leg_R_T;
 
@@ -196,10 +196,6 @@ void task_Motor_Enable(void);
 
 /* ---- chassis_control_task.cpp（C++ 主循环调度器） ---- */
 void Motor_task(void const *argument);
-
-/* ---- lqr_calculate.c ---- */
-void LQR_calculate(void);
-void LQR_Update_K(void);
 
 /* ---- spinning_motion.c ---- */
 float spinning_up(void);

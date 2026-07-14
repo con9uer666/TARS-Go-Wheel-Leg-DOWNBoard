@@ -94,7 +94,7 @@
 "h7_ctrl\gravity_comp_test.o"
 "h7_ctrl\jump_motion.o"
 "h7_ctrl\leg_retract_common.o"
-"h7_ctrl\lqr_calculate.o"
+"h7_ctrl\lqr_controller.o"
 "h7_ctrl\motor_enable.o"
 "h7_ctrl\off_ground_detect.o"
 "h7_ctrl\self_righting.o"

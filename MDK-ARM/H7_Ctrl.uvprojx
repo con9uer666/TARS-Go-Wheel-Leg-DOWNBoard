@@ -1094,9 +1094,9 @@
               <FilePath>..\User_code\Motion_Control\App\src\leg_retract_common.c</FilePath>
             </File>
             <File>
-              <FileName>lqr_calculate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\lqr_calculate.c</FilePath>
+              <FileName>lqr_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\lqr_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>motor_enable.c</FileName>

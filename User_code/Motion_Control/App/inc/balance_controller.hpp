@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include "chassis_control_types.hpp"
+#include "lqr_controller.hpp"
 
 extern "C"
 {
@@ -79,7 +80,7 @@ private:
 /** @brief BalanceController 从旧算法模块捕获命令所需的共享对象。 */
 struct BalanceControllerDependencies
 {
-    VMC_Chassis_Target_t& legacy_command_target; /**< LQR、离地检测和倾覆保护暂时共用的 VMC 目标适配区。 */
+    VMC_Chassis_Target_t& legacy_command_target; /**< 离地检测和倾覆保护暂时共用的 VMC 目标适配区。 */
     user_pid_t& left_length_pid;                 /**< 正常腿长控制的左腿 PID。 */
     user_pid_t& right_length_pid;                /**< 正常腿长控制的右腿 PID。 */
     user_pid_t& roll_compensation_pid;           /**< 横滚补偿 PID，以相反符号叠加到两腿 F0。 */
@@ -110,7 +111,7 @@ struct BalanceUpdateResult
 /**
  * @brief 固定执行正常平衡算法链并返回命令与模式请求的 C++ 控制器。
  *
- * 本阶段保留 Error_Calculate、LQR 和离地检测等现有 C 算法。
+ * 本阶段保留 Error_Calculate 和离地检测等现有 C 算法；LQR 已迁移为内部 LqrController。
  * legacy_command_target 作为受控灰度适配区，Update() 在覆盖逻辑结束后捕获一次命令。
  */
 class BalanceController
@@ -139,6 +140,7 @@ private:
     ChassisCommand CaptureLegacyCommand() const;
 
     BalanceControllerDependencies dependencies_; /**< 旧命令适配区、PID、重力量和外部 Stair 请求引用。 */
+    LqrController lqr_controller_;               /**< 拥有 100 Hz 增益刷新计数并返四路基础力矩的 LQR 控制器。 */
     StepHitDetector step_hit_detector_;           /**< 拥有命中计数和长腿解禁延时的磕台阶检测器。 */
 };
 

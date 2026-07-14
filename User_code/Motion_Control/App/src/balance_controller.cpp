@@ -129,6 +129,7 @@ bool StepHitDetector::Update(const ChassisStateSnapshot& state,
  */
 BalanceController::BalanceController(const BalanceControllerDependencies& dependencies)
     : dependencies_(dependencies),
+      lqr_controller_(),
       step_hit_detector_(dependencies.step_hit_dependencies)
 {
 }
@@ -156,9 +157,26 @@ BalanceUpdateResult BalanceController::Update(const ChassisStateSnapshot& state,
     Error_Calculate();
     Roll_Comp();
     Leg_L0_Control();
-    LQR_Update_K();
+    lqr_controller_.UpdateGainMatrix(state.left_leg.length_m,
+                                     state.right_leg.length_m);
     PowerCtrl();
-    LQR_calculate();
+
+    /** LQR 本周期使用的误差、离地计数与模式快照。 */
+    LqrControlInput lqr_input{};
+    lqr_input.body_distance_error_m = body_distance_error;
+    lqr_input.speed_error_mps = speed_error;
+    lqr_input.yaw_error_rad = yaw_error;
+    lqr_input.yaw_rate_radps = d_yaw;
+    lqr_input.left_off_ground_count = L_off_ground;
+    lqr_input.right_off_ground_count = R_off_ground;
+    lqr_input.spinning_active = spinning_flag == 1U;
+    lqr_input.stair_request_active = dependencies_.legacy_stair_request == 1U;
+    /** 结构化返回的左右轮力矩和防劈叉叠加前腿力矩。 */
+    const LqrOutput lqr_output = lqr_controller_.Calculate(state, lqr_input);
+    dependencies_.legacy_command_target.L_Wheel_Torque =
+        lqr_output.left_wheel_torque_nm;
+    dependencies_.legacy_command_target.R_Wheel_Torque =
+        lqr_output.right_wheel_torque_nm;
 
     /** LQR 虚拟腿力矩叠加防劈叉、离心补偿和小陀螺归中后的左腿命令。 */
     float left_leg_torque_nm = 0.0f;

@@ -3,6 +3,7 @@ h7_ctrl/chassis_control_task.o: \
   ..\User_code\Motion_Control\App\inc\chassis_control_task.hpp \
   ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
   ..\User_code\Motion_Control\App\inc\balance_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\lqr_controller.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
