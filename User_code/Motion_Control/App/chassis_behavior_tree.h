@@ -8,7 +8,7 @@
  *   - 全部对外函数原型（主循环 + 各动作组 + 各计算）
  *
  * 原 motor.c 被拆分为多个细粒度文件，全部包含本头；变量按动作就近定义，
- * 跨动作共享的反馈量/PID 定义在 chassis_state.c。
+ * 跨动作共享的反馈量/PID 定义在 chassis_runtime_state.cpp。
  */
 
 #ifndef CHASSIS_BEHAVIOR_TREE_H
@@ -59,17 +59,9 @@ typedef struct Foot_Chassis
     Foot_Chassis_Info_t Info;  /**< 底盘实时信息 */
 } Foot_Chassis_t;
 
-/* ---------- 收腿起立 State=1 转角阶段子状态（leg_retract_common） ---------- */
-// FWD = 短路径 PID 追目标角；REV = 长路径恒速反绕一圈到同一目标角
-typedef enum {
-    STAIR_SUB_TURN_FWD = 0,  // 沿 ShortestAngleDelta 的短路径用 PID 串级控制
-    STAIR_SUB_TURN_REV       // 沿反方向 (2π − 短路径) 匀速转到原目标角
-} StairSub_t;
-
-
 /*====================================== 跨文件共享变量 =========================================== */
 
-/* ---- chassis_state.c：跨动作共享反馈量/常数/标志/PID ---- */
+/* ---- chassis_runtime_state.cpp：跨动作共享反馈量/常数/标志/PID ---- */
 extern Foot_Chassis_t Foot_Chassis;
 extern float mg;
 extern float Leg_F0_Limit;
@@ -126,7 +118,7 @@ extern user_pid_t gimbal_pitch_pid;
 extern float LQR_K[4][12];
 extern float Leg_L_T, Leg_R_T;
 
-/* ---- off_ground_detect.c ---- */
+/* ---- off_ground_detector.cpp 兼容调试状态 ---- */
 extern float L_Ground_F0, R_Ground_F0;
 extern int L_off_ground, R_off_ground;
 extern int step_hit_cooldown;
@@ -141,7 +133,7 @@ extern int step_hit_cooldown;
  */
 extern uint8_t automatic_stair_climb_enable;
 
-/* ---- spinning_motion.c ---- */
+/* ---- spinning_controller.cpp：小陀螺控制器的 C 兼容状态与调参接口 ---- */
 extern uint8_t spinning_flag;
 extern uint8_t spinning_usable;
 extern float centrifugal_comp_gain;
@@ -154,8 +146,8 @@ extern float target_spin_phi0;
 extern float spinning_target_d_yaw_cmd;
 extern float spinning_d_yaw_feedback;
 
-/* ---- jump_motion.c ---- */
-extern uint8_t jump_mode;            // 只读：当前是否处于跳跃中，由 jump_motion 内部根据 jump_cmd / jump_locked 计算
+/* ---- jump_controller.cpp 兼容指令、调参和调试输出 ---- */
+extern uint8_t jump_mode;            /**< 只读：当前是否处于跳跃中，由 JumpController 根据指令锁和锁存窗口计算。 */
 extern uint8_t jump_cmd;             // B2B byte51 原始跳跃指令：1=请求跳跃，0=解除跳跃锁
 extern uint8_t jump_enable;          // 跳跃使能：=1 允许跳跃，=0 一票否决
 extern uint8_t g_jump_buzzer_active; // 跳跃蜂鸣器独占标志，Error_Buzzer_Tick 看到=1 必须让位
@@ -163,14 +155,11 @@ extern float jump_L0_step_delta;     // 跳跃时 L0 目标阶跃量 (m)，叠�
 extern float jump_leg_change_threshold; // 跳跃失败阈值(m)：锁存到期时任一腿变化<此值判失败
 extern uint8_t jump_fail_reason;     // 跳跃退出原因 0=进行中/未触发 1=离地成功 2=超时腿长不足 3=超时但腿长够
 
-/* ---- leg_retract_common.c：自起收腿与上台阶收腿共用的转角子状态机持久量 ---- */
-extern uint8_t L_Leg_State, R_Leg_State;
-extern uint16_t L_Ready_Count, R_Ready_Count;
-extern StairSub_t L_stair_sub, R_stair_sub;
-extern int   L_sub_dwell, R_sub_dwell;
-extern float L_rev_dir, R_rev_dir;
-extern float L_rev_long_remain, R_rev_long_remain;
-extern float L_rev_traveled, R_rev_traveled;
+/* ---- leg_turn_recovery_controller.cpp：两套动作共用的外层收腿阶段兼容量 ---- */
+extern uint8_t L_Leg_State; /**< 左腿外层收腿阶段：0 收腿长、1 转腿角、2 单腿完成。 */
+extern uint8_t R_Leg_State; /**< 右腿外层收腿阶段：0 收腿长、1 转腿角、2 单腿完成。 */
+extern uint16_t L_Ready_Count; /**< 左腿当前外层阶段的连续到位周期计数。 */
+extern uint16_t R_Ready_Count; /**< 右腿当前外层阶段的连续到位周期计数。 */
 
 /* ---- sit_controller.cpp 兼容调试符号 ---- */
 extern uint8_t sit_first_entry;
@@ -185,40 +174,17 @@ extern float head_forward_angle;    // 云台物理零点偏置
 
 /*====================================== 对外函数原型 =========================================== */
 
-/* ---- chassis_init.c ---- */
-void task_Motor_Init(void);
-void task_VMC_Init(void);
-void task_PID_Init(void);
+/* ---- chassis_initializer.cpp：仅保留给未迁移 C 状态解算的兼容入口 ---- */
 void task_Pitch_Coculate(void);
-
-/* ---- motor_enable.c ---- */
-void task_Motor_Enable(void);
 
 /* ---- chassis_control_task.cpp（C++ 主循环调度器） ---- */
 void Motor_task(void const *argument);
 
-/* ---- spinning_motion.c ---- */
+/* ---- spinning_controller.cpp：供未迁移 C 调用方使用的兼容入口 ---- */
 float spinning_up(void);
 float spinning_exit(void);
 
-/* ---- jump_motion.c ---- */
-uint8_t Jump_Motion_Update(void);
-
-/* ---- off_ground_detect.c ---- */
-void off_ground_detect(void);
-
 /* ---- Lqr_Error_Calculate.h（Ctrl/src/Lqr_Error_Calculate.c） ---- */
 #include "Lqr_Error_Calculate.h"
-
-/* ---- leg_retract_common.c ---- */
-int turn_ctrl_with_stuck_flip(
-    VMC_t *VMC, int is_right, float target_angle,
-    user_pid_t *pid_middle, user_pid_t *pid_dphi0,
-    StairSub_t *sub, int *dwell,
-    float *rev_dir, float *rev_long_remain, float *rev_traveled,
-    float *out_T);
-
-/* ---- gravity_comp_test.c ---- */
-void Gravity_Compensation_Test_Function(void);
 
 #endif // CHASSIS_BEHAVIOR_TREE_H

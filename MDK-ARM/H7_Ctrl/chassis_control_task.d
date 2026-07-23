@@ -3,8 +3,11 @@ h7_ctrl/chassis_control_task.o: \
   ..\User_code\Motion_Control\App\inc\chassis_control_task.hpp \
   ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
   ..\User_code\Motion_Control\App\inc\balance_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\anti_split_controller.hpp \
   ..\User_code\Motion_Control\App\inc\lqr_controller.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\App\inc\chassis_height_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\off_ground_detector.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
@@ -43,14 +46,23 @@ h7_ctrl/chassis_control_task.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
+  ..\User_code\Motion_Control\App\inc\jump_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\tip_protection_controller.hpp \
   ..\User_code\Motion_Control\App\inc\sit_controller.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
   ..\User_code\Motion_Control\App\inc\stair_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\leg_turn_recovery_controller.hpp \
   ..\User_code\Motion_Control\App\inc\startup_retract_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\self_righting_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\gravity_compensation_test_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\chassis_state_estimator.hpp \
+  ..\User_code\Motion_Control\App\inc\chassis_initializer.hpp \
+  ..\User_code\Motion_Control\App\inc\chassis_motor_enabler.hpp \
   ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
   ..\User_code\Motion_Control\App\inc\User_State.h \
   ..\User_code\Device_drives\inc\USER_CAN.h ..\Core\Inc\fdcan.h \
+  ..\User_code\Device_drives\inc\Motor_Drv.h \
   ..\User_code\Device_drives\inc\remoter.h \
   ..\User_code\Motion_Control\Ctrl\inc\Wheel_End_Velocity.h \
   ..\User_code\Motion_Control\Ctrl\inc\Wheel_Leg_about.h \
@@ -94,5 +106,6 @@ h7_ctrl/chassis_control_task.o: \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
   ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
-  ..\User_code\Motion_Control\App\inc\Self_Righting.h \
-  ..\User_code\Board2Board.h ..\Core\Inc\usart.h
+  ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
+  ..\IMU_coculate\imu_temp_ctrl.h \
+  ..\User_code\Device_drives\inc\buzzer.h ..\Core\Inc\tim.h

@@ -31,18 +31,6 @@ enum class RunMode : std::uint8_t
 };
 
 /**
- * @brief 标识本周期命令由旧 C 动作组还是新 C++ 控制器产生。
- *
- * 灰度迁移期间两套控制器并存。任务根据该标识决定是否需要从
- * VMC_Chassis_Target 读取旧动作结果。
- */
-enum class CommandSource : std::uint8_t
-{
-    LegacyGlobal, /**< 命令由旧 C 动作组写入 VMC_Chassis_Target。 */
-    NativeCpp     /**< 命令由 C++ 控制器直接返回 ChassisCommand。 */
-};
-
-/**
  * @brief 单侧轮端运动状态。
  *
  * 数据来自 Wheel_End_Velocity_Both()，目前只作为任务状态快照保存。
@@ -51,6 +39,22 @@ struct WheelSideState
 {
     float velocity_mps = 0.0f;      /**< 轮缘线速度，单位 m/s。 */
     float acceleration_mps2 = 0.0f; /**< 轮缘线加速度，单位 m/s²。 */
+    float raw_motor_speed = 0.0f;   /**< DJ3508 反馈的原始 Speed 字段，供自起轮锁止 PID 保持旧量纲。 */
+};
+
+/**
+ * @brief 单个控制周期结束时需要提交的顶层模式转换请求。
+ *
+ * 控制器只产生语义化请求，不直接写 start_mode。任务在所有控制计算结束后
+ * 通过唯一适配点把请求转换回旧数值，避免模式全局量散落在各分支中修改。
+ */
+enum class ModeTransitionRequest : std::uint8_t
+{
+    None,           /**< 本周期不切换顶层模式。 */
+    StartupRetract, /**< 切换到倒地自起或起立前收腿恢复。 */
+    Balance,        /**< 切换到正常平衡运行。 */
+    Stair,          /**< 切换到完整上台阶动作。 */
+    Sit             /**< 切换到坐地动作。 */
 };
 
 /** @brief 左右轮端运动状态。 */
@@ -88,8 +92,10 @@ struct ChassisStateSnapshot
     LegStateSnapshot right_leg;   /**< 右腿 VMC 状态。 */
     float body_speed_mps = 0.0f;  /**< 卡尔曼估计的车身水平速度，单位 m/s。 */
     float pitch_rad = 0.0f;       /**< 当前车身俯仰角，单位 rad。 */
+    float pitch_angle_deg = 0.0f; /**< IMU 原始车身俯仰角 pitch，单位 deg，供倾覆门槛判定使用。 */
     float pitch_rate_radps = 0.0f;/**< 当前车身俯仰角速度，单位 rad/s。 */
     float yaw_rate_radps = 0.0f;  /**< 当前车身偏航角速度，单位 rad/s。 */
+    float roll_angle_deg = 0.0f;  /**< 原 IMU roll 横滚角反馈，保留旧 Roll_Comp 使用的度制单位。 */
 };
 
 /**

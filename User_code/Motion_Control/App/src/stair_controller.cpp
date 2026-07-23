@@ -226,23 +226,27 @@ StairUpdateResult StairController::UpdateRetract(const ChassisStateSnapshot& sta
 
     if (L_Leg_State >= 1U)
     {
-        left_angle_near = turn_ctrl_with_stuck_flip(
-            &dependencies_.left_vmc, 0, config_.retract_left_angle_rad,
-            &dependencies_.left_angle_position_pid,
-            &dependencies_.left_angle_velocity_pid,
-            &L_stair_sub, &L_sub_dwell,
-            &L_rev_dir, &L_rev_long_remain, &L_rev_traveled,
-            &left_leg_torque_nm);
+        /** 左腿转角恢复状态机的本周期结果。 */
+        const LegTurnRecoveryUpdateResult turn_result =
+            dependencies_.left_turn_recovery.Update(
+                dependencies_.left_vmc,
+                config_.retract_left_angle_rad,
+                dependencies_.left_angle_position_pid,
+                dependencies_.left_angle_velocity_pid);
+        left_angle_near = turn_result.near_target ? 1 : 0;
+        left_leg_torque_nm = turn_result.torque_nm;
     }
     if (R_Leg_State >= 1U)
     {
-        right_angle_near = turn_ctrl_with_stuck_flip(
-            &dependencies_.right_vmc, 1, config_.retract_right_angle_rad,
-            &dependencies_.right_angle_position_pid,
-            &dependencies_.right_angle_velocity_pid,
-            &R_stair_sub, &R_sub_dwell,
-            &R_rev_dir, &R_rev_long_remain, &R_rev_traveled,
-            &right_leg_torque_nm);
+        /** 右腿转角恢复状态机的本周期结果。 */
+        const LegTurnRecoveryUpdateResult turn_result =
+            dependencies_.right_turn_recovery.Update(
+                dependencies_.right_vmc,
+                config_.retract_right_angle_rad,
+                dependencies_.right_angle_position_pid,
+                dependencies_.right_angle_velocity_pid);
+        right_angle_near = turn_result.near_target ? 1 : 0;
+        right_leg_torque_nm = turn_result.torque_nm;
     }
 
     /** 收腿阶段完整命令；值初始化同时保持左右轮力矩严格为零。 */
@@ -265,9 +269,7 @@ StairUpdateResult StairController::UpdateRetract(const ChassisStateSnapshot& sta
     {
         L_Leg_State = 1U;
         L_Ready_Count = 0U;
-        L_stair_sub = STAIR_SUB_TURN_FWD;
-        L_sub_dwell = 0;
-        leg_turn_stuck_reset(&dependencies_.left_vmc);
+        dependencies_.left_turn_recovery.Reset(dependencies_.left_vmc);
     }
 
     if (R_Leg_State == 0U
@@ -283,9 +285,7 @@ StairUpdateResult StairController::UpdateRetract(const ChassisStateSnapshot& sta
     {
         R_Leg_State = 1U;
         R_Ready_Count = 0U;
-        R_stair_sub = STAIR_SUB_TURN_FWD;
-        R_sub_dwell = 0;
-        leg_turn_stuck_reset(&dependencies_.right_vmc);
+        dependencies_.right_turn_recovery.Reset(dependencies_.right_vmc);
     }
 
     if (L_Leg_State == 1U && left_angle_near != 0)
@@ -339,12 +339,8 @@ void StairController::PrepareRetractTurnState()
 {
     L_Leg_State = 0U;
     R_Leg_State = 0U;
-    L_stair_sub = STAIR_SUB_TURN_FWD;
-    R_stair_sub = STAIR_SUB_TURN_FWD;
-    L_sub_dwell = 0;
-    R_sub_dwell = 0;
-    leg_turn_stuck_reset(&dependencies_.left_vmc);
-    leg_turn_stuck_reset(&dependencies_.right_vmc);
+    dependencies_.left_turn_recovery.Reset(dependencies_.left_vmc);
+    dependencies_.right_turn_recovery.Reset(dependencies_.right_vmc);
 }
 
 /**

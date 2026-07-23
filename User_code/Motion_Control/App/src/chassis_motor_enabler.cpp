@@ -1,14 +1,17 @@
 /**
- * @file motor_enable.c
+ * @file chassis_motor_enabler.cpp
  * @brief 全部机身 DM 关节电机使能动作。
  */
 
+#include "chassis_motor_enabler.hpp"
+
+extern "C"
+{
 #include "chassis_behavior_tree.h"
 #include "user_pid.h"
 #include "Motor_Drv.h"
 #include "Gimbal.h"
 #include "User_State.h"
-#include "State.h"
 #include "arm_math.h"
 #include "USER_CAN.h"
 #include "VMC.h"
@@ -32,9 +35,14 @@
 #include "Gas_Spring.h"
 #include "buzzer.h"
 #include "Wheel_End_Velocity.h"
+}
 
-//全部电机使能
-void task_Motor_Enable()
+/**
+ * @brief 按左腿、右腿、拨弹、Yaw 的旧顺序使能六个 DM 电机。
+ *
+ * 每次使能后保留 5 ms 延时；全部命令发送完成后才开启电机掉使能监督。
+ */
+void chassis::ChassisMotorEnabler::EnableAll()
 {
     Enable_DM_Motor_MIT(&hfdcan2, 0x01);
     osDelay(5);

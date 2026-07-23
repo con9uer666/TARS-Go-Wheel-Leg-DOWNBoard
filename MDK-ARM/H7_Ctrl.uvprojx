@@ -1044,14 +1044,24 @@
               <FilePath>..\User_code\Motion_Control\App\src\chassis_control_task.cpp</FilePath>
             </File>
             <File>
+              <FileName>chassis_state_estimator.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\chassis_state_estimator.cpp</FilePath>
+            </File>
+            <File>
               <FileName>balance_controller.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\User_code\Motion_Control\App\src\balance_controller.cpp</FilePath>
             </File>
             <File>
-              <FileName>anti_split_control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\anti_split_control.c</FilePath>
+              <FileName>tip_protection_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\tip_protection_controller.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>anti_split_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\anti_split_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>body_speed_state.c</FileName>
@@ -1059,19 +1069,19 @@
               <FilePath>..\User_code\Motion_Control\App\src\body_speed_state.c</FilePath>
             </File>
             <File>
-              <FileName>chassis_height_control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\chassis_height_control.c</FilePath>
+              <FileName>chassis_height_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\chassis_height_controller.cpp</FilePath>
             </File>
             <File>
-              <FileName>chassis_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\chassis_init.c</FilePath>
+              <FileName>chassis_initializer.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\chassis_initializer.cpp</FilePath>
             </File>
             <File>
-              <FileName>chassis_state.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\chassis_state.c</FilePath>
+              <FileName>chassis_runtime_state.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\chassis_runtime_state.cpp</FilePath>
             </File>
             <File>
               <FileName>Gimbal.c</FileName>
@@ -1079,19 +1089,19 @@
               <FilePath>..\User_code\Motion_Control\App\src\Gimbal.c</FilePath>
             </File>
             <File>
-              <FileName>gravity_comp_test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\gravity_comp_test.c</FilePath>
+              <FileName>gravity_compensation_test_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\gravity_compensation_test_controller.cpp</FilePath>
             </File>
             <File>
-              <FileName>jump_motion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\jump_motion.c</FilePath>
+              <FileName>jump_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\jump_controller.cpp</FilePath>
             </File>
             <File>
-              <FileName>leg_retract_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\leg_retract_common.c</FilePath>
+              <FileName>leg_turn_recovery_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\leg_turn_recovery_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>lqr_controller.cpp</FileName>
@@ -1099,19 +1109,19 @@
               <FilePath>..\User_code\Motion_Control\App\src\lqr_controller.cpp</FilePath>
             </File>
             <File>
-              <FileName>motor_enable.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\motor_enable.c</FilePath>
+              <FileName>chassis_motor_enabler.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\chassis_motor_enabler.cpp</FilePath>
             </File>
             <File>
-              <FileName>off_ground_detect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\off_ground_detect.c</FilePath>
+              <FileName>off_ground_detector.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\off_ground_detector.cpp</FilePath>
             </File>
             <File>
-              <FileName>Self_Righting.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\Self_Righting.c</FilePath>
+              <FileName>self_righting_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\self_righting_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>startup_retract_controller.cpp</FileName>
@@ -1124,9 +1134,9 @@
               <FilePath>..\User_code\Motion_Control\App\src\sit_controller.cpp</FilePath>
             </File>
             <File>
-              <FileName>spinning_motion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\App\src\spinning_motion.c</FilePath>
+              <FileName>spinning_controller.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\Motion_Control\App\src\spinning_controller.cpp</FilePath>
             </File>
             <File>
               <FileName>stair_controller.cpp</FileName>
@@ -1142,11 +1152,6 @@
               <FileName>Gas_Spring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User_code\Motion_Control\Ctrl\src\Gas_Spring.c</FilePath>
-            </File>
-            <File>
-              <FileName>Tip_Protect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User_code\Motion_Control\Ctrl\src\Tip_Protect.c</FilePath>
             </File>
             <File>
               <FileName>kalman_filter1.c</FileName>

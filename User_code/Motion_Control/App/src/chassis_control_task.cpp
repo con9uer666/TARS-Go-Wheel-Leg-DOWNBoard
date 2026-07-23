@@ -13,6 +13,7 @@ extern "C"
 #include "chassis_behavior_tree.h"
 #include "User_State.h"
 #include "USER_CAN.h"
+#include "Motor_Drv.h"
 #include "remoter.h"
 #include "Wheel_End_Velocity.h"
 #include "Wheel_Leg_about.h"
@@ -20,8 +21,9 @@ extern "C"
 #include "observe_task.h"
 #include "controller.h"
 #include "PowerCtrl.h"
-#include "Self_Righting.h"
 #include "Board2Board.h"
+#include "imu_temp_ctrl.h"
+#include "buzzer.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
@@ -37,19 +39,99 @@ namespace chassis
  * 只保存依赖引用，不在算法内部查找全局 PID 或 VMC 对象。
  */
 ChassisControlTask::ChassisControlTask()
-    : balance_controller_(BalanceControllerDependencies{
-          VMC_Chassis_Target,
+    : state_estimator_(ChassisStateEstimatorDependencies{
+          Keyboard_Simulate,
+          VMC_Coculate,
+          Body_Speed_Coculate,
+          INS_Coculate,
+          VMC_L,
+          VMC_R,
+          kalman_body_speed,
+          pitch_trans,
+          d_pitch,
+          d_yaw,
+          pitch,
+          roll}),
+      left_leg_turn_recovery_(false),
+      right_leg_turn_recovery_(true),
+      balance_controller_(BalanceControllerDependencies{
           L_Leg_L0_PID,
           R_Leg_L0_PID,
           Roll_Comp_PID,
           mg,
           upstairs_flag,
+          ChassisHeightControllerDependencies{
+              Roll_Comp_PID,
+              L_Leg_L0_PID,
+              R_Leg_L0_PID,
+              LEG_MIN_LENTH,
+              LEG_MAX_LENTH,
+              target_Leg_L0,
+              target_L_Leg_L0,
+              target_R_Leg_L0,
+              leg_state_count,
+              ramp_target_L0_up,
+              ramp_target_L0_down},
+          JumpControllerDependencies{
+              L_Leg_L0_PID,
+              R_Leg_L0_PID,
+              jump_mode,
+              jump_cmd,
+              jump_enable,
+              g_jump_buzzer_active,
+              jump_L0_step_delta,
+              jump_leg_change_threshold,
+              jump_fail_reason,
+              motor_HZ,
+              Buzzer_Tone_Max,
+              Stop_Buzzer},
+          AntiSplitControllerDependencies{
+              Leg_AntiSplit_PID,
+              L_Spin_Phi0_PID,
+              R_Spin_Phi0_PID,
+              LEG_MIN_LENTH,
+              LEG_MAX_LENTH,
+              centrifugal_comp_gain,
+              target_spin_phi0},
+          OffGroundDetectorDependencies{
+              VMC_L,
+              VMC_R,
+              L_Leg_L0_PID,
+              R_Leg_L0_PID,
+              LQR_K,
+              Leg_L_T,
+              Leg_R_T,
+              b_phi0_offset,
+              L_Ground_F0,
+              R_Ground_F0,
+              L_off_ground,
+              R_off_ground},
+          leg_state_locked_short,
+          body_distance,
+          target_body_distance,
           StepHitDetectorDependencies{
               LEG_MAX_LENTH,
               motor_HZ,
               step_hit_cooldown,
               L_Ground_F0,
-              R_Ground_F0}}),
+              R_Ground_F0},
+          TipProtectionControllerDependencies{
+              L_Leg_L0_POS_PID,
+              L_Leg_L0_SPD_PID,
+              R_Leg_L0_POS_PID,
+              R_Leg_L0_SPD_PID,
+              L_Leg_Middle_PID,
+              L_Leg_dphi0_PID,
+              R_Leg_Middle_PID,
+              R_Leg_dphi0_PID,
+              LEG_MIN_LENTH},
+          LegacyBalanceAlgorithmDependencies{
+              Error_Calculate,
+              PowerCtrl,
+              body_distance_error,
+              speed_error,
+              yaw_error},
+          spinning_flag}),
       sit_controller_(SitControllerDependencies{
           L_Leg_L0_POS_PID,
           L_Leg_L0_SPD_PID,
@@ -72,7 +154,9 @@ ChassisControlTask::ChassisControlTask()
           VMC_L,
           VMC_R,
           LEG_MIN_LENTH,
-          LEG_MAX_LENTH}),
+          LEG_MAX_LENTH,
+          left_leg_turn_recovery_,
+          right_leg_turn_recovery_}),
       startup_retract_controller_(StartupRetractControllerDependencies{
           L_Leg_L0_POS_PID,
           L_Leg_L0_SPD_PID,
@@ -84,9 +168,8 @@ ChassisControlTask::ChassisControlTask()
           R_Leg_dphi0_PID,
           VMC_L,
           VMC_R,
-          VMC_Chassis_Target,
-          Self_Righting_Mode_Detect,
-          Self_Righting_Action})
+          left_leg_turn_recovery_,
+          right_leg_turn_recovery_})
 {
 }
 
@@ -95,13 +178,13 @@ ChassisControlTask::ChassisControlTask()
  */
 void ChassisControlTask::Initialize()
 {
-    task_Motor_Init();
-    task_VMC_Init();
-    task_PID_Init();
+    ChassisInitializer::InitializeMotors();
+    ChassisInitializer::InitializeVmc();
+    ChassisInitializer::InitializePids();
     osDelay(1000);
 
-    task_Pitch_Coculate();
-    task_Motor_Enable();
+    ChassisInitializer::UpdatePitchHistory();
+    ChassisMotorEnabler::EnableAll();
 }
 
 /**
@@ -113,48 +196,8 @@ void ChassisControlTask::UpdateWheelState()
                             &context_.state.wheel.left.acceleration_mps2,
                             &context_.state.wheel.right.velocity_mps,
                             &context_.state.wheel.right.acceleration_mps2);
-}
-
-/**
- * @brief 按旧任务顺序执行正常控制所需的全部输入和状态解算。
- */
-void ChassisControlTask::UpdateNormalStateEstimates()
-{
-    // 保持迁移前顺序：输入更新 → VMC 几何解算 → 车速解算 → INS 解算。
-    Keyboard_Simulate();
-    VMC_Coculate();
-    Body_Speed_Coculate();
-    INS_Coculate();
-}
-
-/**
- * @brief 将本周期解算完成后的全局反馈复制为只读状态快照。
- *
- * 该函数不做滤波、不改符号、不参与状态估计，只建立明确的数据所有权边界。
- * 因此旧 C 控制器继续读取全局量时，控制效果不会发生变化。
- */
-void ChassisControlTask::CaptureStateSnapshot()
-{
-    context_.state.left_leg.length_m = VMC_L.L0;
-    context_.state.left_leg.length_rate_mps = VMC_L.d_L0;
-    context_.state.left_leg.leg_angle_rad = VMC_L.phi0;
-    context_.state.left_leg.leg_angular_rate_radps = VMC_L.d_phi0;
-    context_.state.left_leg.body_angle_rad = VMC_L.b_phi0;
-    context_.state.left_leg.body_angular_rate_radps = VMC_L.d_b_phi0;
-    context_.state.left_leg.actual_leg_torque_nm = VMC_L.T_actual;
-
-    context_.state.right_leg.length_m = VMC_R.L0;
-    context_.state.right_leg.length_rate_mps = VMC_R.d_L0;
-    context_.state.right_leg.leg_angle_rad = VMC_R.phi0;
-    context_.state.right_leg.leg_angular_rate_radps = VMC_R.d_phi0;
-    context_.state.right_leg.body_angle_rad = VMC_R.b_phi0;
-    context_.state.right_leg.body_angular_rate_radps = VMC_R.d_b_phi0;
-    context_.state.right_leg.actual_leg_torque_nm = VMC_R.T_actual;
-
-    context_.state.body_speed_mps = kalman_body_speed;
-    context_.state.pitch_rad = pitch_trans[0];
-    context_.state.pitch_rate_radps = d_pitch;
-    context_.state.yaw_rate_radps = d_yaw;
+    context_.state.wheel.left.raw_motor_speed = L_DJ3508.Rx_Data.Speed;
+    context_.state.wheel.right.raw_motor_speed = R_DJ3508.Rx_Data.Speed;
 }
 
 /**
@@ -192,12 +235,12 @@ RunMode ChassisControlTask::ResolveMode(const LegacyModeSignals& signals) const
  * @brief 执行一个顶层模式的控制计算。
  * @param[in] mode 本周期解析出的唯一运行模式。
  *
- * 起立恢复、正常平衡、坐地和上台阶模式由 C++ 控制器返回 ChassisCommand；尚未迁移的模式
- * 仍调用旧 C 动作组，并在周期末从 VMC_Chassis_Target 捕获命令。
+ * 起立恢复、正常平衡、坐地和上台阶模式均由 C++ 控制器返回 ChassisCommand；
+ * Hold 分支不覆盖命令，从而保持上周期已经提交的目标。
  */
 void ChassisControlTask::ExecuteMode(RunMode mode)
 {
-    context_.command_source = CommandSource::LegacyGlobal;
+    context_.transition_request = ModeTransitionRequest::None;
 
     switch (mode)
     {
@@ -207,14 +250,13 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
         const StartupRetractUpdateResult startup_result =
             startup_retract_controller_.Update(context_.state);
         context_.command = startup_result.command;
-        context_.command_source = CommandSource::NativeCpp;
 
         if (startup_result.retract_control_active)
             first_run = 0U;
 
         if (startup_result.completed)
         {
-            start_mode = 1U;
+            context_.transition_request = ModeTransitionRequest::Balance;
             L_Leg_State = 0U;
             R_Leg_State = 0U;
             body_distance = 0.0f;
@@ -238,15 +280,25 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
         const BalanceUpdateResult balance_result =
             balance_controller_.Update(context_.state, balance_input);
         context_.command = balance_result.command;
-        context_.command_source = CommandSource::NativeCpp;
+
+        if (balance_result.tip_protection_active)
+            HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, GPIO_PIN_RESET);
+
+        if (balance_result.tip_protection_completed)
+        {
+            context_.transition_request = ModeTransitionRequest::StartupRetract;
+            upstares_mode = 0U;
+            first_run = 1U;
+            sit_first_entry = 1U;
+        }
 
         if (balance_result.request_stair)
         {
-            start_mode = 2U;
+            context_.transition_request = ModeTransitionRequest::Stair;
             upstairs_flag = 0U;
         }
         if (balance_result.request_sit)
-            start_mode = 3U;
+            context_.transition_request = ModeTransitionRequest::Sit;
         break;
     }
 
@@ -257,7 +309,6 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
         const StairUpdateResult stair_result =
             stair_controller_.Update(context_.state, context_.command);
         context_.command = stair_result.command;
-        context_.command_source = CommandSource::NativeCpp;
 
         if (stair_result.entered_retract_phase)
             upstares_mode = 1U;
@@ -265,7 +316,7 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
         if (stair_result.completed)
         {
             upstares_mode = 0U;
-            start_mode = 1U;
+            context_.transition_request = ModeTransitionRequest::Balance;
             L_Leg_State = 0U;
             R_Leg_State = 0U;
             leg_state = 0U;
@@ -282,11 +333,10 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
         const SitUpdateResult sit_result =
             sit_controller_.Update(context_.state, sit_mode_enable != 0U);
         context_.command = sit_result.command;
-        context_.command_source = CommandSource::NativeCpp;
 
         if (sit_result.request_startup_retract)
         {
-            start_mode = 0;
+            context_.transition_request = ModeTransitionRequest::StartupRetract;
             first_run = 1;
         }
         break;
@@ -309,24 +359,34 @@ void ChassisControlTask::ExecuteGravityTest()
         return;
     }
 
-    Gravity_Compensation_Test_Function();
+    // 与迁移前一致：标定分支只更新 VMC 几何状态，不运行正常模式的输入/车速/INS 链。
+    VMC_Coculate();
+    context_.command = gravity_test_controller_.Update();
 }
 
 /**
- * @brief 从旧全局目标结构读取本周期动作组计算结果。
- *
- * 这是灰度迁移桥：尚未迁移的 C 动作组仍写 VMC_Chassis_Target，本函数立即
- * 将结果复制进 C++ ChassisCommand。随着动作组逐个迁移，这个读取桥会缩小，
- * 最终所有控制器将直接返回 ChassisCommand。
+ * @brief 把控制器产生的顶层模式请求集中映射为旧 start_mode 数值。
+ * @param[in] request 本周期最终模式转换请求；None 时保持现有模式。
  */
-void ChassisControlTask::CaptureLegacyCommand()
+void ChassisControlTask::ApplyModeTransition(ModeTransitionRequest request)
 {
-    context_.command.left_support_force_n = VMC_Chassis_Target.L_F0;
-    context_.command.left_leg_torque_nm = VMC_Chassis_Target.L_T;
-    context_.command.right_support_force_n = VMC_Chassis_Target.R_F0;
-    context_.command.right_leg_torque_nm = VMC_Chassis_Target.R_T;
-    context_.command.left_wheel_torque_nm = VMC_Chassis_Target.L_Wheel_Torque;
-    context_.command.right_wheel_torque_nm = VMC_Chassis_Target.R_Wheel_Torque;
+    switch (request)
+    {
+    case ModeTransitionRequest::StartupRetract:
+        start_mode = 0U;
+        break;
+    case ModeTransitionRequest::Balance:
+        start_mode = 1U;
+        break;
+    case ModeTransitionRequest::Stair:
+        start_mode = 2U;
+        break;
+    case ModeTransitionRequest::Sit:
+        start_mode = 3U;
+        break;
+    case ModeTransitionRequest::None:
+        break;
+    }
 }
 
 /**
@@ -361,13 +421,12 @@ void ChassisControlTask::ApplyOutputs()
 /**
  * @brief 执行一次 2 ms 控制周期。
  *
- * 周期内先更新状态，再选择并执行模式；只有旧 C 动作组需要经过
- * CaptureLegacyCommand()，原生 C++ 控制器返回的命令不会被旧全局量覆盖。
+ * 周期内先更新状态，再选择并执行模式。所有动作控制器均直接更新
+ * context_.command；Hold 和重力测试启动等待期不覆盖它，因此自然保持上周期命令。
  */
 void ChassisControlTask::RunCycle()
 {
     UpdateWheelState();
-    context_.command_source = CommandSource::LegacyGlobal;
 
     if (user_Gravity_Compensation_Test_Function_set == 1)
     {
@@ -376,15 +435,12 @@ void ChassisControlTask::RunCycle()
     }
     else
     {
-        UpdateNormalStateEstimates();
-        CaptureStateSnapshot();
+        state_estimator_.Update(context_.state);
         CaptureModeSignals();
         context_.mode = ResolveMode(context_.mode_signals);
         ExecuteMode(context_.mode);
+        ApplyModeTransition(context_.transition_request);
     }
-
-    if (context_.command_source == CommandSource::LegacyGlobal)
-        CaptureLegacyCommand();
 
     ApplyOutputs();
 }

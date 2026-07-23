@@ -1,9 +1,12 @@
 h7_ctrl/balance_controller.o: \
   ..\User_code\Motion_Control\App\src\balance_controller.cpp \
   ..\User_code\Motion_Control\App\inc\balance_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\anti_split_controller.hpp \
   ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
   ..\User_code\Motion_Control\App\inc\lqr_controller.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
+  ..\User_code\Motion_Control\App\inc\chassis_height_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\off_ground_detector.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
@@ -42,13 +45,11 @@ h7_ctrl/balance_controller.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
+  ..\User_code\Motion_Control\App\inc\jump_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\tip_protection_controller.hpp \
   ..\User_code\Motion_Control\App\chassis_behavior_tree.h \
   ..\User_code\Motion_Control\Ctrl\inc\ramp_generator.h \
   ..\User_code\Motion_Control\Ctrl\inc\Lqr_Error_Calculate.h \
-  ..\User_code\Motion_Control\App\inc\anti_split_control.h \
-  ..\User_code\Motion_Control\App\inc\chassis_height_control.h \
-  ..\User_code\Motion_Control\Ctrl\inc\Tip_Protect.h \
-  ..\User_code\Motion_Control\Power_control\PowerCtrl.h \
   ..\User_code\Board2Board.h ..\Core\Inc\usart.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math.h \
   D:\Keil\Pack\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h \

@@ -12,6 +12,11 @@
 #include "sit_controller.hpp"
 #include "stair_controller.hpp"
 #include "startup_retract_controller.hpp"
+#include "gravity_compensation_test_controller.hpp"
+#include "leg_turn_recovery_controller.hpp"
+#include "chassis_state_estimator.hpp"
+#include "chassis_initializer.hpp"
+#include "chassis_motor_enabler.hpp"
 
 namespace chassis
 {
@@ -29,7 +34,7 @@ struct TaskContext
     ChassisCommand command;                     /**< 周期末将提交到 VMC 的统一命令。 */
     std::uint16_t gravity_test_delay_count = 0; /**< 重力测试启动等待计数，单位控制周期。 */
     RunMode mode = RunMode::Hold;               /**< 本周期已经解析出的唯一顶层模式。 */
-    CommandSource command_source = CommandSource::LegacyGlobal; /**< 当前命令的数据来源。 */
+    ModeTransitionRequest transition_request = ModeTransitionRequest::None; /**< 本周期控制结果请求的下一顶层模式。 */
 };
 
 /**
@@ -54,10 +59,6 @@ private:
     void RunCycle();
     /** @brief 更新左右轮端速度与加速度，并写入 context_.state.wheel。 */
     void UpdateWheelState();
-    /** @brief 按原顺序执行输入、VMC、车速和 INS 状态解算。 */
-    void UpdateNormalStateEstimates();
-    /** @brief 将解算后的全局反馈复制到 context_.state。 */
-    void CaptureStateSnapshot();
     /** @brief 将旧模式标志锁存到 context_.mode_signals。 */
     void CaptureModeSignals();
     /**
@@ -71,10 +72,13 @@ private:
      * @param[in] mode 本周期需要执行的顶层模式。
      */
     void ExecuteMode(RunMode mode);
+    /**
+     * @brief 在唯一位置把语义化模式请求提交到旧 start_mode 兼容变量。
+     * @param[in] request 本周期控制器最终产生的顶层模式转换请求。
+     */
+    void ApplyModeTransition(ModeTransitionRequest request);
     /** @brief 执行带 1000 周期启动等待的重力补偿测试。 */
     void ExecuteGravityTest();
-    /** @brief 从旧 VMC_Chassis_Target 复制六维命令到 context_.command。 */
-    void CaptureLegacyCommand();
     /**
      * @brief 将统一命令复制到现有 VMC_Chassis_Target 兼容结构。
      * @param[in] command 本周期最终映射前命令。
@@ -84,10 +88,14 @@ private:
     void ApplyOutputs();
 
     TaskContext context_{};        /**< 仅由 Motor_task 对象拥有的任务持久状态。 */
+    ChassisStateEstimator state_estimator_; /**< 固定输入/VMC/车速/INS 顺序并组装只读快照的估计器。 */
+    LegTurnRecoveryController left_leg_turn_recovery_; /**< 左腿收腿转角短路径/反向长路径共享状态机。 */
+    LegTurnRecoveryController right_leg_turn_recovery_; /**< 右腿收腿转角短路径/反向长路径共享状态机。 */
     BalanceController balance_controller_; /**< 固定正常平衡算法顺序并返回命令与模式事件的 C++ 控制器。 */
     SitController sit_controller_; /**< 首个原生 C++ 动作控制器：坐地控制器。 */
     StairController stair_controller_; /**< 管理伸腿和收腿内部阶段的 C++ 上台阶控制器。 */
     StartupRetractController startup_retract_controller_; /**< 管理倒地自起接管与起立前收腿恢复的 C++ 控制器。 */
+    GravityCompensationTestController gravity_test_controller_; /**< 管理机械量程探测、姿态扫描与结果遍历的标定控制器。 */
 };
 
 } // namespace chassis

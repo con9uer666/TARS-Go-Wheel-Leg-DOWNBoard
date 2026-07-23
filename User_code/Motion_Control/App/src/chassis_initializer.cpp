@@ -1,14 +1,15 @@
 /**
- * @file chassis_init.c
+ * @file chassis_initializer.cpp
  * @brief 底盘初始化：电机参数、VMC、PID 初始化，以及 pitch 前后帧计算。
  */
 
+extern "C"
+{
 #include "chassis_behavior_tree.h"
 #include "user_pid.h"
 #include "Motor_Drv.h"
 #include "Gimbal.h"
 #include "User_State.h"
-#include "State.h"
 #include "arm_math.h"
 #include "USER_CAN.h"
 #include "VMC.h"
@@ -32,9 +33,12 @@
 #include "Gas_Spring.h"
 #include "buzzer.h"
 #include "Wheel_End_Velocity.h"
+}
 
-//电机初始化参数及结构体
-void task_Motor_Init()
+#include "chassis_initializer.hpp"
+
+/** @brief 初始化底盘关节、Yaw、拨弹电机参数并启用气弹簧补偿。 */
+void chassis::ChassisInitializer::InitializeMotors()
 {
     DM_Joint_Motor_Init(&L_DM8009[0], 40.0f, 3.14159265f, 45.0f, 0x01);
     DM_Joint_Motor_Init(&L_DM8009[1], 40.0f, 3.14159265f, 45.0f, 0x02);
@@ -51,19 +55,19 @@ void task_Motor_Init()
     gas_spring_enable = 1;
 }
 
-//VMC赋值与初始化结构体
-void task_VMC_Init()
+/** @brief 初始化左右五连杆 VMC 的连杆长度和机构镜像方向。 */
+void chassis::ChassisInitializer::InitializeVmc()
 {
     VMC_Init(&VMC_L, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f, 1);
     VMC_Init(&VMC_R, 0.210f, 0.250f, 0.250f, 0.210f, 0.0f, 0);
 }
 
-//PID赋值与初始化结构体
-void task_PID_Init()
+/** @brief 使用迁移前完全相同的增益、限幅和积分参数初始化全部共享 PID。 */
+void chassis::ChassisInitializer::InitializePids()
 {
     PID_INIT(&L_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
     PID_INIT(&R_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&Leg_AntiSplit_PID, 300, 0, 10, 150, 0, 0, 0, 0);   //Kp/Kd为占位，每周期由 AntiSplit_Get_K 覆盖
+    PID_INIT(&Leg_AntiSplit_PID, 300, 0, 10, 150, 0, 0, 0, 0);   // Kp/Kd 为占位，每周期由 AntiSplitController 按腿长覆盖
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&Roll_Comp_PID, 20, 0.002, 100, 150, 80, 0, 10000, 0);
@@ -92,9 +96,19 @@ void task_PID_Init()
     target_R_Leg_L0 = LEG_MIN_LENTH;
 }
 
-//机身pitch计算，记录前一帧的pitch值，单位为弧度，-PI到PI之间
-void task_Pitch_Coculate()
+/** @brief 推进俯仰角前后帧历史，并把 IMU 度数转换为弧度。 */
+void chassis::ChassisInitializer::UpdatePitchHistory()
 {
     pitch_trans[1] = pitch_trans[0];
     pitch_trans[0] = (pitch/180.0f) * PI;
+}
+
+/**
+ * @brief 未迁移 C 状态解算代码使用的俯仰历史兼容入口。
+ *
+ * Wheel_Leg_about.c 的 INS_Coculate() 仍调用该符号；内部立即委托 C++ 初始化器。
+ */
+extern "C" void task_Pitch_Coculate(void)
+{
+    chassis::ChassisInitializer::UpdatePitchHistory();
 }

@@ -15,8 +15,8 @@ extern "C"
 /**
  * @brief 旧 C 模块使用的“坐地下次需要重新初始化”兼容标志。
  *
- * Tip_Protect.c 仍会把它置 1。SitController 每周期读取该标志，并在完成
- * 斜坡初始化后清零。保留此符号可避免本阶段修改倾覆保护代码。
+ * ChassisControlTask 在倾覆保护完成事件发生时把它置 1。SitController 每周期
+ * 读取该标志，并在完成斜坡初始化后清零，以保留再次进入坐地流程的旧行为。
  */
 extern "C" std::uint8_t sit_first_entry = 1;
 

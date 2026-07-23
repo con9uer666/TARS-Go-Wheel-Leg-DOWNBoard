@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include "chassis_control_types.hpp"
+#include "leg_turn_recovery_controller.hpp"
 
 extern "C"
 {
@@ -47,6 +48,8 @@ struct StairControllerDependencies
     VMC_t& right_vmc;                      /**< 右腿完整 VMC 状态，供卡住检测辅助函数使用。 */
     float& minimum_leg_length_m;           /**< 工程当前最短腿长参数，单位 m；作为恢复正常腿长的装配边界保留。 */
     float& maximum_leg_length_m;           /**< 工程当前最长腿长参数，单位 m；伸腿阶段两侧腿长目标。 */
+    LegTurnRecoveryController& left_turn_recovery; /**< 左腿收腿转角短路径/长路径恢复控制器。 */
+    LegTurnRecoveryController& right_turn_recovery; /**< 右腿收腿转角短路径/长路径恢复控制器。 */
 };
 
 /**

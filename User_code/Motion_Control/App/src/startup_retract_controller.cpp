@@ -18,7 +18,7 @@ namespace chassis
 
 /**
  * @brief 保存起立恢复所需的外部依赖和控制参数。
- * @param[in] dependencies 八个 PID、两侧 VMC、旧命令目标和自起函数引用。
+ * @param[in] dependencies 收腿恢复使用的八个 PID 与左右 VMC 引用。
  * @param[in] config 腿长、腿角目标及到位判定参数。
  */
 StartupRetractController::StartupRetractController(
@@ -36,24 +36,29 @@ StartupRetractController::StartupRetractController(
 StartupRetractUpdateResult StartupRetractController::Update(
     const ChassisStateSnapshot& state)
 {
-    if (dependencies_.detect_self_righting() != 0U)
-        return UpdateSelfRighting();
+    /** 倒地进入/退出去抖和自起动作状态机的本周期结果。 */
+    const StartupRetractUpdateResult self_righting_result = UpdateSelfRighting(state);
+    if (self_righting_result.self_righting_active)
+        return self_righting_result;
 
     return UpdateRetract(state);
 }
 
 /**
- * @brief 执行旧倒地自起单步动作并立即捕获其命令。
+ * @brief 执行倒地判定和自起动作，并转换为启动恢复流程结果。
  * @return self_righting_active 为 true 的命令结果。
  */
-StartupRetractUpdateResult StartupRetractController::UpdateSelfRighting()
+StartupRetractUpdateResult StartupRetractController::UpdateSelfRighting(
+    const ChassisStateSnapshot& state)
 {
-    dependencies_.execute_self_righting();
+    /** 原生 C++ 倒地自起控制器返回的接管状态和命令。 */
+    const SelfRightingUpdateResult self_righting_result =
+        self_righting_controller_.Update(state);
 
-    /** 旧自起动作已写入命令后的本周期返回值。 */
+    /** 转换为 StartupRetractController 统一结果类型的本周期返回值。 */
     StartupRetractUpdateResult result{};
-    result.command = CaptureLegacyCommand();
-    result.self_righting_active = true;
+    result.command = self_righting_result.command;
+    result.self_righting_active = self_righting_result.active;
     return result;
 }
 
@@ -99,23 +104,27 @@ StartupRetractUpdateResult StartupRetractController::UpdateRetract(
 
     if (L_Leg_State >= 1U)
     {
-        left_angle_near = turn_ctrl_with_stuck_flip(
-            &dependencies_.left_vmc, 0, config_.left_target_angle_rad,
-            &dependencies_.left_angle_position_pid,
-            &dependencies_.left_angle_velocity_pid,
-            &L_stair_sub, &L_sub_dwell,
-            &L_rev_dir, &L_rev_long_remain, &L_rev_traveled,
-            &left_leg_torque_nm);
+        /** 左腿转角恢复状态机的本周期结果。 */
+        const LegTurnRecoveryUpdateResult turn_result =
+            dependencies_.left_turn_recovery.Update(
+                dependencies_.left_vmc,
+                config_.left_target_angle_rad,
+                dependencies_.left_angle_position_pid,
+                dependencies_.left_angle_velocity_pid);
+        left_angle_near = turn_result.near_target ? 1 : 0;
+        left_leg_torque_nm = turn_result.torque_nm;
     }
     if (R_Leg_State >= 1U)
     {
-        right_angle_near = turn_ctrl_with_stuck_flip(
-            &dependencies_.right_vmc, 1, config_.right_target_angle_rad,
-            &dependencies_.right_angle_position_pid,
-            &dependencies_.right_angle_velocity_pid,
-            &R_stair_sub, &R_sub_dwell,
-            &R_rev_dir, &R_rev_long_remain, &R_rev_traveled,
-            &right_leg_torque_nm);
+        /** 右腿转角恢复状态机的本周期结果。 */
+        const LegTurnRecoveryUpdateResult turn_result =
+            dependencies_.right_turn_recovery.Update(
+                dependencies_.right_vmc,
+                config_.right_target_angle_rad,
+                dependencies_.right_angle_position_pid,
+                dependencies_.right_angle_velocity_pid);
+        right_angle_near = turn_result.near_target ? 1 : 0;
+        right_leg_torque_nm = turn_result.torque_nm;
     }
 
     if (L_Leg_State == 0U
@@ -127,9 +136,7 @@ StartupRetractUpdateResult StartupRetractController::UpdateRetract(
     {
         L_Leg_State = 1U;
         L_Ready_Count = 0U;
-        L_stair_sub = STAIR_SUB_TURN_FWD;
-        L_sub_dwell = 0;
-        leg_turn_stuck_reset(&dependencies_.left_vmc);
+        dependencies_.left_turn_recovery.Reset(dependencies_.left_vmc);
     }
 
     if (R_Leg_State == 0U
@@ -141,9 +148,7 @@ StartupRetractUpdateResult StartupRetractController::UpdateRetract(
     {
         R_Leg_State = 1U;
         R_Ready_Count = 0U;
-        R_stair_sub = STAIR_SUB_TURN_FWD;
-        R_sub_dwell = 0;
-        leg_turn_stuck_reset(&dependencies_.right_vmc);
+        dependencies_.right_turn_recovery.Reset(dependencies_.right_vmc);
     }
 
     if (L_Leg_State == 1U && left_angle_near != 0)
@@ -190,23 +195,6 @@ StartupRetractUpdateResult StartupRetractController::UpdateRetract(
     }
 
     return result;
-}
-
-/**
- * @brief 把旧倒地自起的 VMC 目标复制为新命令类型。
- * @return 与 VMC_Chassis_Target 六个字段一一对应的命令。
- */
-ChassisCommand StartupRetractController::CaptureLegacyCommand() const
-{
-    /** 旧自起动作已产生的完整 VMC 映射前命令。 */
-    ChassisCommand command{};
-    command.left_support_force_n = dependencies_.legacy_command_target.L_F0;
-    command.left_leg_torque_nm = dependencies_.legacy_command_target.L_T;
-    command.right_support_force_n = dependencies_.legacy_command_target.R_F0;
-    command.right_leg_torque_nm = dependencies_.legacy_command_target.R_T;
-    command.left_wheel_torque_nm = dependencies_.legacy_command_target.L_Wheel_Torque;
-    command.right_wheel_torque_nm = dependencies_.legacy_command_target.R_Wheel_Torque;
-    return command;
 }
 
 } // namespace chassis

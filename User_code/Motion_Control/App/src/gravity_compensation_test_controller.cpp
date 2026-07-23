@@ -1,5 +1,5 @@
 /**
- * @file gravity_comp_test.c
+ * @file gravity_compensation_test_controller.cpp
  * @brief 重力补偿标定扫描。全文用【测腿长范围】/【测数据】/【公共】三种标签标明每段代码归属。
  *
  * ┌─ 总体流程（由 grav_phase 状态机驱动，本函数每 2ms 被调用一次）─────────────────────────┐
@@ -17,12 +17,15 @@
  * 调参只动本文件、不影响其它模式）。调参/标定用，非常规控制路径。
  */
 
+#include "gravity_compensation_test_controller.hpp"
+
+extern "C"
+{
 #include "chassis_behavior_tree.h"
 #include "user_pid.h"
 #include "Motor_Drv.h"
 #include "Gimbal.h"
 #include "User_State.h"
-#include "State.h"
 #include "arm_math.h"
 #include "USER_CAN.h"
 #include "VMC.h"
@@ -46,6 +49,7 @@
 #include "Gas_Spring.h"
 #include "buzzer.h"
 #include "Wheel_End_Velocity.h"
+}
 
 /*====================================== 参数 ===============================================*/
 
@@ -142,7 +146,7 @@ typedef enum
 static Grav_Test_Phase grav_phase = GRAV_PROBE_MIN; // 标定状态机当前阶段（两阶段共 5 状态）
 
 /*=========================== 本文件独立的腿部 PID =========================================*/
-/* 数值从生产 PID（chassis_init.c 的 L/R_Leg_*）原样复制而来，仅加 grav_ 前缀改名隔离。
+/* 数值从生产 PID（chassis_initializer.cpp 的 L/R_Leg_*）原样复制而来，仅加 grav_ 前缀改名隔离。
  * 标定全程只用这一套；★调 PID 参数只改下面 Gravity_Init_Leg_PIDs() 里的数值★，不影响其它模式。 */
 user_pid_t grav_L_Leg_L0_POS_PID, grav_R_Leg_L0_POS_PID;  // 腿长位置环(外环)
 user_pid_t grav_L_Leg_L0_SPD_PID, grav_R_Leg_L0_SPD_PID;  // 腿长速度环(内环)，输出即 F
@@ -151,7 +155,7 @@ user_pid_t grav_L_Leg_dphi0_PID,  grav_R_Leg_dphi0_PID;   // 腿角角速度环(
 
 /*====================================== 内部函数 ==========================================*/
 
-// 【公共】★调参在这★：初始化本文件 8 个腿部 PID，数值与 chassis_init.c 的生产腿 PID 完全一致。
+// 【公共】★调参在这★：初始化本文件 8 个腿部 PID，数值与 chassis_initializer.cpp 的生产腿 PID 完全一致。
 // 参数顺序 = (PID, Kp, Ki, Kd, out_limit, i_limit, I_step, Integraldead_zone, deadzone)
 static void Gravity_Init_Leg_PIDs(void)
 {
@@ -318,17 +322,20 @@ static void Gravity_Probe_Update(void)
 
 /*====================================== 标定主函数 ========================================*/
 
-void Gravity_Compensation_Test_Function(void)
+/**
+ * @brief 推进一次机械量程探测或重力补偿姿态扫描并返回映射前命令。
+ * @return 本周期沿左右腿轴的支持力、虚拟腿力矩以及清零后的轮力矩。
+ */
+chassis::ChassisCommand chassis::GravityCompensationTestController::Update()
 {
-    static uint8_t inited = 0; // 首次调用标志：0=待初始化，1=已初始化，避免重复建方向表/清结果
+    /** 本周期由机械量程探测或姿态锁定双环生成的统一命令。 */
+    ChassisCommand command{};
 
     /* —————————————— 【公共】每周期前置 —————————————— */
-    VMC_Coculate(); // 更新 L0/phi0/d_* 等，供斜坡起点与稳定/卡住判据使用
-
-    if (!inited || gravity_comp_test_restart) // 首次进入、或被置 restart → 从头(含测腿长范围)开始
+    if (!initialized_ || gravity_comp_test_restart) // 首次进入、或被置 restart → 从头(含测腿长范围)开始
     {
         Gravity_Test_Init();
-        inited = 1;
+        initialized_ = true;
         gravity_comp_test_restart = 0;
     }
 
@@ -347,17 +354,17 @@ void Gravity_Compensation_Test_Function(void)
         grav_probe_cycle++;
 
         // 直接命令恒定足端力(沿腿轴)，方向由 grav_probe_force 符号决定；不输出 T 转矩
-        VMC_Chassis_Target.L_F0 = grav_probe_force;
-        VMC_Chassis_Target.L_T = 0.0f;
-        VMC_Chassis_Target.R_F0 = grav_probe_force;
-        VMC_Chassis_Target.R_T = 0.0f;
+        command.left_support_force_n = grav_probe_force;
+        command.left_leg_torque_nm = 0.0f;
+        command.right_support_force_n = grav_probe_force;
+        command.right_leg_torque_nm = 0.0f;
 
         // 轮子不主动驱动
-        VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
-        VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
+        command.left_wheel_torque_nm = 0.0f;
+        command.right_wheel_torque_nm = 0.0f;
 
         Gravity_Probe_Update(); // 卡住检测 + 阶段推进（两腿都卡住后转下一步 / 进入测数据）
-        return;
+        return command;
     }
 
     /* ════════════════════════════════════════════════════════════════════════════════════
@@ -389,14 +396,14 @@ void Gravity_Compensation_Test_Function(void)
     PID_coculate(&grav_R_Leg_dphi0_PID);
 
     // VMC 映射到电机力矩：不加前馈，让 PID 撑出全部保持力（这正是要标定记录的量）
-    VMC_Chassis_Target.L_F0 = grav_L_Leg_L0_SPD_PID.output;
-    VMC_Chassis_Target.L_T = grav_L_Leg_dphi0_PID.output;
-    VMC_Chassis_Target.R_F0 = grav_R_Leg_L0_SPD_PID.output;
-    VMC_Chassis_Target.R_T = -grav_R_Leg_dphi0_PID.output;
+    command.left_support_force_n = grav_L_Leg_L0_SPD_PID.output;
+    command.left_leg_torque_nm = grav_L_Leg_dphi0_PID.output;
+    command.right_support_force_n = grav_R_Leg_L0_SPD_PID.output;
+    command.right_leg_torque_nm = -grav_R_Leg_dphi0_PID.output;
 
     // 轮子不主动驱动（静态测试，置 0 防沿用上一个模式的旧力矩）
-    VMC_Chassis_Target.L_Wheel_Torque = 0.0f;
-    VMC_Chassis_Target.R_Wheel_Torque = 0.0f;
+    command.left_wheel_torque_nm = 0.0f;
+    command.right_wheel_torque_nm = 0.0f;
 
     if (grav_phase == GRAV_DONE)
     {
@@ -536,4 +543,6 @@ void Gravity_Compensation_Test_Function(void)
             }
         }
     }
+
+    return command;
 }

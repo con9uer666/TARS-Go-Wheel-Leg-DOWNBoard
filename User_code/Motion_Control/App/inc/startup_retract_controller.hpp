@@ -8,6 +8,8 @@
 
 #include <cstdint>
 #include "chassis_control_types.hpp"
+#include "self_righting_controller.hpp"
+#include "leg_turn_recovery_controller.hpp"
 
 extern "C"
 {
@@ -17,17 +19,6 @@ extern "C"
 
 namespace chassis
 {
-
-/**
- * @brief 检查当前车体是否应继续执行倒地自起的旧 C 函数类型。
- * @return 非 0 表示倒地自起正在接管输出，0 表示可进入收腿恢复。
- */
-using SelfRightingModeDetectFunction = std::uint8_t (*)(void);
-
-/**
- * @brief 执行一次旧倒地自起动作的 C 函数类型。
- */
-using SelfRightingActionFunction = void (*)(void);
 
 /**
  * @brief StartupRetractController 需要的 PID、VMC 和倒地自起兼容依赖。
@@ -46,9 +37,8 @@ struct StartupRetractControllerDependencies
     user_pid_t& right_angle_velocity_pid;  /**< 右腿角速度环 PID。 */
     VMC_t& left_vmc;                       /**< 左腿完整 VMC 状态，供旧卡住检测辅助器使用。 */
     VMC_t& right_vmc;                      /**< 右腿完整 VMC 状态，供旧卡住检测辅助器使用。 */
-    VMC_Chassis_Target_t& legacy_command_target; /**< 旧 Self_Righting_Action() 写入的 VMC 映射前目标。 */
-    SelfRightingModeDetectFunction detect_self_righting; /**< 倒地自起模式检测函数。 */
-    SelfRightingActionFunction execute_self_righting;    /**< 倒地自起单周期动作函数。 */
+    LegTurnRecoveryController& left_turn_recovery; /**< 左腿短路径/反向长路径转角恢复状态机。 */
+    LegTurnRecoveryController& right_turn_recovery; /**< 右腿短路径/反向长路径转角恢复状态机。 */
 };
 
 /**
@@ -69,7 +59,7 @@ struct StartupRetractControllerConfig
 struct StartupRetractUpdateResult
 {
     ChassisCommand command;                    /**< 本周期将由任务提交的六维 VMC 映射前命令。 */
-    bool self_righting_active = false;          /**< true 表示本周期命令由旧倒地自起动作产生。 */
+    bool self_righting_active = false;          /**< true 表示本周期命令由 SelfRightingController 产生。 */
     bool retract_control_active = false;        /**< true 表示车体姿态已允许执行收腿与转腿恢复。 */
     bool completed = false;                     /**< true 表示双腿已收缩并转回目标姿态。 */
 };
@@ -77,14 +67,14 @@ struct StartupRetractUpdateResult
 /**
  * @brief 管理倒地自起接管和自起后收腿恢复的动作控制器。
  *
- * 倒地自起算法本身在本阶段保持原 C 实现；恢复姿态后的腿长和腿角
- * 控制已迁移到本类，并通过 ChassisCommand 返回命令。
+ * 倒地检测和三阶段自起由内部 SelfRightingController 执行；恢复姿态后的腿长和
+ * 腿角控制由本类执行，两条路径均直接返回 ChassisCommand。
  */
 class StartupRetractController
 {
 public:
     /**
-     * @brief 构造起立恢复控制器并绑定外部 PID、VMC 和旧自起接口。
+     * @brief 构造起立恢复控制器并绑定收腿恢复所需的外部 PID 与 VMC 对象。
      * @param[in] dependencies 生命周期必须覆盖控制器的外部依赖引用。
      * @param[in] config 收腿目标、阈值和到位周期参数。
      */
@@ -101,10 +91,11 @@ public:
 
 private:
     /**
-     * @brief 调用旧倒地自起动作并捕获其写入的六维命令。
-     * @return 标记为自起接管的单周期返回值。
+     * @brief 执行倒地检测和三阶段自起控制，并转换为起立流程结果。
+     * @param[in] state 本周期姿态、腿部反馈和原始轮电机速度快照。
+     * @return 标记为自起接管的单周期返回值；未接管时 active 为 false。
      */
-    StartupRetractUpdateResult UpdateSelfRighting();
+    StartupRetractUpdateResult UpdateSelfRighting(const ChassisStateSnapshot& state);
 
     /**
      * @brief 执行姿态恢复后的收腿和转腿控制。
@@ -113,14 +104,9 @@ private:
      */
     StartupRetractUpdateResult UpdateRetract(const ChassisStateSnapshot& state);
 
-    /**
-     * @brief 把旧 VMC_Chassis_Target 的六个字段复制为统一命令。
-     * @return 不改变符号、限幅和单位的 ChassisCommand。
-     */
-    ChassisCommand CaptureLegacyCommand() const;
-
-    StartupRetractControllerDependencies dependencies_; /**< 构造时绑定的 PID、VMC 和自起函数引用。 */
+    StartupRetractControllerDependencies dependencies_; /**< 构造时绑定的收腿恢复 PID 与左右 VMC 引用。 */
     StartupRetractControllerConfig config_;              /**< 收腿目标、阈值和到位周期参数副本。 */
+    SelfRightingController self_righting_controller_;    /**< 拥有倒地模式去抖和自起动作持久命令的控制器。 */
 };
 
 } // namespace chassis

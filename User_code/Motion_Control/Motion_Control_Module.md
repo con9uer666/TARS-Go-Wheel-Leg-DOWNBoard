@@ -9,8 +9,8 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                       App 层 (应用层)                        │
-│  chassis_behavior_tree(主循环) + 各动作/计算细粒度文件        │
-│  Gimbal.c/h   Self_Righting.c/h   User_State.c/h             │
+│  ChassisControlTask(主循环) + 可注入 C++ 动作控制器            │
+│  Gimbal.c/h   self_righting_controller.cpp   User_State.c/h  │
 │  行为树调度 / LQR / 跳跃 / 小陀螺 / 上台阶 / 坐地 / 离地检测  │
 ├─────────────────────────────────────────────────────────────┤
 │                       Ctrl 层 (算法层)                        │
@@ -40,15 +40,15 @@ flowchart TD
         WL["Wheel_Leg_about.c\n正向运动学:\nWr, Wl, body_speed"]
         WEV["Wheel_End_Velocity.c\n轮端世界速度/加速度"]
         KF["observe_task.c\n卡尔曼滤波:\nkalman_body_speed"]
-        LQR_F["LQR_Get_K()\n查表获取K矩阵"]
+        LQR_F["LqrController::UpdateGainMatrix()\n二维多项式拟合 K 矩阵"]
     end
 
     subgraph App层控制
-        STATE["状态机\n(start_mode=0/1/2/3)"]
+        STATE["LegacyModeSignals → 扁平 RunMode\nModeTransitionRequest 单点提交"]
         YAW["Yaw误差计算\nYaw_Error_Coculate()"]
-        LEG["腿长双环PID\nLeg_L0_Control()"]
+        LEG["腿长斜坡 + PID\nChassisHeightController::Update()"]
         LQR_C["LqrController::Calculate()\n返回轮力矩 + 基础腿力矩"]
-        JUMP["跳跃动作组"]
+        JUMP["JumpController\n指令锁存 + 固定支持力"]
     end
 
     subgraph Drv层
@@ -141,7 +141,7 @@ flowchart TD
     D -->|Balance| F["BalanceController::Update\nLQR + 腿长PID + 跳跃 + 模式事件"]
     D -->|Stair| G["StairController::Update\n伸腿 → 收腿内部阶段"]
     D -->|Sit| I["SitController::Update\nC++ 坐地控制器"]
-    D -->|GravityTest| J["Gravity_Compensation_Test"]
+    D -->|GravityTest| J["GravityCompensationTestController::Update\n量程探测 → 姿态扫描"]
     D -->|Hold| K["保持上一周期目标"]
     
     E -->|两腿到位| D
@@ -224,32 +224,33 @@ flowchart TD
 | 函数 | 文件 | 功能 |
 |---|---|---|
 | `Motor_task()` | chassis_control_task.cpp | C++ 主控制任务调度器，500Hz |
-| `task_Motor_Init()` | chassis_init.c | 电机参数初始化 |
-| `task_VMC_Init()` | chassis_init.c | VMC结构体初始化 |
-| `task_PID_Init()` | chassis_init.c | PID控制器初始化 |
-| `task_Pitch_Coculate()` | chassis_init.c | pitch前后帧计算 |
-| `task_Motor_Enable()` | motor_enable.c | DM电机使能 |
+| `ChassisInitializer::InitializeMotors()` | chassis_initializer.cpp | 电机参数初始化 |
+| `ChassisInitializer::InitializeVmc()` | chassis_initializer.cpp | VMC 结构体初始化 |
+| `ChassisInitializer::InitializePids()` | chassis_initializer.cpp | PID 控制器初始化 |
+| `task_Pitch_Coculate()` | chassis_initializer.cpp | 未迁移 INS C 代码使用的 pitch 历史兼容入口 |
+| `ChassisStateEstimator::Update()` | chassis_state_estimator.cpp | 固定输入、VMC、车速、INS 顺序并组装只读状态快照 |
+| `ChassisMotorEnabler::EnableAll()` | chassis_motor_enabler.cpp | 按固定顺序和 5 ms 间隔使能全部 DM 电机 |
 | `BalanceController::Update()` | balance_controller.cpp | 固定平衡算法顺序，合成最终命令并返回 Stair/Sit 请求 |
+| `TipProtectionController::Update()` | tip_protection_controller.cpp | 连续俯仰超限去抖、250 周期收腿保护命令及完成事件 |
 | `LqrController::Calculate()` | lqr_controller.cpp | 更新积分状态并返回左右轮/腿 LQR 力矩 |
 | `LqrController::UpdateGainMatrix()` | lqr_controller.cpp | 拥有节流计数，以 100 Hz 二维拟合 K(L0_l,L0_r) |
-| `spinning_up()` / `spinning_exit()` | spinning_motion.c | 小陀螺加速 / 退出 |
-| `Jump_Motion_Update()` | jump_motion.c | 跳跃状态、腿长 PID 与蜂鸣器更新 |
-| `off_ground_detect()` | off_ground_detect.c | 离地检测 |
+| `AntiSplitController::Update()` | anti_split_controller.cpp | 叠加防劈叉 PID、d_yaw² 离心补偿和小陀螺 phi0 归中力矩 |
+| `spinning_up()` / `spinning_exit()` | spinning_controller.cpp | 保留给误差计算模块的 C 兼容入口，内部委托 `SpinningController` 完成小陀螺加速 / 退出控制 |
+| `JumpController::Update()` | jump_controller.cpp | 管理单次触发锁、0.5 s 锁存、成功/失败原因、腿长 PID 阶跃与蜂鸣器边沿 |
+| `OffGroundDetector::Update()` | off_ground_detector.cpp | 滤波左右支持力、更新离地计数并覆盖离地侧命令 |
 | `StepHitDetector::Update()` | balance_controller.cpp | 持续更新磕台阶命中、长腿延时与离地冷却；自动触发默认关闭 |
 | `Yaw_Error_Coculate()` | yaw_error.c | Yaw误差+速度误差 |
-| `turn_ctrl_with_stuck_flip()` | leg_retract_common.c | 收腿转角(卡住反向绕长路) |
-| `StartupRetractController::Update()` | startup_retract_controller.cpp | 保留旧倒地自起算法，姿态恢复后返回收腿 ChassisCommand |
+| `LegTurnRecoveryController::Update()` | leg_turn_recovery_controller.cpp | 单腿短路径转角控制与卡住后的反向长路径恢复 |
+| `StartupRetractController::Update()` | startup_retract_controller.cpp | 组合原生 C++ 倒地自起与姿态恢复后的收腿 ChassisCommand |
 | `StairController::Update()` | stair_controller.cpp | 单一 Stair 顶层模式内管理伸腿、收腿和完成等待阶段 |
 | `SitController::Update()` | sit_controller.cpp | 读取状态快照并返回坐地 ChassisCommand |
-| `Gravity_Compensation_Test_Function()` | gravity_comp_test.c | 重力补偿标定测试 |
+| `GravityCompensationTestController::Update()` | gravity_compensation_test_controller.cpp | 探测机械腿长量程、扫描 18×10 位姿并返回结构化标定命令 |
 | `Body_Speed_Coculate()` | Wheel_Leg_about.c | 车身速度解算 |
 | `Distance_Error_Set()` | Wheel_Leg_about.c | 距离误差计算 |
 | `Speed_Error_Set()` | Wheel_Leg_about.c | 速度误差计算 |
-| `Leg_L0_Control()` | Leg_Control.c | 腿长PID控制 |
-| `Roll_Comp()` | Wheel_Leg_about.c | 横滚补偿 |
+| `ChassisHeightController::Update()` | chassis_height_controller.cpp | 先更新横滚补偿，再以不对称斜坡更新腿长目标与左右 PID |
 | `PowerCtrl()` | PowerCtrl.c | 功率门控 |
-| `Self_Righting_Step()` | Self_Righting.c | 倒地自复位 |
-| `Self_Righting_Reset()` | Self_Righting.c | 自复位复位 |
+| `SelfRightingController::Update()` | self_righting_controller.cpp | 倒地进入/退出去抖与伸腿、并齐、大力矩转腿三阶段自起 |
 | `Wheel_End_Velocity()` | Wheel_End_Velocity.c | 轮端世界速度+加速度 |
 | `rampInit()` / `rampIterate()` | ramp_generator.c | 通用斜坡发生器 |
 
@@ -327,32 +328,48 @@ others/Motion_Control/
 │   │   ├── chassis_behavior_tree.h      ★ 底盘聚合公共头（取代 motor.h，所有extern/类型/原型）
 │   │   ├── chassis_control_task.hpp      C++ 任务调度器、扁平模式与任务上下文
 │   │   ├── chassis_control_types.hpp     C++ 控制器共享的状态快照、模式与命令类型
+│   │   ├── chassis_state_estimator.hpp   输入/VMC/车速/INS 解算与快照接口
+│   │   ├── chassis_initializer.hpp       电机、VMC、PID 与 pitch 历史初始化接口
+│   │   ├── chassis_motor_enabler.hpp     六个 DM 电机顺序使能接口
 │   │   ├── balance_controller.hpp       正常平衡流程与磕台阶检测器接口
+│   │   ├── tip_protection_controller.hpp 倾覆检测、收腿保护命令与完成事件接口
 │   │   ├── lqr_controller.hpp           12 维 LQR 输入/输出、配置与控制器接口
+│   │   ├── anti_split_controller.hpp    防劈叉、离心补偿与小陀螺腿角归中控制器
+│   │   ├── off_ground_detector.hpp      支持力滤波、离地计数与单腿命令覆盖接口
+│   │   ├── chassis_height_controller.hpp 横滚补偿与腿长斜坡/PID 控制器
+│   │   ├── spinning_controller.hpp      小陀螺加速/退出控制器、输入快照与依赖接口
+│   │   ├── jump_controller.hpp           跳跃指令锁存、失败判定、PID 阶跃与蜂鸣控制器
 │   │   ├── sit_controller.hpp           坐地控制器接口、依赖与参数
 │   │   ├── stair_controller.hpp         上台阶控制器接口、内部阶段与参数
 │   │   ├── startup_retract_controller.hpp 倒地自起接管与起立前收腿控制器
+│   │   ├── self_righting_controller.hpp   倒地检测去抖与三阶段自起命令接口
+│   │   ├── leg_turn_recovery_controller.hpp 单腿收腿转角与卡住反绕状态机
+│   │   ├── gravity_compensation_test_controller.hpp 重力标定控制器与调试观测量
 │   │   ├── Gimbal.h                     云台控制
 │   │   ├── Self_Righting.h              倒地自复位
 │   │   └── User_State.h                 用户状态
 │   └── src/
 │       ├── chassis_control_task.cpp     ★ C++ 主循环：状态更新→模式调度→最终映射
-│       ├── chassis_state.c              跨动作共享反馈量/常数/标志/共享PID
-│       ├── chassis_init.c               电机/VMC/PID 初始化 + pitch计算
-│       ├── motor_enable.c               全部电机使能动作
+│       ├── chassis_runtime_state.cpp    C linkage 共享反馈量/常数/标志/共享 PID
+│       ├── chassis_initializer.cpp      C++ 电机/VMC/PID 初始化 + pitch 兼容入口
+│       ├── chassis_state_estimator.cpp  C++ 输入→VMC→车速→INS→状态快照
+│       ├── chassis_motor_enabler.cpp    C++ 六个 DM 电机顺序使能动作
 │       ├── balance_controller.cpp       C++ 正常平衡流程 + 磕台阶检测器
+│       ├── tip_protection_controller.cpp C++ 倾覆去抖 + 收腿双环保护命令
 │       ├── lqr_controller.cpp           C++ LQR 力矩输出 + K 矩阵节流拟合
-│       ├── spinning_motion.c            小陀螺动作组（加速/退出）
-│       ├── jump_motion.c                跳跃状态、腿长 PID 与蜂鸣器更新
-│       ├── off_ground_detect.c          离地检测
+│       ├── anti_split_controller.cpp    C++ 防劈叉 + 旋转离心补偿 + phi0 归中
+│       ├── off_ground_detector.cpp      C++ 支持力滤波 + 离地单侧命令覆盖
+│       ├── chassis_height_controller.cpp C++ 横滚补偿 + 腿长斜坡/PID
+│       ├── spinning_controller.cpp      小陀螺控制器实现及 C 兼容入口（加速/退出）
+│       ├── jump_controller.cpp          C++ 跳跃锁存 + 失败判定 + PID/蜂鸣更新
 │       ├── yaw_error.c                  常态Yaw误差计算
-│       ├── leg_retract_common.c         收腿转角公共逻辑(卡住反向绕长路)
-│       ├── startup_retract_controller.cpp C++ 起立恢复控制器（旧自起接管→收腿）
+│       ├── leg_turn_recovery_controller.cpp C++ 单腿短路径转角 + 卡住反向长路径恢复
+│       ├── startup_retract_controller.cpp C++ 起立恢复控制器（原生自起→收腿）
 │       ├── stair_controller.cpp         C++ 上台阶控制器（伸腿→收腿内部阶段）
 │       ├── sit_controller.cpp           C++ 坐地控制器（状态输入→命令输出）
-│       ├── gravity_comp_test.c          重力补偿标定测试
+│       ├── gravity_compensation_test_controller.cpp C++ 机械量程探测 + 重力补偿姿态扫描
 │       ├── Gimbal.c
-│       ├── Self_Righting.c
+│       ├── self_righting_controller.cpp  C++ 倒地进入/退出去抖 + 三阶段自起
 │       └── User_State.c
 ├── Ctrl/                                 算法层
 │   ├── inc/

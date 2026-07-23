@@ -10,10 +10,6 @@
 extern "C"
 {
 #include "chassis_behavior_tree.h"
-#include "anti_split_control.h"
-#include "chassis_height_control.h"
-#include "Tip_Protect.h"
-#include "PowerCtrl.h"
 #include "Board2Board.h"
 #include "arm_math.h"
 }
@@ -129,7 +125,12 @@ bool StepHitDetector::Update(const ChassisStateSnapshot& state,
  */
 BalanceController::BalanceController(const BalanceControllerDependencies& dependencies)
     : dependencies_(dependencies),
+      tip_protection_controller_(dependencies.tip_protection_dependencies),
+      height_controller_(dependencies.height_dependencies),
+      jump_controller_(dependencies.jump_dependencies),
       lqr_controller_(),
+      anti_split_controller_(dependencies.anti_split_dependencies),
+      off_ground_detector_(dependencies.off_ground_dependencies),
       step_hit_detector_(dependencies.step_hit_dependencies)
 {
 }
@@ -146,77 +147,117 @@ BalanceUpdateResult BalanceController::Update(const ChassisStateSnapshot& state,
     /** 本周期将返回给 Motor_task 的命令和模式事件。 */
     BalanceUpdateResult result{};
 
-    if (Tip_Protect_Detect() != 0U)
+    /** 倾覆检测和收腿保护控制器的本周期结果。 */
+    const TipProtectionUpdateResult tip_result =
+        tip_protection_controller_.Update(state);
+    if (tip_result.active)
     {
-        Tip_Protect_Action();
-        result.command = CaptureLegacyCommand();
+        result.command = tip_result.command;
         result.tip_protection_active = true;
+        result.tip_protection_completed = tip_result.completed;
         return result;
     }
 
-    Error_Calculate();
-    Roll_Comp();
-    Leg_L0_Control();
+    /** 不可修改的旧误差计算黑盒在本周期产生的三维输出快照。 */
+    const LegacyBalanceErrorSnapshot error_snapshot = CalculateLegacyErrors();
+    /** 横滚补偿、腿长斜坡和左右腿长 PID 的本周期输出。 */
+    const ChassisHeightOutput height_output =
+        height_controller_.Update(state, input.target_leg_state);
     lqr_controller_.UpdateGainMatrix(state.left_leg.length_m,
                                      state.right_leg.length_m);
-    PowerCtrl();
+    dependencies_.legacy_algorithms.update_power_control();
+
+    /** 本周期锁存的小陀螺运行状态，供 LQR、防劈叉和跳跃使用同一取值。 */
+    const bool spinning_active = dependencies_.spinning_active_flag == 1U;
+    /** LQR 与跳跃必须读取离地检测器更新前的左腿计数，保持旧一周期时序。 */
+    const int previous_left_off_ground_count =
+        dependencies_.off_ground_dependencies.left_off_ground_count;
+    /** LQR 与跳跃必须读取离地检测器更新前的右腿计数，保持旧一周期时序。 */
+    const int previous_right_off_ground_count =
+        dependencies_.off_ground_dependencies.right_off_ground_count;
 
     /** LQR 本周期使用的误差、离地计数与模式快照。 */
     LqrControlInput lqr_input{};
-    lqr_input.body_distance_error_m = body_distance_error;
-    lqr_input.speed_error_mps = speed_error;
-    lqr_input.yaw_error_rad = yaw_error;
-    lqr_input.yaw_rate_radps = d_yaw;
-    lqr_input.left_off_ground_count = L_off_ground;
-    lqr_input.right_off_ground_count = R_off_ground;
-    lqr_input.spinning_active = spinning_flag == 1U;
+    lqr_input.body_distance_error_m = error_snapshot.body_distance_error_m;
+    lqr_input.speed_error_mps = error_snapshot.speed_error_mps;
+    lqr_input.yaw_error_rad = error_snapshot.yaw_error_rad;
+    lqr_input.yaw_rate_radps = state.yaw_rate_radps;
+    lqr_input.left_off_ground_count = previous_left_off_ground_count;
+    lqr_input.right_off_ground_count = previous_right_off_ground_count;
+    lqr_input.spinning_active = spinning_active;
     lqr_input.stair_request_active = dependencies_.legacy_stair_request == 1U;
     /** 结构化返回的左右轮力矩和防劈叉叠加前腿力矩。 */
     const LqrOutput lqr_output = lqr_controller_.Calculate(state, lqr_input);
-    dependencies_.legacy_command_target.L_Wheel_Torque =
-        lqr_output.left_wheel_torque_nm;
-    dependencies_.legacy_command_target.R_Wheel_Torque =
-        lqr_output.right_wheel_torque_nm;
+    /** 防劈叉控制器使用的 LQR 基础力矩、yaw 角速度和小陀螺状态。 */
+    AntiSplitControlInput anti_split_input{};
+    anti_split_input.lqr_output = lqr_output;
+    anti_split_input.yaw_rate_radps = state.yaw_rate_radps;
+    anti_split_input.spinning_active = spinning_active;
+    /** 防劈叉、离心补偿和小陀螺腿角归中叠加后的左右腿力矩。 */
+    const AntiSplitOutput anti_split_output =
+        anti_split_controller_.Update(state, anti_split_input);
 
-    /** LQR 虚拟腿力矩叠加防劈叉、离心补偿和小陀螺归中后的左腿命令。 */
-    float left_leg_torque_nm = 0.0f;
-    /** LQR 虚拟腿力矩叠加防劈叉、离心补偿和小陀螺归中后的右腿命令。 */
-    float right_leg_torque_nm = 0.0f;
-    AntiSplit_Control(&left_leg_torque_nm, &right_leg_torque_nm);
-
-    /** 跳跃状态机返回的本周期激活状态。 */
-    const std::uint8_t jump_active = Jump_Motion_Update();
-    result.jump_active = jump_active != 0U;
+    /** 跳跃控制器使用的腿长档位、常规目标、离地计数和旋转状态。 */
+    JumpControlInput jump_input{};
+    jump_input.target_leg_state = input.target_leg_state;
+    jump_input.nominal_target_length_m = height_output.target_leg_length_m;
+    jump_input.left_off_ground_count = previous_left_off_ground_count;
+    jump_input.right_off_ground_count = previous_right_off_ground_count;
+    jump_input.spinning_active = spinning_active;
+    /** 跳跃锁存、成功/失败判定、PID 阶跃和蜂鸣器更新结果。 */
+    const JumpUpdateResult jump_result = jump_controller_.Update(state, jump_input);
+    result.jump_active = jump_result.active;
 
     /** 左腿重力补偿投影分母 cos(b_phi0)。 */
     const float left_gravity_projection = arm_cos_f32(state.left_leg.body_angle_rad);
     /** 右腿重力补偿投影分母 cos(b_phi0)。 */
     const float right_gravity_projection = arm_cos_f32(state.right_leg.body_angle_rad);
 
+    /** 离地覆盖前由 LQR、腿长、重力补偿和防劈叉合成的正常平衡命令。 */
+    ChassisCommand nominal_command{};
+    nominal_command.left_wheel_torque_nm = lqr_output.left_wheel_torque_nm;
+    nominal_command.right_wheel_torque_nm = lqr_output.right_wheel_torque_nm;
+    nominal_command.left_leg_torque_nm = anti_split_output.left_leg_torque_nm;
+    nominal_command.right_leg_torque_nm = anti_split_output.right_leg_torque_nm;
+
     if (result.jump_active)
     {
-        dependencies_.legacy_command_target.L_F0 =
-            200.0f + dependencies_.gravity_compensation_load / left_gravity_projection
-            + dependencies_.roll_compensation_pid.output;
-        dependencies_.legacy_command_target.R_F0 =
-            200.0f + dependencies_.gravity_compensation_load / right_gravity_projection
-            - dependencies_.roll_compensation_pid.output;
+        nominal_command.left_support_force_n =
+            jump_result.fixed_support_force_n
+            + dependencies_.gravity_compensation_load / left_gravity_projection
+            + height_output.roll_compensation_n;
+        nominal_command.right_support_force_n =
+            jump_result.fixed_support_force_n
+            + dependencies_.gravity_compensation_load / right_gravity_projection
+            - height_output.roll_compensation_n;
     }
     else
     {
-        dependencies_.legacy_command_target.L_F0 =
-            dependencies_.left_length_pid.output
+        nominal_command.left_support_force_n =
+            height_output.left_length_force_n
             + dependencies_.gravity_compensation_load / left_gravity_projection
-            + dependencies_.roll_compensation_pid.output;
-        dependencies_.legacy_command_target.R_F0 =
-            dependencies_.right_length_pid.output
+            + height_output.roll_compensation_n;
+        nominal_command.right_support_force_n =
+            height_output.right_length_force_n
             + dependencies_.gravity_compensation_load / right_gravity_projection
-            - dependencies_.roll_compensation_pid.output;
+            - height_output.roll_compensation_n;
     }
-    dependencies_.legacy_command_target.L_T = left_leg_torque_nm;
-    dependencies_.legacy_command_target.R_T = right_leg_torque_nm;
 
-    off_ground_detect();
+    /** 地面支持力滤波和离地单侧命令覆盖结果。 */
+    const OffGroundUpdateResult off_ground_result =
+        off_ground_detector_.Update(state, nominal_command);
+    if (off_ground_result.request_short_leg_lock)
+        dependencies_.short_leg_lock = 1U;
+    if (off_ground_result.request_distance_reset)
+    {
+        dependencies_.body_distance_m = 0.0f;
+        dependencies_.target_body_distance_m = 0.0f;
+    }
+    if (off_ground_result.request_step_cooldown_refresh)
+    {
+        dependencies_.step_hit_dependencies.cooldown_cycles =
+            dependencies_.step_hit_dependencies.motor_frequency_hz;
+    }
 
     /** 磕台阶检测器所需的长腿档位、模式和开关快照。 */
     StepHitDetectorInput step_hit_input{};
@@ -226,7 +267,7 @@ BalanceUpdateResult BalanceController::Update(const ChassisStateSnapshot& state,
     /** 磕台阶检测在本周期产生的自动 Stair 请求。 */
     const bool automatic_stair_request = step_hit_detector_.Update(state, step_hit_input);
 
-    result.command = CaptureLegacyCommand();
+    result.command = off_ground_result.command;
     result.request_stair = automatic_stair_request
         || dependencies_.legacy_stair_request == 1U;
     result.request_sit = input.sit_requested;
@@ -234,20 +275,20 @@ BalanceUpdateResult BalanceController::Update(const ChassisStateSnapshot& state,
 }
 
 /**
- * @brief 捕获 LQR、支持力合成和离地覆盖全部结束后的命令。
- * @return 与 VMC_Chassis_Target 六个字段一一对应的 ChassisCommand。
+ * @brief 调用 Error_Calculate 黑盒并锁存其三个公开误差输出。
+ * @return 供本周期 LQR 使用、不会再随全局量变化的误差快照。
  */
-ChassisCommand BalanceController::CaptureLegacyCommand() const
+LegacyBalanceErrorSnapshot BalanceController::CalculateLegacyErrors() const
 {
-    /** 本周期所有正常平衡覆盖逻辑结束后的最终命令。 */
-    ChassisCommand command{};
-    command.left_support_force_n = dependencies_.legacy_command_target.L_F0;
-    command.left_leg_torque_nm = dependencies_.legacy_command_target.L_T;
-    command.right_support_force_n = dependencies_.legacy_command_target.R_F0;
-    command.right_leg_torque_nm = dependencies_.legacy_command_target.R_T;
-    command.left_wheel_torque_nm = dependencies_.legacy_command_target.L_Wheel_Torque;
-    command.right_wheel_torque_nm = dependencies_.legacy_command_target.R_Wheel_Torque;
-    return command;
+    dependencies_.legacy_algorithms.calculate_errors();
+
+    /** 紧邻黑盒调用复制的位移、速度和偏航误差。 */
+    LegacyBalanceErrorSnapshot snapshot{};
+    snapshot.body_distance_error_m =
+        dependencies_.legacy_algorithms.body_distance_error_m;
+    snapshot.speed_error_mps = dependencies_.legacy_algorithms.speed_error_mps;
+    snapshot.yaw_error_rad = dependencies_.legacy_algorithms.yaw_error_rad;
+    return snapshot;
 }
 
 } // namespace chassis

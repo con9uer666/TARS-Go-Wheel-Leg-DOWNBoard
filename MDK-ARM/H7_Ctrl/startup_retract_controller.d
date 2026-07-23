@@ -2,6 +2,8 @@ h7_ctrl/startup_retract_controller.o: \
   ..\User_code\Motion_Control\App\src\startup_retract_controller.cpp \
   ..\User_code\Motion_Control\App\inc\startup_retract_controller.hpp \
   ..\User_code\Motion_Control\App\inc\chassis_control_types.hpp \
+  ..\User_code\Motion_Control\App\inc\self_righting_controller.hpp \
+  ..\User_code\Motion_Control\App\inc\leg_turn_recovery_controller.hpp \
   ..\User_code\Motion_Control\Ctrl\inc\user_pid.h \
   ..\User_code\Motion_Control\Ctrl\inc\VMC.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
