@@ -3,11 +3,11 @@
 <title>Static Call Graph - [H7_Ctrl\H7_Ctrl.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image H7_Ctrl\H7_Ctrl.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sat Jul 25 21:53:50 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sat Jul 25 22:18:18 2026
 <BR><P>
-<H3>Maximum Stack Usage =        520 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        512 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-Motor_task &rArr; chassis::ChassisControlTask::RunCycle() &rArr; chassis::ChassisControlTask::ExecuteMode(chassis::RunMode) &rArr; chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
+__rt_entry_main &rArr; main &rArr; MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 <P>
 <H3>
 Functions with no stack information
@@ -257,19 +257,19 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
 </UL>
 
-<P><STRONG><a name="[2d8]"></a>__scatterload_rt2_thumb_only</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
+<P><STRONG><a name="[2d9]"></a>__scatterload_rt2_thumb_only</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
 
-<P><STRONG><a name="[2d9]"></a>__scatterload_loop</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
+<P><STRONG><a name="[2da]"></a>__scatterload_loop</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
 
-<P><STRONG><a name="[2da]"></a>__decompress</STRONG> (Thumb, 100 bytes, Stack size unknown bytes, __dclz77c.o(!!dclz77c), UNUSED)
+<P><STRONG><a name="[2db]"></a>__decompress</STRONG> (Thumb, 100 bytes, Stack size unknown bytes, __dclz77c.o(!!dclz77c), UNUSED)
 
-<P><STRONG><a name="[2db]"></a>__decompress2</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __dclz77c.o(!!dclz77c), UNUSED)
+<P><STRONG><a name="[2dc]"></a>__decompress2</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __dclz77c.o(!!dclz77c), UNUSED)
 
-<P><STRONG><a name="[2dc]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, __scatter.o(!!handler_null), UNUSED)
+<P><STRONG><a name="[2dd]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, __scatter.o(!!handler_null), UNUSED)
 
-<P><STRONG><a name="[2dd]"></a>__scatterload_zeroinit</STRONG> (Thumb, 28 bytes, Stack size unknown bytes, __scatter_zi.o(!!handler_zi), UNUSED)
+<P><STRONG><a name="[2de]"></a>__scatterload_zeroinit</STRONG> (Thumb, 28 bytes, Stack size unknown bytes, __scatter_zi.o(!!handler_zi), UNUSED)
 
-<P><STRONG><a name="[2de]"></a>_printf_percent</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, _printf_percent.o(.ARM.Collect$$_printf_percent$$00000000))
+<P><STRONG><a name="[2df]"></a>_printf_percent</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, _printf_percent.o(.ARM.Collect$$_printf_percent$$00000000))
 
 <P><STRONG><a name="[d2]"></a>_printf_x</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, _printf_x.o(.ARM.Collect$$_printf_percent$$0000000C))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64 + Unknown Stack Size
@@ -278,7 +278,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_int_hex
 </UL>
 
-<P><STRONG><a name="[2df]"></a>_printf_percent_end</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, _printf_percent_end.o(.ARM.Collect$$_printf_percent$$00000017))
+<P><STRONG><a name="[2e0]"></a>_printf_percent_end</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, _printf_percent_end.o(.ARM.Collect$$_printf_percent$$00000017))
 
 <P><STRONG><a name="[d9]"></a>__rt_lib_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit.o(.ARM.Collect$$libinit$$00000000))
 <BR><BR>[Called By]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_li
@@ -288,73 +288,73 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_init
 </UL>
 
-<P><STRONG><a name="[2e0]"></a>__rt_lib_init_alloca_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000030))
+<P><STRONG><a name="[2e1]"></a>__rt_lib_init_alloca_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000030))
 
-<P><STRONG><a name="[2e1]"></a>__rt_lib_init_argv_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000002E))
+<P><STRONG><a name="[2e2]"></a>__rt_lib_init_argv_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000002E))
 
-<P><STRONG><a name="[2e2]"></a>__rt_lib_init_atexit_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001D))
+<P><STRONG><a name="[2e3]"></a>__rt_lib_init_atexit_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001D))
 
-<P><STRONG><a name="[2e3]"></a>__rt_lib_init_clock_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000023))
+<P><STRONG><a name="[2e4]"></a>__rt_lib_init_clock_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000023))
 
-<P><STRONG><a name="[2e4]"></a>__rt_lib_init_cpp_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000034))
+<P><STRONG><a name="[2e5]"></a>__rt_lib_init_cpp_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000034))
 
-<P><STRONG><a name="[2e5]"></a>__rt_lib_init_exceptions_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000032))
+<P><STRONG><a name="[2e6]"></a>__rt_lib_init_exceptions_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000032))
 
-<P><STRONG><a name="[2e6]"></a>__rt_lib_init_fp_trap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000021))
+<P><STRONG><a name="[2e7]"></a>__rt_lib_init_fp_trap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000021))
 
-<P><STRONG><a name="[2e7]"></a>__rt_lib_init_getenv_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000025))
+<P><STRONG><a name="[2e8]"></a>__rt_lib_init_getenv_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000025))
 
-<P><STRONG><a name="[2e8]"></a>__rt_lib_init_heap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000C))
+<P><STRONG><a name="[2e9]"></a>__rt_lib_init_heap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000C))
 
-<P><STRONG><a name="[2e9]"></a>__rt_lib_init_lc_collate_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000013))
+<P><STRONG><a name="[2ea]"></a>__rt_lib_init_lc_collate_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000013))
 
-<P><STRONG><a name="[2ea]"></a>__rt_lib_init_lc_ctype_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000015))
+<P><STRONG><a name="[2eb]"></a>__rt_lib_init_lc_ctype_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000015))
 
-<P><STRONG><a name="[2eb]"></a>__rt_lib_init_lc_monetary_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000017))
+<P><STRONG><a name="[2ec]"></a>__rt_lib_init_lc_monetary_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000017))
 
-<P><STRONG><a name="[2ec]"></a>__rt_lib_init_lc_numeric_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000019))
+<P><STRONG><a name="[2ed]"></a>__rt_lib_init_lc_numeric_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000019))
 
-<P><STRONG><a name="[2ed]"></a>__rt_lib_init_lc_time_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001B))
+<P><STRONG><a name="[2ee]"></a>__rt_lib_init_lc_time_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001B))
 
-<P><STRONG><a name="[2ee]"></a>__rt_lib_init_preinit_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000006))
+<P><STRONG><a name="[2ef]"></a>__rt_lib_init_preinit_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000006))
 
-<P><STRONG><a name="[2ef]"></a>__rt_lib_init_rand_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000010))
+<P><STRONG><a name="[2f0]"></a>__rt_lib_init_rand_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000010))
 
-<P><STRONG><a name="[2f0]"></a>__rt_lib_init_relocate_pie_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000004))
+<P><STRONG><a name="[2f1]"></a>__rt_lib_init_relocate_pie_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000004))
 
-<P><STRONG><a name="[2f1]"></a>__rt_lib_init_return</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000035))
+<P><STRONG><a name="[2f2]"></a>__rt_lib_init_return</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000035))
 
-<P><STRONG><a name="[2f2]"></a>__rt_lib_init_signal_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001F))
+<P><STRONG><a name="[2f3]"></a>__rt_lib_init_signal_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001F))
 
-<P><STRONG><a name="[2f3]"></a>__rt_lib_init_stdio_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000027))
+<P><STRONG><a name="[2f4]"></a>__rt_lib_init_stdio_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000027))
 
-<P><STRONG><a name="[2f4]"></a>__rt_lib_init_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000E))
+<P><STRONG><a name="[2f5]"></a>__rt_lib_init_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000E))
 
 <P><STRONG><a name="[de]"></a>__rt_lib_shutdown</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown.o(.ARM.Collect$$libshutdown$$00000000))
 <BR><BR>[Called By]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;abort
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_ls
 </UL>
 
-<P><STRONG><a name="[2f5]"></a>__rt_lib_shutdown_cpp_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000002))
+<P><STRONG><a name="[2f6]"></a>__rt_lib_shutdown_cpp_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000002))
 
-<P><STRONG><a name="[2f6]"></a>__rt_lib_shutdown_fp_trap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000007))
+<P><STRONG><a name="[2f7]"></a>__rt_lib_shutdown_fp_trap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000007))
 
-<P><STRONG><a name="[2f7]"></a>__rt_lib_shutdown_heap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000F))
+<P><STRONG><a name="[2f8]"></a>__rt_lib_shutdown_heap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000F))
 
-<P><STRONG><a name="[2f8]"></a>__rt_lib_shutdown_return</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000010))
+<P><STRONG><a name="[2f9]"></a>__rt_lib_shutdown_return</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000010))
 
-<P><STRONG><a name="[2f9]"></a>__rt_lib_shutdown_signal_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000A))
+<P><STRONG><a name="[2fa]"></a>__rt_lib_shutdown_signal_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000A))
 
-<P><STRONG><a name="[2fa]"></a>__rt_lib_shutdown_stdio_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000004))
+<P><STRONG><a name="[2fb]"></a>__rt_lib_shutdown_stdio_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000004))
 
-<P><STRONG><a name="[2fb]"></a>__rt_lib_shutdown_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000C))
+<P><STRONG><a name="[2fc]"></a>__rt_lib_shutdown_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000C))
 
 <P><STRONG><a name="[d0]"></a>__rt_entry</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry.o(.ARM.Collect$$rtentry$$00000000))
 <BR><BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
 <LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
 </UL>
 
-<P><STRONG><a name="[2fc]"></a>__rt_entry_presh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000002))
+<P><STRONG><a name="[2fd]"></a>__rt_entry_presh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000002))
 
 <P><STRONG><a name="[d6]"></a>__rt_entry_sh</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry4.o(.ARM.Collect$$rtentry$$00000004))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
@@ -367,7 +367,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_lib_init
 </UL>
 
-<P><STRONG><a name="[2fd]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
+<P><STRONG><a name="[2fe]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
 
 <P><STRONG><a name="[da]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
 <BR><BR>[Stack]<UL><LI>Max Depth = 512 + Unknown Stack Size
@@ -377,7 +377,7 @@ Global Symbols
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
 </UL>
 
-<P><STRONG><a name="[2fe]"></a>__rt_entry_postli_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000C))
+<P><STRONG><a name="[2ff]"></a>__rt_entry_postli_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000C))
 
 <P><STRONG><a name="[ef]"></a>__rt_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit.o(.ARM.Collect$$rtexit$$00000000))
 <BR><BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
@@ -387,7 +387,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_lib_shutdown
 </UL>
 
-<P><STRONG><a name="[2ff]"></a>__rt_exit_prels_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit2.o(.ARM.Collect$$rtexit$$00000002))
+<P><STRONG><a name="[300]"></a>__rt_exit_prels_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit2.o(.ARM.Collect$$rtexit$$00000002))
 
 <P><STRONG><a name="[df]"></a>__rt_exit_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit2.o(.ARM.Collect$$rtexit$$00000004))
 <BR><BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_sys_exit
@@ -749,7 +749,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
 </UL>
 
-<P><STRONG><a name="[300]"></a>_ll_udiv</STRONG> (Thumb, 240 bytes, Stack size 48 bytes, lludivv7m.o(.text), UNUSED)
+<P><STRONG><a name="[301]"></a>_ll_udiv</STRONG> (Thumb, 240 bytes, Stack size 48 bytes, lludivv7m.o(.text), UNUSED)
 
 <P><STRONG><a name="[e7]"></a>_printf_pre_padding</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, _printf_pad.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = _printf_pre_padding
@@ -771,12 +771,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_x
 </UL>
 
-<P><STRONG><a name="[301]"></a>_printf_longlong_hex</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, _printf_hex_int.o(.text), UNUSED)
+<P><STRONG><a name="[302]"></a>_printf_longlong_hex</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, _printf_hex_int.o(.text), UNUSED)
 
-<P><STRONG><a name="[2c1]"></a>strlen</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, strlen.o(.text))
+<P><STRONG><a name="[2c2]"></a>strlen</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, strlen.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = strlen
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
+<BR>[Called By]<UL><LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
 </UL>
 
 <P><STRONG><a name="[1dd]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
@@ -793,11 +793,11 @@ Global Symbols
 <LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Measure
 </UL>
 
-<P><STRONG><a name="[302]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+<P><STRONG><a name="[303]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[303]"></a>__rt_memcpy_w</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+<P><STRONG><a name="[304]"></a>__rt_memcpy_w</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[304]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
+<P><STRONG><a name="[305]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
 
 <P><STRONG><a name="[1d2]"></a>__aeabi_memclr</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[1d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_ErrorCallback
@@ -805,7 +805,7 @@ Global Symbols
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Init
 </UL>
 
-<P><STRONG><a name="[305]"></a>__rt_memclr</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr.o(.text), UNUSED)
+<P><STRONG><a name="[306]"></a>__rt_memclr</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr.o(.text), UNUSED)
 
 <P><STRONG><a name="[e2]"></a>_memset</STRONG> (Thumb, 64 bytes, Stack size 0 bytes, rt_memclr.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_memset_w
@@ -815,8 +815,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[201]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 <LI><a href="#[20c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
 <LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
-<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_SetH
 <LI><a href="#[1e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_mat_inverse_f32
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Measure
@@ -836,17 +836,17 @@ Global Symbols
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PCD_MspInit
 </UL>
 
-<P><STRONG><a name="[306]"></a>__rt_memclr_w</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr_w.o(.text), UNUSED)
+<P><STRONG><a name="[307]"></a>__rt_memclr_w</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr_w.o(.text), UNUSED)
 
 <P><STRONG><a name="[e3]"></a>_memset_w</STRONG> (Thumb, 74 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_memset
 </UL>
 
-<P><STRONG><a name="[307]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[308]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[308]"></a>__rt_heap_escrow</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[309]"></a>__rt_heap_escrow</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[309]"></a>__rt_heap_expand</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[30a]"></a>__rt_heap_expand</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
 <P><STRONG><a name="[e4]"></a>__read_errno</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, _rserrno.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_errno_addr
@@ -858,7 +858,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_errno_addr
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
-<LI><a href="#[2cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
+<LI><a href="#[2ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
 <LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sqrtf
 <LI><a href="#[23f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
@@ -884,7 +884,7 @@ Global Symbols
 <LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_SIGABRT
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_sys_exit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;abort_message
+<BR>[Called By]<UL><LI><a href="#[2c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;abort_message
 </UL>
 
 <P><STRONG><a name="[f1]"></a>_ttywrch</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, sys_wrch.o(.text))
@@ -899,22 +899,22 @@ Global Symbols
 <LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__sig_exit
 </UL>
 
-<P><STRONG><a name="[30a]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[30b]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[ed]"></a>__user_perproc_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[30b]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[30c]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[e5]"></a>__aeabi_errno_addr</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, rt_errno_addr_intlibspace.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
 <LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__read_errno
 </UL>
 
-<P><STRONG><a name="[30c]"></a>__errno$intlibspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_errno_addr_intlibspace.o(.text), UNUSED)
+<P><STRONG><a name="[30d]"></a>__errno$intlibspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_errno_addr_intlibspace.o(.text), UNUSED)
 
-<P><STRONG><a name="[30d]"></a>__rt_errno_addr$intlibspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_errno_addr_intlibspace.o(.text), UNUSED)
+<P><STRONG><a name="[30e]"></a>__rt_errno_addr$intlibspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_errno_addr_intlibspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[ea]"></a>__rt_SIGABRT</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, defsig_abrt_outer.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = __rt_SIGABRT &rArr; __rt_SIGABRT_inner &rArr; __default_signal_display &rArr; _ttywrch
@@ -925,11 +925,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;abort
 </UL>
 
-<P><STRONG><a name="[30e]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[30f]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[30f]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[310]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[310]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, indicate_semi.o(.text), UNUSED)
+<P><STRONG><a name="[311]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, indicate_semi.o(.text), UNUSED)
 
 <P><STRONG><a name="[d7]"></a>__user_setup_stackheap</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, sys_stackheap_outer.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
@@ -1037,14 +1037,14 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_init
 </UL>
 
-<P><STRONG><a name="[2ac]"></a>BMI088_delay_ms</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, bmi088middleware.o(.text.BMI088_delay_ms))
+<P><STRONG><a name="[2ad]"></a>BMI088_delay_ms</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, bmi088middleware.o(.text.BMI088_delay_ms))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = BMI088_delay_ms
 </UL>
 <BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bmi088_gyro_init
 <LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bmi088_accel_init
 </UL>
 
-<P><STRONG><a name="[2ab]"></a>BMI088_delay_us</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, bmi088middleware.o(.text.BMI088_delay_us))
+<P><STRONG><a name="[2ac]"></a>BMI088_delay_us</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, bmi088middleware.o(.text.BMI088_delay_us))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = BMI088_delay_us
 </UL>
 <BR>[Called By]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bmi088_gyro_init
@@ -1123,7 +1123,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PWM_Start
 </UL>
-<BR>[Called By]<UL><LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Buzzer_Tick
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> chassis_control_task.o(.text._ZN7chassis18ChassisControlTaskC2Ev)
@@ -1308,7 +1308,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
-<P><STRONG><a name="[295]"></a>DM_Joint_Motor_Init</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, motor_drv.o(.text.DM_Joint_Motor_Init))
+<P><STRONG><a name="[296]"></a>DM_Joint_Motor_Init</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, motor_drv.o(.text.DM_Joint_Motor_Init))
 <BR><BR>[Called By]<UL><LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisInitializer::InitializeMotors()
 </UL>
 
@@ -1548,8 +1548,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_AbortTransmit
 </UL>
 
-<P><STRONG><a name="[2c2]"></a>HAL_DMA_GetState</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32h7xx_hal_dma.o(.text.HAL_DMA_GetState))
-<BR><BR>[Called By]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<P><STRONG><a name="[2c3]"></a>HAL_DMA_GetState</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32h7xx_hal_dma.o(.text.HAL_DMA_GetState))
+<BR><BR>[Called By]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 
 <P><STRONG><a name="[124]"></a>HAL_DMA_IRQHandler</STRONG> (Thumb, 2684 bytes, Stack size 32 bytes, stm32h7xx_hal_dma.o(.text.HAL_DMA_IRQHandler))
@@ -2492,7 +2492,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[1d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_GetError
 <LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_Abort
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Called By]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 
 <P><STRONG><a name="[1d1]"></a>HAL_UART_ErrorCallback</STRONG> (Thumb, 338 bytes, Stack size 16 bytes, remoter.o(.text.HAL_UART_ErrorCallback))
@@ -2572,7 +2572,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_Start_IT
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;B2B_ParseUsart
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 
 <P><STRONG><a name="[1d6]"></a>HAL_UART_TxCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32h7xx_hal_uart.o(.text.HAL_UART_TxCpltCallback))
@@ -3053,7 +3053,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[cc]"></a>Motor_task</STRONG> (Thumb, 122 bytes, Stack size 8 bytes, chassis_control_task.o(.text.Motor_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 520 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 496 + Unknown Stack Size
 <LI>Call Chain = Motor_task &rArr; chassis::ChassisControlTask::RunCycle() &rArr; chassis::ChassisControlTask::ExecuteMode(chassis::RunMode) &rArr; chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -3106,21 +3106,21 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.text.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[296]"></a>PID_Clear</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Clear))
+<P><STRONG><a name="[297]"></a>PID_Clear</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Clear))
 <BR><BR>[Called By]<UL><LI><a href="#[280]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::AntiSplitController::Update(chassis::ChassisStateSnapshot const&, chassis::AntiSplitControlInput const&)
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 </UL>
 
 <P><STRONG><a name="[136]"></a>PID_INIT</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, user_pid.o(.text.PID_INIT))
 <BR><BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[221]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisInitializer::InitializePids()
-<LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 </UL>
 
-<P><STRONG><a name="[2ad]"></a>PID_Reset_OutLimit</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Reset_OutLimit))
-<BR><BR>[Called By]<UL><LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<P><STRONG><a name="[2ae]"></a>PID_Reset_OutLimit</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Reset_OutLimit))
+<BR><BR>[Called By]<UL><LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 </UL>
 
 <P><STRONG><a name="[229]"></a>PID_Set_AngleError</STRONG> (Thumb, 192 bytes, Stack size 40 bytes, user_pid.o(.text.PID_Set_AngleError))
@@ -3128,9 +3128,9 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
+<BR>[Called By]<UL><LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[280]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::AntiSplitController::Update(chassis::ChassisStateSnapshot const&, chassis::AntiSplitControlInput const&)
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[275]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateExtend(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)
 <LI><a href="#[270]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::CalculateCommand(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
@@ -3138,37 +3138,37 @@ Global Symbols
 
 <P><STRONG><a name="[139]"></a>PID_Set_Error</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, user_pid.o(.text.PID_Set_Error))
 <BR><BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[274]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::JumpController::Update(chassis::ChassisStateSnapshot const&, chassis::JumpControlInput const&)
 <LI><a href="#[280]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::AntiSplitController::Update(chassis::ChassisStateSnapshot const&, chassis::AntiSplitControlInput const&)
 <LI><a href="#[27d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisHeightController::Update(chassis::ChassisStateSnapshot const&, unsigned char)
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateRetract(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[275]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateExtend(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spinning_exit
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spinning_up
 <LI><a href="#[270]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::CalculateCommand(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
 
 <P><STRONG><a name="[13a]"></a>PID_coculate</STRONG> (Thumb, 320 bytes, Stack size 0 bytes, user_pid.o(.text.PID_coculate))
 <BR><BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
-<LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[274]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::JumpController::Update(chassis::ChassisStateSnapshot const&, chassis::JumpControlInput const&)
 <LI><a href="#[280]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::AntiSplitController::Update(chassis::ChassisStateSnapshot const&, chassis::AntiSplitControlInput const&)
 <LI><a href="#[27d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisHeightController::Update(chassis::ChassisStateSnapshot const&, unsigned char)
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateRetract(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[275]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateExtend(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spinning_exit
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spinning_up
 <LI><a href="#[270]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::CalculateCommand(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
 
@@ -3206,7 +3206,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INS_Task
 </UL>
 
-<P><STRONG><a name="[29c]"></a>RAMP_float</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, observe_task.o(.text.RAMP_float))
+<P><STRONG><a name="[29d]"></a>RAMP_float</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, observe_task.o(.text.RAMP_float))
 <BR><BR>[Called By]<UL><LI><a href="#[27d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisHeightController::Update(chassis::ChassisStateSnapshot const&, unsigned char)
 </UL>
 
@@ -3249,7 +3249,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
 
@@ -3270,7 +3270,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.rodata..L__const.MX_FREERTOS_Init.os_thread_def_State_machine)
 </UL>
 <P><STRONG><a name="[c3]"></a>Stop_Buzzer</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, buzzer.o(.text.Stop_Buzzer))
-<BR><BR>[Called By]<UL><LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[200]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Run_Remind
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
@@ -4024,12 +4024,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Coculate
 </UL>
 
-<P><STRONG><a name="[294]"></a>VMC_Init</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, vmc.o(.text.VMC_Init))
+<P><STRONG><a name="[295]"></a>VMC_Init</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, vmc.o(.text.VMC_Init))
 <BR><BR>[Called By]<UL><LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisInitializer::InitializeVmc()
 </UL>
 
-<P><STRONG><a name="[29f]"></a>VMC_Reset_F_History</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, vmc.o(.text.VMC_Reset_F_History))
-<BR><BR>[Called By]<UL><LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
+<P><STRONG><a name="[2a0]"></a>VMC_Reset_F_History</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, vmc.o(.text.VMC_Reset_F_History))
+<BR><BR>[Called By]<UL><LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
 </UL>
 
 <P><STRONG><a name="[26a]"></a>VMC_Set_F0_T</STRONG> (Thumb, 386 bytes, Stack size 48 bytes, vmc.o(.text.VMC_Set_F0_T))
@@ -4091,7 +4091,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
 </UL>
 
-<P><STRONG><a name="[311]"></a>chassis::LqrController::LqrController__sub_object(chassis::LqrControllerConfig const&)</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, lqr_controller.o(.text._ZN7chassis13LqrControllerC2ERKNS_19LqrControllerConfigE), UNUSED)
+<P><STRONG><a name="[312]"></a>chassis::LqrController::LqrController__sub_object(chassis::LqrControllerConfig const&)</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, lqr_controller.o(.text._ZN7chassis13LqrControllerC2ERKNS_19LqrControllerConfigE), UNUSED)
 
 <P><STRONG><a name="[270]"></a>chassis::SitController::CalculateCommand(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 320 bytes, Stack size 64 bytes, sit_controller.o(.text._ZN7chassis13SitController16CalculateCommandERKNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = chassis::SitController::CalculateCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
@@ -4114,11 +4114,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[28a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)
 </UL>
 
-<P><STRONG><a name="[291]"></a>chassis::SitController::SitController(chassis::SitControllerDependencies const&, chassis::SitControllerConfig const&)</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, sit_controller.o(.text._ZN7chassis13SitControllerC2ERKNS_25SitControllerDependenciesERKNS_19SitControllerConfigE), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<P><STRONG><a name="[292]"></a>chassis::SitController::SitController(chassis::SitControllerDependencies const&, chassis::SitControllerConfig const&)</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, sit_controller.o(.text._ZN7chassis13SitControllerC2ERKNS_25SitControllerDependenciesERKNS_19SitControllerConfigE), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
 </UL>
 
-<P><STRONG><a name="[312]"></a>chassis::SitController::SitController__sub_object(chassis::SitControllerDependencies const&, chassis::SitControllerConfig const&)</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, sit_controller.o(.text._ZN7chassis13SitControllerC2ERKNS_25SitControllerDependenciesERKNS_19SitControllerConfigE), UNUSED)
+<P><STRONG><a name="[313]"></a>chassis::SitController::SitController__sub_object(chassis::SitControllerDependencies const&, chassis::SitControllerConfig const&)</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, sit_controller.o(.text._ZN7chassis13SitControllerC2ERKNS_25SitControllerDependenciesERKNS_19SitControllerConfigE), UNUSED)
 
 <P><STRONG><a name="[274]"></a>chassis::JumpController::Update(chassis::ChassisStateSnapshot const&, chassis::JumpControlInput const&)</STRONG> (Thumb, 408 bytes, Stack size 32 bytes, jump_controller.o(.text._ZN7chassis14JumpController6UpdateERKNS_20ChassisStateSnapshotERKNS_16JumpControlInputE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = chassis::JumpController::Update(chassis::ChassisStateSnapshot const&, chassis::JumpControlInput const&)
@@ -4133,7 +4133,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
 </UL>
 
-<P><STRONG><a name="[313]"></a>chassis::JumpController::JumpController__sub_object(chassis::JumpControllerDependencies const&, chassis::JumpControllerConfig const&)</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, jump_controller.o(.text._ZN7chassis14JumpControllerC2ERKNS_26JumpControllerDependenciesERKNS_20JumpControllerConfigE), UNUSED)
+<P><STRONG><a name="[314]"></a>chassis::JumpController::JumpController__sub_object(chassis::JumpControllerDependencies const&, chassis::JumpControllerConfig const&)</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, jump_controller.o(.text._ZN7chassis14JumpControllerC2ERKNS_26JumpControllerDependenciesERKNS_20JumpControllerConfigE), UNUSED)
 
 <P><STRONG><a name="[275]"></a>chassis::StairController::UpdateExtend(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)</STRONG> (Thumb, 520 bytes, Stack size 64 bytes, stair_controller.o(.text._ZN7chassis15StairController12UpdateExtendERKNS_20ChassisStateSnapshotERKNS_14ChassisCommandE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = chassis::StairController::UpdateExtend(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
@@ -4174,11 +4174,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[28a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)
 </UL>
 
-<P><STRONG><a name="[292]"></a>chassis::StairController::StairController(chassis::StairControllerDependencies const&, chassis::StairControllerConfig const&)</STRONG> (Thumb, 104 bytes, Stack size 16 bytes, stair_controller.o(.text._ZN7chassis15StairControllerC2ERKNS_27StairControllerDependenciesERKNS_21StairControllerConfigE), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<P><STRONG><a name="[293]"></a>chassis::StairController::StairController(chassis::StairControllerDependencies const&, chassis::StairControllerConfig const&)</STRONG> (Thumb, 104 bytes, Stack size 16 bytes, stair_controller.o(.text._ZN7chassis15StairControllerC2ERKNS_27StairControllerDependenciesERKNS_21StairControllerConfigE), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
 </UL>
 
-<P><STRONG><a name="[314]"></a>chassis::StairController::StairController__sub_object(chassis::StairControllerDependencies const&, chassis::StairControllerConfig const&)</STRONG> (Thumb, 104 bytes, Stack size 16 bytes, stair_controller.o(.text._ZN7chassis15StairControllerC2ERKNS_27StairControllerDependenciesERKNS_21StairControllerConfigE), UNUSED)
+<P><STRONG><a name="[315]"></a>chassis::StairController::StairController__sub_object(chassis::StairControllerDependencies const&, chassis::StairControllerConfig const&)</STRONG> (Thumb, 104 bytes, Stack size 16 bytes, stair_controller.o(.text._ZN7chassis15StairControllerC2ERKNS_27StairControllerDependenciesERKNS_21StairControllerConfigE), UNUSED)
 
 <P><STRONG><a name="[282]"></a>chassis::StepHitDetector::Update(chassis::ChassisStateSnapshot const&, chassis::StepHitDetectorInput const&)</STRONG> (Thumb, 282 bytes, Stack size 8 bytes, balance_controller.o(.text._ZN7chassis15StepHitDetector6UpdateERKNS_20ChassisStateSnapshotERKNS_20StepHitDetectorInputE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = chassis::StepHitDetector::Update(chassis::ChassisStateSnapshot const&, chassis::StepHitDetectorInput const&)
@@ -4186,8 +4186,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[27b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&)
 </UL>
 
-<P><STRONG><a name="[27b]"></a>chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&)</STRONG> (Thumb, 622 bytes, Stack size 296 bytes, balance_controller.o(.text._ZN7chassis17BalanceController6UpdateERKNS_20ChassisStateSnapshotERKNS_19BalanceControlInputE))
-<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
+<P><STRONG><a name="[28c]"></a>chassis::BalanceController::SuppressTipProtection(unsigned short)</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, balance_controller.o(.text._ZN7chassis17BalanceController21SuppressTipProtectionEt))
+<BR><BR>[Called By]<UL><LI><a href="#[28a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)
+</UL>
+
+<P><STRONG><a name="[27b]"></a>chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&)</STRONG> (Thumb, 628 bytes, Stack size 272 bytes, balance_controller.o(.text._ZN7chassis17BalanceController6UpdateERKNS_20ChassisStateSnapshotERKNS_19BalanceControlInputE))
+<BR><BR>[Stack]<UL><LI>Max Depth = 392<LI>Call Chain = chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[281]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::OffGroundDetector::Update(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)
 <LI><a href="#[274]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::JumpController::Update(chassis::ChassisStateSnapshot const&, chassis::JumpControlInput const&)
@@ -4202,7 +4206,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[28a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)
 </UL>
 
-<P><STRONG><a name="[283]"></a>chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)</STRONG> (Thumb, 330 bytes, Stack size 56 bytes, balance_controller.o(.text._ZN7chassis17BalanceControllerC2ERKNS_29BalanceControllerDependenciesE), UNUSED)
+<P><STRONG><a name="[283]"></a>chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)</STRONG> (Thumb, 334 bytes, Stack size 56 bytes, balance_controller.o(.text._ZN7chassis17BalanceControllerC2ERKNS_29BalanceControllerDependenciesE), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[289]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::OffGroundDetector::OffGroundDetector(chassis::OffGroundDetectorDependencies const&, chassis::OffGroundDetectorConfig const&)
 <LI><a href="#[288]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::AntiSplitController::AntiSplitController(chassis::AntiSplitControllerDependencies const&, chassis::AntiSplitControllerConfig const&)
 <LI><a href="#[287]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LqrController::LqrController(chassis::LqrControllerConfig const&)
@@ -4211,10 +4215,10 @@ Global Symbols
 <LI><a href="#[284]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::TipProtectionController(chassis::TipProtectionControllerDependencies const&, chassis::TipProtectionConfig const&)
 <LI><a href="#[1dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
-<BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<BR>[Called By]<UL><LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
 </UL>
 
-<P><STRONG><a name="[315]"></a>chassis::BalanceController::BalanceController__sub_object(chassis::BalanceControllerDependencies const&)</STRONG> (Thumb, 330 bytes, Stack size 56 bytes, balance_controller.o(.text._ZN7chassis17BalanceControllerC2ERKNS_29BalanceControllerDependenciesE), UNUSED)
+<P><STRONG><a name="[316]"></a>chassis::BalanceController::BalanceController__sub_object(chassis::BalanceControllerDependencies const&)</STRONG> (Thumb, 334 bytes, Stack size 56 bytes, balance_controller.o(.text._ZN7chassis17BalanceControllerC2ERKNS_29BalanceControllerDependenciesE), UNUSED)
 
 <P><STRONG><a name="[281]"></a>chassis::OffGroundDetector::Update(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)</STRONG> (Thumb, 488 bytes, Stack size 32 bytes, off_ground_detector.o(.text._ZN7chassis17OffGroundDetector6UpdateERKNS_20ChassisStateSnapshotERKNS_14ChassisCommandE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = chassis::OffGroundDetector::Update(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&) &rArr; VMC_Get_Ground_F0
@@ -4228,13 +4232,14 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
 </UL>
 
-<P><STRONG><a name="[316]"></a>chassis::OffGroundDetector::OffGroundDetector__sub_object(chassis::OffGroundDetectorDependencies const&, chassis::OffGroundDetectorConfig const&)</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, off_ground_detector.o(.text._ZN7chassis17OffGroundDetectorC2ERKNS_29OffGroundDetectorDependenciesERKNS_23OffGroundDetectorConfigE), UNUSED)
+<P><STRONG><a name="[317]"></a>chassis::OffGroundDetector::OffGroundDetector__sub_object(chassis::OffGroundDetectorDependencies const&, chassis::OffGroundDetectorConfig const&)</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, off_ground_detector.o(.text._ZN7chassis17OffGroundDetectorC2ERKNS_29OffGroundDetectorDependenciesERKNS_23OffGroundDetectorConfigE), UNUSED)
 
-<P><STRONG><a name="[28a]"></a>chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)</STRONG> (Thumb, 636 bytes, Stack size 56 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTask11ExecuteModeENS_7RunModeE))
-<BR><BR>[Stack]<UL><LI>Max Depth = 472<LI>Call Chain = chassis::ChassisControlTask::ExecuteMode(chassis::RunMode) &rArr; chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
+<P><STRONG><a name="[28a]"></a>chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)</STRONG> (Thumb, 656 bytes, Stack size 56 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTask11ExecuteModeENS_7RunModeE))
+<BR><BR>[Stack]<UL><LI>Max Depth = 448<LI>Call Chain = chassis::ChassisControlTask::ExecuteMode(chassis::RunMode) &rArr; chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[27b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&)
+<LI><a href="#[28c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::SuppressTipProtection(unsigned short)
 <LI><a href="#[271]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::Update(chassis::ChassisStateSnapshot const&, bool)
 <LI><a href="#[27a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::Update(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)
 <LI><a href="#[279]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::SynchronizeLegacyPhase(chassis::LegacyModeSignals const&)
@@ -4243,13 +4248,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::RunCycle()
 </UL>
 
-<P><STRONG><a name="[224]"></a>chassis::ChassisControlTask::RunCycle()</STRONG> (Thumb, 340 bytes, Stack size 40 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTask8RunCycleEv))
-<BR><BR>[Stack]<UL><LI>Max Depth = 512 + Unknown Stack Size
+<P><STRONG><a name="[224]"></a>chassis::ChassisControlTask::RunCycle()</STRONG> (Thumb, 348 bytes, Stack size 40 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTask8RunCycleEv))
+<BR><BR>[Stack]<UL><LI>Max Depth = 488 + Unknown Stack Size
 <LI>Call Chain = chassis::ChassisControlTask::RunCycle() &rArr; chassis::ChassisControlTask::ExecuteMode(chassis::RunMode) &rArr; chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&) &rArr; chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[28c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisStateEstimator::Update(chassis::ChassisStateSnapshot&) const
+<BR>[Calls]<UL><LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisStateEstimator::Update(chassis::ChassisStateSnapshot&) const
 <LI><a href="#[269]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Apply_Chassis_Target
-<LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[28a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)
 <LI><a href="#[26f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Wheel_End_Velocity_Both
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Coculate
@@ -4258,17 +4263,17 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[28e]"></a>chassis::ChassisControlTask::ChassisControlTask()</STRONG> (Thumb, 1288 bytes, Stack size 360 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTaskC2Ev), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[293]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::StartupRetractController(chassis::StartupRetractControllerDependencies const&, chassis::StartupRetractControllerConfig const&)
-<LI><a href="#[292]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::StairController(chassis::StairControllerDependencies const&, chassis::StairControllerConfig const&)
-<LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::SitController(chassis::SitControllerDependencies const&, chassis::SitControllerConfig const&)
+<P><STRONG><a name="[28f]"></a>chassis::ChassisControlTask::ChassisControlTask()</STRONG> (Thumb, 1294 bytes, Stack size 360 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTaskC2Ev), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[294]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::StartupRetractController(chassis::StartupRetractControllerDependencies const&, chassis::StartupRetractControllerConfig const&)
+<LI><a href="#[293]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::StairController(chassis::StairControllerDependencies const&, chassis::StairControllerConfig const&)
+<LI><a href="#[292]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::SitController(chassis::SitControllerDependencies const&, chassis::SitControllerConfig const&)
 <LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
-<LI><a href="#[290]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::LegTurnRecoveryController(bool)
-<LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisStateEstimator::ChassisStateEstimator(chassis::ChassisStateEstimatorDependencies const&)
+<LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::LegTurnRecoveryController(bool)
+<LI><a href="#[290]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisStateEstimator::ChassisStateEstimator(chassis::ChassisStateEstimatorDependencies const&)
 <LI><a href="#[1de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 
-<P><STRONG><a name="[226]"></a>chassis::ChassisControlTask::ChassisControlTask__sub_object()</STRONG> (Thumb, 1288 bytes, Stack size 360 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTaskC2Ev))
+<P><STRONG><a name="[226]"></a>chassis::ChassisControlTask::ChassisControlTask__sub_object()</STRONG> (Thumb, 1294 bytes, Stack size 360 bytes, chassis_control_task.o(.text._ZN7chassis18ChassisControlTaskC2Ev))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = chassis::ChassisControlTask::ChassisControlTask__sub_object()
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
@@ -4277,12 +4282,12 @@ Global Symbols
 <P><STRONG><a name="[220]"></a>chassis::ChassisInitializer::InitializeVmc()</STRONG> (Thumb, 96 bytes, Stack size 32 bytes, chassis_initializer.o(.text._ZN7chassis18ChassisInitializer13InitializeVmcEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = chassis::ChassisInitializer::InitializeVmc()
 </UL>
-<BR>[Calls]<UL><LI><a href="#[294]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Init
+<BR>[Calls]<UL><LI><a href="#[295]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[221]"></a>chassis::ChassisInitializer::InitializePids()</STRONG> (Thumb, 896 bytes, Stack size 72 bytes, chassis_initializer.o(.text._ZN7chassis18ChassisInitializer14InitializePidsEv))
+<P><STRONG><a name="[221]"></a>chassis::ChassisInitializer::InitializePids()</STRONG> (Thumb, 892 bytes, Stack size 72 bytes, chassis_initializer.o(.text._ZN7chassis18ChassisInitializer14InitializePidsEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = chassis::ChassisInitializer::InitializePids()
 </UL>
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
@@ -4293,7 +4298,7 @@ Global Symbols
 <P><STRONG><a name="[21f]"></a>chassis::ChassisInitializer::InitializeMotors()</STRONG> (Thumb, 192 bytes, Stack size 40 bytes, chassis_initializer.o(.text._ZN7chassis18ChassisInitializer16InitializeMotorsEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = chassis::ChassisInitializer::InitializeMotors()
 </UL>
-<BR>[Calls]<UL><LI><a href="#[295]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Joint_Motor_Init
+<BR>[Calls]<UL><LI><a href="#[296]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DM_Joint_Motor_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
@@ -4305,7 +4310,7 @@ Global Symbols
 <P><STRONG><a name="[280]"></a>chassis::AntiSplitController::Update(chassis::ChassisStateSnapshot const&, chassis::AntiSplitControlInput const&)</STRONG> (Thumb, 296 bytes, Stack size 32 bytes, anti_split_controller.o(.text._ZN7chassis19AntiSplitController6UpdateERKNS_20ChassisStateSnapshotERKNS_21AntiSplitControlInputE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = chassis::AntiSplitController::Update(chassis::ChassisStateSnapshot const&, chassis::AntiSplitControlInput const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[296]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
+<BR>[Calls]<UL><LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
 <LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_AngleError
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
@@ -4317,7 +4322,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
 </UL>
 
-<P><STRONG><a name="[317]"></a>chassis::AntiSplitController::AntiSplitController__sub_object(chassis::AntiSplitControllerDependencies const&, chassis::AntiSplitControllerConfig const&)</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, anti_split_controller.o(.text._ZN7chassis19AntiSplitControllerC2ERKNS_31AntiSplitControllerDependenciesERKNS_25AntiSplitControllerConfigE), UNUSED)
+<P><STRONG><a name="[318]"></a>chassis::AntiSplitController::AntiSplitController__sub_object(chassis::AntiSplitControllerDependencies const&, chassis::AntiSplitControllerConfig const&)</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, anti_split_controller.o(.text._ZN7chassis19AntiSplitControllerC2ERKNS_31AntiSplitControllerDependenciesERKNS_25AntiSplitControllerConfigE), UNUSED)
 
 <P><STRONG><a name="[223]"></a>chassis::ChassisMotorEnabler::EnableAll()</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, chassis_motor_enabler.o(.text._ZN7chassis19ChassisMotorEnabler9EnableAllEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = chassis::ChassisMotorEnabler::EnableAll() &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
@@ -4328,22 +4333,22 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 </UL>
 
-<P><STRONG><a name="[28f]"></a>chassis::ChassisStateEstimator::ChassisStateEstimator(chassis::ChassisStateEstimatorDependencies const&)</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, chassis_state_estimator.o(.text._ZN7chassis21ChassisStateEstimatorC2ERKNS_33ChassisStateEstimatorDependenciesE), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<P><STRONG><a name="[290]"></a>chassis::ChassisStateEstimator::ChassisStateEstimator(chassis::ChassisStateEstimatorDependencies const&)</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, chassis_state_estimator.o(.text._ZN7chassis21ChassisStateEstimatorC2ERKNS_33ChassisStateEstimatorDependenciesE), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
 </UL>
 
-<P><STRONG><a name="[318]"></a>chassis::ChassisStateEstimator::ChassisStateEstimator__sub_object(chassis::ChassisStateEstimatorDependencies const&)</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, chassis_state_estimator.o(.text._ZN7chassis21ChassisStateEstimatorC2ERKNS_33ChassisStateEstimatorDependenciesE), UNUSED)
+<P><STRONG><a name="[319]"></a>chassis::ChassisStateEstimator::ChassisStateEstimator__sub_object(chassis::ChassisStateEstimatorDependencies const&)</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, chassis_state_estimator.o(.text._ZN7chassis21ChassisStateEstimatorC2ERKNS_33ChassisStateEstimatorDependenciesE), UNUSED)
 
-<P><STRONG><a name="[297]"></a>chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 2832 bytes, Stack size 64 bytes, self_righting_controller.o(.text._ZN7chassis22SelfRightingController6UpdateERKNS_20ChassisStateSnapshotE))
+<P><STRONG><a name="[298]"></a>chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 2832 bytes, Stack size 64 bytes, self_righting_controller.o(.text._ZN7chassis22SelfRightingController6UpdateERKNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&) &rArr; leg_turn_speed_control
 </UL>
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
-<LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calculate_angle_diff_double_direction
-<LI><a href="#[299]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_length_stuck_detect
-<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_detect
-<LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<LI><a href="#[299]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calculate_angle_diff_double_direction
+<LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_length_stuck_detect
+<LI><a href="#[29c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_detect
+<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 </UL>
 <BR>[Called By]<UL><LI><a href="#[28b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::Update(chassis::ChassisStateSnapshot const&)
 </UL>
@@ -4351,7 +4356,7 @@ Global Symbols
 <P><STRONG><a name="[27d]"></a>chassis::ChassisHeightController::Update(chassis::ChassisStateSnapshot const&, unsigned char)</STRONG> (Thumb, 320 bytes, Stack size 24 bytes, chassis_height_controller.o(.text._ZN7chassis23ChassisHeightController6UpdateERKNS_20ChassisStateSnapshotEh))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = chassis::ChassisHeightController::Update(chassis::ChassisStateSnapshot const&, unsigned char)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[29c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RAMP_float
+<BR>[Calls]<UL><LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RAMP_float
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
 </UL>
@@ -4362,9 +4367,9 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
 </UL>
 
-<P><STRONG><a name="[319]"></a>chassis::ChassisHeightController::ChassisHeightController__sub_object(chassis::ChassisHeightControllerDependencies const&)</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, chassis_height_controller.o(.text._ZN7chassis23ChassisHeightControllerC2ERKNS_35ChassisHeightControllerDependenciesE), UNUSED)
+<P><STRONG><a name="[31a]"></a>chassis::ChassisHeightController::ChassisHeightController__sub_object(chassis::ChassisHeightControllerDependencies const&)</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, chassis_height_controller.o(.text._ZN7chassis23ChassisHeightControllerC2ERKNS_35ChassisHeightControllerDependenciesE), UNUSED)
 
-<P><STRONG><a name="[29d]"></a>chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 240 bytes, Stack size 24 bytes, tip_protection_controller.o(.text._ZN7chassis23TipProtectionController26CalculateProtectiveCommandERKNS_20ChassisStateSnapshotE))
+<P><STRONG><a name="[29e]"></a>chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 240 bytes, Stack size 24 bytes, tip_protection_controller.o(.text._ZN7chassis23TipProtectionController26CalculateProtectiveCommandERKNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_AngleError
@@ -4377,7 +4382,7 @@ Global Symbols
 <P><STRONG><a name="[27c]"></a>chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, tip_protection_controller.o(.text._ZN7chassis23TipProtectionController6UpdateERKNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = chassis::TipProtectionController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
+<BR>[Calls]<UL><LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::TipProtectionController::CalculateProtectiveCommand(chassis::ChassisStateSnapshot const&)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[27b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::Update(chassis::ChassisStateSnapshot const&, chassis::BalanceControlInput const&)
 </UL>
@@ -4386,14 +4391,14 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[283]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::BalanceController::BalanceController(chassis::BalanceControllerDependencies const&)
 </UL>
 
-<P><STRONG><a name="[31a]"></a>chassis::TipProtectionController::TipProtectionController__sub_object(chassis::TipProtectionControllerDependencies const&, chassis::TipProtectionConfig const&)</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, tip_protection_controller.o(.text._ZN7chassis23TipProtectionControllerC2ERKNS_35TipProtectionControllerDependenciesERKNS_19TipProtectionConfigE), UNUSED)
+<P><STRONG><a name="[31b]"></a>chassis::TipProtectionController::TipProtectionController__sub_object(chassis::TipProtectionControllerDependencies const&, chassis::TipProtectionConfig const&)</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, tip_protection_controller.o(.text._ZN7chassis23TipProtectionControllerC2ERKNS_35TipProtectionControllerDependenciesERKNS_19TipProtectionConfigE), UNUSED)
 
-<P><STRONG><a name="[29e]"></a>chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 644 bytes, Stack size 72 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractController13UpdateRetractERKNS_20ChassisStateSnapshotE))
+<P><STRONG><a name="[29f]"></a>chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 644 bytes, Stack size 72 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractController13UpdateRetractERKNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&) &rArr; chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
-<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Reset_F_History
+<LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;VMC_Reset_F_History
 <LI><a href="#[276]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Reset(VMC&)
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
@@ -4403,25 +4408,25 @@ Global Symbols
 <P><STRONG><a name="[28b]"></a>chassis::StartupRetractController::Update(chassis::ChassisStateSnapshot const&)</STRONG> (Thumb, 92 bytes, Stack size 72 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractController6UpdateERKNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = chassis::StartupRetractController::Update(chassis::ChassisStateSnapshot const&) &rArr; chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&) &rArr; chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&) &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<BR>[Calls]<UL><LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
 </UL>
 <BR>[Called By]<UL><LI><a href="#[28a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ExecuteMode(chassis::RunMode)
 </UL>
 
-<P><STRONG><a name="[293]"></a>chassis::StartupRetractController::StartupRetractController(chassis::StartupRetractControllerDependencies const&, chassis::StartupRetractControllerConfig const&)</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractControllerC2ERKNS_36StartupRetractControllerDependenciesERKNS_30StartupRetractControllerConfigE), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<P><STRONG><a name="[294]"></a>chassis::StartupRetractController::StartupRetractController(chassis::StartupRetractControllerDependencies const&, chassis::StartupRetractControllerConfig const&)</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractControllerC2ERKNS_36StartupRetractControllerDependenciesERKNS_30StartupRetractControllerConfigE), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
 </UL>
 
-<P><STRONG><a name="[31b]"></a>chassis::StartupRetractController::StartupRetractController__sub_object(chassis::StartupRetractControllerDependencies const&, chassis::StartupRetractControllerConfig const&)</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractControllerC2ERKNS_36StartupRetractControllerDependenciesERKNS_30StartupRetractControllerConfigE), UNUSED)
+<P><STRONG><a name="[31c]"></a>chassis::StartupRetractController::StartupRetractController__sub_object(chassis::StartupRetractControllerDependencies const&, chassis::StartupRetractControllerConfig const&)</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, startup_retract_controller.o(.text._ZN7chassis24StartupRetractControllerC2ERKNS_36StartupRetractControllerDependenciesERKNS_30StartupRetractControllerConfigE), UNUSED)
 
 <P><STRONG><a name="[276]"></a>chassis::LegTurnRecoveryController::Reset(VMC&)</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, leg_turn_recovery_controller.o(.text._ZN7chassis25LegTurnRecoveryController5ResetER3VMC))
-<BR><BR>[Calls]<UL><LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_reset
+<BR><BR>[Calls]<UL><LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_reset
 </UL>
 <BR>[Called By]<UL><LI><a href="#[279]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::SynchronizeLegacyPhase(chassis::LegacyModeSignals const&)
 <LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateRetract(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[275]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateExtend(chassis::ChassisStateSnapshot const&, chassis::ChassisCommand const&)
-<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
 </UL>
 
 <P><STRONG><a name="[278]"></a>chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)</STRONG> (Thumb, 476 bytes, Stack size 32 bytes, leg_turn_recovery_controller.o(.text._ZN7chassis25LegTurnRecoveryController6UpdateER3VMCfR10user_pid_tS4_))
@@ -4430,27 +4435,27 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_AngleError
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
-<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_detect
-<LI><a href="#[2a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_reset
-<LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
+<LI><a href="#[29c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_detect
+<LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_stuck_reset
+<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;leg_turn_speed_control
 <LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ShortestAngleDelta
 </UL>
 <BR>[Called By]<UL><LI><a href="#[277]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StairController::UpdateRetract(chassis::ChassisStateSnapshot const&)
-<LI><a href="#[29e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
+<LI><a href="#[29f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::StartupRetractController::UpdateRetract(chassis::ChassisStateSnapshot const&)
 </UL>
 
-<P><STRONG><a name="[290]"></a>chassis::LegTurnRecoveryController::LegTurnRecoveryController(bool)</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, leg_turn_recovery_controller.o(.text._ZN7chassis25LegTurnRecoveryControllerC2Eb), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
+<P><STRONG><a name="[291]"></a>chassis::LegTurnRecoveryController::LegTurnRecoveryController(bool)</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, leg_turn_recovery_controller.o(.text._ZN7chassis25LegTurnRecoveryControllerC2Eb), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[28f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::ChassisControlTask()
 </UL>
 
-<P><STRONG><a name="[31c]"></a>chassis::LegTurnRecoveryController::LegTurnRecoveryController__sub_object(bool)</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, leg_turn_recovery_controller.o(.text._ZN7chassis25LegTurnRecoveryControllerC2Eb), UNUSED)
+<P><STRONG><a name="[31d]"></a>chassis::LegTurnRecoveryController::LegTurnRecoveryController__sub_object(bool)</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, leg_turn_recovery_controller.o(.text._ZN7chassis25LegTurnRecoveryControllerC2Eb), UNUSED)
 
-<P><STRONG><a name="[28d]"></a>chassis::GravityCompensationTestController::Update()</STRONG> (Thumb, 3408 bytes, Stack size 104 bytes, gravity_compensation_test_controller.o(.text._ZN7chassis33GravityCompensationTestController6UpdateEv))
+<P><STRONG><a name="[28e]"></a>chassis::GravityCompensationTestController::Update()</STRONG> (Thumb, 3408 bytes, Stack size 104 bytes, gravity_compensation_test_controller.o(.text._ZN7chassis33GravityCompensationTestController6UpdateEv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184 + Unknown Stack Size
 <LI>Call Chain = chassis::GravityCompensationTestController::Update() &rArr; PID_Set_AngleError &rArr; __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
-<LI><a href="#[296]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
+<LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Clear
 <LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_AngleError
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
@@ -4464,62 +4469,62 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::RunCycle()
 </UL>
 
-<P><STRONG><a name="[28c]"></a>chassis::ChassisStateEstimator::Update(chassis::ChassisStateSnapshot&) const</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, chassis_state_estimator.o(.text._ZNK7chassis21ChassisStateEstimator6UpdateERNS_20ChassisStateSnapshotE))
+<P><STRONG><a name="[28d]"></a>chassis::ChassisStateEstimator::Update(chassis::ChassisStateSnapshot&) const</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, chassis_state_estimator.o(.text._ZNK7chassis21ChassisStateEstimator6UpdateERNS_20ChassisStateSnapshotE))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = chassis::ChassisStateEstimator::Update(chassis::ChassisStateSnapshot&) const
 </UL>
 <BR>[Called By]<UL><LI><a href="#[224]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::ChassisControlTask::RunCycle()
 </UL>
 
-<P><STRONG><a name="[2a1]"></a>_ui_init_g_30HZ_0</STRONG> (Thumb, 740 bytes, Stack size 24 bytes, ui_g.o(.text._ui_init_g_30HZ_0))
+<P><STRONG><a name="[2a2]"></a>_ui_init_g_30HZ_0</STRONG> (Thumb, 740 bytes, Stack size 24 bytes, ui_g.o(.text._ui_init_g_30HZ_0))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = _ui_init_g_30HZ_0 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
-<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
+<BR>[Calls]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
 </UL>
 
-<P><STRONG><a name="[2a4]"></a>_ui_init_g_30HZ_1</STRONG> (Thumb, 388 bytes, Stack size 24 bytes, ui_g.o(.text._ui_init_g_30HZ_1))
+<P><STRONG><a name="[2a5]"></a>_ui_init_g_30HZ_1</STRONG> (Thumb, 388 bytes, Stack size 24 bytes, ui_g.o(.text._ui_init_g_30HZ_1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = _ui_init_g_30HZ_1 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
 </UL>
 
-<P><STRONG><a name="[2a6]"></a>_ui_init_g_30HZ_2</STRONG> (Thumb, 712 bytes, Stack size 16 bytes, ui_g.o(.text._ui_init_g_30HZ_2))
+<P><STRONG><a name="[2a7]"></a>_ui_init_g_30HZ_2</STRONG> (Thumb, 712 bytes, Stack size 16 bytes, ui_g.o(.text._ui_init_g_30HZ_2))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = _ui_init_g_30HZ_2 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
-<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
+<BR>[Calls]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
 </UL>
 
-<P><STRONG><a name="[2a7]"></a>_ui_init_g_30HZ_3</STRONG> (Thumb, 522 bytes, Stack size 16 bytes, ui_g.o(.text._ui_init_g_30HZ_3))
+<P><STRONG><a name="[2a8]"></a>_ui_init_g_30HZ_3</STRONG> (Thumb, 522 bytes, Stack size 16 bytes, ui_g.o(.text._ui_init_g_30HZ_3))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = _ui_init_g_30HZ_3 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
 </UL>
 
-<P><STRONG><a name="[2a8]"></a>_ui_init_g_30HZ_FAST</STRONG> (Thumb, 508 bytes, Stack size 16 bytes, ui_g.o(.text._ui_init_g_30HZ_FAST))
+<P><STRONG><a name="[2a9]"></a>_ui_init_g_30HZ_FAST</STRONG> (Thumb, 508 bytes, Stack size 16 bytes, ui_g.o(.text._ui_init_g_30HZ_FAST))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = _ui_init_g_30HZ_FAST &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
 </UL>
 
-<P><STRONG><a name="[2a9]"></a>_ui_init_g_INIT_0</STRONG> (Thumb, 566 bytes, Stack size 8 bytes, ui_g.o(.text._ui_init_g_INIT_0))
+<P><STRONG><a name="[2aa]"></a>_ui_init_g_INIT_0</STRONG> (Thumb, 566 bytes, Stack size 8 bytes, ui_g.o(.text._ui_init_g_INIT_0))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_init_g_INIT_0 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
 </UL>
@@ -4527,8 +4532,8 @@ Global Symbols
 <P><STRONG><a name="[241]"></a>_ui_update_g_30HZ_0</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_30HZ_0))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_30HZ_0 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
-<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
+<BR>[Calls]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4536,8 +4541,8 @@ Global Symbols
 <P><STRONG><a name="[244]"></a>_ui_update_g_30HZ_1</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_30HZ_1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_30HZ_1 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4545,8 +4550,8 @@ Global Symbols
 <P><STRONG><a name="[243]"></a>_ui_update_g_30HZ_2</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_30HZ_2))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_30HZ_2 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
-<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
+<BR>[Calls]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_7_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4554,8 +4559,8 @@ Global Symbols
 <P><STRONG><a name="[245]"></a>_ui_update_g_30HZ_3</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_30HZ_3))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_30HZ_3 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4563,8 +4568,8 @@ Global Symbols
 <P><STRONG><a name="[240]"></a>_ui_update_g_30HZ_FAST</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_30HZ_FAST))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_30HZ_FAST &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4572,8 +4577,8 @@ Global Symbols
 <P><STRONG><a name="[242]"></a>_ui_update_g_5HZ_0</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_5HZ_0))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_5HZ_0 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4581,8 +4586,8 @@ Global Symbols
 <P><STRONG><a name="[246]"></a>_ui_update_g_5HZ_1</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, ui_g.o(.text._ui_update_g_5HZ_1))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = _ui_update_g_5HZ_1 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Calls]<UL><LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4674,8 +4679,8 @@ Global Symbols
 <P><STRONG><a name="[104]"></a>bmi088_accel_init</STRONG> (Thumb, 280 bytes, Stack size 24 bytes, bmi088driver.o(.text.bmi088_accel_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = bmi088_accel_init &rArr; BMI088_read_write_byte &rArr; HAL_SPI_TransmitReceive
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_ms
-<LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_us
+<BR>[Calls]<UL><LI><a href="#[2ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_ms
+<LI><a href="#[2ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_us
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_ACCEL_NS_H
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_read_write_byte
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_ACCEL_NS_L
@@ -4688,15 +4693,15 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_GYRO_NS_H
 <LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_GYRO_NS_L
-<LI><a href="#[2ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_ms
-<LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_us
+<LI><a href="#[2ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_ms
+<LI><a href="#[2ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_delay_us
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_read_write_byte
 </UL>
 <BR>[Called By]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMI088_init
 </UL>
 
-<P><STRONG><a name="[298]"></a>calculate_angle_diff_double_direction</STRONG> (Thumb, 76 bytes, Stack size 0 bytes, angle_about.o(.text.calculate_angle_diff_double_direction))
-<BR><BR>[Called By]<UL><LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<P><STRONG><a name="[299]"></a>calculate_angle_diff_double_direction</STRONG> (Thumb, 76 bytes, Stack size 0 bytes, angle_about.o(.text.calculate_angle_diff_double_direction))
+<BR><BR>[Called By]<UL><LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
 </UL>
 
 <P><STRONG><a name="[138]"></a>easy_angle_normalize</STRONG> (Thumb, 116 bytes, Stack size 0 bytes, angle_about.o(.text.easy_angle_normalize))
@@ -4707,28 +4712,28 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Keyboard_Simulate
 </UL>
 
-<P><STRONG><a name="[299]"></a>leg_length_stuck_detect</STRONG> (Thumb, 102 bytes, Stack size 0 bytes, leg_control.o(.text.leg_length_stuck_detect))
-<BR><BR>[Called By]<UL><LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<P><STRONG><a name="[29a]"></a>leg_length_stuck_detect</STRONG> (Thumb, 102 bytes, Stack size 0 bytes, leg_control.o(.text.leg_length_stuck_detect))
+<BR><BR>[Called By]<UL><LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
 </UL>
 
-<P><STRONG><a name="[29a]"></a>leg_turn_speed_control</STRONG> (Thumb, 320 bytes, Stack size 64 bytes, leg_control.o(.text.leg_turn_speed_control))
+<P><STRONG><a name="[29b]"></a>leg_turn_speed_control</STRONG> (Thumb, 320 bytes, Stack size 64 bytes, leg_control.o(.text.leg_turn_speed_control))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = leg_turn_speed_control
 </UL>
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_INIT
 <LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_coculate
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_Error
-<LI><a href="#[2ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Reset_OutLimit
+<LI><a href="#[2ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Reset_OutLimit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<BR>[Called By]<UL><LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
 
-<P><STRONG><a name="[29b]"></a>leg_turn_stuck_detect</STRONG> (Thumb, 94 bytes, Stack size 0 bytes, leg_control.o(.text.leg_turn_stuck_detect))
-<BR><BR>[Called By]<UL><LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
+<P><STRONG><a name="[29c]"></a>leg_turn_stuck_detect</STRONG> (Thumb, 94 bytes, Stack size 0 bytes, leg_control.o(.text.leg_turn_stuck_detect))
+<BR><BR>[Called By]<UL><LI><a href="#[298]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SelfRightingController::Update(chassis::ChassisStateSnapshot const&)
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
 
-<P><STRONG><a name="[2a0]"></a>leg_turn_stuck_reset</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, leg_control.o(.text.leg_turn_stuck_reset))
+<P><STRONG><a name="[2a1]"></a>leg_turn_stuck_reset</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, leg_control.o(.text.leg_turn_stuck_reset))
 <BR><BR>[Called By]<UL><LI><a href="#[276]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Reset(VMC&)
 <LI><a href="#[278]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::LegTurnRecoveryController::Update(VMC&, float, user_pid_t&, user_pid_t&)
 </UL>
@@ -4737,7 +4742,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 512 + Unknown Stack Size
 <LI>Call Chain = main &rArr; MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
+<BR>[Calls]<UL><LI><a href="#[2af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
 <LI><a href="#[208]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;JUDGE_Init
 <LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;B2B_Init
@@ -4765,7 +4770,7 @@ Global Symbols
 <P><STRONG><a name="[111]"></a>osDelay</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, cmsis_os.o(.text.osDelay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<BR>[Calls]<UL><LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Buzzer_task
@@ -4782,24 +4787,24 @@ Global Symbols
 <LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
 <LI><a href="#[23a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_5HZ
 <LI><a href="#[23b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_30HZ
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
 
 <P><STRONG><a name="[137]"></a>osDelayUntil</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, cmsis_os.o(.text.osDelayUntil))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = osDelayUntil &rArr; vTaskDelayUntil &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
+<BR>[Calls]<UL><LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_task
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Observe_Tasks
 </UL>
 
-<P><STRONG><a name="[2ae]"></a>osKernelStart</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, cmsis_os.o(.text.osKernelStart))
+<P><STRONG><a name="[2af]"></a>osKernelStart</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, cmsis_os.o(.text.osKernelStart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = osKernelStart &rArr; vTaskStartScheduler &rArr; xTaskCreateStatic &rArr; prvAddNewTaskToReadyList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
+<BR>[Calls]<UL><LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 </UL>
 <BR>[Called By]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -4807,18 +4812,18 @@ Global Symbols
 <P><STRONG><a name="[23c]"></a>osKernelSysTick</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, cmsis_os.o(.text.osKernelSysTick))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = osKernelSysTick &rArr; xTaskGetTickCountFromISR
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCountFromISR
+<BR>[Calls]<UL><LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCountFromISR
 <LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<BR>[Called By]<UL><LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
 
 <P><STRONG><a name="[209]"></a>osThreadCreate</STRONG> (Thumb, 96 bytes, Stack size 32 bytes, cmsis_os.o(.text.osThreadCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
-<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
+<BR>[Calls]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
 </UL>
 <BR>[Called By]<UL><LI><a href="#[208]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 </UL>
@@ -4826,8 +4831,8 @@ Global Symbols
 <P><STRONG><a name="[228]"></a>osThreadResume</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, cmsis_os.o(.text.osThreadResume))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = osThreadResume &rArr; xTaskResumeFromISR
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
-<LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
+<BR>[Calls]<UL><LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
+<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OS_Board2BoardCallback
 </UL>
@@ -4835,26 +4840,26 @@ Global Symbols
 <P><STRONG><a name="[1f5]"></a>pvPortMalloc</STRONG> (Thumb, 422 bytes, Stack size 24 bytes, heap_4.o(.text.pvPortMalloc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspendAll
+<BR>[Calls]<UL><LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspendAll
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
 <LI><a href="#[1db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter_Init
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kalman_Filter1_Init
 </UL>
 
-<P><STRONG><a name="[2cb]"></a>pxPortInitialiseStack</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, port.o(.text.pxPortInitialiseStack))
-<BR><BR>[Called By]<UL><LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
-<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
+<P><STRONG><a name="[2cc]"></a>pxPortInitialiseStack</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, port.o(.text.pxPortInitialiseStack))
+<BR><BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
 </UL>
 
 <P><STRONG><a name="[272]"></a>rampInit</STRONG> (Thumb, 72 bytes, Stack size 0 bytes, ramp_generator.o(.text.rampInit))
-<BR><BR>[Called By]<UL><LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[271]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::Update(chassis::ChassisStateSnapshot const&, bool)
 </UL>
 
 <P><STRONG><a name="[273]"></a>rampIterate</STRONG> (Thumb, 90 bytes, Stack size 0 bytes, ramp_generator.o(.text.rampIterate))
-<BR><BR>[Called By]<UL><LI><a href="#[28d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
+<BR><BR>[Called By]<UL><LI><a href="#[28e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::GravityCompensationTestController::Update()
 <LI><a href="#[271]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;chassis::SitController::Update(chassis::ChassisStateSnapshot const&, bool)
 </UL>
 
@@ -4890,11 +4895,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = ui_init_g_30HZ &rArr; _ui_init_g_30HZ_1 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[2a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_3
-<LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_2
-<LI><a href="#[2a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_FAST
-<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_1
-<LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_0
+<LI><a href="#[2a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_3
+<LI><a href="#[2a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_2
+<LI><a href="#[2a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_FAST
+<LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_1
+<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_0
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4903,8 +4908,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = ui_init_g_5HZ &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -4913,47 +4918,47 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = ui_init_g_INIT &rArr; _ui_init_g_INIT_0 &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_1_frame
-<LI><a href="#[2a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_INIT_0
-<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_1_frame
+<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_INIT_0
+<LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
 
-<P><STRONG><a name="[2c0]"></a>ui_proc_1_frame</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_1_frame))
+<P><STRONG><a name="[2c1]"></a>ui_proc_1_frame</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_1_frame))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = ui_proc_1_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[247]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_update_g_INIT
 <LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
 </UL>
 
-<P><STRONG><a name="[2a5]"></a>ui_proc_5_frame</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_5_frame))
+<P><STRONG><a name="[2a6]"></a>ui_proc_5_frame</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_5_frame))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = ui_proc_5_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[247]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_update_g_INIT
-<LI><a href="#[2a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_INIT_0
+<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_INIT_0
 <LI><a href="#[245]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_3
-<LI><a href="#[2a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_3
+<LI><a href="#[2a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_3
 <LI><a href="#[240]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_FAST
-<LI><a href="#[2a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_FAST
+<LI><a href="#[2a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_FAST
 <LI><a href="#[244]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_1
-<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_1
+<LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_1
 </UL>
 
-<P><STRONG><a name="[2a2]"></a>ui_proc_7_frame</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_7_frame))
+<P><STRONG><a name="[2a3]"></a>ui_proc_7_frame</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_7_frame))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = ui_proc_7_frame
 </UL>
 <BR>[Called By]<UL><LI><a href="#[243]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_2
-<LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_2
+<LI><a href="#[2a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_2
 <LI><a href="#[241]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_0
-<LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_0
+<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_0
 </UL>
 
-<P><STRONG><a name="[2aa]"></a>ui_proc_string_frame</STRONG> (Thumb, 164 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_string_frame))
+<P><STRONG><a name="[2ab]"></a>ui_proc_string_frame</STRONG> (Thumb, 164 bytes, Stack size 8 bytes, ui_interface.o(.text.ui_proc_string_frame))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = ui_proc_string_frame &rArr; strlen
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+<BR>[Calls]<UL><LI><a href="#[2c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 </UL>
 <BR>[Called By]<UL><LI><a href="#[247]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_update_g_INIT
 <LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
@@ -4962,41 +4967,41 @@ Global Symbols
 <LI><a href="#[242]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_5HZ_0
 </UL>
 
-<P><STRONG><a name="[2a3]"></a>ui_send_message</STRONG> (Thumb, 86 bytes, Stack size 24 bytes, ui_interface.o(.text.ui_send_message))
+<P><STRONG><a name="[2a4]"></a>ui_send_message</STRONG> (Thumb, 86 bytes, Stack size 24 bytes, ui_interface.o(.text.ui_send_message))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[2c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_GetState
+<LI><a href="#[2c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_GetState
 <LI><a href="#[23c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelSysTick
 <LI><a href="#[1cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_AbortTransmit
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit_DMA
 </UL>
 <BR>[Called By]<UL><LI><a href="#[247]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_update_g_INIT
 <LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_INIT
-<LI><a href="#[2a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_INIT_0
+<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_INIT_0
 <LI><a href="#[23a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_init_g_5HZ
 <LI><a href="#[246]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_5HZ_1
 <LI><a href="#[242]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_5HZ_0
 <LI><a href="#[245]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_3
-<LI><a href="#[2a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_3
+<LI><a href="#[2a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_3
 <LI><a href="#[243]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_2
-<LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_2
+<LI><a href="#[2a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_2
 <LI><a href="#[240]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_FAST
-<LI><a href="#[2a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_FAST
+<LI><a href="#[2a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_FAST
 <LI><a href="#[244]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_1
-<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_1
+<LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_1
 <LI><a href="#[241]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_update_g_30HZ_0
-<LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_0
+<LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ui_init_g_30HZ_0
 </UL>
 
 <P><STRONG><a name="[247]"></a>ui_update_g_INIT</STRONG> (Thumb, 200 bytes, Stack size 16 bytes, ui_g.o(.text.ui_update_g_INIT))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = ui_update_g_INIT &rArr; ui_send_message &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_1_frame
-<LI><a href="#[2aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
-<LI><a href="#[2a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
-<LI><a href="#[2a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
+<LI><a href="#[2c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_1_frame
+<LI><a href="#[2ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_string_frame
+<LI><a href="#[2a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_proc_5_frame
+<LI><a href="#[2a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ui_send_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -5005,7 +5010,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 56 + Unknown Stack Size
 <LI>Call Chain = __cxa_guard_acquire &rArr; abort_message &rArr; abort &rArr; __rt_SIGABRT &rArr; __rt_SIGABRT_inner &rArr; __default_signal_display &rArr; _ttywrch
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;abort_message
+<BR>[Calls]<UL><LI><a href="#[2c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;abort_message
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_task
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spinning_exit
@@ -5018,7 +5023,7 @@ Global Symbols
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spinning_up
 </UL>
 
-<P><STRONG><a name="[2c3]"></a>abort_message</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, abort_message.cpp.o(.text.unlikely.abort_message))
+<P><STRONG><a name="[2c4]"></a>abort_message</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, abort_message.cpp.o(.text.unlikely.abort_message))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48 + Unknown Stack Size
 <LI>Call Chain = abort_message &rArr; abort &rArr; __rt_SIGABRT &rArr; __rt_SIGABRT_inner &rArr; __default_signal_display &rArr; _ttywrch
 </UL>
@@ -5027,175 +5032,175 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[225]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__cxa_guard_acquire
 </UL>
 
-<P><STRONG><a name="[2bd]"></a>uxListRemove</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, list.o(.text.uxListRemove))
-<BR><BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
-<LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
+<P><STRONG><a name="[2be]"></a>uxListRemove</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, list.o(.text.uxListRemove))
+<BR><BR>[Called By]<UL><LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
+<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspend
-<LI><a href="#[2af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
-<LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
+<LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvIdleTask
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 
-<P><STRONG><a name="[2c5]"></a>vApplicationGetIdleTaskMemory</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, freertos.o(.text.vApplicationGetIdleTaskMemory))
-<BR><BR>[Called By]<UL><LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
+<P><STRONG><a name="[2c6]"></a>vApplicationGetIdleTaskMemory</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, freertos.o(.text.vApplicationGetIdleTaskMemory))
+<BR><BR>[Called By]<UL><LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 </UL>
 
-<P><STRONG><a name="[2b9]"></a>vListInitialise</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, list.o(.text.vListInitialise))
-<BR><BR>[Called By]<UL><LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
+<P><STRONG><a name="[2ba]"></a>vListInitialise</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, list.o(.text.vListInitialise))
+<BR><BR>[Called By]<UL><LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 </UL>
 
-<P><STRONG><a name="[2ca]"></a>vListInitialiseItem</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, list.o(.text.vListInitialiseItem))
-<BR><BR>[Called By]<UL><LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
-<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
+<P><STRONG><a name="[2cb]"></a>vListInitialiseItem</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, list.o(.text.vListInitialiseItem))
+<BR><BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
 </UL>
 
-<P><STRONG><a name="[2c4]"></a>vListInsert</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, list.o(.text.vListInsert))
+<P><STRONG><a name="[2c5]"></a>vListInsert</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, list.o(.text.vListInsert))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = vListInsert
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
+<BR>[Called By]<UL><LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
 </UL>
 
-<P><STRONG><a name="[2ba]"></a>vListInsertEnd</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, list.o(.text.vListInsertEnd))
-<BR><BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
-<LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
+<P><STRONG><a name="[2bb]"></a>vListInsertEnd</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, list.o(.text.vListInsertEnd))
+<BR><BR>[Called By]<UL><LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
+<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspend
 <LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
-<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 
-<P><STRONG><a name="[2b8]"></a>vPortEnterCritical</STRONG> (Thumb, 74 bytes, Stack size 0 bytes, port.o(.text.vPortEnterCritical))
-<BR><BR>[Called By]<UL><LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
+<P><STRONG><a name="[2b9]"></a>vPortEnterCritical</STRONG> (Thumb, 74 bytes, Stack size 0 bytes, port.o(.text.vPortEnterCritical))
+<BR><BR>[Called By]<UL><LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspend
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvIdleTask
-<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 
-<P><STRONG><a name="[2bb]"></a>vPortExitCritical</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, port.o(.text.vPortExitCritical))
-<BR><BR>[Called By]<UL><LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
+<P><STRONG><a name="[2bc]"></a>vPortExitCritical</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, port.o(.text.vPortExitCritical))
+<BR><BR>[Called By]<UL><LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskResume
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspend
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvIdleTask
-<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 
-<P><STRONG><a name="[2bc]"></a>vPortFree</STRONG> (Thumb, 214 bytes, Stack size 16 bytes, heap_4.o(.text.vPortFree))
+<P><STRONG><a name="[2bd]"></a>vPortFree</STRONG> (Thumb, 214 bytes, Stack size 16 bytes, heap_4.o(.text.vPortFree))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = vPortFree &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspendAll
+<BR>[Calls]<UL><LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSuspendAll
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvIdleTask
 </UL>
 
-<P><STRONG><a name="[2c7]"></a>vPortSetupTimerInterrupt</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, port.o(.text.vPortSetupTimerInterrupt))
-<BR><BR>[Called By]<UL><LI><a href="#[2c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
+<P><STRONG><a name="[2c8]"></a>vPortSetupTimerInterrupt</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, port.o(.text.vPortSetupTimerInterrupt))
+<BR><BR>[Called By]<UL><LI><a href="#[2c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
 </UL>
 
-<P><STRONG><a name="[2cc]"></a>vPortValidateInterruptPriority</STRONG> (Thumb, 98 bytes, Stack size 0 bytes, port.o(.text.vPortValidateInterruptPriority))
-<BR><BR>[Called By]<UL><LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCountFromISR
-<LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
+<P><STRONG><a name="[2cd]"></a>vPortValidateInterruptPriority</STRONG> (Thumb, 98 bytes, Stack size 0 bytes, port.o(.text.vPortValidateInterruptPriority))
+<BR><BR>[Called By]<UL><LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCountFromISR
+<LI><a href="#[2b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeFromISR
 </UL>
 
-<P><STRONG><a name="[2af]"></a>vTaskDelay</STRONG> (Thumb, 196 bytes, Stack size 16 bytes, tasks.o(.text.vTaskDelay))
+<P><STRONG><a name="[2b0]"></a>vTaskDelay</STRONG> (Thumb, 196 bytes, Stack size 16 bytes, tasks.o(.text.vTaskDelay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsert
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<BR>[Calls]<UL><LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsert
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 <BR>[Called By]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 </UL>
 
-<P><STRONG><a name="[2b0]"></a>vTaskDelayUntil</STRONG> (Thumb, 266 bytes, Stack size 16 bytes, tasks.o(.text.vTaskDelayUntil))
+<P><STRONG><a name="[2b1]"></a>vTaskDelayUntil</STRONG> (Thumb, 266 bytes, Stack size 16 bytes, tasks.o(.text.vTaskDelayUntil))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = vTaskDelayUntil &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsert
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<BR>[Calls]<UL><LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsert
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 <BR>[Called By]<UL><LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelayUntil
 </UL>
 
-<P><STRONG><a name="[2b6]"></a>vTaskResume</STRONG> (Thumb, 162 bytes, Stack size 16 bytes, tasks.o(.text.vTaskResume))
+<P><STRONG><a name="[2b7]"></a>vTaskResume</STRONG> (Thumb, 162 bytes, Stack size 16 bytes, tasks.o(.text.vTaskResume))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = vTaskResume
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
-<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
-<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
+<BR>[Calls]<UL><LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
+<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
+<LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 </UL>
 <BR>[Called By]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadResume
 </UL>
 
-<P><STRONG><a name="[2b1]"></a>vTaskStartScheduler</STRONG> (Thumb, 120 bytes, Stack size 40 bytes, tasks.o(.text.vTaskStartScheduler))
+<P><STRONG><a name="[2b2]"></a>vTaskStartScheduler</STRONG> (Thumb, 120 bytes, Stack size 40 bytes, tasks.o(.text.vTaskStartScheduler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = vTaskStartScheduler &rArr; xTaskCreateStatic &rArr; prvAddNewTaskToReadyList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vApplicationGetIdleTaskMemory
-<LI><a href="#[2c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
-<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
+<BR>[Calls]<UL><LI><a href="#[2c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vApplicationGetIdleTaskMemory
+<LI><a href="#[2c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
+<LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
+<BR>[Called By]<UL><LI><a href="#[2af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
 </UL>
 
 <P><STRONG><a name="[131]"></a>vTaskSuspend</STRONG> (Thumb, 402 bytes, Stack size 24 bytes, tasks.o(.text.vTaskSuspend))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = vTaskSuspend
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
-<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
-<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
+<BR>[Calls]<UL><LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
+<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
+<LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_task
 </UL>
 
-<P><STRONG><a name="[2be]"></a>vTaskSuspendAll</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, tasks.o(.text.vTaskSuspendAll))
-<BR><BR>[Called By]<UL><LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<P><STRONG><a name="[2bf]"></a>vTaskSuspendAll</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, tasks.o(.text.vTaskSuspendAll))
+<BR><BR>[Called By]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 </UL>
 
 <P><STRONG><a name="[22b]"></a>vTaskSwitchContext</STRONG> (Thumb, 134 bytes, Stack size 0 bytes, tasks.o(.text.vTaskSwitchContext))
 <BR><BR>[Called By]<UL><LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
-<LI><a href="#[2c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
+<LI><a href="#[2c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
 </UL>
 
-<P><STRONG><a name="[2c6]"></a>xPortStartScheduler</STRONG> (Thumb, 302 bytes, Stack size 32 bytes, port.o(.text.xPortStartScheduler))
+<P><STRONG><a name="[2c7]"></a>xPortStartScheduler</STRONG> (Thumb, 302 bytes, Stack size 32 bytes, port.o(.text.xPortStartScheduler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = xPortStartScheduler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortSetupTimerInterrupt
-<LI><a href="#[2c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvPortStartFirstTask
-<LI><a href="#[2c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnableVFP
+<BR>[Calls]<UL><LI><a href="#[2c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortSetupTimerInterrupt
+<LI><a href="#[2ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvPortStartFirstTask
+<LI><a href="#[2c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnableVFP
 <LI><a href="#[22b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSwitchContext
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
+<BR>[Called By]<UL><LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 </UL>
 
-<P><STRONG><a name="[2b4]"></a>xTaskCreate</STRONG> (Thumb, 194 bytes, Stack size 32 bytes, tasks.o(.text.xTaskCreate))
+<P><STRONG><a name="[2b5]"></a>xTaskCreate</STRONG> (Thumb, 194 bytes, Stack size 32 bytes, tasks.o(.text.xTaskCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pxPortInitialiseStack
-<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
-<LI><a href="#[2ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInitialiseItem
-<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<BR>[Calls]<UL><LI><a href="#[2cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pxPortInitialiseStack
+<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
+<LI><a href="#[2cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInitialiseItem
+<LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 </UL>
 <BR>[Called By]<UL><LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
 </UL>
 
-<P><STRONG><a name="[2b3]"></a>xTaskCreateStatic</STRONG> (Thumb, 240 bytes, Stack size 40 bytes, tasks.o(.text.xTaskCreateStatic))
+<P><STRONG><a name="[2b4]"></a>xTaskCreateStatic</STRONG> (Thumb, 240 bytes, Stack size 40 bytes, tasks.o(.text.xTaskCreateStatic))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = xTaskCreateStatic &rArr; prvAddNewTaskToReadyList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pxPortInitialiseStack
-<LI><a href="#[2b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
-<LI><a href="#[2ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInitialiseItem
+<BR>[Calls]<UL><LI><a href="#[2cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pxPortInitialiseStack
+<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
+<LI><a href="#[2cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInitialiseItem
 </UL>
 <BR>[Called By]<UL><LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
-<LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
+<LI><a href="#[2b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 </UL>
 
 <P><STRONG><a name="[11b]"></a>xTaskGetTickCount</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, tasks.o(.text.xTaskGetTickCount))
@@ -5207,10 +5212,10 @@ Global Symbols
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Observe_Tasks
 </UL>
 
-<P><STRONG><a name="[2b2]"></a>xTaskGetTickCountFromISR</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, tasks.o(.text.xTaskGetTickCountFromISR))
+<P><STRONG><a name="[2b3]"></a>xTaskGetTickCountFromISR</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, tasks.o(.text.xTaskGetTickCountFromISR))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = xTaskGetTickCountFromISR
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortValidateInterruptPriority
+<BR>[Calls]<UL><LI><a href="#[2cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortValidateInterruptPriority
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelSysTick
 </UL>
@@ -5218,39 +5223,39 @@ Global Symbols
 <P><STRONG><a name="[22f]"></a>xTaskIncrementTick</STRONG> (Thumb, 384 bytes, Stack size 40 bytes, tasks.o(.text.xTaskIncrementTick))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
+<BR>[Calls]<UL><LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
-<LI><a href="#[2bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
+<LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 
-<P><STRONG><a name="[2bf]"></a>xTaskResumeAll</STRONG> (Thumb, 312 bytes, Stack size 40 bytes, tasks.o(.text.xTaskResumeAll))
+<P><STRONG><a name="[2c0]"></a>xTaskResumeAll</STRONG> (Thumb, 312 bytes, Stack size 40 bytes, tasks.o(.text.xTaskResumeAll))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
-<LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
-<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
-<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
+<LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
+<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
+<LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
-<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<BR>[Called By]<UL><LI><a href="#[2b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<LI><a href="#[2b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelayUntil
+<LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 </UL>
 
-<P><STRONG><a name="[2b5]"></a>xTaskResumeFromISR</STRONG> (Thumb, 182 bytes, Stack size 24 bytes, tasks.o(.text.xTaskResumeFromISR))
+<P><STRONG><a name="[2b6]"></a>xTaskResumeFromISR</STRONG> (Thumb, 182 bytes, Stack size 24 bytes, tasks.o(.text.xTaskResumeFromISR))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = xTaskResumeFromISR
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortValidateInterruptPriority
-<LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
+<BR>[Calls]<UL><LI><a href="#[2cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortValidateInterruptPriority
+<LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[228]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadResume
 </UL>
 
-<P><STRONG><a name="[2ce]"></a>__ARM_fpclassifyf</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, fpclassifyf.o(i.__ARM_fpclassifyf))
+<P><STRONG><a name="[2cf]"></a>__ARM_fpclassifyf</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, fpclassifyf.o(i.__ARM_fpclassifyf))
 <BR><BR>[Called By]<UL><LI><a href="#[23f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
@@ -5260,11 +5265,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = __hardfp_asinf &rArr; sqrtf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[2cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
-<LI><a href="#[2cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
-<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
-<LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
-<LI><a href="#[2ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
+<LI><a href="#[2ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
+<LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
+<LI><a href="#[2d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
+<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
+<LI><a href="#[2cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Update
 </UL>
@@ -5273,9 +5278,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = __hardfp_atan2f &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[2cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
-<LI><a href="#[2d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan2
-<LI><a href="#[2ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
+<LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
+<LI><a href="#[2d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan2
+<LI><a href="#[2cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Calculate
 </UL>
@@ -5284,9 +5289,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = __hardfp_cosf &rArr; __mathlib_rredf2
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[2d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_rredf2
-<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
-<LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
+<LI><a href="#[2d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_rredf2
+<LI><a href="#[2d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
+<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -5295,8 +5300,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = __hardfp_fmodf &rArr; _frem &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
-<LI><a href="#[2d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frem
+<LI><a href="#[2d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
+<LI><a href="#[2d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frem
 </UL>
 <BR>[Called By]<UL><LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Set_AngleError
 <LI><a href="#[22e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ShortestAngleDelta
@@ -5306,8 +5311,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = __hardfp_lroundf &rArr; _frnd &rArr; __fpl_fnaninf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[2d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frnd
-<LI><a href="#[2d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ffix_r
+<LI><a href="#[2d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frnd
+<LI><a href="#[2d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_ffix_r
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -5316,11 +5321,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = __hardfp_sinf &rArr; __mathlib_rredf2
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
-<LI><a href="#[2d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_rredf2
-<LI><a href="#[2cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
-<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
-<LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
-<LI><a href="#[2ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
+<LI><a href="#[2d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_rredf2
+<LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_underflow
+<LI><a href="#[2d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_invalid
+<LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__mathlib_flt_infnan
+<LI><a href="#[2cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_fpclassifyf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UI_task
 </UL>
@@ -5335,37 +5340,37 @@ Global Symbols
 <LI><a href="#[1df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_QuaternionEKF_Update
 </UL>
 
-<P><STRONG><a name="[2d0]"></a>__mathlib_flt_infnan</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_infnan))
+<P><STRONG><a name="[2d1]"></a>__mathlib_flt_infnan</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_infnan))
 <BR><BR>[Called By]<UL><LI><a href="#[23f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
-<P><STRONG><a name="[2d2]"></a>__mathlib_flt_infnan2</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_infnan2))
+<P><STRONG><a name="[2d3]"></a>__mathlib_flt_infnan2</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_infnan2))
 <BR><BR>[Called By]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
 </UL>
 
-<P><STRONG><a name="[2d1]"></a>__mathlib_flt_invalid</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_invalid))
+<P><STRONG><a name="[2d2]"></a>__mathlib_flt_invalid</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_invalid))
 <BR><BR>[Called By]<UL><LI><a href="#[23f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
 <LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
-<P><STRONG><a name="[2cf]"></a>__mathlib_flt_underflow</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_underflow))
+<P><STRONG><a name="[2d0]"></a>__mathlib_flt_underflow</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_underflow))
 <BR><BR>[Called By]<UL><LI><a href="#[23f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
-<P><STRONG><a name="[2d3]"></a>__mathlib_rredf2</STRONG> (Thumb, 316 bytes, Stack size 20 bytes, rredf.o(i.__mathlib_rredf2))
+<P><STRONG><a name="[2d4]"></a>__mathlib_rredf2</STRONG> (Thumb, 316 bytes, Stack size 20 bytes, rredf.o(i.__mathlib_rredf2))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = __mathlib_rredf2
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 </UL>
 
-<P><STRONG><a name="[2cd]"></a>sqrtf</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, sqrtf.o(i.sqrtf))
+<P><STRONG><a name="[2ce]"></a>sqrtf</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, sqrtf.o(i.sqrtf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sqrtf &rArr; __set_errno
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__set_errno
@@ -5373,37 +5378,37 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
-<P><STRONG><a name="[2d6]"></a>_ffix_r</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, ffix.o(x$fpl$ffixr))
+<P><STRONG><a name="[2d7]"></a>_ffix_r</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, ffix.o(x$fpl$ffixr))
 <BR><BR>[Called By]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
 </UL>
 
-<P><STRONG><a name="[2d7]"></a>__fpl_fnaninf</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, fnaninf.o(x$fpl$fnaninf))
+<P><STRONG><a name="[2d8]"></a>__fpl_fnaninf</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, fnaninf.o(x$fpl$fnaninf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __fpl_fnaninf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frnd
-<LI><a href="#[2d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frem
+<BR>[Called By]<UL><LI><a href="#[2d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frnd
+<LI><a href="#[2d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frem
 </UL>
 
 <P><STRONG><a name="[d5]"></a>_fp_init</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, fpinit.o(x$fpl$fpinit))
 <BR><BR>[Called By]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_lib_init_fp_1
 </UL>
 
-<P><STRONG><a name="[31d]"></a>__fplib_config_fpu_vfp</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, fpinit.o(x$fpl$fpinit), UNUSED)
+<P><STRONG><a name="[31e]"></a>__fplib_config_fpu_vfp</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, fpinit.o(x$fpl$fpinit), UNUSED)
 
-<P><STRONG><a name="[31e]"></a>__fplib_config_pureend_doubles</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, fpinit.o(x$fpl$fpinit), UNUSED)
+<P><STRONG><a name="[31f]"></a>__fplib_config_pureend_doubles</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, fpinit.o(x$fpl$fpinit), UNUSED)
 
-<P><STRONG><a name="[2d4]"></a>_frem</STRONG> (Thumb, 240 bytes, Stack size 16 bytes, frem_clz.o(x$fpl$frem))
+<P><STRONG><a name="[2d5]"></a>_frem</STRONG> (Thumb, 240 bytes, Stack size 16 bytes, frem_clz.o(x$fpl$frem))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = _frem &rArr; __fpl_fnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__fpl_fnaninf
+<BR>[Calls]<UL><LI><a href="#[2d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__fpl_fnaninf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[22a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fmodf
 </UL>
 
-<P><STRONG><a name="[2d5]"></a>_frnd</STRONG> (Thumb, 96 bytes, Stack size 8 bytes, frnd.o(x$fpl$frnd))
+<P><STRONG><a name="[2d6]"></a>_frnd</STRONG> (Thumb, 96 bytes, Stack size 8 bytes, frnd.o(x$fpl$frnd))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = _frnd &rArr; __fpl_fnaninf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__fpl_fnaninf
+<BR>[Calls]<UL><LI><a href="#[2d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__fpl_fnaninf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_lroundf
 </UL>
@@ -5501,25 +5506,25 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32h7xx_hal_uart.o(.text.HAL_UART_IRQHandler)
 </UL>
-<P><STRONG><a name="[2b7]"></a>prvAddNewTaskToReadyList</STRONG> (Thumb, 282 bytes, Stack size 32 bytes, tasks.o(.text.prvAddNewTaskToReadyList))
+<P><STRONG><a name="[2b8]"></a>prvAddNewTaskToReadyList</STRONG> (Thumb, 282 bytes, Stack size 32 bytes, tasks.o(.text.prvAddNewTaskToReadyList))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = prvAddNewTaskToReadyList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
-<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
-<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
-<LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInitialise
+<BR>[Calls]<UL><LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInsertEnd
+<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
+<LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
+<LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vListInitialise
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
-<LI><a href="#[2b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
+<BR>[Called By]<UL><LI><a href="#[2b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<LI><a href="#[2b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreateStatic
 </UL>
 
 <P><STRONG><a name="[c7]"></a>prvIdleTask</STRONG> (Thumb, 150 bytes, Stack size 0 bytes, tasks.o(.text.prvIdleTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = prvIdleTask &rArr; vPortFree &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
-<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[2bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
-<LI><a href="#[2b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
+<BR>[Calls]<UL><LI><a href="#[2be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
+<LI><a href="#[2bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
+<LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> tasks.o(.text.vTaskStartScheduler)
 </UL>
@@ -5528,12 +5533,12 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> port.o(.text.pxPortInitialiseStack)
 </UL>
-<P><STRONG><a name="[2c8]"></a>vPortEnableVFP</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, port.o(.text.vPortEnableVFP))
-<BR><BR>[Called By]<UL><LI><a href="#[2c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
+<P><STRONG><a name="[2c9]"></a>vPortEnableVFP</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, port.o(.text.vPortEnableVFP))
+<BR><BR>[Called By]<UL><LI><a href="#[2c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
 </UL>
 
-<P><STRONG><a name="[2c9]"></a>prvPortStartFirstTask</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, port.o(.text.prvPortStartFirstTask))
-<BR><BR>[Called By]<UL><LI><a href="#[2c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
+<P><STRONG><a name="[2ca]"></a>prvPortStartFirstTask</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, port.o(.text.prvPortStartFirstTask))
+<BR><BR>[Called By]<UL><LI><a href="#[2c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortStartScheduler
 </UL>
 
 <P><STRONG><a name="[b3]"></a>IMU_QuaternionEKF_F_Linearization_P_Fading</STRONG> (Thumb, 408 bytes, Stack size 40 bytes, quaternionekf.o(.text.IMU_QuaternionEKF_F_Linearization_P_Fading))

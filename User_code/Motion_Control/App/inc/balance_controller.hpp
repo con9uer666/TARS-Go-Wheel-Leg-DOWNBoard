@@ -165,6 +165,12 @@ public:
     explicit BalanceController(const BalanceControllerDependencies& dependencies);
 
     /**
+     * @brief 启动一段倾覆保护抑制期（单位：控制周期），用于模式切换后让 LQR 先行稳定车身。
+     * @param[in] cycles 抑制持续周期数，0 表示立即恢复检测。
+     */
+    void SuppressTipProtection(std::uint16_t cycles);
+
+    /**
      * @brief 执行一次倾覆保护判定或完整正常平衡流程。
      * @param[in] state 本周期 VMC、INS 和轮端状态快照。
      * @param[in] input 腿长档位、坐地请求、自动 Stair 开关和旧模式快照。
@@ -188,6 +194,7 @@ private:
     AntiSplitController anti_split_controller_;  /**< 将 LQR 基础腿力矩与防劈叉、离心补偿和小陀螺归中合成的控制器。 */
     OffGroundDetector off_ground_detector_;      /**< 更新支持力/离地计数并仅覆盖离地侧命令的检测器。 */
     StepHitDetector step_hit_detector_;           /**< 拥有命中计数和长腿解禁延时的磕台阶检测器。 */
+    std::uint16_t tip_protection_suppression_cycles_ = 0U; /**< 倾覆保护抑制剩余周期数，模式切换后暂时禁止检测。 */
 };
 
 } // namespace chassis

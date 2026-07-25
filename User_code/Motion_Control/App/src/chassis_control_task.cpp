@@ -269,6 +269,9 @@ void ChassisControlTask::ExecuteMode(RunMode mode)
 
     case RunMode::Balance:
     {
+        if (previous_mode_ != RunMode::Balance)
+            balance_controller_.SuppressTipProtection(500U);
+
         /** 平衡控制器使用的腿长档位、坐地请求、自动 Stair 开关和模式快照。 */
         BalanceControlInput balance_input{};
         balance_input.target_leg_state = Foot_Chassis.Target_Leg_State;
@@ -444,6 +447,7 @@ void ChassisControlTask::RunCycle()
     }
 
     ApplyOutputs();
+    previous_mode_ = context_.mode;
 }
 
 /**

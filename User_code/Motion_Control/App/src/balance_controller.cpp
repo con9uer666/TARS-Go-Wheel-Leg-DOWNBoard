@@ -135,6 +135,11 @@ BalanceController::BalanceController(const BalanceControllerDependencies& depend
 {
 }
 
+void BalanceController::SuppressTipProtection(std::uint16_t cycles)
+{
+    tip_protection_suppression_cycles_ = cycles;
+}
+
 /**
  * @brief 执行倾覆保护判定或完整的正常平衡控制链。
  * @param[in] state 本周期已锁存的腿部、车体和轮端状态。
@@ -147,15 +152,23 @@ BalanceUpdateResult BalanceController::Update(const ChassisStateSnapshot& state,
     /** 本周期将返回给 Motor_task 的命令和模式事件。 */
     BalanceUpdateResult result{};
 
-    /** 倾覆检测和收腿保护控制器的本周期结果。 */
-    const TipProtectionUpdateResult tip_result =
-        tip_protection_controller_.Update(state);
-    if (tip_result.active)
+    /** 倾覆保护抑制期内不检测。 */
+    if (tip_protection_suppression_cycles_ > 0U)
     {
-        result.command = tip_result.command;
-        result.tip_protection_active = true;
-        result.tip_protection_completed = tip_result.completed;
-        return result;
+        --tip_protection_suppression_cycles_;
+    }
+    else
+    {
+        /** 倾覆检测和收腿保护控制器的本周期结果。 */
+        const TipProtectionUpdateResult tip_result =
+            tip_protection_controller_.Update(state);
+        if (tip_result.active)
+        {
+            result.command = tip_result.command;
+            result.tip_protection_active = true;
+            result.tip_protection_completed = tip_result.completed;
+            return result;
+        }
     }
 
     /** 不可修改的旧误差计算黑盒在本周期产生的三维输出快照。 */

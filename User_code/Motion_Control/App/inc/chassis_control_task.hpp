@@ -88,6 +88,7 @@ private:
     void ApplyOutputs();
 
     TaskContext context_{};        /**< 仅由 Motor_task 对象拥有的任务持久状态。 */
+    RunMode previous_mode_ = RunMode::StartupRetract;  /**< 上一周期有效模式，用于检测模式切换边沿。 */
     ChassisStateEstimator state_estimator_; /**< 固定输入/VMC/车速/INS 顺序并组装只读快照的估计器。 */
     LegTurnRecoveryController left_leg_turn_recovery_; /**< 左腿收腿转角短路径/反向长路径共享状态机。 */
     LegTurnRecoveryController right_leg_turn_recovery_; /**< 右腿收腿转角短路径/反向长路径共享状态机。 */

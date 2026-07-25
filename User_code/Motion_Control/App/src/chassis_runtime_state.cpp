@@ -81,7 +81,7 @@ float alpha_target_roll = 0.05f;
 float Leg_F0_Limit = 500.0f;
 
 /** @brief 单腿承担的车体重力补偿基准，单位 N。 */
-float mg = 45.0f / 2.0f;
+float mg = 55.0f / 2.0f;
 
 /** @brief 腿部前倾角偏置，正值前倾、负值后倾，单位 rad。 */
 float b_phi0_offset = 0.0f;
