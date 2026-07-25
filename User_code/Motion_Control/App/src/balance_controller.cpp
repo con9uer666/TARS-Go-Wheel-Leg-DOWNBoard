@@ -4,6 +4,7 @@
  */
 
 #include "balance_controller.hpp"
+#include "arm_math.h"
 
 #include <cmath>
 
@@ -11,7 +12,6 @@ extern "C"
 {
 #include "chassis_behavior_tree.h"
 #include "Board2Board.h"
-#include "arm_math.h"
 }
 
 /**

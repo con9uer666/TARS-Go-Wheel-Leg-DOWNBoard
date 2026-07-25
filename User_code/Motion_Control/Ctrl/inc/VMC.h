@@ -53,6 +53,12 @@ extern VMC_Chassis_Target_t VMC_Chassis_Target;
 extern volatile uint8_t chassis_hard_stop_flag;
 extern volatile uint8_t chassis_soft_stop_flag;
 
+/* 四电机机械零点偏移（rad），在 Keil Watch 窗口修改即可生效 */
+extern float motor_zero_L_phi1;   /**< 左腿下关节零点，对应 L_DM8009[1] */
+extern float motor_zero_L_phi4;   /**< 左腿上关节零点，对应 L_DM8009[0] */
+extern float motor_zero_R_phi1;   /**< 右腿上关节零点，对应 R_DM8009[0] */
+extern float motor_zero_R_phi4;   /**< 右腿下关节零点，对应 R_DM8009[1] */
+
 void VMC_Init(VMC_t *VMC, float l1, float l2, float l3, float l4, float l5, uint8_t isLeft);
 void VMC_Set_phi1_phi4(VMC_t *VMC, float phi1, float phi4);
 void VMC_Get_L0_phi0(VMC_t *VMC);
@@ -60,5 +66,6 @@ void VMC_Set_F0_T(VMC_t *VMC, float F, float T);
 void VMC_Apply_Chassis_Target(void);
 float VMC_Get_Ground_F0(VMC_t *VMC);
 void VMC_Coculate();
+void VMC_Reset_F_History(void);
 
 #endif

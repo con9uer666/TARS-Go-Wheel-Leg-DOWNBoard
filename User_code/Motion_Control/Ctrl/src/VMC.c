@@ -16,6 +16,12 @@ VMC_Chassis_Target_t VMC_Chassis_Target;
 volatile uint8_t chassis_hard_stop_flag = 0;
 volatile uint8_t chassis_soft_stop_flag = 0;
 
+/* 四电机机械零点偏移（rad），在 Keil Watch 窗口修改即可生效 */
+float motor_zero_L_phi1 = 0.0 - PI;   /**< 左腿下关节零点，对应 L_DM8009[1] */
+float motor_zero_L_phi4 = 0.0;        /**< 左腿上关节零点，对应 L_DM8009[0] */
+float motor_zero_R_phi1 = 0.0 - PI;   /**< 右腿上关节零点，对应 R_DM8009[0] */
+float motor_zero_R_phi4 = 0.0;        /**< 右腿下关节零点，对应 R_DM8009[1] */
+
 float alpha_d_phi0 = 1.0;
 float alpha_phi0 = 1.0;//滤波系数
 float alpha_F = 0.5f;
@@ -218,10 +224,21 @@ float VMC_Get_Ground_F0(VMC_t *VMC)
 }
 
 //算左右VMC的phi1/phi4/L0/phi0
+/** @brief 清零左右腿 F 的 IIR 滤波历史，防止切换控制模式时旧 F 污染。 */
+void VMC_Reset_F_History(void)
+{
+    VMC_L.last_F = 0.0f;
+    VMC_R.last_F = 0.0f;
+}
+
 void VMC_Coculate()
 {
-    VMC_Set_phi1_phi4(&VMC_L, L_DM8009[1].Rx_Data.Position + PI, L_DM8009[0].Rx_Data.Position);
-    VMC_Set_phi1_phi4(&VMC_R, R_DM8009[0].Rx_Data.Position + PI, R_DM8009[1].Rx_Data.Position);
+    VMC_Set_phi1_phi4(&VMC_L,
+        L_DM8009[1].Rx_Data.Position - motor_zero_L_phi1,
+        L_DM8009[0].Rx_Data.Position - motor_zero_L_phi4);
+    VMC_Set_phi1_phi4(&VMC_R,
+        R_DM8009[0].Rx_Data.Position - motor_zero_R_phi1,
+        R_DM8009[1].Rx_Data.Position - motor_zero_R_phi4);
     VMC_Get_L0_phi0(&VMC_L);
     VMC_Get_L0_phi0(&VMC_R);
 }

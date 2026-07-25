@@ -11,6 +11,7 @@ extern "C"
 {
 #include "chassis_behavior_tree.h"
 #include "Leg_Control.h"
+#include "VMC.h"
 }
 
 namespace chassis
@@ -70,6 +71,11 @@ StartupRetractUpdateResult StartupRetractController::UpdateSelfRighting(
 StartupRetractUpdateResult StartupRetractController::UpdateRetract(
     const ChassisStateSnapshot& state)
 {
+    if (first_run != 0U)
+    {
+        VMC_Reset_F_History();
+    }
+
     /** 左腿腿长位置环 PID 的本地别名。 */
     user_pid_t& left_length_position_pid = dependencies_.left_length_position_pid;
     /** 左腿腿长速度环 PID 的本地别名。 */

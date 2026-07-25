@@ -23,7 +23,7 @@ user_pid_t gimbal_yaw_angle_pid;
 float yaw_angle_PI = 0.0f;
 
 /** @brief 正视前方的 yaw 电机角度 (rad)，见 motor.c 定义。 */
-float head_forward_angle = -2.773;
+float head_forward_angle = 0.361f;
 
 /** @brief 云台跟随底盘归位完成计数器，计数满 100 次（约 200ms）即完成。 */
 uint16_t gimbal_follow_flag_cnt = 0;

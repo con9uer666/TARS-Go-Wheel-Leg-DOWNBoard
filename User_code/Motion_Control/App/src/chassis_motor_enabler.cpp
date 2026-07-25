@@ -4,6 +4,7 @@
  */
 
 #include "chassis_motor_enabler.hpp"
+#include "arm_math.h"
 
 extern "C"
 {
@@ -12,7 +13,6 @@ extern "C"
 #include "Motor_Drv.h"
 #include "Gimbal.h"
 #include "User_State.h"
-#include "arm_math.h"
 #include "USER_CAN.h"
 #include "VMC.h"
 #include "observe_task.h"

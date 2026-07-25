@@ -1,5 +1,6 @@
 /** @file chassis_height_controller.cpp @brief ChassisHeightController 实现。 */
 #include "chassis_height_controller.hpp"
+#include "arm_math.h"
 extern "C"
 {
 #include "observe_task.h"

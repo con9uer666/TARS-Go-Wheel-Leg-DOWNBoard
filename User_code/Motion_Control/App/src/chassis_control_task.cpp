@@ -7,6 +7,7 @@
  */
 
 #include "chassis_control_task.hpp"
+#include "arm_math.h"
 
 extern "C"
 {

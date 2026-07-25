@@ -4,13 +4,9 @@
  */
 
 #include "sit_controller.hpp"
+#include "arm_math.h"
 
 #include <cmath>
-
-extern "C"
-{
-#include "arm_math.h"
-}
 
 /**
  * @brief 旧 C 模块使用的“坐地下次需要重新初始化”兼容标志。

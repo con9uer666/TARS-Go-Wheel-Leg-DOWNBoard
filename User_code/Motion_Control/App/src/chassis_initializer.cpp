@@ -3,6 +3,8 @@
  * @brief 底盘初始化：电机参数、VMC、PID 初始化，以及 pitch 前后帧计算。
  */
 
+#include "arm_math.h"
+
 extern "C"
 {
 #include "chassis_behavior_tree.h"
@@ -10,7 +12,6 @@ extern "C"
 #include "Motor_Drv.h"
 #include "Gimbal.h"
 #include "User_State.h"
-#include "arm_math.h"
 #include "USER_CAN.h"
 #include "VMC.h"
 #include "observe_task.h"
@@ -65,12 +66,12 @@ void chassis::ChassisInitializer::InitializeVmc()
 /** @brief 使用迁移前完全相同的增益、限幅和积分参数初始化全部共享 PID。 */
 void chassis::ChassisInitializer::InitializePids()
 {
-    PID_INIT(&L_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 2500, 0, 30000, 200, 0, 0, 0, 0);
-    PID_INIT(&Leg_AntiSplit_PID, 300, 0, 10, 150, 0, 0, 0, 0);   // Kp/Kd 为占位，每周期由 AntiSplitController 按腿长覆盖
+    PID_INIT(&L_Leg_L0_PID, 2500, 0, 5000, 200, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 2500, 0, 5000, 200, 0, 0, 0, 0);
+    PID_INIT(&Leg_AntiSplit_PID, 200, 0, 10, 150, 0, 0, 0, 0);   // Kp/Kd 为占位，每周期由 AntiSplitController 按腿长覆盖
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
-    PID_INIT(&Roll_Comp_PID, 20, 0.002, 100, 150, 80, 0, 10000, 0);
+    PID_INIT(&Roll_Comp_PID, 0, 0.0, 0, 150, 80, 0, 10000, 0);
     PID_INIT(&L_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
     PID_INIT(&R_Leg_Middle_PID, 15, 0.1, 0.1, 5.0, 4.0, 0, 0, 0);
     PID_INIT(&L_Leg_dphi0_PID, 3, 0.1, 1, 150, 150, 0, 2000, 0);
