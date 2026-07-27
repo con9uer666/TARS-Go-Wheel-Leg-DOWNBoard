@@ -89,7 +89,7 @@ void VMC_Get_L0_phi0(VMC_t *VMC)
 
     VMC->last_d_phi0 = VMC->d_phi0;
     VMC->d_phi0 = alpha_d_phi0 * ((VMC->phi0 - VMC->last_phi0) / 0.002f) + (1 - alpha_d_phi0) * VMC->d_phi0;
-    VMC->d_b_phi0 = (VMC->b_phi0 - VMC->last_b_phi0) / 0.002f;
+    // d_b_phi0/dd_b_phi0 在下面 isLeft/else 分支内计算（须在 b_phi0 更新后）；此处不要提前算，否则会把上一周期的 d_b_phi0 冲掉，导致 dd_b_phi0 退化成 d_b_phi0/dt
 
     VMC->d_L0 = (VMC->L0 - VMC->last_L0)/0.002f;
     VMC->dd_L0 = (VMC->d_L0 - VMC->last_d_L0) / 0.002f;

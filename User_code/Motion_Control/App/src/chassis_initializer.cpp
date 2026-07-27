@@ -53,7 +53,7 @@ void chassis::ChassisInitializer::InitializeMotors()
     // 功率控制模块初始化（仅初始化参数，不改变现有控制流）。
     // PowerCtralInit(&whell_power);
 
-    gas_spring_enable = 1;
+    // gas_spring_enable = 1;  // 氮气弹簧已拆除，禁用补偿
 }
 
 /** @brief 初始化左右五连杆 VMC 的连杆长度和机构镜像方向。 */
