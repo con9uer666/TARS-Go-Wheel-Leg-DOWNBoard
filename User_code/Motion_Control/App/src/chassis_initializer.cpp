@@ -66,8 +66,8 @@ void chassis::ChassisInitializer::InitializeVmc()
 /** @brief 使用迁移前完全相同的增益、限幅和积分参数初始化全部共享 PID。 */
 void chassis::ChassisInitializer::InitializePids()
 {
-    PID_INIT(&L_Leg_L0_PID, 200, 0, 1000, 200, 0, 0, 0, 0);
-    PID_INIT(&R_Leg_L0_PID, 200, 0, 1000, 200, 0, 0, 0, 0);
+    PID_INIT(&L_Leg_L0_PID, 1000, 0, 800, 150, 0, 0, 0, 0);
+    PID_INIT(&R_Leg_L0_PID, 1000, 0, 800, 150, 0, 0, 0, 0);
     PID_INIT(&Leg_AntiSplit_PID, 200, 0, 10, 150, 0, 0, 0, 0);   // Kp/Kd 为占位，每周期由 AntiSplitController 按腿长覆盖
     PID_INIT(&L_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);
     PID_INIT(&R_Spin_Phi0_PID, 80, 0, 8, 40, 0, 0, 0, 0);

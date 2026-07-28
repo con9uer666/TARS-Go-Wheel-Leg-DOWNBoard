@@ -210,6 +210,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>R_DM8009[1].Rx_Data,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>start_mode,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -225,42 +230,37 @@
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>L_Leg_L0_POS_PID.error</ItemText>
+          <ItemText>target_L_Leg_L0	</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>R_Leg_L0_POS_PID.error</ItemText>
+          <ItemText>target_R_Leg_L0	</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>VMC_L.F</ItemText>
+          <ItemText>VMC_L.T1</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>VMC_R.F</ItemText>
+          <ItemText>VMC_L.T2</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>VMC_L.T1</ItemText>
+          <ItemText>VMC_R.T1</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>VMC_L.T2</ItemText>
+          <ItemText>VMC_R.T2</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>2</WinNumber>
-          <ItemText>VMC_R.T1</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>VMC_R.T2</ItemText>
+          <ItemText>start_mode,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>
