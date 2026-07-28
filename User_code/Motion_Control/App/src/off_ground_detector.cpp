@@ -65,10 +65,80 @@ OffGroundUpdateResult OffGroundDetector::Update(
     const ChassisStateSnapshot& state,
     const ChassisCommand& nominal_command)
 {
-    // TODO: 临时禁用离地检测，调试完成后恢复
+    // 离地检测暂时禁用，直接透传命令
     OffGroundUpdateResult result{};
     result.command = nominal_command;
     return result;
+
+#if 0
+    /** 左腿 VMC 反解得到的本周期未滤波地面支持力，单位 N。 */
+    const float left_ground_force_sample_n =
+        VMC_Get_Ground_F0(&dependencies_.left_vmc);
+    /** 右腿 VMC 反解得到的本周期未滤波地面支持力，单位 N。 */
+    const float right_ground_force_sample_n =
+        VMC_Get_Ground_F0(&dependencies_.right_vmc);
+
+    dependencies_.left_filtered_ground_force_n =
+        config_.ground_force_filter_alpha * left_ground_force_sample_n
+        + (1.0f - config_.ground_force_filter_alpha)
+            * dependencies_.left_filtered_ground_force_n;
+    dependencies_.right_filtered_ground_force_n =
+        config_.ground_force_filter_alpha * right_ground_force_sample_n
+        + (1.0f - config_.ground_force_filter_alpha)
+            * dependencies_.right_filtered_ground_force_n;
+
+    UpdateCounter(dependencies_.left_filtered_ground_force_n,
+                  dependencies_.left_off_ground_count);
+    UpdateCounter(dependencies_.right_filtered_ground_force_n,
+                  dependencies_.right_off_ground_count);
+
+    /** 离地检测对命令和兼容状态的本周期结果。 */
+    OffGroundUpdateResult result{};
+    result.command = nominal_command;
+    result.left_airborne =
+        dependencies_.left_off_ground_count >= config_.active_count_threshold;
+    result.right_airborne =
+        dependencies_.right_off_ground_count >= config_.active_count_threshold;
+    result.request_short_leg_lock = result.left_airborne && result.right_airborne;
+
+    if (result.left_airborne)
+    {
+        dependencies_.left_base_leg_torque_nm =
+            -dependencies_.lqr_gain_matrix[2][4]
+                * (state.left_leg.body_angle_rad
+                   - dependencies_.centered_body_leg_angle_rad)
+            -dependencies_.lqr_gain_matrix[2][5]
+                * state.left_leg.body_angular_rate_radps;
+        dependencies_.left_base_leg_torque_nm *= config_.airborne_leg_torque_scale;
+
+        result.command.left_wheel_torque_nm = 0.0f;
+        result.command.left_support_force_n =
+            dependencies_.left_length_pid.output
+            * config_.airborne_support_force_scale;
+        result.command.left_leg_torque_nm = dependencies_.left_base_leg_torque_nm;
+    }
+
+    if (result.right_airborne)
+    {
+        dependencies_.right_base_leg_torque_nm =
+            -dependencies_.lqr_gain_matrix[3][6]
+                * (state.right_leg.body_angle_rad
+                   - dependencies_.centered_body_leg_angle_rad)
+            -dependencies_.lqr_gain_matrix[3][7]
+                * state.right_leg.body_angular_rate_radps;
+        dependencies_.right_base_leg_torque_nm *= config_.airborne_leg_torque_scale;
+
+        result.command.right_wheel_torque_nm = 0.0f;
+        result.command.right_support_force_n =
+            dependencies_.right_length_pid.output
+            * config_.airborne_support_force_scale;
+        result.command.right_leg_torque_nm = -dependencies_.right_base_leg_torque_nm;
+    }
+
+    result.request_distance_reset = result.left_airborne || result.right_airborne;
+    result.request_step_cooldown_refresh = result.request_distance_reset;
+    return result;
+#endif
 }
 
 } // namespace chassis

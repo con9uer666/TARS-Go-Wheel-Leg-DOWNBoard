@@ -79,8 +79,8 @@ void chassis::ChassisInitializer::InitializePids()
 
     PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
     PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
-    PID_INIT(&L_Leg_L0_SPD_PID, 50, 3, 400, 80, 80, 0, 2000, 0);
-    PID_INIT(&R_Leg_L0_SPD_PID, 50, 3, 400, 80, 80, 0, 2000, 0);
+    PID_INIT(&L_Leg_L0_SPD_PID, 50, 3, 20, 80, 80, 0, 2000, 0);
+    PID_INIT(&R_Leg_L0_SPD_PID, 50, 3, 20, 80, 80, 0, 2000, 0);
 
     //小陀螺pid
     PID_INIT(&spinning_pid, 0.0005, 0.001f, 0.001, 6.0f, 6.0f, 0.005f, 20.0f, 0);
