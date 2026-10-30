@@ -13,7 +13,7 @@ extern float powerPredict;
 
 ChassisPower whell_power;
 
-uint8_t g_power_ctrl_enable = 1; // 总开关：1=启用功率控制，0=旁路
+uint8_t g_power_ctrl_enable = 0; // 总开关：1=启用功率控制，0=旁路
 
 // lambda 是目标速度/转速的缩放系数（0~1），由 PID 输出后经低通滤波得到。
 // 仅在 g_filtered_power > power_limit 时生效，否则不限制。
