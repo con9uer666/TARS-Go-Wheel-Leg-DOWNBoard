@@ -40,6 +40,9 @@ typedef struct Foot_Chassis
 
 extern Foot_Chassis_t Foot_Chassis;
 extern uint8_t gimbal_follow_flag; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
+extern uint8_t yaw_follow_mode;     // 0=跟随Yaw电机相对角度；1=跟随IMU目标角度（CH4累加）
+extern float imu_yaw_target_angle;  // IMU模式目标角度，单位rad
+extern float imu_yaw_target_rate;   // CH4满量程目标角速度，单位rad/s
 extern uint8_t spinning_flag;      // 1：小陀螺运行中 0：小陀螺停止
 extern float spin_speed_tol_angle; // 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)
 extern float spin_speed_angle_offset; // 小陀螺平移方向偏置(rad)

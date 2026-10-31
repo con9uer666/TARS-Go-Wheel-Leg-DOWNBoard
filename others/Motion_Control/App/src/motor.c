@@ -199,6 +199,12 @@ RampGenerator Target_Speed_Ramp;//目标速度斜坡发生器
 
 //?标志位
 uint8_t gimbal_follow_flag = 1; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
+uint8_t yaw_follow_mode = 1;    // 0=跟随Yaw电机相对角度；1=跟随IMU目标角度（CH4累加）
+float imu_yaw_target_angle = 0.0f;
+static uint8_t imu_yaw_target_initialized = 0;
+
+// CH4满量程对应的目标角速度(rad/s)，松杆后目标角度保持不变
+float imu_yaw_target_rate = 2.5f;
 uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
 uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
 uint8_t L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
@@ -861,7 +867,32 @@ static void Step_Hit_Detect(void)
 void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
-    Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (head_forward_angle);//减的是零点
+
+    if (yaw_follow_mode == 1)
+    {
+        if (!imu_yaw_target_initialized)
+        {
+            imu_yaw_target_angle = yaw_trans[0];
+            imu_yaw_target_initialized = 1;
+        }
+
+        float stick = ((float)SBUS_CH.CH4 - 992.0f) / 800.0f;
+        if (fabsf(stick) < 0.05f)
+        {
+            stick = 0.0f;
+        }
+        imu_yaw_target_angle = easy_angle_wrapping(
+            imu_yaw_target_angle + stick * imu_yaw_target_rate * 0.002f);
+
+        // 与原Yaw电机链路保持相同定义：当前角度减目标角度
+        Yaw_motor_position = easy_angle_wrapping(yaw_trans[0] - imu_yaw_target_angle);
+        yaw_angle_PI = Yaw_motor_position;
+    }
+    else
+    {
+        imu_yaw_target_initialized = 0;
+        Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (head_forward_angle);//减的是零点
+    }
     
     //套圈处理
     if(Yaw_motor_position > PI)
@@ -1018,13 +1049,13 @@ void Standing()
     Body_Speed_Coculate();
 
     //算yaw的误差，以及根据yaw误差调整目标速度
-    if(gimbal_follow_flag == 1)
+    if(gimbal_follow_flag == 1 && yaw_follow_mode == 0)
     {
         yaw_error = 0;//云台跟随底盘时，强制yaw误差为0，让底盘完全跟随云台
         Speed_Error_Set();
     }
     
-    if(gimbal_follow_flag == 0)
+    if(gimbal_follow_flag == 0 || yaw_follow_mode == 1)
     {
         //算小陀螺的
         if(Foot_Chassis.Chassis_Mode == 1 && spinning_usable == 1)

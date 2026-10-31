@@ -25,7 +25,10 @@ void Gimbal_task(void const * argument)
     {
         if (!gimbal_enable)
         {
-            yaw_angle_PI = 0.0f;
+            if (yaw_follow_mode == 0)
+            {
+                yaw_angle_PI = 0.0f;
+            }
             down_board_yaw_output = 0.0f;
             gimbal_follow_flag = 1;
             gimbal_follow_flag_cnt = 0;
