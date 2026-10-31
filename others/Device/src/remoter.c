@@ -4,6 +4,7 @@
 #include "string.h"
 #include "cmsis_os.h"
 #include "state.h"
+#include "USER_CAN.h"
 
 
 extern uint8_t Rx_Data[BUFF_SIZE];
@@ -18,8 +19,14 @@ extern osThreadId ErrorHandle;
 extern DMA_HandleTypeDef hdma_uart5_rx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 
+extern uint8_t STOPFLAG;
+
 int Remoter_disconnected_times;
 uint8_t Error_state = 0;
+static uint32_t remoter_last_valid_tick = 0;
+static uint8_t remoter_heartbeat_lost = 1;
+
+#define REMOTER_HEARTBEAT_TIMEOUT_MS 100U
 
 SBUS_CH_Struct SBUS_CH;
 
@@ -28,6 +35,8 @@ void Sbus_Data_Count(uint8_t *buf)
     if (buf[23] == 0 && buf[0] == 0x0F)
     {
 		Remoter_disconnected_times = 0;
+        remoter_last_valid_tick = HAL_GetTick();
+        remoter_heartbeat_lost = 0;
         SBUS_CH.ConnectState = 1;
         SBUS_CH.CH1 = ((int16_t)buf[ 1] >> 0 | ((int16_t)buf[ 2] << 8 )) & 0x07FF;
         SBUS_CH.CH2 = ((int16_t)buf[ 2] >> 3 | ((int16_t)buf[ 3] << 5 )) & 0x07FF;
@@ -77,14 +86,32 @@ void Sbus_Data_Count(uint8_t *buf)
 
 void Error_Judge()
 {
-	if(SBUS_CH.SW3 == 0 || Remoter_disconnected_times >= 50)
+	if(SBUS_CH.SW3 == 0 || remoter_heartbeat_lost)
 	{
 		SBUS_CH.SW3 = 0;
-		Remoter_disconnected_times = 0;
-		if(Error_state != 1)xTaskResumeFromISR(ErrorHandle);
+		STOPFLAG = 1;
+		motor_output_enable = 0;
 		Error_state = 1;
 		System_State = Error;
 	}
+	else if (Error_state == 1 && SBUS_CH.SW3 == 1)
+	{
+		STOPFLAG = 0;
+		motor_output_enable = 1;
+		Error_state = 0;
+		System_State = Normal;
+	}
+}
+
+// æ€¥åœ
+void Remoter_Heartbeat_Tick(void)
+{
+	if ((HAL_GetTick() - remoter_last_valid_tick) >= REMOTER_HEARTBEAT_TIMEOUT_MS)
+	{
+		remoter_heartbeat_lost = 1;
+		SBUS_CH.ConnectState = 0;
+	}
+	Error_Judge();
 }
 
 void Remoter_Init()
@@ -102,18 +129,21 @@ void Remoter_Init()
 		SBUS_CH.SW3 = 1;
 	
 		Error_state = 0;
+		remoter_last_valid_tick = HAL_GetTick();
+		remoter_heartbeat_lost = 1;
+		SBUS_CH.ConnectState = 0;
 		
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
 }
 
-//ÏÂ°åµ¥¶Àµ÷ÊÔÒ£¿ØÆ÷½ÓÊÕ
+// Â°åµ¥Ò£
 // void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 // {
 
 // 	if(huart->Instance == UART5)
 // 	{
-// 			// ½ÓÊÕÍê±ÏºóÖØÆô
+// // Ïº
 // 			Sbus_Data_Count(Rx_Data);
 // 			Error_Judge();
 // 			HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
@@ -127,8 +157,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef * huart)
 	if(huart->Instance == UART5)
 	{
 		__HAL_UNLOCK(huart);
-		memset(Rx_Data, 0, BUFF_SIZE);							   // Çå³ı½ÓÊÕ»º´æ		
-		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);// ½ÓÊÕ·¢Éú´íÎóºóÖØÆô
+		memset(Rx_Data, 0, BUFF_SIZE);							   // æ³¨é‡Šå·²æ ¹æ®ä»£ç è¯­ä¹‰é‡å†™ã€‚
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);// æ³¨é‡Šå·²æ ¹æ®ä»£ç è¯­ä¹‰é‡å†™ã€‚
 	}
 	if (huart == &huart2)
     {

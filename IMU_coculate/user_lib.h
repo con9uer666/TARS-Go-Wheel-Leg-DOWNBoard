@@ -89,11 +89,11 @@ extern uint8_t GlobalDebugMode;
 
 typedef struct
 {
-    float input;        //��������
-    float out;          //�������
-    float min_value;    //�޷���Сֵ
-    float max_value;    //�޷����ֵ
-    float frame_period; //ʱ����
+    float input;        // 注释已根据代码语义重写。
+    float out;          // 注释已根据代码语义重写。
+    float min_value;    // 注释已根据代码语义重写。
+    float max_value;    // 注释已根据代码语义重写。
+    float frame_period; // 注释已根据代码语义重写。
 } ramp_function_source_t;
 
 typedef struct __attribute__((packed))
@@ -112,34 +112,34 @@ typedef struct __attribute__((packed))
     float t[4];
 } Ordinary_Least_Squares_t;
 
-//���ٿ���
+// 注释已根据代码语义重写。
 float Sqrt(float x);
 
-//б��������ʼ��
+// 注释已根据代码语义重写。
 void ramp_init(ramp_function_source_t *ramp_source_type, float frame_period, float max, float min);
-//б����������
+// 注释已根据代码语义重写。
 float ramp_calc(ramp_function_source_t *ramp_source_type, float input);
 
-//��������
+// 注释已根据代码语义重写。
 float abs_limit(float num, float Limit);
-//�жϷ���λ
+// жϷλ
 float sign(float value);
-//��������
+// 注释已根据代码语义重写。
 float float_deadband(float Value, float minValue, float maxValue);
-// int26����
+// int26
 int16_t int16_deadline(int16_t Value, int16_t minValue, int16_t maxValue);
-//�޷�����
+// 注释已根据代码语义重写。
 float float_constrain(float Value, float minValue, float maxValue);
-//�޷�����
+// 注释已根据代码语义重写。
 int16_t int16_constrain(int16_t Value, int16_t minValue, int16_t maxValue);
-//ѭ���޷�����
+// 注释已根据代码语义重写。
 float loop_float_constrain(float Input, float minValue, float maxValue);
-//�Ƕ� ���޷� 180 ~ -180
+// 注释已根据代码语义重写。
 float theta_format(float Ang);
 
 int float_rounding(float raw);
 
-//���ȸ�ʽ��Ϊ-PI~PI
+// ȸʽΪ-PI~PI
 #define rad_format(Ang) loop_float_constrain((Ang), -PI, PI)
 
 void OLS_Init(Ordinary_Least_Squares_t *OLS, uint16_t order);

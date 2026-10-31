@@ -1,19 +1,4 @@
-/**
-  ****************************(C) COPYRIGHT 2019 DJI****************************
-  * @file       pid.c/h
-  * @brief      pid实锟街猴拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷始锟斤拷锟斤拷PID锟斤拷锟姐函锟斤拷锟斤拷
-  * @note       
-  * @history
-  *  Version    Date            Author          Modification
-  *  V1.0.0     Dec-26-2018     RM              1. 锟斤拷锟�
-  *
-  @verbatim
-  ==============================================================================
-
-  ==============================================================================
-  @endverbatim
-  ****************************(C) COPYRIGHT 2019 DJI****************************
-  */
+/* * ****************************(C) COPYRIGHT 2019 DJI**************************** * @file pid.c/h * @brief pid实街猴拷始PID姐函 * @note * @history * Version Date Author Modification * V1.0.0 Dec-26-2018 RM 1. * @verbatim ============================================================================== ============================================================================== @endverbatim ****************************(C) COPYRIGHT 2019 DJI**************************** */
 
 #include "pid.h"
 #include "main.h"
@@ -40,16 +25,7 @@
   * @param[in]      max_iout: pid max iout
   * @retval         none
   */
-/**
-  * @brief          pid struct data init
-  * @param[out]     pid: PID锟结构锟斤拷锟斤拷指锟斤拷
-  * @param[in]      mode: PID_POSITION:锟斤拷通PID
-  *                 PID_DELTA: 锟斤拷锟絇ID
-  * @param[in]      PID: 0: kp, 1: ki, 2:kd
-  * @param[in]      max_out: pid锟斤拷锟斤拷锟斤拷
-  * @param[in]      max_iout: pid锟斤拷锟斤拷锟斤拷锟斤拷锟�
-  * @retval         none
-  */
+/* * * @brief pid struct data init * @param[out] pid: PID结构指 * @param[in] mode: PID_POSITION:通PID * PID_DELTA: 絇ID * @param[in] PID: 0: kp, 1: ki, 2:kd * @param[in] max_out: pid * @param[in] max_iout: pid * @retval none */
 void PID_init(pid_type_def *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, fp32 max_iout)
 {
     if (pid == NULL || PID == NULL)
@@ -73,13 +49,7 @@ void PID_init(pid_type_def *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, 
   * @param[in]      set: set point
   * @retval         pid out
   */
-/**
-  * @brief          pid锟斤拷锟斤拷
-  * @param[out]     pid: PID锟结构锟斤拷锟斤拷指锟斤拷
-  * @param[in]      ref: 锟斤拷锟斤拷锟斤拷锟斤拷
-  * @param[in]      set: 锟借定值
-  * @retval         pid锟斤拷锟�
-  */
+/* * * @brief pid * @param[out] pid: PID结构指 * @param[in] ref: * @param[in] set: 借定值 * @retval pid */
 fp32 PID_calc(pid_type_def *pid, fp32 ref, fp32 set)
 {
     if (pid == NULL)
@@ -123,11 +93,7 @@ fp32 PID_calc(pid_type_def *pid, fp32 ref, fp32 set)
   * @param[out]     pid: PID struct data point
   * @retval         none
   */
-/**
-  * @brief          pid 锟斤拷锟斤拷锟斤拷
-  * @param[out]     pid: PID锟结构锟斤拷锟斤拷指锟斤拷
-  * @retval         none
-  */
+/* * * @brief pid * @param[out] pid: PID结构指 * @retval none */
 void PID_clear(pid_type_def *pid)
 {
     if (pid == NULL)

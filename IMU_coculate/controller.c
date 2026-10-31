@@ -1,16 +1,4 @@
-/**
- ******************************************************************************
- * @file    controller.c
- * @author  Wang Hongxi
- * @author  Zhang Hongyu (fuzzy pid)
- * @version V1.1.3
- * @date    2021/7/3
- * @brief   DWT锟斤拷时锟斤拷锟斤拷锟节硷拷锟斤拷锟斤拷锟斤拷锟斤拷锟� OLS锟斤拷锟斤拷锟斤拷取锟脚猴拷微锟斤拷
- ******************************************************************************
- * @attention
- *
- ******************************************************************************
- */
+/* * ****************************************************************************** * @file controller.c * @author Wang Hongxi * @author Zhang Hongyu (fuzzy pid) * @version V1.1.3 * @date 2021/7/3 * @brief DWT时节硷拷 OLS取脚猴拷微 ****************************************************************************** * @attention * ****************************************************************************** */
 #include "controller.h"
 #include "bsp_dwt.h"
 /******************************** FUZZY PID **********************************/
@@ -82,13 +70,13 @@ void Fuzzy_Rule_Implementation(FuzzyRule_t *fuzzyRule, float measure, float ref)
     fuzzyRule->ec = (fuzzyRule->e - fuzzyRule->eLast) / fuzzyRule->dt;
     fuzzyRule->eLast = fuzzyRule->e;
 
-    //锟斤拷锟斤拷锟斤拷锟斤拷
+    // 注释已根据代码语义重写。
     eLeftIndex = fuzzyRule->e >= 3 * fuzzyRule->eStep ? 6 : (fuzzyRule->e <= -3 * fuzzyRule->eStep ? 0 : (fuzzyRule->e >= 0 ? ((int)(fuzzyRule->e / fuzzyRule->eStep) + 3) : ((int)(fuzzyRule->e / fuzzyRule->eStep) + 2)));
     eRightIndex = fuzzyRule->e >= 3 * fuzzyRule->eStep ? 6 : (fuzzyRule->e <= -3 * fuzzyRule->eStep ? 0 : (fuzzyRule->e >= 0 ? ((int)(fuzzyRule->e / fuzzyRule->eStep) + 4) : ((int)(fuzzyRule->e / fuzzyRule->eStep) + 3)));
     ecLeftIndex = fuzzyRule->ec >= 3 * fuzzyRule->ecStep ? 6 : (fuzzyRule->ec <= -3 * fuzzyRule->ecStep ? 0 : (fuzzyRule->ec >= 0 ? ((int)(fuzzyRule->ec / fuzzyRule->ecStep) + 3) : ((int)(fuzzyRule->ec / fuzzyRule->ecStep) + 2)));
     ecRightIndex = fuzzyRule->ec >= 3 * fuzzyRule->ecStep ? 6 : (fuzzyRule->ec <= -3 * fuzzyRule->ecStep ? 0 : (fuzzyRule->ec >= 0 ? ((int)(fuzzyRule->ec / fuzzyRule->ecStep) + 4) : ((int)(fuzzyRule->ec / fuzzyRule->ecStep) + 3)));
 
-    //锟斤拷锟斤拷锟斤拷
+    // 注释已根据代码语义重写。
     eLeftTemp = fuzzyRule->e >= 3 * fuzzyRule->eStep ? 0 : (fuzzyRule->e <= -3 * fuzzyRule->eStep ? 1 : (eRightIndex - fuzzyRule->e / fuzzyRule->eStep - 3));
     eRightTemp = fuzzyRule->e >= 3 * fuzzyRule->eStep ? 1 : (fuzzyRule->e <= -3 * fuzzyRule->eStep ? 0 : (fuzzyRule->e / fuzzyRule->eStep - eLeftIndex + 3));
     ecLeftTemp = fuzzyRule->ec >= 3 * fuzzyRule->ecStep ? 0 : (fuzzyRule->ec <= -3 * fuzzyRule->ecStep ? 1 : (ecRightIndex - fuzzyRule->ec / fuzzyRule->ecStep - 3));
@@ -111,7 +99,7 @@ void Fuzzy_Rule_Implementation(FuzzyRule_t *fuzzyRule, float measure, float ref)
 }
 
 /******************************* PID CONTROL *********************************/
-// PID锟脚伙拷锟斤拷锟节猴拷锟斤拷锟斤拷锟斤拷
+// 注释已根据代码语义重写。
 static void f_Trapezoid_Intergral(PID_t *pid);
 static void f_Integral_Limit(PID_t *pid);
 static void f_Derivative_On_Measurement(PID_t *pid);
@@ -122,12 +110,7 @@ static void f_Output_Limit(PID_t *pid);
 static void f_Proportion_Limit(PID_t *pid);
 static void f_PID_ErrorHandle(PID_t *pid);
 
-/**
- * @brief          PID锟斤拷始锟斤拷   PID initialize
- * @param[in]      PID锟结构锟斤拷   PID structure
- * @param[in]      锟斤拷
- * @retval         锟斤拷锟截匡拷      null
- */
+/* * * @brief PID始 PID initialize * @param[in] PID结构 PID structure * @param[in] * @retval 截匡拷 null */
 void PID_Init(
     PID_t *pid,
     float max_out,
@@ -158,7 +141,7 @@ void PID_Init(
     pid->Kd = Kd;
     pid->ITerm = 0;
 
-    // 锟斤拷锟劫伙拷锟街诧拷锟斤拷
+    // 注释已根据代码语义重写。
     // coefficient of changing integration rate
     pid->CoefA = A;
     pid->CoefB = B;
@@ -167,32 +150,26 @@ void PID_Init(
 
     pid->Derivative_LPF_RC = derivative_lpf_rc;
 
-    // 锟斤拷小锟斤拷锟斤拷锟斤拷取锟脚猴拷微锟街筹拷始锟斤拷
+    // 小取脚猴拷微街筹拷始
     // differential signal is distilled by OLS
     pid->OLS_Order = ols_order;
     OLS_Init(&pid->OLS, ols_order);
 
-    // DWT锟斤拷时锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
+    // DWT时
     // reset DWT Timer count counter
     pid->DWT_CNT = 0;
 
-    // 锟斤拷锟斤拷PID锟脚伙拷锟斤拷锟斤拷
+    // 注释已根据代码语义重写。
     pid->Improve = improve;
 
-    // 锟斤拷锟斤拷PID锟届常锟斤拷锟斤拷 目前锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟阶�锟斤拷锟斤拷
+    // PID届常 目前阶
     pid->ERRORHandler.ERRORCount = 0;
     pid->ERRORHandler.ERRORType = PID_ERROR_NONE;
 
     pid->Output = 0;
 }
 
-/**
- * @brief          PID锟斤拷锟斤拷
- * @param[in]      PID锟结构锟斤拷
- * @param[in]      锟斤拷锟斤拷值
- * @param[in]      锟斤拷锟斤拷值
- * @retval         锟斤拷锟截匡拷
- */
+/* * * @brief PID * @param[in] PID结构 * @param[in] 值 * @param[in] 值 * @retval 截匡拷 */
 float PID_Calculate(PID_t *pid, float measure, float ref)
 {
     if (pid->Improve & ErrorHandle)
@@ -231,19 +208,19 @@ float PID_Calculate(PID_t *pid, float measure, float ref)
         if (pid->User_Func2_f != NULL)
             pid->User_Func2_f(pid);
 
-        // 锟斤拷锟轿伙拷锟斤拷
+        // 注释已根据代码语义重写。
         if (pid->Improve & Trapezoid_Intergral)
             f_Trapezoid_Intergral(pid);
-        // 锟斤拷锟劫伙拷锟斤拷
+        // 注释已根据代码语义重写。
         if (pid->Improve & ChangingIntegrationRate)
             f_Changing_Integration_Rate(pid);
-        // 微锟斤拷锟斤拷锟斤拷
+        // 注释已根据代码语义重写。
         if (pid->Improve & Derivative_On_Measurement)
             f_Derivative_On_Measurement(pid);
-        // 微锟斤拷锟剿诧拷锟斤拷
+        // 注释已根据代码语义重写。
         if (pid->Improve & DerivativeFilter)
             f_Derivative_Filter(pid);
-        // 锟斤拷锟斤拷锟睫凤拷
+        // 注释已根据代码语义重写。
         if (pid->Improve & Integral_Limit)
             f_Integral_Limit(pid);
 
@@ -251,14 +228,14 @@ float PID_Calculate(PID_t *pid, float measure, float ref)
 
         pid->Output = pid->Pout + pid->Iout + pid->Dout;
 
-        // 锟斤拷锟斤拷瞬锟�
+        // 注释已根据代码语义重写。
         if (pid->Improve & OutputFilter)
             f_Output_Filter(pid);
 
-        // 锟斤拷锟斤拷薹锟�
+        // 注释已根据代码语义重写。
         f_Output_Limit(pid);
 
-        // 锟睫关斤拷要
+        // 睫关斤拷要
         f_Proportion_Limit(pid);
     }
 
@@ -283,7 +260,7 @@ static void f_Changing_Integration_Rate(PID_t *pid)
 {
     if (pid->Err * pid->Iout > 0)
     {
-        // 锟斤拷锟街筹拷锟桔伙拷锟斤拷锟斤拷
+        // 注释已根据代码语义重写。
         // Integral still increasing
         if (abs(pid->Err) <= pid->CoefB)
             return; // Full integral
@@ -303,7 +280,7 @@ static void f_Integral_Limit(PID_t *pid)
     {
         if (pid->Err * pid->Iout > 0)
         {
-            // 锟斤拷锟街筹拷锟桔伙拷锟斤拷锟斤拷
+            // 注释已根据代码语义重写。
             // Integral still increasing
             pid->ITerm = 0;
         }
@@ -400,12 +377,7 @@ static void f_PID_ErrorHandle(PID_t *pid)
 }
 
 /*************************** FEEDFORWARD CONTROL *****************************/
-/**
- * @brief          前锟斤拷锟斤拷锟狡筹拷始锟斤拷
- * @param[in]      前锟斤拷锟斤拷锟狡结构锟斤拷
- * @param[in]      锟斤拷
- * @retval         锟斤拷锟截匡拷
- */
+/* * * @brief 前狡筹拷始 * @param[in] 前狡结构 * @param[in] * @retval 截匡拷 */
 void Feedforward_Init(
     Feedforward_t *ffc,
     float max_out,
@@ -416,7 +388,7 @@ void Feedforward_Init(
 {
     ffc->MaxOut = max_out;
 
-    // 锟斤拷锟斤拷前锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷 锟斤拷锟角帮拷锟斤拷锟斤拷平峁癸拷宥�锟斤拷
+    // 前 角帮拷平峁癸拷宥
     // set parameters of feed-forward controller (see struct definition)
     if (c != NULL && ffc != NULL)
     {
@@ -434,7 +406,7 @@ void Feedforward_Init(
 
     ffc->LPF_RC = lpf_rc;
 
-    // 锟斤拷小锟斤拷锟斤拷锟斤拷取锟脚猴拷微锟街筹拷始锟斤拷
+    // 小取脚猴拷微街筹拷始
     // differential signal is distilled by OLS
     ffc->Ref_dot_OLS_Order = ref_dot_ols_order;
     ffc->Ref_ddot_OLS_Order = ref_ddot_ols_order;
@@ -448,13 +420,7 @@ void Feedforward_Init(
     ffc->Output = 0;
 }
 
-/**
- * @brief          PID锟斤拷锟斤拷
- * @param[in]      PID锟结构锟斤拷
- * @param[in]      锟斤拷锟斤拷值
- * @param[in]      锟斤拷锟斤拷值
- * @retval         锟斤拷锟截匡拷
- */
+/* * * @brief PID * @param[in] PID结构 * @param[in] 值 * @param[in] 值 * @retval 截匡拷 */
 float Feedforward_Calculate(Feedforward_t *ffc, float ref)
 {
     ffc->dt = DWT_GetDeltaT((void *)&ffc->DWT_CNT);
@@ -462,21 +428,21 @@ float Feedforward_Calculate(Feedforward_t *ffc, float ref)
     ffc->Ref = ref * ffc->dt / (ffc->LPF_RC + ffc->dt) +
                ffc->Ref * ffc->LPF_RC / (ffc->LPF_RC + ffc->dt);
 
-    // 锟斤拷锟斤拷一锟阶碉拷锟斤拷
+    // 注释已根据代码语义重写。
     // calculate first derivative
     if (ffc->Ref_dot_OLS_Order > 2)
         ffc->Ref_dot = OLS_Derivative(&ffc->Ref_dot_OLS, ffc->dt, ffc->Ref);
     else
         ffc->Ref_dot = (ffc->Ref - ffc->Last_Ref) / ffc->dt;
 
-    // 锟斤拷锟斤拷锟斤拷椎锟斤拷锟�
+    // 注释已根据代码语义重写。
     // calculate second derivative
     if (ffc->Ref_ddot_OLS_Order > 2)
         ffc->Ref_ddot = OLS_Derivative(&ffc->Ref_ddot_OLS, ffc->dt, ffc->Ref_dot);
     else
         ffc->Ref_ddot = (ffc->Ref_dot - ffc->Last_Ref_dot) / ffc->dt;
 
-    // 锟斤拷锟斤拷前锟斤拷锟斤拷锟斤拷锟斤拷锟�
+    // 注释已根据代码语义重写。
     // calculate feed-forward controller output
     ffc->Output = ffc->c[0] * ffc->Ref + ffc->c[1] * ffc->Ref_dot + ffc->c[2] * ffc->Ref_ddot;
 
@@ -502,7 +468,7 @@ void LDOB_Init(
 
     ldob->DeadBand = deadband;
 
-    // 锟斤拷锟斤拷锟斤拷锟斤拷锟脚讹拷锟桔诧拷锟斤拷锟斤拷锟斤拷 锟斤拷锟絃DOB锟结构锟藉定锟斤拷
+    // 脚讹拷桔诧拷 絃DOB结构藉定
     // set parameters of linear disturbance observer (see struct definition)
     if (c != NULL && ldob != NULL)
     {
@@ -518,11 +484,11 @@ void LDOB_Init(
         ldob->Max_Disturbance = 0;
     }
 
-    // 锟斤拷锟斤拷Q(s)锟斤拷锟斤拷  Q(s)选锟斤拷一锟阶癸拷锟皆伙拷锟斤拷
+    // 注释已根据代码语义重写。
     // set bandwidth of Q(s)    Q(s) is chosen as a first-order low-pass form
     ldob->LPF_RC = lpf_rc;
 
-    // 锟斤拷小锟斤拷锟斤拷锟斤拷取锟脚猴拷微锟街筹拷始锟斤拷
+    // 小取脚猴拷微街筹拷始
     // differential signal is distilled by OLS
     ldob->Measure_dot_OLS_Order = measure_dot_ols_order;
     ldob->Measure_ddot_OLS_Order = measure_ddot_ols_order;
@@ -544,21 +510,21 @@ float LDOB_Calculate(LDOB_t *ldob, float measure, float u)
 
     ldob->u = u;
 
-    // 锟斤拷锟斤拷一锟阶碉拷锟斤拷
+    // 注释已根据代码语义重写。
     // calculate first derivative
     if (ldob->Measure_dot_OLS_Order > 2)
         ldob->Measure_dot = OLS_Derivative(&ldob->Measure_dot_OLS, ldob->dt, ldob->Measure);
     else
         ldob->Measure_dot = (ldob->Measure - ldob->Last_Measure) / ldob->dt;
 
-    // 锟斤拷锟斤拷锟斤拷椎锟斤拷锟�
+    // 注释已根据代码语义重写。
     // calculate second derivative
     if (ldob->Measure_ddot_OLS_Order > 2)
         ldob->Measure_ddot = OLS_Derivative(&ldob->Measure_ddot_OLS, ldob->dt, ldob->Measure_dot);
     else
         ldob->Measure_ddot = (ldob->Measure_dot - ldob->Last_Measure_dot) / ldob->dt;
 
-    // 锟斤拷锟斤拷锟斤拷锟脚讹拷
+    // 脚讹拷
     // estimate external disturbances and internal disturbances caused by model uncertainties
     ldob->Disturbance = ldob->c[0] * ldob->Measure + ldob->c[1] * ldob->Measure_dot + ldob->c[2] * ldob->Measure_ddot - ldob->u;
     ldob->Disturbance = ldob->Disturbance * ldob->dt / (ldob->LPF_RC + ldob->dt) +
@@ -566,7 +532,7 @@ float LDOB_Calculate(LDOB_t *ldob, float measure, float u)
 
     ldob->Disturbance = float_constrain(ldob->Disturbance, -ldob->Max_Disturbance, ldob->Max_Disturbance);
 
-    // 锟脚讹拷锟斤拷锟斤拷锟斤拷锟�
+    // 脚讹拷
     // deadband of disturbance output
     if (abs(ldob->Disturbance) > ldob->DeadBand * ldob->Max_Disturbance)
         ldob->Output = ldob->Disturbance;

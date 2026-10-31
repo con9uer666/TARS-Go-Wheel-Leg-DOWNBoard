@@ -12,6 +12,7 @@
 #include "Gimbal.h"
 #include "Motor_Drv.h"
 #include "tfmini.h"
+#include "remoter.h"
 
 extern uint8_t usart1RxBuf[JUDGE_MAX_RX_LENGTH];
 uint8_t usart7RxBuf[128];
@@ -20,6 +21,8 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_uart7_rx;
 extern DMA_HandleTypeDef hdma_usart10_rx;
+extern DMA_HandleTypeDef hdma_uart5_rx;
+extern uint8_t Rx_Data[BUFF_SIZE];
 extern osThreadId ErrorHandle;
 
 uint8_t rs485_isvalid = 0;
@@ -213,6 +216,17 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		Detect_Update(DeviceID_Judge);
 	}
 
+	if (huart == &huart5)
+	{
+		if (Size >= 25U)
+		{
+			Sbus_Data_Count(Rx_Data);
+			Error_Judge();
+		}
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
+		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
+	}
+
 	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
 	{
 		//启动下一次UART1接收
@@ -269,14 +283,14 @@ void OS_Board2BoardCallback(void const *argument)
 			}
 			receive_times = 0;
 		}
-		Task_B2B_Callback();
+		/* Upper board removed: board-to-board link no longer triggers stop. */
+		Remoter_Heartbeat_Tick();
 
 		if(B2B_time_cnt >= 250)
 		{
 			if(B2B_offline_cnt == pre_B2B_offline_cnt)
 			{
 				B2B_offline_flag = 1;
-				STOPFLAG = 1;
 			}
 			pre_B2B_offline_cnt = B2B_offline_cnt;
 			B2B_time_cnt = 0;
