@@ -130,6 +130,8 @@ typedef struct _Key
 }Key;
 
 extern RC_TypeDef rcInfo;
+/* 板间通信总开关：0=关闭UART2和485离线急停，1=启用 */
+extern uint8_t b2b_enable;
 extern uint8_t STOPFLAG;
 extern uint8_t FEEDBACK;
 extern uint8_t upstairs_flag;

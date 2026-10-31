@@ -103,7 +103,7 @@ void Error_Judge()
 	}
 }
 
-// 急停
+// 遥控器掉线检测
 void Remoter_Heartbeat_Tick(void)
 {
 	if ((HAL_GetTick() - remoter_last_valid_tick) >= REMOTER_HEARTBEAT_TIMEOUT_MS)

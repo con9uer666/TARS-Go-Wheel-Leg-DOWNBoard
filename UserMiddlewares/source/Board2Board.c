@@ -37,6 +37,7 @@ int16_t fric_speed_r_rpm = 0;  // 上板下发，byte49~50，int16 小端，单�
 
 #define EN_B2B_TASK		  // 使能任务
 uint8_t usart2RxBuf[256]; // 串口2缓冲区
+uint8_t b2b_enable = 0;
 uint8_t STOPFLAG = 0;	// 停止标志，1为停止，0为正常
 uint8_t FEEDBACK = 0;
 int16_t fricMotor_left_speed;
@@ -58,8 +59,11 @@ uint8_t UP_Leg;
 // 板间通信初始化
 void B2B_Init()
 {
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart2, usart2RxBuf, sizeof(usart2RxBuf));
-	__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+	if (b2b_enable)
+	{
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart2, usart2RxBuf, sizeof(usart2RxBuf));
+		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+	}
 
 	HAL_UARTEx_ReceiveToIdle_DMA(&huart7, usart7RxBuf, sizeof(usart7RxBuf));
 	__HAL_DMA_DISABLE_IT(&hdma_uart7_rx, DMA_IT_HT);
@@ -68,8 +72,12 @@ void B2B_Init()
 	__HAL_DMA_DISABLE_IT(&hdma_usart10_rx, DMA_IT_HT);
 }
 
+// 板间通信丢失回调
 void B2B_LostCallback()
 {
+	if (!b2b_enable)
+		return;
+
 		rs485_cnt++;
 		B2B_Init();
 		if (rs485_cnt <= 2)
@@ -227,7 +235,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
 	}
 
-	if (huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
+	if (b2b_enable && huart == &huart2 && huart->ReceptionType == HAL_UART_RECEPTION_STANDARD)
 	{
 		//启动下一次UART1接收
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart1,usart1RxBuf,sizeof(usart1RxBuf));
@@ -240,6 +248,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		detectList[DeviceID_B2B].isLost = 0;
 
 		B2B_offline_cnt ++;
+		B2B_offline_flag = 0;
 	}
 	//功率计模块
 	if (huart == &huart7)
@@ -276,21 +285,31 @@ void OS_Board2BoardCallback(void const *argument)
 		if(times >= 100)
 		{
 			times = 0;
-			if(receive_times <= 5)
+			if(b2b_enable && receive_times <= 5)
 			{
 				HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));
 				__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
 			}
 			receive_times = 0;
 		}
-		/* Upper board removed: board-to-board link no longer triggers stop. */
+		if (b2b_enable)
+		{
+			Task_B2B_Callback();
+		}
+		else
+		{
+			B2B_offline_flag = 0;
+		}
+
+		// 遥控器掉线检测
 		Remoter_Heartbeat_Tick();
 
-		if(B2B_time_cnt >= 250)
+		if(b2b_enable && B2B_time_cnt >= 250)
 		{
 			if(B2B_offline_cnt == pre_B2B_offline_cnt)
 			{
 				B2B_offline_flag = 1;
+				STOPFLAG = 1;
 			}
 			pre_B2B_offline_cnt = B2B_offline_cnt;
 			B2B_time_cnt = 0;
