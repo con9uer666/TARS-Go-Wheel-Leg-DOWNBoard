@@ -44,6 +44,7 @@ extern uint8_t yaw_follow_mode;     // 0=跟随Yaw电机相对角度；1=跟随I
 extern float imu_yaw_target_angle;  // IMU模式目标角度，单位rad
 extern float imu_yaw_target_rate;   // CH4满量程目标角速度，单位rad/s
 extern uint8_t spinning_flag;      // 1：小陀螺运行中 0：小陀螺停止
+extern uint8_t spinning_enable;    // 0=禁止小陀螺；1=允许小陀螺
 extern float spin_speed_tol_angle; // 小陀螺时允许触发平移的yaw_angle_PI误差窗口(rad)
 extern float spin_speed_angle_offset; // 小陀螺平移方向偏置(rad)
 extern uint8_t jump_mode;            // 只读：当前是否处于跳跃中，由 Standing 内部根据 jump_cmd / jump_locked 计算

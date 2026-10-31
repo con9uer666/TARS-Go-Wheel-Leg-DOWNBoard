@@ -206,6 +206,7 @@ static uint8_t imu_yaw_target_initialized = 0;
 // CH4满量程对应的目标角速度(rad/s)，松杆后目标角度保持不变
 float imu_yaw_target_rate = 2.5f;
 uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
+uint8_t spinning_enable = 0; // 0=禁止小陀螺；1=允许小陀螺
 uint8_t spinning_usable = 1; // 小陀螺是否可用，0为不可用，1为可用
 uint8_t L_Leg_State, R_Leg_State;   //收腿阶段，0为收腿中，1为起立过程中收腿完成，2为上台阶过程中收腿完成
 
@@ -1058,7 +1059,7 @@ void Standing()
     if(gimbal_follow_flag == 0 || yaw_follow_mode == 1)
     {
         //算小陀螺的
-        if(Foot_Chassis.Chassis_Mode == 1 && spinning_usable == 1)
+        if(Foot_Chassis.Chassis_Mode == 1 && spinning_enable == 1 && spinning_usable == 1)
         {
             spinning_up();
             spinning_flag = 1;
