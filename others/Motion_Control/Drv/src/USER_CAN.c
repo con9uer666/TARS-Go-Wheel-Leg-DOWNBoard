@@ -12,6 +12,7 @@
 #include "wattmeter.h"
 #include "buzzer.h"
 #include "Self_Righting.h"
+#include "Gimbal.h"
 
 extern uint8_t first_run;
 extern uint8_t start_mode;
@@ -119,7 +120,11 @@ void Error_Buzzer_Tick(void)
 
     uint8_t any_err = L_DM8009[0].last_error_code | L_DM8009[1].last_error_code
                     | R_DM8009[0].last_error_code | R_DM8009[1].last_error_code
-                    | Yaw_DM4310.last_error_code  | Shooter_DM2325.last_error_code;
+                    | Shooter_DM2325.last_error_code;
+    if (gimbal_enable)
+    {
+        any_err |= Yaw_DM4310.last_error_code;
+    }
     if (any_err != 0)
     {
         Buzzer_Tone_Max(ERROR_BUZZER_FREQ_HZ);
@@ -362,7 +367,7 @@ void CAN_Transmit(void const * argument)
 
 			// 更新掉线状态
 			lost_8009_3508 = any_8009_3508_lost;
-			lost_4310      = (cur_4310 == last_rx_cnt_4310);
+			lost_4310      = gimbal_enable && (cur_4310 == last_rx_cnt_4310);
 			lost_2325      = (cur_2325 == last_rx_cnt_2325);
 
 			// 保存本次计数值用于下次对比
@@ -393,7 +398,7 @@ void CAN_Transmit(void const * argument)
 		/*========== 按优先级发送电机指令 ==========*/
 		// 优先级：4310掉线 > 8009/3508掉线 > 2325掉线 > 正常
 		// 每条DM控制帧发送前用 DM_Motor_TxPreempt 守卫：若该电机pending清错/使能，则替换发送
-		if (lost_4310)
+		if (gimbal_enable && lost_4310)
 		{
 			// 4310掉线：全部电机输出零力矩
 			DJI_Motor_Torque_Ctrl(&hfdcan2, 0x200, 0);
@@ -446,8 +451,12 @@ void CAN_Transmit(void const * argument)
 				}
 			}
 			osDelay(1);
-			// 4310正常时，始终发送4310指令
-			if (DM_Motor_TxPreempt(&hfdcan3, &Yaw_DM4310))
+			// 云台关闭时持续发送零力矩，确保4310停机；开启时才执行云台控制
+			if (!gimbal_enable)
+			{
+				DM_Motor_MIT_Torque_ctrl(&hfdcan3, Yaw_DM4310, 0);
+			}
+			else if (DM_Motor_TxPreempt(&hfdcan3, &Yaw_DM4310))
 			{
 				if(gimbal_follow_flag == 1)
 				{

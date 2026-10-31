@@ -7,6 +7,8 @@
 
 user_pid_t gimbal_yaw_angle_pid;//云台偏航角度环pid
 
+uint8_t gimbal_enable = 0;
+
 float yaw_angle_PI = 0.0f;//标零处理后的yaw角度，单位rad，范围在[-PI, PI]内
 float head_forward_angle = -2.773;//正视前方的yaw电机角度
 
@@ -21,6 +23,16 @@ void Gimbal_task(void const * argument)
     TickType_t xLastWakeTime = xTaskGetTickCount(); 
     for(;;)
     {
+        if (!gimbal_enable)
+        {
+            yaw_angle_PI = 0.0f;
+            down_board_yaw_output = 0.0f;
+            gimbal_follow_flag = 1;
+            gimbal_follow_flag_cnt = 0;
+            osDelayUntil(&xLastWakeTime, 2);
+            continue;
+        }
+
         //计算标零后角度值
         yaw_angle_PI = easy_angle_normalize(head_forward_angle, Yaw_DM4310.Rx_Data.Position);
 
