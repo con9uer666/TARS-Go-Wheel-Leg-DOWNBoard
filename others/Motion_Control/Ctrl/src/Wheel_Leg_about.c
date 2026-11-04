@@ -147,6 +147,10 @@ void Speed_Error_Set()
         else if(base_power_limit >= 100.0f)   speed_limit = 2.5f;
         else                                  speed_limit = 2.1f + (base_power_limit - 60.0f) * 0.01f;
     }
+    /* DR16 ch[1]: right vertical, positive forward, negative backward. */
+    Foot_Chassis.Target_Vx = 0.0f;
+    Foot_Chassis.Target_Vy = (SBUS_CH.ConnectState && SBUS_CH.SW3 && !sit_mode_enable)
+        ? ((float)SBUS_CH.CH2 - 992.0f) / 800.0f * speed_limit : 0.0f;
     if(spinning_flag == 1)
     {
         speed_limit = 4.0f;     //小陀螺时限制平移最大速度

@@ -239,7 +239,7 @@ uint8_t jump_mode = 0;
 // B2B byte51 原始跳跃指令，由 Board2Board.c 写入
 uint8_t jump_cmd = 0;
 // 跳跃使能：=1 允许跳跃，=0 即使 jump_mode 已置位也不执行跳跃动作（一票否决）
-uint8_t jump_enable = 1;
+uint8_t jump_enable = 0;
 // 跳跃蜂鸣器独占标志：跳跃期间置1，Error_Buzzer_Tick 看到它必须让位
 uint8_t g_jump_buzzer_active = 0;
 // 跳跃锁：起跳后检测到离地时上锁，期间 jump_mode 强制为 0；jump_cmd 回 0 时解锁

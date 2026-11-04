@@ -210,8 +210,6 @@ void B2B_ParseUsart() // 先发低字节
 }
 
 uint16_t B2B_offline_cnt = 0;
-uint16_t pre_B2B_offline_cnt = 0;
-uint8_t B2B_time_cnt = 0;
 uint8_t B2B_offline_flag = 0;
 
 int aaaa;
@@ -226,11 +224,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 	if (huart == &huart5)
 	{
-		if (Size >= 25U)
-		{
-			Sbus_Data_Count(Rx_Data);
-			Error_Judge();
-		}
+		Remoter_Receive(Rx_Data, Size);
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
 	}
@@ -304,17 +298,7 @@ void OS_Board2BoardCallback(void const *argument)
 		// 遥控器掉线检测
 		Remoter_Heartbeat_Tick();
 
-		if(b2b_enable && B2B_time_cnt >= 250)
-		{
-			if(B2B_offline_cnt == pre_B2B_offline_cnt)
-			{
-				B2B_offline_flag = 1;
-				STOPFLAG = 1;
-			}
-			pre_B2B_offline_cnt = B2B_offline_cnt;
-			B2B_time_cnt = 0;
-		}
-		B2B_time_cnt ++;
+		B2B_offline_flag = 0; // B2B offline protection disabled.
 
 		osDelay(2);
 	}

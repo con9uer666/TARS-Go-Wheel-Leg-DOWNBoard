@@ -59,7 +59,7 @@ void Detect_InitAll()
 	
 	Detect_InitDevice(DeviceID_TrigMotor, 50, NULL, NULL);
 
-	Detect_InitDevice(DeviceID_B2B, 50, B2B_LostCallback, NULL);
+	/* B2B offline monitoring disabled. */
 
 	Detect_InitDevice(DeviceID_Judge, 500, Judge_UartLostCallback, NULL);
 }
@@ -74,6 +74,7 @@ void Task_Detect_Callback()
 	{
 		for (uint8_t id = 0; id < DETECT_DEVICE_NUM; id++)
 		{
+			if (id == DeviceID_B2B) continue;
 			// 判定是否掉线
 			if (presentTime - detectList[id].lastRecieveTime > detectList[id].maxInterval)
 			{

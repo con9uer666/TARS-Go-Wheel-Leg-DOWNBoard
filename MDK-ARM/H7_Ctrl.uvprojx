@@ -885,6 +885,11 @@
               <FilePath>..\others\Device\src\LED.c</FilePath>
             </File>
             <File>
+              <FileName>dr16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\others\Device\src\dr16.c</FilePath>
+            </File>
+            <File>
               <FileName>remoter.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\others\Device\src\remoter.c</FilePath>

@@ -2,6 +2,7 @@
 #define REMOTER_H
 
 #include <main.h>
+#include "dr16.h"
 
 #define BUFF_SIZE	100
 
@@ -38,7 +39,8 @@ extern SBUS_CH_Struct SBUS_CH;
 
 
 void Remoter_Init(void);
-void Sbus_Data_Count(uint8_t *buf);
+extern DR16_Data_t DR16_Data;
+void Remoter_Receive(const uint8_t *buf, uint16_t size);
 void Error_Judge(void);
 void Remoter_Heartbeat_Tick(void);
 
