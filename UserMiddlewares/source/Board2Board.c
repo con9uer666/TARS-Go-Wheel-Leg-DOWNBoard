@@ -265,7 +265,7 @@ void Task_B2B_Callback()
 	{
 		FEEDBACK = 1;
 		B2B_ParseUsart();
-		osThreadResume(ErrorHandle); // 恢复错误任务 饿死其他任务
+		osSignalSet(ErrorHandle, 1); // 唤醒错误任务，饿死其他任务
 	}
 }
 int times;

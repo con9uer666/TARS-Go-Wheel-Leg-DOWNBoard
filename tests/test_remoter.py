@@ -18,7 +18,7 @@ uint32_t HAL_GetTick(void);
 int HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *, uint8_t *, uint16_t);
 ''')
     (tmp / 'usart.h').write_text('#include "main.h"\nextern UART_HandleTypeDef huart5, huart2;\n')
-    (tmp / 'cmsis_os.h').write_text('typedef void *osThreadId;\n')
+    (tmp / 'cmsis_os.h').write_text('#include <stdint.h>\ntypedef void *osThreadId;\nint32_t osSignalSet(osThreadId, int32_t);\n')
     (tmp / 'USER_CAN.h').write_text('#include <stdint.h>\nextern uint8_t motor_output_enable;\n')
     (tmp / 'state.h').write_bytes((root / 'others/State.h').read_bytes())
     (tmp / 'motor.h').write_text('#pragma once\n#include <stdint.h>\ntypedef struct { float Target_Vx, Target_Vy; uint8_t Target_Leg_State, Chassis_Mode; } Foot_Chassis_t;\nextern Foot_Chassis_t Foot_Chassis;\nextern uint8_t spinning_enable, jump_enable, jump_cmd;\n')
@@ -36,6 +36,15 @@ UART_HandleTypeDef huart5, huart2;
 enum State System_State;
 uint8_t State_changed;
 static uint32_t tick;
+void *ErrorHandle = (void *)1;
+static unsigned emergency_signals;
+int32_t osSignalSet(void *handle, int32_t signal)
+{
+    assert(handle == ErrorHandle && signal == 1);
+    assert(STOPFLAG && !motor_output_enable);
+    ++emergency_signals;
+    return 0;
+}
 uint32_t HAL_GetTick(void) { return tick; }
 int HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *h, uint8_t *b, uint16_t s)
 { (void)h; (void)b; (void)s; return 0; }
@@ -45,8 +54,9 @@ int main(void)
     uint8_t frame[18] = {0,4,32,0,1,0x68,0,0,0,0,0,0,0,0,0,0,0,4};
     Remoter_Init();
     assert(STOPFLAG && !motor_output_enable);
-    Remoter_Receive(frame, 18);
-    assert(STOPFLAG && !motor_output_enable && SBUS_CH.ConnectState);
+    assert(emergency_signals == 0);
+    Remoter_Heartbeat_Tick(); /* startup grace must not wake the error task */
+    assert(emergency_signals == 0);
     frame[5] = 0x78; /* right middle: allow output; left remains up */
     Remoter_Receive(frame, 18);
     assert(!STOPFLAG && motor_output_enable && System_State == Normal);
@@ -100,11 +110,32 @@ int main(void)
     tick = 100;
     Remoter_Heartbeat_Tick();
     assert(STOPFLAG && !motor_output_enable && !SBUS_CH.ConnectState);
+    assert(emergency_signals == 1);
+    Remoter_Heartbeat_Tick();
+    assert(emergency_signals == 1); /* no duplicate wakeups */
     Remoter_Receive(frame, 18);
-    assert(!STOPFLAG && motor_output_enable);
+    assert(!STOPFLAG && !motor_output_enable); /* release requests MCU reset */
+
+    Remoter_Init(); /* model a new boot, right=2 must wake immediately */
+    emergency_signals = 0;
     frame[5] = 0xA8;
     Remoter_Receive(frame, 18);
-    assert(STOPFLAG && !motor_output_enable);
+    assert(DR16_Data.right == 2 && STOPFLAG && !motor_output_enable);
+    assert(emergency_signals == 1);
+    Remoter_Receive(frame, 18);
+    assert(emergency_signals == 1);
+    frame[5] = 0x98; /* right up: release, but no sit/control before reset */
+    Remoter_Receive(frame, 18);
+    assert(!STOPFLAG && !motor_output_enable && !sit_mode_enable);
+
+    Remoter_Init(); /* no first frame: trigger after the startup timeout */
+    emergency_signals = 0;
+    tick += 99;
+    Remoter_Heartbeat_Tick();
+    assert(emergency_signals == 0);
+    tick += 1;
+    Remoter_Heartbeat_Tick();
+    assert(emergency_signals == 1 && STOPFLAG && !motor_output_enable);
     return 0;
 }
 ''')
@@ -113,4 +144,4 @@ int main(void)
                     'others/Device/src/remoter.c', 'others/Device/src/dr16.c',
                     str(tmp / 'test.c'), '-o', str(tmp / 'test')], cwd=root, check=True)
     subprocess.run([str(tmp / 'test')], check=True)
-print('DR16 receive, switch edges, leg lock, sit, startup and timeout: passed')
+print('DR16 controls, emergency notification, latch, release and startup timeout: passed')

@@ -26,6 +26,8 @@ extern uint8_t STOPFLAG;
 uint8_t Error_state = 0;
 static uint32_t remoter_last_valid_tick = 0;
 static uint8_t remoter_heartbeat_lost = 1;
+static uint8_t remoter_initialized = 0;
+static uint8_t error_task_latched = 0;
 
 #define REMOTER_HEARTBEAT_TIMEOUT_MS 100U
 
@@ -85,13 +87,26 @@ void Error_Judge()
 		motor_output_enable = 0;
 		Error_state = 1;
 		System_State = Error;
+        /* Initialization is not an emergency; allow the first frame for 100 ms.
+           Signals remain pending if Error_task has not started waiting yet. */
+        if (remoter_initialized && !error_task_latched &&
+            (SBUS_CH.ConnectState ||
+             HAL_GetTick() - remoter_last_valid_tick >= REMOTER_HEARTBEAT_TIMEOUT_MS))
+        {
+            error_task_latched = 1;
+            osSignalSet(ErrorHandle, 1);
+        }
 	}
 	else if (Error_state == 1 && SBUS_CH.SW3 == 1)
 	{
 		STOPFLAG = 0;
-		motor_output_enable = 1;
-		Error_state = 0;
-		System_State = Normal;
+        /* After emergency entry, Error_task owns recovery via MCU reset. */
+        if (!error_task_latched)
+        {
+            motor_output_enable = 1;
+            Error_state = 0;
+            System_State = Normal;
+        }
 	}
 }
 
@@ -108,6 +123,8 @@ void Remoter_Heartbeat_Tick(void)
 
 void Remoter_Init()
 {
+        remoter_initialized = 0;
+        error_task_latched = 0;
 		SBUS_CH.CH1 = 992;
 		SBUS_CH.CH2 = 992;
 		SBUS_CH.CH3 = 992;
@@ -129,6 +146,7 @@ void Remoter_Init()
 		Foot_Chassis.Target_Leg_State = 0;
 		Error_Judge();
 		
+		remoter_initialized = 1;
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, Rx_Data, BUFF_SIZE);
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);
 }

@@ -25,7 +25,7 @@ extern uint8_t usart2RxBuf[256];
 1.初始化和挂起任务：
 
 调用 Remoter_Init() 初始化遥控器。
-使用 vTaskSuspend(NULL) 挂起当前任务。
+使用任务信号等待急停，防止初始化期间丢失唤醒。
 
 2.禁用电机：
 
@@ -53,7 +53,7 @@ extern uint8_t usart2RxBuf[256];
 void Error_task(void const * argument)
 {
 		Remoter_Init();
-    	vTaskSuspend(NULL);
+		osSignalWait(1, osWaitForever);
 		Disable_DM_Motor(&hfdcan2, 0x01);
 		Disable_DM_Motor(&hfdcan1, 0x01);
 		Disable_DM_Motor(&hfdcan3, 0x11);
@@ -112,6 +112,6 @@ void Error_task(void const * argument)
 			}																																		
 			HAL_UARTEx_ReceiveToIdle_DMA(&huart2,usart2RxBuf,sizeof(usart2RxBuf));																																								
 			__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);			
-			osDelay(1);																												
+			HAL_Delay(1); // 保持最高优先级任务就绪，不让出 CPU。
     }																														
 }																																										
