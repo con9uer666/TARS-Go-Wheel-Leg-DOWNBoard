@@ -9,10 +9,12 @@
     "stm32cube-ide-clangd.path": "cube",
     "stm32cube-ide-clangd.arguments": [
         "starm-clangd",
-        "--query-driver=${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc.exe",
-        "--query-driver=${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-g++.exe"
+        "--query-driver=/Users/speros987/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/*/bin/arm-none-eabi-*"
     ],
     "cortex-debug.variableUseNaturalFormat": true,
     "C_Cpp.clang_format_fallbackStyle": "",
-    "emberprobe.openocdPath": "/Users/speros987/opt/xpack-openocd-0.12.0-7/bin/openocd"
+    "emberprobe.openocdPath": "/Users/speros987/opt/xpack-openocd-0.12.0-7/bin/openocd",
+    "C_Cpp.intelliSenseEngine": "default",
+    "editor.semanticHighlighting.enabled": true,
+    "stm32cube-ide-clangd.enable": false
 }

@@ -3,9 +3,10 @@
         {
             "name": "STM32",
             "compileCommands": "${workspaceFolder}/build/Debug/compile_commands.json",
-            "intelliSenseMode": "windows-msvc-x64",
+            "intelliSenseMode": "macos-gcc-arm",
             "cStandard": "c17",
-            "cppStandard": "gnu++14"
+            "cppStandard": "gnu++14",
+            "compilerPath": "/Users/speros987/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc"
         }
     ],
     "version": 4

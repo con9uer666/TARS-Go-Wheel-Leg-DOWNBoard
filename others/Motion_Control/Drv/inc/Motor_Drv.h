@@ -4,7 +4,8 @@
 #include "main.h"
 #include "USER_CAN.h"
 
-typedef struct DJI_Rx_Data{
+typedef struct DJI_Rx_Data
+{
     uint16_t Position;
     float Velocity;
     int16_t Speed;
@@ -13,7 +14,8 @@ typedef struct DJI_Rx_Data{
     int16_t last_ecd;
 }DJI_Rx_Data_t;
 
-typedef struct Rx_Data{
+typedef struct Rx_Data
+{
     uint8_t ID;
     uint8_t State;
     float Position;
@@ -22,7 +24,8 @@ typedef struct Rx_Data{
     float T_Mos;
     float T_Rotor;
 }Rx_Data_t;
-typedef struct Joint_Motor{
+typedef struct Joint_Motor
+{
     Rx_Data_t Rx_Data;
     float Target_Torque;
     float Target_Speed;
@@ -37,7 +40,8 @@ typedef struct Joint_Motor{
     uint8_t  enable_pending;      // 收帧解析到state==0(失能)且应使能时置1；CAN_Transmit替换本电机控制帧为使能帧后清0
 }Joint_Motor_t;
 
-typedef struct Wheel_Motor{
+typedef struct Wheel_Motor
+{
     DJI_Rx_Data_t Rx_Data;
     int16_t TX_data;
     float Target_Torque;
