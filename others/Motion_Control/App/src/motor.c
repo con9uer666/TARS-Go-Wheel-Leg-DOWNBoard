@@ -70,7 +70,6 @@ float d_yaw;//陀螺仪yaw速度，单位为弧度每秒
 float alpha_d_yaw = 0.8f;
 
 float target_roll;
-float alpha_target_roll = 0.05;
 
 float Leg_F0_Limit = 500;
 

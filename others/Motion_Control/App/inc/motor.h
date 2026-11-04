@@ -58,7 +58,6 @@ extern float down_board_yaw_output; // 下板yaw输出
 
 extern float speed_error; 
 extern float target_roll;
-extern float alpha_target_roll;
 extern user_pid_t Roll_Comp_PID;
 extern user_pid_t Jump_LR_Balance_PID;
 extern int leg_state_count;

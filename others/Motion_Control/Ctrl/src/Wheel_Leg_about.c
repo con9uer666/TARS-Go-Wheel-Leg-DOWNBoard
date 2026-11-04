@@ -65,10 +65,7 @@ void AntiSplit_Get_K(float K[2], float Coef[2][3], float L0_avg)
  */
 void Roll_Comp()
 {
-    if(speed_error <= 0.3 && speed_error >= -0.3)
-    target_roll = alpha_target_roll * (-((SBUS_CH.CH1 - 992.0f)/800.0f) * 12.0f) + (1 - alpha_target_roll) * target_roll;
-    else
-    target_roll = alpha_target_roll * target_roll + (1 - alpha_target_roll) * target_roll;
+    target_roll = 0.0f; // 关闭遥控器侧倾输入，保留横滚补偿。
 
     PID_Set_Error(&Roll_Comp_PID, roll, target_roll + 2);
     PID_coculate(&Roll_Comp_PID);
