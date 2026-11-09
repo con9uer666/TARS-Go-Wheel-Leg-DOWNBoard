@@ -1446,6 +1446,9 @@ void StairRetract()
             R_Leg_State = 0;
             L_Leg_State = 0;
             leg_state = 0;
+            //上台阶完成后锁短腿，避免遥控器或上位机的长腿指令立即覆盖
+            leg_state_locked_short = 1;
+            Foot_Chassis.Target_Leg_State = 0;
             target_Leg_L0 = LEG_MIN_LENTH;
             body_distance = 0;
             target_body_distance = 0.0f;

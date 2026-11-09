@@ -98,7 +98,7 @@ float Foot_Target_Relative_Angle;//!目前没用。以后可能会用
 uint8_t upstairs_flag = 0;//0：常态；1：上台阶的瞬间
 uint8_t sit_mode_enable = 0;//0：正常，1：坐地模式
 uint8_t sit_debug_force = 0;   // 调试用：debugger中设为1可强制进入坐地模式
-uint8_t leg_state_locked_short = 0;//两腿离地时由 motor.c 置1，把 Target_Leg_State 锁短腿；上位机发短腿(0)即解锁
+uint8_t leg_state_locked_short = 0;//两腿离地或上台阶完成时由 motor.c 置1，锁短腿；收到短腿请求(0)即解锁
 uint8_t AIM_State = 0;//0为不自瞄，1为自瞄
 
 uint32_t user_g ;
@@ -140,7 +140,7 @@ void B2B_ParseUsart() // 先发低字节
 		vision_rune_dirt = (usart2RxBuf[41] >> 1) & 0x01;
 		trigger_block = usart2RxBuf[41] & 0x01;
 
-		//两腿离地锁短腿：先用本次上位机值判断解锁，再决定写入值
+		//短腿锁定：先用本次上位机值判断解锁，再决定写入值
 		{
 			uint8_t rx_leg = usart2RxBuf[42];
 			if (rx_leg == 0) leg_state_locked_short = 0;
