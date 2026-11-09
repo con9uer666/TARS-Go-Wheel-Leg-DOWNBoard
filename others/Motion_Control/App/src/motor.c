@@ -35,7 +35,7 @@ Foot_Chassis_t Foot_Chassis;//轮足底盘结构体
 float powerPredict;
    
 float LEG_MIN_LENTH = 0.23f;
-float LEG_MAX_LENTH = 0.39f;
+float LEG_MAX_LENTH = 0.42f;
 
 float L_b_phi0, R_b_phi0;
    
@@ -50,7 +50,7 @@ float alpha_d_pitch = 1.0;//滤波系数
 float Leg_L_T; //模拟腿力矩
 float Leg_R_T; 
 
-float Wr, Wl;//加上杆角速度的车轮速度      
+float Wr, Wl;//加上杆角速度的车轮速度
 float alpha_W = 0.9;//滤波系数   
 float body_speed_L, body_speed_R, body_speed; //当前车体速度 ,已正交，是水平方向的速度
 float target_body_speed;//目标速度   
@@ -198,11 +198,11 @@ RampGenerator Target_Speed_Ramp;//目标速度斜坡发生器
 
 //?标志位
 uint8_t gimbal_follow_flag = 1; // 1：刚站起来，云台跟随底盘 0：底盘跟随云台
-uint8_t yaw_follow_mode = 1;    // 0=跟随Yaw电机相对角度；1=跟随IMU目标角度（CH4累加）
+uint8_t yaw_follow_mode = 1;    // 0=跟随Yaw电机相对角度；1=跟随IMU目标角度（右横CH1累加）
 float imu_yaw_target_angle = 0.0f;
 static uint8_t imu_yaw_target_initialized = 0;
 
-// CH4满量程对应的目标角速度(rad/s)，松杆后目标角度保持不变
+// 右横CH1满量程对应的目标角速度(rad/s)，松杆后目标角度保持不变
 float imu_yaw_target_rate = 2.5f;
 uint8_t spinning_flag = 0; // 1：小陀螺运行中 0：小陀螺停止
 uint8_t spinning_enable = 0; // 0=禁止小陀螺；1=允许小陀螺
@@ -385,10 +385,10 @@ void task_PID_Init()
     PID_INIT(&L_Leg_dphi0_PID, 3, 0.1, 1, 150, 150, 0, 2000, 0);
     PID_INIT(&R_Leg_dphi0_PID, 3, 0.1, 1, 150,150, 0, 2000, 0);
 
-    PID_INIT(&L_Leg_L0_POS_PID, 15, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
-    PID_INIT(&R_Leg_L0_POS_PID, 15, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
-    PID_INIT(&L_Leg_L0_SPD_PID, 50, 3, 400, 80, 80, 0, 2000, 0);
-    PID_INIT(&R_Leg_L0_SPD_PID, 50, 3, 400, 80, 80, 0, 2000, 0);
+    PID_INIT(&L_Leg_L0_POS_PID, 1, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
+    PID_INIT(&R_Leg_L0_POS_PID, 1, 0.001, 0.1, 3.0, 2.0, 0, 200, 0);
+    PID_INIT(&L_Leg_L0_SPD_PID, 5, 1, 400, 80, 80, 0, 2000, 0);
+    PID_INIT(&R_Leg_L0_SPD_PID, 5, 1, 400, 80, 80, 0, 2000, 0);
 
     //小陀螺pid
     PID_INIT(&spinning_pid, 0.0005, 0.001f, 0.001, 6.0f, 6.0f, 0.005f, 20.0f, 0);
@@ -438,6 +438,8 @@ void task_Motor_Enable()
 
 /* ---------- 收腿起立 State=1 转角阶段：卡住反向绕长路 ---------- */
 
+uint8_t leg_stuck_flip_enable = 0; // 0=关闭卡住反向绕长路；1=开启，左右腿共用
+
 // FWD = 短路径 PID 追目标角；REV = 长路径恒速反绕一圈到同一目标角
 typedef enum {
     STAIR_SUB_TURN_FWD = 0,  // 沿 ShortestAngleDelta 的短路径用 PID 串级控制
@@ -485,7 +487,17 @@ static int turn_ctrl_with_stuck_flip(
     float *rev_dir, float *rev_long_remain, float *rev_traveled,
     float *out_T)
 {
-    (*dwell)++;
+    if (leg_stuck_flip_enable == 0)
+    {
+        // 关闭时退出反向绕行，并清除卡住计数，重新开启后重新判定
+        *sub = STAIR_SUB_TURN_FWD;
+        *dwell = 0;
+        leg_turn_stuck_reset(VMC);
+    }
+    else
+    {
+        (*dwell)++;
+    }
     int near = 0;                               // 本周期是否算到位
 
     if (*sub == STAIR_SUB_TURN_FWD)
@@ -503,7 +515,7 @@ static int turn_ctrl_with_stuck_flip(
         if (fabsf(pid_middle->error) <= 0.1f) near = 1;
 
         // 卡住判据：dwell 门禁过了 + 误差仍大 + d_phi0 死区持续时间达到 → 切 REV
-        if (!near && *dwell > 100 &&
+        if (leg_stuck_flip_enable && !near && *dwell > 100 &&
             fabsf(pid_middle->error) > 0.1f &&
             leg_turn_stuck_detect(VMC, 0.0873f, 0.1f))
         {
@@ -560,6 +572,7 @@ void NotStanding_NotStairRetract_for_chassis()
     VMC_Coculate();
     Body_Speed_Coculate();//车身速度解算
 
+    // region 倒地自起
     //是否姿态稳定在误差20°内的起立态
     if((roll >= 40.0f || roll <= -40.0f || pitch >= 40.0f || pitch <= -40.0f) && first_run == 1)//不稳定且是急停开始第一次运行
     {
@@ -595,6 +608,7 @@ void NotStanding_NotStairRetract_for_chassis()
         }
     }
     first_run = 0;//第一次运行完成
+    // endregion
 
     //收腿过程腿长控制
     PID_Set_Error(&L_Leg_L0_POS_PID, VMC_L.L0, 0.12f);//0.19这个值是通过反复试验得来的，目的是让腿在收腿过程中稍微有个前倾，防止完全竖直时不稳定
@@ -820,6 +834,8 @@ void off_ground_detect()
     }
 }
 
+uint8_t auto_upstairs_enable = 0; // 0=关闭自动上台阶；1=开启，不影响遥控器手动触发
+
 static void Step_Hit_Detect(void)
 {
     const float leg_torque_threshold = 3.0;   // 单腿力矩门槛
@@ -853,7 +869,7 @@ static void Step_Hit_Detect(void)
         step_hit_cooldown--;
     }
 
-    if (step_hit_cooldown == 0 && !leg_off_ground && step_hit && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
+    if (auto_upstairs_enable && step_hit_cooldown == 0 && !leg_off_ground && step_hit && Foot_Chassis.Target_Leg_State == 1 && start_mode == 1 && upstares_mode == 0)
     {
         upstairs_flag = 1;
         step_hit_cooldown = step_hit_cooldown_target;
@@ -868,6 +884,7 @@ void Yaw_Error_Coculate()
 {
     float Yaw_motor_position;
 
+    // region 选择控制模式
     if (yaw_follow_mode == 1)
     {
         if (!imu_yaw_target_initialized)
@@ -876,7 +893,7 @@ void Yaw_Error_Coculate()
             imu_yaw_target_initialized = 1;
         }
 
-        float stick = ((float)SBUS_CH.CH4 - 992.0f) / 800.0f;
+        float stick = -((float)SBUS_CH.CH1 - 992.0f) / 800.0f;//-1~1 目标方向增加值
         if (fabsf(stick) < 0.05f)
         {
             stick = 0.0f;
@@ -885,7 +902,7 @@ void Yaw_Error_Coculate()
             imu_yaw_target_angle + stick * imu_yaw_target_rate * 0.002f);
 
         // 与原Yaw电机链路保持相同定义：当前角度减目标角度
-        Yaw_motor_position = easy_angle_wrapping(yaw_trans[0] - imu_yaw_target_angle);
+        Yaw_motor_position = -easy_angle_wrapping(yaw_trans[0] - imu_yaw_target_angle);
         yaw_angle_PI = Yaw_motor_position;
     }
     else
@@ -893,6 +910,7 @@ void Yaw_Error_Coculate()
         imu_yaw_target_initialized = 0;
         Yaw_motor_position = Yaw_DM4310.Rx_Data.Position - (head_forward_angle);//减的是零点
     }
+    // endregion
     
     //套圈处理
     if(Yaw_motor_position > PI)
@@ -974,7 +992,7 @@ static uint8_t sit_first_entry = 1;
 //站起
 void Standing()
 {
-//占用率检测用的，留着吧，看不懂也不影响
+    //占用率检测用的，留着吧，看不懂也不影响
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, 1);
 
     /* 倾覆保护：站立期间 |pitch| > 45° 连续 10 帧才触发，避免 IMU 抖动误判。
@@ -1253,8 +1271,11 @@ void Standing()
 
     if(upstairs_flag == 1)
     {
-        start_mode = 2;
-        upstairs_flag = 0;    // 已消费触发信号，避免动作完成后残留导致距离闭环被永久压0
+        if(Foot_Chassis.Target_Leg_State == 1)
+        {
+            start_mode = 2;
+        }
+        upstairs_flag = 0;    // 短腿请求直接丢弃，避免切成长腿后补触发
     }
 
     if(sit_mode_enable == 1)
@@ -1297,7 +1318,7 @@ void Upstair_NotStairRetract()
     VMC_Set_F0_T(&VMC_R, R_Leg_L0_SPD_PID.output, -R_Leg_dphi0_PID.output);
 
     //上台阶收腿过程中判断腿长和腿角度是否都到位了
-    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.15 && fabsf(L_Leg_Middle_PID.error) <= 0.15)
+    if(L_Leg_State == 0 && fabsf(L_Leg_L0_POS_PID.error) <= 0.3 && fabsf(L_Leg_Middle_PID.error) <= 0.3)
     {
         L_Ready_Count ++;
     }
@@ -1306,7 +1327,7 @@ void Upstair_NotStairRetract()
         L_Leg_State = 2;
         L_Ready_Count = 0;
     }
-    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.15 && fabsf(R_Leg_Middle_PID.error) <= 0.15)
+    if(R_Leg_State == 0 && fabsf(R_Leg_L0_POS_PID.error) <= 0.3 && fabsf(R_Leg_Middle_PID.error) <= 0.3)
     {
         R_Ready_Count ++;
     }
